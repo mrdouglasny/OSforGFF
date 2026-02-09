@@ -1,5 +1,29 @@
 # Osterwalder-Schrader Axioms for the Gaussian Free Field
 
+## Dimension Generalization (dimensions branch)
+
+This branch generalizes all core type definitions and the OS axiom framework
+from fixed d=4 spacetime to parametric dimension `d : ℕ`. The structural files
+(OS axiom definitions, Euclidean group actions, discrete symmetries, time
+translation, Schwinger functions) are fully parametric in `d` with the
+constraint `[Fact (0 < d)]`. The GFF-specific proofs remain specialized to
+d=4 via `STDimension := 4`.
+
+This enables other projects (e.g. P(Φ)₂ in d=2) to import the OS axiom
+definitions and structural infrastructure, instantiating at their target
+dimension:
+```lean
+import OSforGFF.OS_Axioms
+instance : Fact (0 < 2) := ⟨by omega⟩
+-- OS0_Analyticity, OS1_Regularity, ..., OS4_Clustering
+-- all available at d = 2
+```
+
+See [docs/dimension_dependence.md](docs/dimension_dependence.md) for details
+on which files are parametric vs. fixed to d=4.
+
+---
+
 We construct the massive Gaussian Free Field (GFF) in four spacetime dimensions
 as a probability measure on the space of tempered distributions S'(ℝ⁴), and
 prove that it satisfies all five
