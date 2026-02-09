@@ -31,29 +31,31 @@ the star operation (complex conjugation composed with time reflection) for test 
 ## Main results
 
 * `is_open_positiveTimeSet`: The positive time set is open
-* `Star TestFunctionℂ`: Star instance for complex test functions
+* `Star TestFunctionℂ d`: Star instance for complex test functions
 -/
 
 noncomputable section
 
 open TopologicalSpace Function SchwartzMap QFT
 
+variable {d : ℕ} [Fact (0 < d)]
+
 /-- A spacetime point has positive time if its time component is positive -/
-def HasPositiveTime (x : SpaceTime) : Prop := getTimeComponent x > 0
+def HasPositiveTime (x : SpaceTime d) : Prop := getTimeComponent x > 0
 
 /-- The set of all spacetime points with positive time -/
-def positiveTimeSet : Set SpaceTime := {x | HasPositiveTime x}
+def positiveTimeSet : Set (SpaceTime d) := {x | HasPositiveTime x}
 
 /-- The positive time set is open -/
-lemma is_open_positiveTimeSet : IsOpen positiveTimeSet :=
-  isOpen_lt continuous_const (PiLp.continuous_apply 2 (fun _ => ℝ) (0 : Fin STDimension))
+lemma is_open_positiveTimeSet : IsOpen (positiveTimeSet (d := d)) :=
+  isOpen_lt continuous_const (PiLp.continuous_apply 2 (fun _ => ℝ) (0 : Fin d))
 
 /-- Submodule of **real-valued** test functions supported in the positive time region -/
-def PositiveTimeTestFunctions.submodule : Submodule ℝ TestFunction where
-  carrier := { f : TestFunction | tsupport f ⊆ positiveTimeSet }
+def PositiveTimeTestFunctions.submodule : Submodule ℝ (TestFunction d) where
+  carrier := { f : TestFunction d | tsupport f ⊆ positiveTimeSet }
   zero_mem' := by
     simp only [Set.mem_setOf_eq]
-    suffices h : tsupport (0 : TestFunction) = ∅ by
+    suffices h : tsupport (0 : TestFunction d) = ∅ by
       rw [h]
       apply Set.empty_subset
     rw [tsupport_eq_empty_iff]
@@ -61,17 +63,17 @@ def PositiveTimeTestFunctions.submodule : Submodule ℝ TestFunction where
   add_mem' := fun {f g} hf hg => Set.Subset.trans (tsupport_add f g) (Set.union_subset hf hg)
   smul_mem' := by
     intro c f hf
-    refine (tsupport_smul_subset_right (fun _ : SpaceTime => c) f).trans hf
+    refine (tsupport_smul_subset_right (fun _ : SpaceTime d => c) f).trans hf
 
 /-- Type of real-valued test functions supported in the positive time region -/
-abbrev PositiveTimeTestFunction : Type := PositiveTimeTestFunctions.submodule
+abbrev PositiveTimeTestFunction : Type := PositiveTimeTestFunctions.submodule (d := d)
 
-instance : AddCommMonoid PositiveTimeTestFunction := by infer_instance
-instance : AddCommGroup PositiveTimeTestFunction := by infer_instance
+instance : AddCommMonoid (PositiveTimeTestFunction (d := d)) := by infer_instance
+instance : AddCommGroup (PositiveTimeTestFunction (d := d)) := by infer_instance
 
 /-- Linear combinations of positive-time test functions are positive-time test functions. -/
 lemma PositiveTimeTestFunction.sum_smul_mem
-    {n : ℕ} (f : Fin n → PositiveTimeTestFunction) (c : Fin n → ℝ) :
+    {n : ℕ} (f : Fin n → PositiveTimeTestFunction (d := d)) (c : Fin n → ℝ) :
     ∃ g : PositiveTimeTestFunction, g.val = ∑ i, c i • (f i).val := by
   -- Use the fact that PositiveTimeTestFunctions.submodule is closed under finite linear combinations
   use ∑ i, c i • (f i)
@@ -80,7 +82,7 @@ lemma PositiveTimeTestFunction.sum_smul_mem
 
 
 /-- Helper lemma: starRingEnd ℂ commutes through derivatives and preserves norms -/
-lemma starRingEnd_iteratedFDeriv_norm_eq (g : TestFunctionℂ) (n : ℕ) (x : SpaceTime) :
+lemma starRingEnd_iteratedFDeriv_norm_eq (g : TestFunctionℂ d) (n : ℕ) (x : SpaceTime d) :
   ‖iteratedFDeriv ℝ n (fun x => starRingEnd ℂ (g x)) x‖ = ‖iteratedFDeriv ℝ n g x‖ := by
   -- Use the fact that starRingEnd ℂ = Complex.conjLIE (as functions)
   have h : (fun x => starRingEnd ℂ (g x)) = Complex.conjLIE ∘ g := by
@@ -93,7 +95,7 @@ lemma starRingEnd_iteratedFDeriv_norm_eq (g : TestFunctionℂ) (n : ℕ) (x : Sp
   exact LinearIsometryEquiv.norm_iteratedFDeriv_comp_left Complex.conjLIE g x n
 
 /-- Star operation on test functions: time reflection followed by complex conjugation -/
-noncomputable def starTestFunction (f : TestFunctionℂ) : TestFunctionℂ :=
+noncomputable def starTestFunction (f : TestFunctionℂ d) : TestFunctionℂ d :=
   -- Apply time reflection then complex conjugation pointwise
   let f_reflected := compTimeReflection f
   -- Apply complex conjugation to each value
@@ -121,11 +123,11 @@ noncomputable def starTestFunction (f : TestFunctionℂ) : TestFunctionℂ :=
      exact hC x⟩
 
 /-- Star instance for complex test functions -/
-noncomputable instance : Star TestFunctionℂ where
+noncomputable instance : Star (TestFunctionℂ d) where
   star f := starTestFunction f
 
 lemma PositiveTimeTestFunction.zero_on_nonpositive
-    (f : PositiveTimeTestFunction) {x : SpaceTime}
+    (f : PositiveTimeTestFunction (d := d)) {x : SpaceTime d}
     (hx : getTimeComponent x ≤ 0) : f.val x = 0 := by
   classical
   have hx_not_support : x ∉ tsupport f.val := by

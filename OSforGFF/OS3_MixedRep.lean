@@ -125,7 +125,7 @@ lemma gaussian_fourier_1d (s : ℝ) (hs : 0 < s) (t : ℝ) :
     ring
 
 /-- Gaussian exponential factorizes: exp(-s‖k‖²) = exp(-sk₀²) × exp(-s‖k_sp‖²) -/
-lemma gaussian_exp_factorize (s : ℂ) (k : SpaceTime) :
+lemma gaussian_exp_factorize (s : ℂ) (k : SpaceTime STDimension) :
     Complex.exp (-s * ‖k‖^2) =
     Complex.exp (-s * (k 0)^2) * Complex.exp (-s * ‖spatialPart k‖^2) := by
   rw [← Complex.exp_add]
@@ -144,13 +144,13 @@ lemma gaussian_exp_factorize (s : ℂ) (k : SpaceTime) :
     For z = Θx - y with z₀ = -x₀ - y₀:
     ∫_k exp(-ik·z) exp(-s|k|²) = (∫_{k₀} exp(-ik₀z₀) exp(-sk₀²)) × (∫_{k_sp} exp(-ik_sp·z_sp) exp(-s|k_sp|²))
                                 = √(π/s) exp(-z₀²/(4s)) × ∫_{k_sp} exp(-ik_sp·z_sp) exp(-s|k_sp|²) -/
-lemma k_integral_after_k0_eval (s : ℝ) (hs : 0 < s) (z : SpaceTime) :
-    ∫ k : SpaceTime, Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-(s : ℂ) * ‖k‖^2) =
+lemma k_integral_after_k0_eval (s : ℝ) (hs : 0 < s) (z : SpaceTime STDimension) :
+    ∫ k : SpaceTime STDimension, Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-(s : ℂ) * ‖k‖^2) =
     (Real.sqrt (π / s) : ℂ) * Complex.exp (-(((z 0)^2 / (4 * s)) : ℝ)) *
-      ∫ k_sp : SpatialCoords, Complex.exp (-Complex.I * spatialDot k_sp (spatialPart z)) *
+      ∫ k_sp : SpatialCoords STDimension, Complex.exp (-Complex.I * spatialDot k_sp (spatialPart z)) *
                                Complex.exp (-(s : ℂ) * ‖k_sp‖^2) := by
   -- Step 1: Factor the integrand into k₀-part × k_sp-part using existing lemmas
-  have h_factor : ∀ k : SpaceTime,
+  have h_factor : ∀ k : SpaceTime STDimension,
       Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-(s : ℂ) * ‖k‖^2) =
       (Complex.exp (-Complex.I * (k 0 * z 0)) * Complex.exp (-(s : ℂ) * (k 0)^2)) *
       (Complex.exp (-Complex.I * spatialDot (spatialPart k) (spatialPart z)) *
@@ -194,7 +194,7 @@ lemma k_integral_after_k0_eval (s : ℝ) (hs : 0 < s) (z : SpaceTime) :
     ring
   -- Step 4: Integrability for k_sp (3D Gaussian)
   -- The lemma gives: Integrable (fun v ↦ cexp(-s * ‖v‖² + (-I) * ⟪z_sp, v⟫_ℝ))
-  have h_int_ksp : Integrable (fun k_sp : SpatialCoords =>
+  have h_int_ksp : Integrable (fun k_sp : SpatialCoords STDimension =>
       Complex.exp (-Complex.I * spatialDot k_sp (spatialPart z)) *
       Complex.exp (-(s : ℂ) * ‖k_sp‖^2)) volume := by
     have hs_cplx : 0 < (s : ℂ).re := by simp [hs]
@@ -231,11 +231,11 @@ lemma k_integral_after_k0_eval (s : ℝ) (hs : 0 < s) (z : SpaceTime) :
   rw [h_k0]
 
 /-- The time component of (timeReflection x - y). -/
-lemma timeReflection_sub_zero (x y : SpaceTime) :
+lemma timeReflection_sub_zero (x y : SpaceTime STDimension) :
     (timeReflection x - y) 0 = -(x 0) - y 0 := rfl
 
 /-- The spatial part of (timeReflection x - y) equals spatialPart x - spatialPart y. -/
-lemma spatialPart_timeReflection_sub (x y : SpaceTime) :
+lemma spatialPart_timeReflection_sub (x y : SpaceTime STDimension) :
     spatialPart (timeReflection x - y) = spatialPart x - spatialPart y := rfl
 
 /-- **THEOREM**: Heat kernel bilinear form after k₀ integration.
@@ -256,32 +256,32 @@ lemma spatialPart_timeReflection_sub (x y : SpaceTime) :
     where t = -x₀ - y₀ (time separation under reflection) and r̄ = x̄ - ȳ (spatial separation).
 
     The exp(-sm²) factor combines with exp(-s|p̄|²) to give exp(-s(|p̄|² + m²)). -/
-theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
+theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
     ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖ =
     (1 / (2 * π) ^ STDimension : ℝ) *
-    ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+    ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * f y *
         (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
         Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
         Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) := by
   -- Step 1: For s > 0, substitute heatKernel_eq_gaussianFT
-  have h_hk : ∀ s : ℝ, 0 < s → ∀ z : SpaceTime,
+  have h_hk : ∀ s : ℝ, 0 < s → ∀ z : SpaceTime STDimension,
       (heatKernelPositionSpace s ‖z‖ : ℂ) =
       (1 / (2 * π) ^ STDimension : ℝ) *
-      ∫ k : SpaceTime, Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-(s : ℂ) * ‖k‖^2) :=
+      ∫ k : SpaceTime STDimension, Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-(s : ℂ) * ‖k‖^2) :=
     fun s hs z => heatKernel_eq_gaussianFT s hs z
 
   -- Step 2: Rewrite LHS using h_hk under the s-integral
   have h_step1 : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖ =
       ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-        ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y *
           ((1 / (2 * π) ^ STDimension : ℝ) *
-           ∫ k : SpaceTime, Complex.exp (-Complex.I * ⟪k, timeReflection x - y⟫_ℝ) *
+           ∫ k : SpaceTime STDimension, Complex.exp (-Complex.I * ⟪k, timeReflection x - y⟫_ℝ) *
                             Complex.exp (-(s : ℂ) * ‖k‖^2)) := by
     apply MeasureTheory.setIntegral_congr_ae measurableSet_Ioi
     filter_upwards with s hs
@@ -298,17 +298,17 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- √(π/s) exp(-z₀²/(4s)) × ∫_{k_sp} exp(-I k_sp·z_sp) exp(-s‖k_sp‖²)
   -- where z = Θx - y, z₀ = -(x₀) - y₀, z_sp = x_sp - y_sp
   have h_step2 : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
         ((1 / (2 * π) ^ STDimension : ℝ) *
-         ∫ k : SpaceTime, Complex.exp (-Complex.I * ⟪k, timeReflection x - y⟫_ℝ) *
+         ∫ k : SpaceTime STDimension, Complex.exp (-Complex.I * ⟪k, timeReflection x - y⟫_ℝ) *
                           Complex.exp (-(s : ℂ) * ‖k‖^2)) =
       ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-        ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y *
           ((1 / (2 * π) ^ STDimension : ℝ) *
            ((Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
-            ∫ k_sp : SpatialCoords,
+            ∫ k_sp : SpatialCoords STDimension,
               Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) *
               Complex.exp (-(s : ℂ) * ‖k_sp‖^2))) := by
     apply MeasureTheory.setIntegral_congr_ae measurableSet_Ioi
@@ -330,30 +330,30 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- Step 4: Rearrange the integrand to match fubini_ksp_xy_swap LHS form
   -- Move the constant outside x,y integrals and swap k_sp integrand order
   have h_step3 : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
         ((1 / (2 * π) ^ STDimension : ℝ) *
          ((Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
-          ∫ k_sp : SpatialCoords,
+          ∫ k_sp : SpatialCoords STDimension,
             Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) *
             Complex.exp (-(s : ℂ) * ‖k_sp‖^2))) =
       ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
         ((1 / (2 * π) ^ STDimension : ℝ) *
-         ∫ x : SpaceTime, ∫ y : SpaceTime,
+         ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
            (starRingEnd ℂ (f x)) * f y *
            (Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
-           ∫ k_sp : SpatialCoords,
+           ∫ k_sp : SpatialCoords STDimension,
              Complex.exp (-(s : ℂ) * ‖k_sp‖^2) *
              Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y))) := by
     apply MeasureTheory.setIntegral_congr_ae measurableSet_Ioi
     filter_upwards with s hs
     congr 1
     -- First reorder the k_sp integrand using mul_comm
-    have h_ksp_reorder : ∀ x y : SpaceTime,
-        (∫ k_sp : SpatialCoords,
+    have h_ksp_reorder : ∀ x y : SpaceTime STDimension,
+        (∫ k_sp : SpatialCoords STDimension,
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) *
           Complex.exp (-(s : ℂ) * ‖k_sp‖^2)) =
-        (∫ k_sp : SpatialCoords,
+        (∫ k_sp : SpatialCoords STDimension,
           Complex.exp (-(s : ℂ) * ‖k_sp‖^2) *
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y))) := by
       intro x y
@@ -373,15 +373,15 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- Step 5: Apply fubini_ksp_xy_swap to swap k_sp outside (x, y)
   have h_step4 : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
       ((1 / (2 * π) ^ STDimension : ℝ) *
-       ∫ x : SpaceTime, ∫ y : SpaceTime,
+       ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
          (starRingEnd ℂ (f x)) * f y *
          (Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
-         ∫ k_sp : SpatialCoords,
+         ∫ k_sp : SpatialCoords STDimension,
            Complex.exp (-(s : ℂ) * ‖k_sp‖^2) *
            Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y))) =
       ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
         ((1 / (2 * π) ^ STDimension : ℝ) *
-         ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+         ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
            (starRingEnd ℂ (f x)) * f y *
            (Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
            Complex.exp (-(s : ℂ) * ‖k_sp‖^2) *
@@ -396,14 +396,14 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- Step 6: Factor out (1/(2π)^4) from the s-integral
   have h_step5 : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
       ((1 / (2 * π) ^ STDimension : ℝ) *
-       ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+       ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
          (starRingEnd ℂ (f x)) * f y *
          (Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
          Complex.exp (-(s : ℂ) * ‖k_sp‖^2) *
          Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y))) =
       (1 / (2 * π) ^ STDimension : ℝ) *
         ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-          ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+          ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
             (starRingEnd ℂ (f x)) * f y *
             (Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
             Complex.exp (-(s : ℂ) * ‖k_sp‖^2) *
@@ -419,13 +419,13 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- Step 7: Push exp(-sm²) inside k_sp integral and combine exponentials
   have h_step6 : (1 / (2 * π) ^ STDimension : ℝ) *
       ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-        ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
           Complex.exp (-(s : ℂ) * ‖k_sp‖^2) *
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) =
       (1 / (2 * π) ^ STDimension : ℝ) *
-        ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-(((-(x 0) - y 0)^2 / (4 * s)) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
@@ -471,7 +471,7 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunct
 
   -- Chain all steps together
   calc ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-         ∫ x : SpaceTime, ∫ y : SpaceTime,
+         ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
            (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖
        = _ := h_step1
      _ = _ := h_step2
@@ -483,7 +483,7 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : TestFunct
 /-! ### Helper lemmas for Laplace s-integral evaluation -/
 
 /-- ω = √(‖k_sp‖² + m²) is positive for m > 0. -/
-lemma omega_pos (k_sp : SpatialCoords) (m : ℝ) (hm : 0 < m) :
+lemma omega_pos (k_sp : SpatialCoords STDimension) (m : ℝ) (hm : 0 < m) :
     0 < Real.sqrt (‖k_sp‖^2 + m^2) := by positivity
 
 /-- The normalization constant relation:
@@ -622,8 +622,8 @@ lemma s_integral_eval_complex (t : ℝ) (ω : ℝ) (hω : 0 < ω) :
     f̄ * f * √(π/s) * cexp(-t²/(4s)) * cexp(-sω²) * cexp(-I*phase)
 
     where all exponentials have real arguments (cast to ℂ). -/
-lemma s_integral_complex_eval (k_sp : SpatialCoords) (x y : SpaceTime) (m : ℝ) (hm : 0 < m)
-    (f : TestFunctionℂ) :
+lemma s_integral_complex_eval (k_sp : SpatialCoords STDimension) (x y : SpaceTime STDimension) (m : ℝ) (hm : 0 < m)
+    (f : TestFunctionℂ STDimension) :
     ∫ s in Set.Ioi 0, (starRingEnd ℂ (f x)) * f y *
       (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
       Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
@@ -720,40 +720,40 @@ lemma s_integral_complex_eval (k_sp : SpatialCoords) (x y : SpaceTime) (m : ℝ)
 
     **Proof:** Uses `fubini_s_xy_swap` to move s inside, then
     `s_integral_eval` to evaluate the Laplace transform. -/
-theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
+theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
     (1 / (2 * π) ^ STDimension : ℝ) *
-    ∫ k_sp : SpatialCoords, ∫ s in Set.Ioi 0, ∫ x : SpaceTime, ∫ y : SpaceTime,
+    ∫ k_sp : SpatialCoords STDimension, ∫ s in Set.Ioi 0, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * f y *
         (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
         Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
         Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) =
     (1 / (2 * (2 * π) ^ (STDimension - 1)) : ℝ) *
-      ∫ k_spatial : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ k_spatial : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         let ω := Real.sqrt (‖k_spatial‖^2 + m^2)
         (starRingEnd ℂ (f x)) * f y * (1 / ω : ℝ) *
           Complex.exp (-(|-(x 0) - y 0| : ℝ) * ω) *
           Complex.exp (-Complex.I * spatialDot k_spatial (spatialPart x - spatialPart y)) := by
   have hm : 0 < m := Fact.out
   -- Step 1: For each k_sp, swap s with (x, y) using fubini_s_xy_swap
-  have h_fubini : ∀ k_sp : SpatialCoords,
-      ∫ s in Set.Ioi 0, ∫ x : SpaceTime, ∫ y : SpaceTime,
+  have h_fubini : ∀ k_sp : SpatialCoords STDimension,
+      ∫ s in Set.Ioi 0, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) =
-      ∫ x : SpaceTime, ∫ y : SpaceTime, ∫ s in Set.Ioi 0,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension, ∫ s in Set.Ioi 0,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) :=
     fun k_sp => fubini_s_xy_swap m f k_sp
   -- Step 2: Rewrite using Fubini for each k_sp
-  have h_lhs_fubini : ∫ k_sp : SpatialCoords, ∫ s in Set.Ioi 0, ∫ x : SpaceTime, ∫ y : SpaceTime,
+  have h_lhs_fubini : ∫ k_sp : SpatialCoords STDimension, ∫ s in Set.Ioi 0, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * f y *
         (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
         Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
         Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) =
-      ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime, ∫ s in Set.Ioi 0,
+      ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension, ∫ s in Set.Ioi 0,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
@@ -764,7 +764,7 @@ theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : TestFunction�
   rw [h_lhs_fubini]
   -- Step 3: For each (k_sp, x, y), the s-integral evaluates via the Laplace transform
   -- Apply s_integral_complex_eval to the inner s-integral
-  have h_s_eval : ∀ k_sp : SpatialCoords, ∀ x y : SpaceTime,
+  have h_s_eval : ∀ k_sp : SpatialCoords STDimension, ∀ x y : SpaceTime STDimension,
       ∫ (s : ℝ) in Set.Ioi 0,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
@@ -775,13 +775,13 @@ theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : TestFunction�
         Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) :=
     fun k_sp x y => s_integral_complex_eval k_sp x y m hm f
   -- Use the s-integral evaluation
-  have h_inner_eval : ∫ (k_sp : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+  have h_inner_eval : ∫ (k_sp : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
       ∫ (s : ℝ) in Set.Ioi 0,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) =
-      ∫ (k_sp : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+      ∫ (k_sp : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
         (starRingEnd ℂ (f x)) * f y * (π / Real.sqrt (‖k_sp‖^2 + m^2) : ℂ) *
           Complex.exp (-(|-(x 0) - y 0| : ℝ) * Real.sqrt (‖k_sp‖^2 + m^2)) *
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) := by
@@ -819,7 +819,7 @@ theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     field_simp
 
   -- Step C: Rewrite the integrand to factor out π: (π/ω) = π * (1/ω)
-  have h_integrand : ∀ k_sp : SpatialCoords, ∀ x y : SpaceTime,
+  have h_integrand : ∀ k_sp : SpatialCoords STDimension, ∀ x y : SpaceTime STDimension,
       (starRingEnd ℂ) (f x) * f y * ((π : ℂ) / ↑(Real.sqrt (‖k_sp‖^2 + m^2))) *
         Complex.exp (-(↑|-x.ofLp 0 - y.ofLp 0| * ↑(Real.sqrt (‖k_sp‖^2 + m^2)))) *
         Complex.exp (-(Complex.I * ↑(spatialDot k_sp (spatialPart x - spatialPart y)))) =
@@ -832,11 +832,11 @@ theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     field_simp
 
   -- Step D: Apply the integrand factorization across the triple integral
-  have h_integral_eq : ∫ (k_sp : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+  have h_integral_eq : ∫ (k_sp : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
         (starRingEnd ℂ) (f x) * f y * ((π : ℂ) / ↑(Real.sqrt (‖k_sp‖^2 + m^2))) *
           Complex.exp (-(↑|-x.ofLp 0 - y.ofLp 0| * ↑(Real.sqrt (‖k_sp‖^2 + m^2)))) *
           Complex.exp (-(Complex.I * ↑(spatialDot k_sp (spatialPart x - spatialPart y)))) =
-      (π : ℂ) * ∫ (k_sp : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+      (π : ℂ) * ∫ (k_sp : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
         (starRingEnd ℂ) (f x) * f y * (↑(Real.sqrt (‖k_sp‖^2 + m^2)))⁻¹ *
           Complex.exp (-(↑|-x.ofLp 0 - y.ofLp 0| * ↑(Real.sqrt (‖k_sp‖^2 + m^2)))) *
           Complex.exp (-(Complex.I * ↑(spatialDot k_sp (spatialPart x - spatialPart y)))) := by
@@ -846,26 +846,26 @@ theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : TestFunction�
 
   -- Step E: The main calculation
   calc ((2 * (π : ℂ)) ^ 4)⁻¹ *
-        ∫ (k_sp : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+        ∫ (k_sp : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
           (starRingEnd ℂ) (f x) * f y * ((π : ℂ) / ↑(Real.sqrt (‖k_sp‖^2 + m^2))) *
             Complex.exp (-(↑|-x.ofLp 0 - y.ofLp 0| * ↑(Real.sqrt (‖k_sp‖^2 + m^2)))) *
             Complex.exp (-(Complex.I * ↑(spatialDot k_sp (spatialPart x - spatialPart y))))
-      = ((2 * (π : ℂ)) ^ 4)⁻¹ * ((π : ℂ) * ∫ (k_sp : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+      = ((2 * (π : ℂ)) ^ 4)⁻¹ * ((π : ℂ) * ∫ (k_sp : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
           (starRingEnd ℂ) (f x) * f y * (↑(Real.sqrt (‖k_sp‖^2 + m^2)))⁻¹ *
             Complex.exp (-(↑|-x.ofLp 0 - y.ofLp 0| * ↑(Real.sqrt (‖k_sp‖^2 + m^2)))) *
             Complex.exp (-(Complex.I * ↑(spatialDot k_sp (spatialPart x - spatialPart y))))) := by
         rw [h_integral_eq]
-    _ = (((2 * (π : ℂ)) ^ 4)⁻¹ * (π : ℂ)) * ∫ (k_sp : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+    _ = (((2 * (π : ℂ)) ^ 4)⁻¹ * (π : ℂ)) * ∫ (k_sp : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
           (starRingEnd ℂ) (f x) * f y * (↑(Real.sqrt (‖k_sp‖^2 + m^2)))⁻¹ *
             Complex.exp (-(↑|-x.ofLp 0 - y.ofLp 0| * ↑(Real.sqrt (‖k_sp‖^2 + m^2)))) *
             Complex.exp (-(Complex.I * ↑(spatialDot k_sp (spatialPart x - spatialPart y)))) := by
         ring
-    _ = (((2 * (π : ℂ)) ^ 3)⁻¹ * (1 / 2)) * ∫ (k_sp : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+    _ = (((2 * (π : ℂ)) ^ 3)⁻¹ * (1 / 2)) * ∫ (k_sp : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
           (starRingEnd ℂ) (f x) * f y * (↑(Real.sqrt (‖k_sp‖^2 + m^2)))⁻¹ *
             Complex.exp (-(↑|-x.ofLp 0 - y.ofLp 0| * ↑(Real.sqrt (‖k_sp‖^2 + m^2)))) *
             Complex.exp (-(Complex.I * ↑(spatialDot k_sp (spatialPart x - spatialPart y)))) := by
         rw [h_const]
-    _ = ((2 * (π : ℂ)) ^ 3)⁻¹ * (1 / 2) * ∫ (k_spatial : SpatialCoords) (x : SpaceTime) (y : SpaceTime),
+    _ = ((2 * (π : ℂ)) ^ 3)⁻¹ * (1 / 2) * ∫ (k_spatial : SpatialCoords STDimension) (x : SpaceTime STDimension) (y : SpaceTime STDimension),
           (starRingEnd ℂ) (f x) * f y * (↑(Real.sqrt (‖k_spatial‖^2 + m^2)))⁻¹ *
             Complex.exp (-(↑|-x.ofLp 0 - y.ofLp 0| * ↑(Real.sqrt (‖k_spatial‖^2 + m^2)))) *
             Complex.exp (-(Complex.I * ↑(spatialDot k_spatial (spatialPart x - spatialPart y)))) := by
@@ -880,8 +880,8 @@ theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     Uses `Integrable.mono'` with the bound from `schwinger_bound_integrable`.
     The pointwise bound |integrand| ≤ bound is verified for s > 0,
     and the set s ≤ 0 has measure zero under the restricted measure. -/
-theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
-    Integrable (fun (p : ℝ × SpaceTime × SpaceTime) =>
+theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
+    Integrable (fun (p : ℝ × SpaceTime STDimension × SpaceTime STDimension) =>
       (starRingEnd ℂ (f p.2.1)) * f p.2.2 *
       Real.exp (-p.1 * m^2) * heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖)
       ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) := by
@@ -894,8 +894,8 @@ theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunction
     exact BoundedContinuousFunction.norm_coe_le_norm f.toBoundedContinuousFunction x
   obtain ⟨Cf, hCf⟩ := hf_bdd
   -- Get integrability of f (Schwartz functions are L¹)
-  have hf_int : Integrable (fun x => ‖f x‖) (volume : Measure SpaceTime) := f.integrable.norm
-  have hf_L1 : Integrable f (volume : Measure SpaceTime) := f.integrable
+  have hf_int : Integrable (fun x => ‖f x‖) (volume : Measure (SpaceTime STDimension)) := f.integrable.norm
+  have hf_L1 : Integrable f (volume : Measure (SpaceTime STDimension)) := f.integrable
 
   -- Key insight: the bound separates into factors
   -- |integrand| ≤ ‖f(x)‖ * ‖f(y)‖ * exp(-sm²) * H(s, ‖Θx-y‖)
@@ -917,7 +917,7 @@ theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunction
   -- Then apply Integrable.mono'
 
   -- The heat kernel L¹ normalization is the key:
-  have h_heat_L1 : ∀ s > 0, ∫ z : SpaceTime, heatKernelPositionSpace s ‖z‖ = 1 :=
+  have h_heat_L1 : ∀ s > 0, ∫ z : SpaceTime STDimension, heatKernelPositionSpace s ‖z‖ = 1 :=
     fun s hs => heatKernelPositionSpace_integral_eq_one s hs
 
   -- The s-integral of exp(-sm²) converges
@@ -929,20 +929,20 @@ theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunction
     ring_nf
 
   -- Define the integrand
-  let F : ℝ × SpaceTime × SpaceTime → ℂ := fun p =>
+  let F : ℝ × SpaceTime STDimension × SpaceTime STDimension → ℂ := fun p =>
     (starRingEnd ℂ (f p.2.1)) * f p.2.2 *
     Real.exp (-p.1 * m^2) * heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖
 
   -- Define the real-valued dominating function
-  let bound : ℝ × SpaceTime × SpaceTime → ℝ := fun p =>
+  let bound : ℝ × SpaceTime STDimension × SpaceTime STDimension → ℝ := fun p =>
     ‖f p.2.1‖ * Cf * Real.exp (-p.1 * m^2) * heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖
 
   -- The measure
-  let μ : Measure (ℝ × SpaceTime × SpaceTime) :=
-    (volume.restrict (Set.Ioi 0)).prod ((volume : Measure SpaceTime).prod volume)
+  let μ : Measure (ℝ × SpaceTime STDimension × SpaceTime STDimension) :=
+    (volume.restrict (Set.Ioi 0)).prod ((volume : Measure (SpaceTime STDimension)).prod volume)
 
   -- Pointwise bound: ‖F p‖ ≤ bound p for s > 0
-  have h_bound : ∀ p : ℝ × SpaceTime × SpaceTime, p.1 ∈ Set.Ioi 0 →
+  have h_bound : ∀ p : ℝ × SpaceTime STDimension × SpaceTime STDimension, p.1 ∈ Set.Ioi 0 →
       ‖F p‖ ≤ bound p := by
     intro p hp
     simp only [F, bound, Set.mem_Ioi] at hp ⊢
@@ -978,7 +978,7 @@ theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunction
   have hCf_nonneg : 0 ≤ Cf := le_trans (norm_nonneg (f 0)) (hCf 0)
 
   -- The bound is non-negative
-  have h_bound_nonneg : ∀ p : ℝ × SpaceTime × SpaceTime, p.1 ∈ Set.Ioi 0 → 0 ≤ bound p := by
+  have h_bound_nonneg : ∀ p : ℝ × SpaceTime STDimension × SpaceTime STDimension, p.1 ∈ Set.Ioi 0 → 0 ≤ bound p := by
     intro p hp
     simp only [bound, Set.mem_Ioi] at hp ⊢
     apply mul_nonneg
@@ -1000,7 +1000,7 @@ theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunction
     --
     -- The formal proof requires showing:
     -- (a) AEStronglyMeasurable bound μ
-    -- (b) For a.e. s: (x, y) ↦ bound(s, x, y) is integrable on SpaceTime × SpaceTime
+    -- (b) For a.e. s: (x, y) ↦ bound(s, x, y) is integrable on SpaceTime STDimension × SpaceTime STDimension
     -- (c) s ↦ ∫∫ |bound(s, x, y)| dy dx is integrable on Ioi 0
     --
     -- For (a): bound involves continuous functions (norm, exp, heatKernel)
@@ -1045,8 +1045,8 @@ theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunction
   -- The set {p | p.1 ∉ Ioi 0} has μ-measure zero since the first marginal is restricted to Ioi 0
   rw [ae_iff]
   -- First show that {p | p.1 ≤ 0} has μ-measure zero
-  have h_null : μ {p : ℝ × SpaceTime × SpaceTime | p.1 ≤ 0} = 0 := by
-    have h_preimage : {p : ℝ × SpaceTime × SpaceTime | p.1 ≤ 0} = Set.Iic 0 ×ˢ Set.univ := by
+  have h_null : μ {p : ℝ × SpaceTime STDimension × SpaceTime STDimension | p.1 ≤ 0} = 0 := by
+    have h_preimage : {p : ℝ × SpaceTime STDimension × SpaceTime STDimension | p.1 ≤ 0} = Set.Iic 0 ×ˢ Set.univ := by
       ext p; simp only [Set.mem_setOf_eq, Set.mem_prod, Set.mem_Iic, Set.mem_univ, and_true]
     rw [h_preimage, Measure.prod_prod]
     rw [Measure.restrict_apply measurableSet_Iic]
@@ -1064,27 +1064,27 @@ theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunction
 /-- The permutation map (x, (y, s)) ↦ (s, (x, y)) as a measurable equivalence.
     Constructed by composing prodAssoc.symm (reassociating) with prodComm (swapping). -/
 private def schwinger_tripleReorder :
-    SpaceTime × (SpaceTime × ℝ) ≃ᵐ ℝ × (SpaceTime × SpaceTime) :=
+    SpaceTime STDimension × (SpaceTime STDimension × ℝ) ≃ᵐ ℝ × (SpaceTime STDimension × SpaceTime STDimension) :=
   MeasurableEquiv.prodAssoc.symm.trans MeasurableEquiv.prodComm
 
 /-- The schwinger_tripleReorder map is measure-preserving on product Lebesgue measures
     with the s-measure restricted to Ioi 0. -/
 private lemma measurePreserving_schwinger_tripleReorder :
     MeasurePreserving schwinger_tripleReorder
-      ((volume : Measure SpaceTime).prod (volume.prod (volume.restrict (Set.Ioi 0))))
+      ((volume : Measure (SpaceTime STDimension)).prod (volume.prod (volume.restrict (Set.Ioi 0))))
       ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) := by
   unfold schwinger_tripleReorder
   -- Step 1: prodAssoc.symm preserves measure from μ.prod(μ.prod ν) to (μ.prod μ).prod ν
   have h1 : MeasurePreserving
-      (MeasurableEquiv.prodAssoc (α := SpaceTime) (β := SpaceTime) (γ := ℝ)).symm
-      ((volume : Measure SpaceTime).prod (volume.prod (volume.restrict (Set.Ioi 0))))
+      (MeasurableEquiv.prodAssoc (α := SpaceTime STDimension) (β := SpaceTime STDimension) (γ := ℝ)).symm
+      ((volume : Measure (SpaceTime STDimension)).prod (volume.prod (volume.restrict (Set.Ioi 0))))
       ((volume.prod volume).prod (volume.restrict (Set.Ioi 0))) :=
     (measurePreserving_prodAssoc volume volume (volume.restrict (Set.Ioi 0))).symm
       MeasurableEquiv.prodAssoc
   -- Step 2: prodComm preserves measure from (μ.prod μ).prod ν to ν.prod(μ.prod μ)
   have h2 : MeasurePreserving
-      (MeasurableEquiv.prodComm (α := SpaceTime × SpaceTime) (β := ℝ))
-      (((volume : Measure SpaceTime).prod volume).prod (volume.restrict (Set.Ioi 0)))
+      (MeasurableEquiv.prodComm (α := SpaceTime STDimension × SpaceTime STDimension) (β := ℝ))
+      (((volume : Measure (SpaceTime STDimension)).prod volume).prod (volume.restrict (Set.Ioi 0)))
       ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) :=
     MeasureTheory.Measure.measurePreserving_swap
   exact h2.comp h1
@@ -1096,24 +1096,24 @@ private lemma measurePreserving_schwinger_tripleReorder :
     ∫_x ∫_y ∫_s F = ∫_s ∫_x ∫_y F
 
     **Proof:**
-    Both sides equal ∫∫∫ F over (Ioi 0) × SpaceTime × SpaceTime by Fubini-Tonelli.
+    Both sides equal ∫∫∫ F over (Ioi 0) × SpaceTime STDimension × SpaceTime STDimension by Fubini-Tonelli.
     The proof uses `integral_prod` to convert iterated integrals to product integrals,
     and the measure-preserving map `schwinger_tripleReorder` to connect them. -/
-theorem schwinger_fubini_core (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
-    ∫ x : SpaceTime, ∫ y : SpaceTime, ∫ s in Set.Ioi 0,
+theorem schwinger_fubini_core (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
+    ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension, ∫ s in Set.Ioi 0,
       (starRingEnd ℂ (f x)) * f y *
         (Real.exp (-s * m^2) : ℂ) * heatKernelPositionSpace s ‖timeReflection x - y‖ =
-    ∫ s in Set.Ioi 0, ∫ x : SpaceTime, ∫ y : SpaceTime,
+    ∫ s in Set.Ioi 0, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * f y *
         (Real.exp (-s * m^2) : ℂ) * heatKernelPositionSpace s ‖timeReflection x - y‖ := by
   -- Define the integrand function
-  let F : SpaceTime → SpaceTime → ℝ → ℂ := fun x y s =>
+  let F : SpaceTime STDimension → SpaceTime STDimension → ℝ → ℂ := fun x y s =>
     (starRingEnd ℂ (f x)) * f y *
       (Real.exp (-s * m^2) : ℂ) * heatKernelPositionSpace s ‖timeReflection x - y‖
 
   -- Define product functions for LHS and RHS orderings
-  let fL : SpaceTime × (SpaceTime × ℝ) → ℂ := fun p => F p.1 p.2.1 p.2.2
-  let fR : ℝ × (SpaceTime × SpaceTime) → ℂ := fun q => F q.2.1 q.2.2 q.1
+  let fL : SpaceTime STDimension × (SpaceTime STDimension × ℝ) → ℂ := fun p => F p.1 p.2.1 p.2.2
+  let fR : ℝ × (SpaceTime STDimension × SpaceTime STDimension) → ℂ := fun q => F q.2.1 q.2.2 q.1
 
   -- Get integrability on (s, (x, y)) from schwinger_bilinear_integrable
   have h_int_sxy := schwinger_bilinear_integrable m f
@@ -1124,7 +1124,7 @@ theorem schwinger_fubini_core (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
 
   -- Transfer to (x, (y, s)) via measure-preserving map
   have h_int_xys : Integrable fL
-      ((volume : Measure SpaceTime).prod (volume.prod (volume.restrict (Set.Ioi 0)))) := by
+      ((volume : Measure (SpaceTime STDimension)).prod (volume.prod (volume.restrict (Set.Ioi 0)))) := by
     have hcomp : fL = fR ∘ schwinger_tripleReorder := rfl
     rw [hcomp]
     exact (measurePreserving_schwinger_tripleReorder.integrable_comp_emb
@@ -1132,9 +1132,9 @@ theorem schwinger_fubini_core (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
 
   -- LHS = ∫ fL on product space (via Fubini twice)
   have hLHS : ∫ x, ∫ y, ∫ s in Set.Ioi 0, F x y s ∂volume ∂volume ∂volume =
-      ∫ p, fL p ∂((volume : Measure SpaceTime).prod (volume.prod (volume.restrict (Set.Ioi 0)))) := by
+      ∫ p, fL p ∂((volume : Measure (SpaceTime STDimension)).prod (volume.prod (volume.restrict (Set.Ioi 0)))) := by
     -- Convert inner ∫y ∫s → ∫(y,s) using Fubini
-    have inner_fubini : ∀ᵐ x ∂(volume : Measure SpaceTime),
+    have inner_fubini : ∀ᵐ x ∂(volume : Measure (SpaceTime STDimension)),
         ∫ y, ∫ s in Set.Ioi 0, F x y s ∂volume =
         ∫ ys, F x ys.1 ys.2 ∂(volume.prod (volume.restrict (Set.Ioi 0))) := by
       filter_upwards [h_int_xys.prod_right_ae] with x hx
@@ -1159,9 +1159,9 @@ theorem schwinger_fubini_core (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
 
   -- Connect via measure-preserving transformation
   calc ∫ x, ∫ y, ∫ s in Set.Ioi 0, F x y s ∂volume ∂volume ∂volume
-      = ∫ p, fL p ∂((volume : Measure SpaceTime).prod (volume.prod (volume.restrict (Set.Ioi 0)))) := hLHS
+      = ∫ p, fL p ∂((volume : Measure (SpaceTime STDimension)).prod (volume.prod (volume.restrict (Set.Ioi 0)))) := hLHS
     _ = ∫ p, fR (schwinger_tripleReorder p)
-          ∂((volume : Measure SpaceTime).prod (volume.prod (volume.restrict (Set.Ioi 0)))) := rfl
+          ∂((volume : Measure (SpaceTime STDimension)).prod (volume.prod (volume.restrict (Set.Ioi 0)))) := rfl
     _ = ∫ q, fR q ∂((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) :=
         measurePreserving_schwinger_tripleReorder.integral_comp
           schwinger_tripleReorder.measurableEmbedding fR
@@ -1176,16 +1176,16 @@ theorem schwinger_fubini_core (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
     This follows from Mathlib's `MeasureTheory.integral_integral_swap` (Fubini-Tonelli)
     applied to the integrable function from `schwinger_bilinear_integrable`.
     The key steps:
-    1. Rewrite both sides as integrals over ℝ × SpaceTime × SpaceTime
+    1. Rewrite both sides as integrals over ℝ × SpaceTime STDimension × SpaceTime STDimension
     2. Apply Fubini to swap the order of integration
     3. Use the integrability hypothesis to justify the swap -/
-theorem schwinger_fubini_swap (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
-    ∫ x : SpaceTime, ∫ y : SpaceTime,
+theorem schwinger_fubini_swap (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
+    ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * f y *
         (∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
           heatKernelPositionSpace s ‖timeReflection x - y‖) =
     ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖ := by
   -- This follows from Fubini's theorem applied to the integrable function
   -- from schwinger_bilinear_integrable.
@@ -1200,7 +1200,7 @@ theorem schwinger_fubini_swap (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
   have h_int := schwinger_bilinear_integrable m f
 
   -- Step 1: Rewrite LHS by pulling f̄ f into the s-integral
-  have h_pull_in : ∀ x y : SpaceTime,
+  have h_pull_in : ∀ x y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * f y *
         (∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
           heatKernelPositionSpace s ‖timeReflection x - y‖) =
@@ -1216,9 +1216,9 @@ theorem schwinger_fubini_swap (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
   -- Step 2: Rewrite RHS by factoring exp(-sm²) out of spatial integrals
   have h_factor_out : ∀ s : ℝ,
       (Real.exp (-s * m^2) : ℂ) *
-        ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖ =
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
           (Real.exp (-s * m^2) : ℂ) * heatKernelPositionSpace s ‖timeReflection x - y‖ := by
     intro s
@@ -1240,7 +1240,7 @@ theorem schwinger_fubini_swap (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
   -- RHS = ∫_s [∫_x ∫_y F(s,x,y) dy dx] ds
   --
   -- By Fubini-Tonelli, given F is integrable on the product space (h_int),
-  -- both equal the triple integral ∫∫∫ F over (Ioi 0) × SpaceTime × SpaceTime.
+  -- both equal the triple integral ∫∫∫ F over (Ioi 0) × SpaceTime STDimension × SpaceTime STDimension.
   --
   -- The formal proof requires showing:
   -- (a) ∫_x ∫_y ∫_s F = ∫_{(x,y)} ∫_s F = ∫_{(s,x,y)} F  (by integral_integral twice)
@@ -1248,7 +1248,7 @@ theorem schwinger_fubini_swap (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
   -- Hence (a) = (b).
 
   -- Define the integrand function
-  set F : ℝ → SpaceTime → SpaceTime → ℂ :=
+  set F : ℝ → SpaceTime STDimension → SpaceTime STDimension → ℂ :=
     fun s x y => (starRingEnd ℂ (f x)) * f y *
       (Real.exp (-s * m^2) : ℂ) * heatKernelPositionSpace s ‖timeReflection x - y‖ with hF
 
@@ -1276,7 +1276,7 @@ theorem schwinger_fubini_swap (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
 
 /-- The kernel-level Schwinger representation holds for Θx ≠ y.
     This follows from `covarianceSchwingerRep_eq_freeCovarianceBessel`. -/
-lemma freeCovariance_eq_schwingerRep (m : ℝ) (hm : 0 < m) (x y : SpaceTime)
+lemma freeCovariance_eq_schwingerRep (m : ℝ) (hm : 0 < m) (x y : SpaceTime STDimension)
     (hxy : timeReflection x ≠ y) :
     (freeCovariance m (timeReflection x) y : ℂ) =
     ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
@@ -1318,11 +1318,11 @@ lemma freeCovariance_eq_schwingerRep (m : ℝ) (hm : 0 < m) (x y : SpaceTime)
     **Mathematical statement:**
     ∫∫ conj(f(x)) C(Θx,y) f(y) dx dy = ∫₀^∞ e^{-sm²} [∫∫ conj(f) f H(s,|Θx-y|) dx dy] ds
 -/
-theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
-    ∫ x : SpaceTime, ∫ y : SpaceTime,
+theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
+    ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * (freeCovariance m (timeReflection x) y : ℂ) * f y =
     ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖ := by
   -- The proof uses:
   -- 1. freeCovariance_eq_schwingerRep: kernel equality for Θx ≠ y
@@ -1334,7 +1334,7 @@ theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] (f : TestFunct
 
   -- Step 1: Rewrite LHS by substituting kernel equality for each (x,y)
   -- For Θx ≠ y: freeCovariance m (Θx) y = ∫ s, exp(-sm²) H(s, ‖Θx-y‖)
-  -- The set {(x,y) : Θx = y} has measure zero in SpaceTime × SpaceTime
+  -- The set {(x,y) : Θx = y} has measure zero in SpaceTime STDimension × SpaceTime STDimension
 
   -- The integrand transformation:
   -- conj(f x) * C(Θx,y) * f y = conj(f x) * f y * ∫ s, exp(-sm²) H(s, ‖Θx-y‖)
@@ -1374,17 +1374,17 @@ theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- Step 2: Show h_kernel_eq holds almost everywhere
   -- The set where Θx = y is a proper affine subspace, hence has measure zero
   -- For each x, {y : Θx = y} is a singleton, which has measure zero (NoAtoms).
-  have h_ae : ∀ᵐ x ∂(volume : Measure SpaceTime), ∀ᵐ y ∂volume,
+  have h_ae : ∀ᵐ x ∂(volume : Measure (SpaceTime STDimension)), ∀ᵐ y ∂volume,
       (starRingEnd ℂ (f x)) * (freeCovariance m (timeReflection x) y : ℂ) * f y =
       (starRingEnd ℂ (f x)) * f y *
         (∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
           heatKernelPositionSpace s ‖timeReflection x - y‖) := by
     filter_upwards with x
     -- The set {y : Θx = y} = {Θx} is a singleton with measure zero
-    have h_singleton : (volume : Measure SpaceTime) {timeReflection x} = 0 :=
+    have h_singleton : (volume : Measure (SpaceTime STDimension)) {timeReflection x} = 0 :=
       MeasureTheory.NoAtoms.measure_singleton (timeReflection x)
     -- Show: ∀ᵐ y, y ≠ Θx
-    have h_compl : ∀ᵐ y ∂(volume : Measure SpaceTime), y ≠ timeReflection x := by
+    have h_compl : ∀ᵐ y ∂(volume : Measure (SpaceTime STDimension)), y ≠ timeReflection x := by
       rw [ae_iff]
       -- Need to show: volume {y | ¬(y ≠ Θx)} = 0
       -- i.e., volume {y | y = Θx} = 0
@@ -1396,9 +1396,9 @@ theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] (f : TestFunct
     exact h_kernel_eq x y (Ne.symm hy)
 
   -- Step 3: Rewrite LHS using a.e. equality
-  have lhs_eq : ∫ x : SpaceTime, ∫ y : SpaceTime,
+  have lhs_eq : ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * (freeCovariance m (timeReflection x) y : ℂ) * f y =
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
           (∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
             heatKernelPositionSpace s ‖timeReflection x - y‖) := by
@@ -1428,13 +1428,13 @@ theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] (f : TestFunct
     - `laplace_integral_half_power` (THEOREM, line 135)
     - Fubini applications (require integrability - uses Schwartz decay)
 -/
-theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
+theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension)
     (hf_supp : ∀ x, x 0 ≤ 0 → f x = 0) :
     ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖ =
     (1 / (2 * (2 * π) ^ (STDimension - 1)) : ℝ) *
-      ∫ k_spatial : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ k_spatial : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         let ω := Real.sqrt (‖k_spatial‖^2 + m^2)
         (starRingEnd ℂ (f x)) * f y * (1 / ω : ℝ) *
           Complex.exp (-(|-(x 0) - y 0| : ℝ) * ω) *
@@ -1443,10 +1443,10 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- By heatKernel_eq_gaussianFT:
   --   H(s, |z|) = (1/(2π)^d) ∫_k exp(-ik·z) exp(-s|k|²)
   -- Key proven lemmas:
-  have h_hk_eq : ∀ s : ℝ, 0 < s → ∀ z : SpaceTime,
+  have h_hk_eq : ∀ s : ℝ, 0 < s → ∀ z : SpaceTime STDimension,
       (heatKernelPositionSpace s ‖z‖ : ℂ) =
       (1 / (2 * π) ^ STDimension : ℝ) *
-      ∫ k : SpaceTime, Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-(s : ℂ) * ‖k‖^2) :=
+      ∫ k : SpaceTime STDimension, Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-(s : ℂ) * ‖k‖^2) :=
     fun s hs z => heatKernel_eq_gaussianFT s hs z
   -- `gaussian_fourier_1d` (line 847): ∫ e^{-ik₀t} e^{-sk₀²} dk₀ = √(π/s) e^{-t²/(4s)}
   -- `laplace_integral_half_power` (line 135): ∫ s^{-1/2} e^{-a/s-bs} ds = √(π/b) e^{-2√(ab)}
@@ -1486,12 +1486,12 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -/
 
   -- Apply inner product decomposition to rewrite the phase
-  have h_inner : ∀ k z : SpaceTime,
+  have h_inner : ∀ k z : SpaceTime STDimension,
       ⟪k, z⟫_ℝ = k 0 * z 0 + spatialDot (spatialPart k) (spatialPart z) :=
     fun k z => spacetime_inner_decompose k z
 
   -- Key factorization: exp(-I⟪k,z⟫) = exp(-I k₀z₀) × exp(-I k_sp·z_sp)
-  have h_exp_factor : ∀ k z : SpaceTime,
+  have h_exp_factor : ∀ k z : SpaceTime STDimension,
       Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) =
       Complex.exp (-Complex.I * (k 0 * z 0)) *
       Complex.exp (-Complex.I * spatialDot (spatialPart k) (spatialPart z)) := by
@@ -1504,7 +1504,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
     ring
 
   -- Norm decomposition: ‖k‖² = k₀² + ‖k_sp‖²
-  have h_norm : ∀ k : SpaceTime, ‖k‖^2 = (k 0)^2 + ‖spatialPart k‖^2 :=
+  have h_norm : ∀ k : SpaceTime STDimension, ‖k‖^2 = (k 0)^2 + ‖spatialPart k‖^2 :=
     fun k => spacetime_norm_sq_decompose k
 
   -- The full proof proceeds in stages. All mathematical ingredients are available.
@@ -1552,13 +1552,13 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- For s > 0: H(s, |z|) = (1/(2π)^4) ∫_k e^{-ik·z} e^{-s|k|²}
   -- This requires rewriting under the integral over Set.Ioi 0.
   have h_step1 : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖ =
       ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-        ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y *
           ((1 / (2 * π) ^ STDimension : ℝ) *
-           ∫ k : SpaceTime, Complex.exp (-Complex.I * ⟪k, timeReflection x - y⟫_ℝ) *
+           ∫ k : SpaceTime STDimension, Complex.exp (-Complex.I * ⟪k, timeReflection x - y⟫_ℝ) *
                             Complex.exp (-(s : ℂ) * ‖k‖^2)) := by
     apply setIntegral_congr_ae measurableSet_Ioi
     -- For almost all s, prove s ∈ Ioi 0 → LHS = RHS
@@ -1573,7 +1573,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
 
   -- Stage 2: Decompose exponentials using h_exp_factor and gaussian_exp_factorize
   -- For each k, z: exp(-I⟪k,z⟫) × exp(-s‖k‖²) factors into time × spatial parts
-  have h_k_decomp : ∀ (s : ℂ) (k z : SpaceTime),
+  have h_k_decomp : ∀ (s : ℂ) (k z : SpaceTime STDimension),
       Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-s * ‖k‖^2) =
       (Complex.exp (-Complex.I * (k 0 * z 0)) * Complex.exp (-s * (k 0)^2)) *
       (Complex.exp (-Complex.I * spatialDot (spatialPart k) (spatialPart z)) *
@@ -1585,7 +1585,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- Stage 3: For fixed s, x, y, we can split the k-integral using h_k_decomp
   -- The integrand becomes a product of f(k₀) × g(k_sp)
   -- Note: z = timeReflection x - y, so z₀ = -x₀ - y₀
-  have h_time_component : ∀ (x y : SpaceTime),
+  have h_time_component : ∀ (x y : SpaceTime STDimension),
       (timeReflection x - y) 0 = -(x 0) - y 0 := by
     intro x y
     unfold timeReflection
@@ -1612,10 +1612,10 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- The form after k₀ integration matches fubini_s_ksp_swap LHS
   -- Uses: h_step1, h_k_decomp, integral_spacetime_prod_split, gaussian_fourier_1d
   have h_stage4_form : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖ =
       (1 / (2 * π) ^ STDimension : ℝ) *
-      ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
@@ -1624,13 +1624,13 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
 
   -- Stage 5: Apply fubini_s_ksp_swap to exchange s and k_sp
   have h_after_fubini : (1 / (2 * π) ^ STDimension : ℝ) *
-      ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) =
       (1 / (2 * π) ^ STDimension : ℝ) *
-      ∫ k_sp : SpatialCoords, ∫ s in Set.Ioi 0, ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ k_sp : SpatialCoords STDimension, ∫ s in Set.Ioi 0, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
@@ -1642,13 +1642,13 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
   -- The s-integral evaluates to (π/ω) exp(-ω|t|)
   -- Combined with normalization: (1/(2π)^4) × π = 1/(2(2π)³)
   have h_stage67 : (1 / (2 * π) ^ STDimension : ℝ) *
-      ∫ k_sp : SpatialCoords, ∫ s in Set.Ioi 0, ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ k_sp : SpatialCoords STDimension, ∫ s in Set.Ioi 0, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * f y *
           (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
           Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) =
       (1 / (2 * (2 * π) ^ (STDimension - 1)) : ℝ) *
-        ∫ k_spatial : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ k_spatial : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           let ω := Real.sqrt (‖k_spatial‖^2 + m^2)
           (starRingEnd ℂ (f x)) * f y * (1 / ω : ℝ) *
             Complex.exp (-(|-(x 0) - y 0| : ℝ) * ω) *
@@ -1656,22 +1656,22 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
     laplace_s_integral_with_norm m f
 
   calc ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-        ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y * heatKernelPositionSpace s ‖timeReflection x - y‖
       = (1 / (2 * π) ^ STDimension : ℝ) *
-        ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ s in Set.Ioi 0, ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y *
             (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
             Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
             Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) := h_stage4_form
     _ = (1 / (2 * π) ^ STDimension : ℝ) *
-        ∫ k_sp : SpatialCoords, ∫ s in Set.Ioi 0, ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ k_sp : SpatialCoords STDimension, ∫ s in Set.Ioi 0, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           (starRingEnd ℂ (f x)) * f y *
             (Real.sqrt (π / s) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * s) : ℝ)) *
             Complex.exp (-(s : ℂ) * (‖k_sp‖^2 + m^2)) *
             Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) := h_after_fubini
     _ = (1 / (2 * (2 * π) ^ (STDimension - 1)) : ℝ) *
-        ∫ k_spatial : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+        ∫ k_spatial : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
           let ω := Real.sqrt (‖k_spatial‖^2 + m^2)
           (starRingEnd ℂ (f x)) * f y * (1 / ω : ℝ) *
             Complex.exp (-(|-(x 0) - y 0| : ℝ) * ω) *
@@ -1708,14 +1708,14 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : TestFunct
 
     **Note**: Working directly at bilinear level ensures absolute convergence
     (Schwartz test functions provide decay even when t = 0). -/
-theorem bessel_bilinear_eq_mixed_representation (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
+theorem bessel_bilinear_eq_mixed_representation (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension)
     (hf_supp : ∀ x, x 0 ≤ 0 → f x = 0) :
-  ∫ x : SpaceTime, ∫ y : SpaceTime,
+  ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
     (starRingEnd ℂ (f x)) *
     (freeCovariance m (timeReflection x) y : ℂ) *
     f y =
   (1 / (2 * (2 * π) ^ (STDimension - 1)) : ℝ) *
-  ∫ k_spatial : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+  ∫ k_spatial : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
     let ω := Real.sqrt (‖k_spatial‖^2 + m^2)
     (starRingEnd ℂ (f x)) * f y *
     (1 / ω : ℝ) *
@@ -1733,7 +1733,7 @@ theorem bessel_bilinear_eq_mixed_representation (m : ℝ) [Fact (0 < m)] (f : Te
     (π/ω) exp(-ω|t|) = ∫_{k₀} exp(-ik₀t)/(k₀²+ω²) dk₀
 
     So: (1/ω) exp(-ω|t|) = (1/π) ∫_{k₀} exp(-ik₀t)/(k₀²+ω²) dk₀ -/
-lemma mixed_rep_to_k0_inside_integrand (k_spatial : SpatialCoords) (m : ℝ) [Fact (0 < m)]
+lemma mixed_rep_to_k0_inside_integrand (k_spatial : SpatialCoords STDimension) (m : ℝ) [Fact (0 < m)]
     (t : ℝ) :
     let ω := Real.sqrt (‖k_spatial‖^2 + m^2)
     ((1 / ω : ℝ) : ℂ) * Complex.exp (-(|t| : ℝ) * ω) =
@@ -1770,14 +1770,14 @@ lemma mixed_rep_to_k0_inside_integrand (k_spatial : SpatialCoords) (m : ℝ) [Fa
     2. Use `mixed_rep_to_k0_inside_integrand`: (1/ω) exp(-ω|t|) = (1/π) ∫_{k₀}...
     3. Factor the spatial phase into the k₀ integral
     4. Combine normalizations: 1/(2(2π)^{d-1}) × (1/π) = 1/(2π)^d -/
-theorem bilinear_to_k0_inside (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
+theorem bilinear_to_k0_inside (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension)
     (hf_supp : ∀ x, x 0 ≤ 0 → f x = 0) :
-  ∫ x : SpaceTime, ∫ y : SpaceTime,
+  ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
     (starRingEnd ℂ (f x)) *
     (freeCovariance m (timeReflection x) y : ℂ) *
     f y =
   (1 / (2 * π) ^ STDimension : ℝ) *
-  ∫ k_spatial : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+  ∫ k_spatial : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
     (starRingEnd ℂ (f x)) * f y *
     (∫ k0 : ℝ, Complex.exp (-Complex.I * (k0 * (-(x 0) - y 0) +
       spatialDot k_spatial (spatialPart x - spatialPart y))) /

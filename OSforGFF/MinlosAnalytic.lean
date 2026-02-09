@@ -43,24 +43,24 @@ noncomputable section
 
 namespace MinlosAnalytic
 
--- Ensure FieldConfiguration is a BorelSpace since it uses the borel measurable space
-instance : BorelSpace FieldConfiguration := ⟨rfl⟩
+-- Ensure FieldConfiguration STDimension is a BorelSpace since it uses the borel measurable space
+instance : BorelSpace (FieldConfiguration STDimension) := ⟨rfl⟩
 
 /-- A real symmetric, positive semidefinite covariance form on real test functions,
     together with a proof that the associated Gaussian characteristic functional
     exp(-½Q(f,f)) is positive definite. -/
 structure CovarianceForm where
-  Q : TestFunction → TestFunction → ℝ
+  Q : TestFunction STDimension → TestFunction STDimension → ℝ
   symm : ∀ f g, Q f g = Q g f
   psd  : ∀ f, 0 ≤ Q f f
   cont_diag : Continuous fun f => Q f f
   add_left : ∀ f₁ f₂ g, Q (f₁ + f₂) g = Q f₁ g + Q f₂ g
   smul_left : ∀ (c : ℝ) f g, Q (c • f) g = c * Q f g
   gaussian_cf_pd : IsPositiveDefinite
-    (fun f : TestFunction => Complex.exp (-(1/2 : ℂ) * (Q f f : ℂ)))
+    (fun f : TestFunction STDimension => Complex.exp (-(1/2 : ℂ) * (Q f f : ℂ)))
 
 /-- The negation map on field configurations: T(ω) = -ω -/
-def negMap : FieldConfiguration → FieldConfiguration := fun ω => -ω
+def negMap : FieldConfiguration STDimension → FieldConfiguration STDimension := fun ω => -ω
 
 /-- The negation map is measurable -/
 lemma negMap_measurable : Measurable negMap := by
@@ -73,12 +73,12 @@ lemma negMap_measurable : Measurable negMap := by
 /-- Symmetry under global sign flip induced by the real Gaussian CF.
     Note: Requires NuclearSpace instance for Minlos uniqueness theorem. -/
 lemma integral_neg_invariance
-  [NuclearSpace TestFunction]
-  (C : CovarianceForm) (μ : ProbabilityMeasure FieldConfiguration)
-  (h_realCF : ∀ f : TestFunction,
+  [NuclearSpace (TestFunction STDimension)]
+  (C : CovarianceForm) (μ : ProbabilityMeasure (FieldConfiguration STDimension))
+  (h_realCF : ∀ f : TestFunction STDimension,
      ∫ ω, Complex.exp (Complex.I * (ω f)) ∂μ.toMeasure
        = Complex.exp (-(1/2 : ℂ) * (C.Q f f))) :
-  ∀ (f : FieldConfiguration → ℂ), Integrable f μ.toMeasure →
+  ∀ (f : FieldConfiguration STDimension → ℂ), Integrable f μ.toMeasure →
     ∫ ω, f ω ∂μ.toMeasure = ∫ ω, f (-ω) ∂μ.toMeasure := by
   intro f hInt
   classical
@@ -94,14 +94,14 @@ lemma integral_neg_invariance
     exact Measure.isProbabilityMeasure_map (Measurable.aemeasurable negMap_measurable)
 
   -- Step 2: Show characteristic functionals are equal
-  have hCF_equal : ∀ g : TestFunction,
+  have hCF_equal : ∀ g : TestFunction STDimension,
       ∫ ω, Complex.exp (Complex.I * (distributionPairing ω g)) ∂μneg
         = ∫ ω, Complex.exp (Complex.I * (distributionPairing ω g)) ∂μ.toMeasure := by
     intro g
     -- Use the change of variables formula for the map
     have h_aestrongly_measurable : AEStronglyMeasurable (fun ω => Complex.exp (Complex.I * (distributionPairing ω g))) μneg := by
       -- Inner map: ω ↦ distributionPairing ω g is measurable via continuous linear map
-      have h_inner_meas : Measurable (fun ω : FieldConfiguration => distributionPairing ω g) := by
+      have h_inner_meas : Measurable (fun ω : FieldConfiguration STDimension => distributionPairing ω g) := by
         simpa [distributionPairingCLM_apply] using (distributionPairingCLM g).continuous.measurable
       -- Outer map: x ↦ exp(I * x) is continuous hence measurable
       have h_cont_mulI : Continuous (fun x : ℝ => (Complex.I : ℂ) * (x : ℂ)) :=
@@ -118,7 +118,7 @@ lemma integral_neg_invariance
       simp [negMap]
     rw [h_neg_pairing]
     -- Step 1: (-ω) g = -(ω g) by linearity (negation is scalar multiplication by -1)
-    have h_neg_eq : ∀ ω : FieldConfiguration, distributionPairing (-ω) g = -distributionPairing ω g := by
+    have h_neg_eq : ∀ ω : FieldConfiguration STDimension, distributionPairing (-ω) g = -distributionPairing ω g := by
       intro ω
       have h_neg_smul : -ω = (-1 : ℝ) • ω := (neg_one_smul ℝ ω).symm
       rw [h_neg_smul, distributionPairing_smul]
@@ -162,12 +162,12 @@ lemma integral_neg_invariance
 
   -- Step 3: Apply uniqueness of measures (Minlos theorem)
   -- Both μneg and μ have the Gaussian CF exp(-½Q(f,f)).
-  let μneg_prob : ProbabilityMeasure FieldConfiguration := ⟨μneg, hμneg_prob⟩
+  let μneg_prob : ProbabilityMeasure (FieldConfiguration STDimension) := ⟨μneg, hμneg_prob⟩
   -- Derive continuity and normalization of the Gaussian CF from CovarianceForm
   have h_cf_cont : Continuous
-      (fun f : TestFunction => Complex.exp (-(1/2 : ℂ) * (C.Q f f : ℂ))) :=
+      (fun f : TestFunction STDimension => Complex.exp (-(1/2 : ℂ) * (C.Q f f : ℂ))) :=
     continuous_exp.comp (continuous_const.mul (continuous_ofReal.comp C.cont_diag))
-  have h_cf_norm : (fun f : TestFunction =>
+  have h_cf_norm : (fun f : TestFunction STDimension =>
       Complex.exp (-(1/2 : ℂ) * (C.Q f f : ℂ))) 0 = 1 := by
     simp [show C.Q 0 0 = 0 from by simpa using C.smul_left 0 0 0]
   have hμeq_prob : μneg_prob = μ := by
@@ -194,19 +194,19 @@ lemma integral_neg_invariance
 
 /-- Zero mean from the real Gaussian characteristic functional, via symmetry and L¹. -/
 lemma moment_zero_from_realCF
-  [NuclearSpace TestFunction]
-  (C : CovarianceForm) (μ : ProbabilityMeasure FieldConfiguration)
-  (h_realCF : ∀ f : TestFunction,
+  [NuclearSpace (TestFunction STDimension)]
+  (C : CovarianceForm) (μ : ProbabilityMeasure (FieldConfiguration STDimension))
+  (h_realCF : ∀ f : TestFunction STDimension,
      ∫ ω, Complex.exp (Complex.I * (ω f)) ∂μ.toMeasure
        = Complex.exp (-(1/2 : ℂ) * (C.Q f f)))
-  (a : TestFunction)
+  (a : TestFunction STDimension)
   (hInt1 : Integrable (fun ω => (ω a : ℂ)) μ.toMeasure) :
   ∫ ω, (ω a : ℂ) ∂μ.toMeasure = 0 := by
   classical
   -- Symmetry: ∫ f(ω) = ∫ f(-ω)
   have hInv := integral_neg_invariance C μ h_realCF (fun ω => (ω a : ℂ)) hInt1
   -- Flip integrand: ((-ω) a : ℂ) = - (ω a : ℂ)
-  have hflip : (fun ω : FieldConfiguration => ((-ω) a : ℂ)) = (fun ω => - (ω a : ℂ)) := by
+  have hflip : (fun ω : FieldConfiguration STDimension => ((-ω) a : ℂ)) = (fun ω => - (ω a : ℂ)) := by
     funext ω
     rw [ContinuousLinearMap.neg_apply]
     simp

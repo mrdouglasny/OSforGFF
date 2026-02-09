@@ -37,7 +37,7 @@ private lemma freeCovarianceFormR_reflection_nonneg
     (m : ℝ) [Fact (0 < m)] (f : PositiveTimeTestFunction) :
     0 ≤ freeCovarianceFormR m (QFT.compTimeReflectionReal f.val) f.val := by
   classical
-  have hf_supp : ∀ x : SpaceTime, x 0 ≤ 0 → f.val x = 0 := fun x hx => by
+  have hf_supp : ∀ x : SpaceTime STDimension, x 0 ≤ 0 → f.val x = 0 := fun x hx => by
     apply f.zero_on_nonpositive
     unfold getTimeComponent
     exact hx
@@ -213,7 +213,7 @@ lemma freeCovarianceFormR_reflection_matrix_posSemidef
 
 /-- Quadratic expansion identity for reflected arguments. -/
 lemma freeCovarianceFormR_reflection_expansion
-    (m : ℝ) [Fact (0 < m)] (f g : TestFunction) :
+    (m : ℝ) [Fact (0 < m)] (f g : TestFunction STDimension) :
     freeCovarianceFormR m
         (f - QFT.compTimeReflectionReal g)
         (f - QFT.compTimeReflectionReal g)
@@ -226,12 +226,12 @@ lemma freeCovarianceFormR_reflection_expansion
   set Cf : ℝ := freeCovarianceFormR m f f
   set Cg : ℝ := freeCovarianceFormR m g g
   set Cfg : ℝ := freeCovarianceFormR m θf g
-  have h_neg_left : ∀ u v : TestFunction,
+  have h_neg_left : ∀ u v : TestFunction STDimension,
       freeCovarianceFormR m (-u) v = -freeCovarianceFormR m u v := by
     intro u v
     simpa using
       (freeCovarianceFormR_smul_left (m := m) (c := (-1 : ℝ)) (f := u) (g := v))
-  have h_neg_right : ∀ u v : TestFunction,
+  have h_neg_right : ∀ u v : TestFunction STDimension,
       freeCovarianceFormR m u (-v) = -freeCovarianceFormR m u v := by
     intro u v
     calc
@@ -327,7 +327,7 @@ lemma freeCovarianceFormR_reflection_expansion
 
 /-- Evaluate the real generating functional of the free field on a real test function. -/
 lemma gaussianFreeField_real_generating_re
-    (m : ℝ) [Fact (0 < m)] (h : TestFunction) :
+    (m : ℝ) [Fact (0 < m)] (h : TestFunction STDimension) :
     (GJGeneratingFunctional (gaussianFreeField_free m) h).re
       = Real.exp (-(1 / 2 : ℝ) * freeCovarianceFormR m h h) := by
   classical

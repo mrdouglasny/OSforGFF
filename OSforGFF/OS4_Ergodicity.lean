@@ -80,7 +80,7 @@ We define intermediate formulations of OS4 that are easier to prove directly.
     lim_{t→∞} (1/t) ∫₀ᵗ e^{⟨T_s φ, f⟩} ds → 𝔼_μ[e^{⟨φ,f⟩}] in L²(μ_GFF)
 -/
 def OS4'_Ergodicity_generating (m : ℝ) [Fact (0 < m)] : Prop :=
-  ∀ (f : TestFunctionℂ),
+  ∀ (f : TestFunctionℂ STDimension),
     let μ := (gaussianFreeField_free m).toMeasure
     Filter.Tendsto
       (fun T : ℝ =>
@@ -98,7 +98,7 @@ def OS4''_Clustering (m : ℝ) [Fact (0 < m)] : Prop :=
 /-! ## GFF Integrability Lemmas -/
 
 /-- The GFF exponential is integrable with respect to the GFF measure. -/
-lemma gff_exp_pairing_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
+lemma gff_exp_pairing_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
     Integrable (fun ω => Complex.exp (distributionPairingℂ_real ω f))
       (gaussianFreeField_free m).toMeasure := by
   -- |exp(z)| = exp(Re z), so bound by exp(|Re z|)
@@ -122,8 +122,8 @@ lemma gff_exp_pairing_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) 
 /-- Time-translated complex exponential is in L² under the GFF measure.
     This follows from |exp(z)|² = exp(2 Re z) ≤ exp(2|Re z|) which is integrable.
     (Copied from OS4Ron.lean - needed for integrability proofs) -/
-lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : TestFunctionℂ) :
-    MemLp (fun ω : FieldConfiguration =>
+lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : TestFunctionℂ STDimension) :
+    MemLp (fun ω : FieldConfiguration STDimension =>
         Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) f))
       2 (gaussianFreeField_free m).toMeasure := by
   let g := timeTranslationSchwartzℂ (-s) f
@@ -133,12 +133,12 @@ lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : 
   rw [h_eq]
   -- Need ∫ ‖exp(...)‖² < ∞, i.e., ∫ exp(2 Re(...)) < ∞
   have h_meas : AEStronglyMeasurable
-      (fun ω : FieldConfiguration => Complex.exp (distributionPairingℂ_real ω g))
+      (fun ω : FieldConfiguration STDimension => Complex.exp (distributionPairingℂ_real ω g))
       (gaussianFreeField_free m).toMeasure := by
     apply Continuous.aestronglyMeasurable
     exact Complex.continuous_exp.comp (QFT.distributionPairingℂ_real_continuous g)
   -- The dominating function: exp(2|ω g_re|) is integrable
-  have h_dom : Integrable (fun ω : FieldConfiguration =>
+  have h_dom : Integrable (fun ω : FieldConfiguration STDimension =>
       Real.exp (2 * |ω (complex_testfunction_decompose g).1|))
       (gaussianFreeField_free m).toMeasure := by
     have h_L2 := QFT.gff_exp_abs_pairing_memLp m (complex_testfunction_decompose g).1 2 (by norm_num)
@@ -150,7 +150,7 @@ lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : 
       ring_nf
     · exact (Real.continuous_exp.comp (continuous_abs.comp (WeakDual.eval_continuous _))).aestronglyMeasurable
   -- The bound: ‖exp(z)‖² = exp(2 Re z) ≤ exp(2|Re z|)
-  have h_sq_norm_bound : ∀ ω : FieldConfiguration,
+  have h_sq_norm_bound : ∀ ω : FieldConfiguration STDimension,
       ‖Complex.exp (distributionPairingℂ_real ω g)‖^2 ≤
         Real.exp (2 * |ω (complex_testfunction_decompose g).1|) := fun ω => by
     have h_norm : ‖Complex.exp (distributionPairingℂ_real ω g)‖ =
@@ -176,14 +176,14 @@ lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : 
 /-! ## GFF Time Translation Invariance -/
 
 /-- Time translation commutes with pointwise conjugation. -/
-lemma timeTranslationSchwartzℂ_conj_comm (t : ℝ) (f : TestFunctionℂ) :
+lemma timeTranslationSchwartzℂ_conj_comm (t : ℝ) (f : TestFunctionℂ STDimension) :
     timeTranslationSchwartzℂ t (conjSchwartz f) = conjSchwartz (timeTranslationSchwartzℂ t f) := by
   ext x
   simp only [timeTranslationSchwartzℂ_apply, conjSchwartz_apply]
 
 /-- The product exp(⟨ω, T_t g₁⟩) · conj(exp(⟨ω, T_t g₂⟩)) integral is time-shift invariant.
     This follows from the GFF characteristic function and covariance time-translation invariance. -/
-lemma gff_exp_product_time_shift_invariant (m : ℝ) [Fact (0 < m)] (g₁ g₂ : TestFunctionℂ) (t : ℝ) :
+lemma gff_exp_product_time_shift_invariant (m : ℝ) [Fact (0 < m)] (g₁ g₂ : TestFunctionℂ STDimension) (t : ℝ) :
     let μ := (gaussianFreeField_free m).toMeasure
     ∫ ω, Complex.exp (distributionPairingℂ_real ω (timeTranslationSchwartzℂ t g₁)) *
          starRingEnd ℂ (Complex.exp (distributionPairingℂ_real ω (timeTranslationSchwartzℂ t g₂))) ∂μ =
@@ -198,7 +198,7 @@ lemma gff_exp_product_time_shift_invariant (m : ℝ) [Fact (0 < m)] (g₁ g₂ :
   -- Time translation commutes with conjugation: rewrite RHS direction
   simp_rw [← timeTranslationSchwartzℂ_conj_comm t]
   -- ⟨ω, f⟩ + ⟨ω, g⟩ = ⟨ω, f + g⟩ by linearity
-  have h_add : ∀ ω (f g : TestFunctionℂ),
+  have h_add : ∀ ω (f g : TestFunctionℂ STDimension),
       distributionPairingℂ_real ω f + distributionPairingℂ_real ω g =
       distributionPairingℂ_real ω (f + g) := fun ω f g => by
     have := pairing_linear_combo ω f g 1 1
@@ -206,7 +206,7 @@ lemma gff_exp_product_time_shift_invariant (m : ℝ) [Fact (0 < m)] (g₁ g₂ :
     exact this.symm
   simp_rw [h_add]
   -- T_t f + T_t g = T_t(f + g)
-  have h_T_add : ∀ (f g : TestFunctionℂ),
+  have h_T_add : ∀ (f g : TestFunctionℂ STDimension),
       timeTranslationSchwartzℂ t f + timeTranslationSchwartzℂ t g =
       timeTranslationSchwartzℂ t (f + g) := fun f g => by
     ext x; simp [timeTranslationSchwartzℂ_apply]
@@ -216,7 +216,7 @@ lemma gff_exp_product_time_shift_invariant (m : ℝ) [Fact (0 < m)] (g₁ g₂ :
 
 /-- The L² norm of A_s is constant in s by stationarity.
     Proof: Uses OS2 → gff_exp_product_time_shift_invariant → this result. -/
-lemma gff_exp_L2_norm_constant (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (s : ℝ) :
+lemma gff_exp_L2_norm_constant (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) (s : ℝ) :
     ∫ ω, ‖Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) f)‖^2
       ∂(gaussianFreeField_free m).toMeasure =
     ∫ ω, ‖Complex.exp (distributionPairingℂ_real ω f)‖^2
@@ -246,7 +246,7 @@ lemma gff_exp_L2_norm_constant (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (s
   rw [h_lhs_eq]
 
   -- Convert: ∫ ‖exp(⟨ω, g⟩)‖² = (∫ exp * conj(exp)).re
-  have h_int_re_eq : ∀ g : TestFunctionℂ,
+  have h_int_re_eq : ∀ g : TestFunctionℂ STDimension,
       ∫ ω, ‖Complex.exp (distributionPairingℂ_real ω g)‖^2 ∂μ =
       (∫ ω, Complex.exp (distributionPairingℂ_real ω g) *
             starRingEnd ℂ (Complex.exp (distributionPairingℂ_real ω g)) ∂μ).re := by
@@ -264,7 +264,7 @@ lemma gff_exp_L2_norm_constant (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (s
   rw [h_int_re_eq (timeTranslationSchwartzℂ (-s) f), h_int_re_eq f, h_product_eq]
 
 /-- The time average (1/T)∫A_s ds is in L²(μ). -/
-lemma time_average_memLp_two (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (T : ℝ) (hT : T > 0) :
+lemma time_average_memLp_two (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) (T : ℝ) (hT : T > 0) :
     MemLp (fun ω => (1/T : ℂ) * ∫ s in Set.Icc (0 : ℝ) T,
         Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) f))
       2 (gaussianFreeField_free m).toMeasure := by
@@ -298,7 +298,7 @@ lemma time_average_memLp_two (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (T :
   have h_avg_meas : AEStronglyMeasurable
       (fun ω => (1/T : ℂ) * ∫ s in Set.Icc 0 T, A s ω) μ := by
     -- Swap measure order: (vol|[0,T]).prod μ → μ.prod (vol|[0,T])
-    have h_swap : AEStronglyMeasurable (fun (p : FieldConfiguration × ℝ) => A p.2 p.1)
+    have h_swap : AEStronglyMeasurable (fun (p : FieldConfiguration STDimension × ℝ) => A p.2 p.1)
         (μ.prod (volume.restrict (Set.Icc 0 T))) :=
       AEStronglyMeasurable.prod_swap h_joint_meas
     have h_int_meas : AEStronglyMeasurable (fun ω => ∫ s in Set.Icc 0 T, A s ω) μ :=
@@ -309,7 +309,7 @@ lemma time_average_memLp_two (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (T :
   exact OSforGFF.time_average_memLp_two μ A T hT h_As_L2 h_uniform h_joint_meas h_avg_meas
 
 /-- The error term squared is integrable (for T > 0). -/
-lemma gff_err_sq_integrable (m : ℝ) [Fact (0 < m)] (T : ℝ) (hT : T > 0) (f : TestFunctionℂ) :
+lemma gff_err_sq_integrable (m : ℝ) [Fact (0 < m)] (T : ℝ) (hT : T > 0) (f : TestFunctionℂ STDimension) :
     Integrable (fun ω =>
       ‖((1 : ℝ) / T) • (∫ s in Set.Icc (0 : ℝ) T,
           Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) f))
@@ -324,7 +324,7 @@ lemma gff_err_sq_integrable (m : ℝ) [Fact (0 < m)] (T : ℝ) (hT : T > 0) (f :
   -- Step 2: EA is constant, hence in L² (probability measure → finite measure)
   haveI : IsProbabilityMeasure μ :=
     MeasureTheory.ProbabilityMeasure.instIsProbabilityMeasureToMeasure (gaussianFreeField_free m)
-  have h_const_L2 : MemLp (fun _ : FieldConfiguration => EA) 2 μ := memLp_const EA
+  have h_const_L2 : MemLp (fun _ : FieldConfiguration STDimension => EA) 2 μ := memLp_const EA
   -- Step 3: Difference is in L² (L² is a vector space)
   have h_diff_L2 : MemLp (fun ω => (1/T : ℂ) * (∫ s in Set.Icc (0 : ℝ) T, A s ω) - EA) 2 μ := by
     have h := h_avg_L2.sub h_const_L2
@@ -335,7 +335,7 @@ lemma gff_err_sq_integrable (m : ℝ) [Fact (0 < m)] (T : ℝ) (hT : T > 0) (f :
     rw [memLp_two_iff_integrable_sq_norm h_meas] at h_diff_L2
     exact h_diff_L2
   -- Goal matches h_sq_int up to notation: smul ↔ mul, and ∫ ω' ... ↔ EA
-  have h_EA : ∫ ω' : FieldConfiguration, Complex.exp (distributionPairingℂ_real ω' f) ∂μ = EA := by
+  have h_EA : ∫ ω' : FieldConfiguration STDimension, Complex.exp (distributionPairingℂ_real ω' f) ∂μ = EA := by
     simp only [EA, A]
     congr 1
     ext ω'
@@ -371,7 +371,7 @@ lemma double_integral_decay_bound :
     _ ≤ 2 * T * C₀ := by nlinarith
 
 /-- Product expectation stationarity. -/
-lemma gff_product_expectation_stationarity (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
+lemma gff_product_expectation_stationarity (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension)
     (s u : ℝ) :
     let μ := (gaussianFreeField_free m).toMeasure
     let A := fun t ω => Complex.exp (distributionPairingℂ_real (timeTranslationDistribution t ω) f)
@@ -412,7 +412,7 @@ lemma gff_product_expectation_stationarity (m : ℝ) [Fact (0 < m)] (f : TestFun
     s ↦ C(T_s f, g) is continuous.
     (Proved via dominated convergence, copied from GFFCovarianceContinuity.) -/
 lemma gff_covariance_timeTranslation_continuous (m : ℝ) [Fact (0 < m)]
-    (f g : TestFunctionℂ) :
+    (f g : TestFunctionℂ STDimension) :
     Continuous (fun s => SchwingerFunctionℂ₂ (gaussianFreeField_free m)
       (timeTranslationSchwartzℂ s f) g) := by
   -- Step 1: S₂ = freeCovarianceℂ_bilinear for the GFF
@@ -429,7 +429,7 @@ lemma gff_covariance_timeTranslation_continuous (m : ℝ) [Fact (0 < m)]
     exact hCf (timeShift s x)
   -- Convert to product integral for continuous_of_dominated
   have h_fubini : ∀ s, ∫ x, ∫ y, (timeTranslationSchwartzℂ s f) x * (freeCovariance m x y : ℂ) * g y =
-      ∫ p : SpaceTime × SpaceTime, (timeTranslationSchwartzℂ s f) p.1 * (freeCovariance m p.1 p.2 : ℂ) * g p.2
+      ∫ p : SpaceTime STDimension × SpaceTime STDimension, (timeTranslationSchwartzℂ s f) p.1 * (freeCovariance m p.1 p.2 : ℂ) * g p.2
         ∂(volume.prod volume) := by
     intro s
     have h_int := freeCovarianceℂ_bilinear_integrable m (timeTranslationSchwartzℂ s f) g
@@ -437,7 +437,7 @@ lemma gff_covariance_timeTranslation_continuous (m : ℝ) [Fact (0 < m)]
     exact (MeasureTheory.integral_prod _ h_int).symm
   simp_rw [h_fubini]
   -- Bound using |g(y)| instead of Cg
-  let bound' : SpaceTime × SpaceTime → ℝ := fun p => Cf * ‖(freeCovariance m p.1 p.2 : ℂ)‖ * ‖g p.2‖
+  let bound' : SpaceTime STDimension × SpaceTime STDimension → ℝ := fun p => Cf * ‖(freeCovariance m p.1 p.2 : ℂ)‖ * ‖g p.2‖
   -- Pointwise bound
   have h_bdd' : ∀ s p, ‖(timeTranslationSchwartzℂ s f) p.1 * (freeCovariance m p.1 p.2 : ℂ) * g p.2‖ ≤ bound' p := by
     intro s ⟨x, y⟩
@@ -452,25 +452,25 @@ lemma gff_covariance_timeTranslation_continuous (m : ℝ) [Fact (0 < m)]
   -- The bound is integrable via convolution estimate
   have h_bound_int : Integrable bound' (volume.prod volume) := by
     simp only [bound']
-    have h_eq : (fun p : SpaceTime × SpaceTime => Cf * ‖(freeCovariance m p.1 p.2 : ℂ)‖ * ‖g p.2‖) =
+    have h_eq : (fun p : SpaceTime STDimension × SpaceTime STDimension => Cf * ‖(freeCovariance m p.1 p.2 : ℂ)‖ * ‖g p.2‖) =
         (fun p => Cf * (‖(freeCovariance m p.1 p.2 : ℂ)‖ * ‖g p.2‖)) := by ext p; ring
     rw [h_eq]
     apply Integrable.const_mul
     have h_transl : ∀ x y, freeCovariance m x y = freeCovarianceKernel m (x - y) := by
       intro x y; simp only [freeCovariance, freeCovarianceBessel, freeCovarianceKernel, zero_sub, norm_neg]
-    have h_eq2 : (fun p : SpaceTime × SpaceTime => ‖(freeCovariance m p.1 p.2 : ℂ)‖ * ‖g p.2‖) =
+    have h_eq2 : (fun p : SpaceTime STDimension × SpaceTime STDimension => ‖(freeCovariance m p.1 p.2 : ℂ)‖ * ‖g p.2‖) =
         (fun p => ‖(freeCovarianceKernel m (p.1 - p.2) : ℂ)‖ * ‖g p.2‖) := by ext p; rw [h_transl]
     rw [h_eq2]
-    have hK_int : Integrable (freeCovarianceKernel m) (volume : Measure SpaceTime) :=
+    have hK_int : Integrable (freeCovarianceKernel m) (volume : Measure (SpaceTime STDimension)) :=
       freeCovarianceKernel_integrable m (Fact.out)
-    have hg_int : Integrable (fun y => ‖g y‖) (volume : Measure SpaceTime) :=
+    have hg_int : Integrable (fun y => ‖g y‖) (volume : Measure (SpaceTime STDimension)) :=
       (SchwartzMap.integrable (μ := volume) g).norm
-    have hK_norm : Integrable (fun z => ‖(freeCovarianceKernel m z : ℂ)‖) (volume : Measure SpaceTime) := by
+    have hK_norm : Integrable (fun z => ‖(freeCovarianceKernel m z : ℂ)‖) (volume : Measure (SpaceTime STDimension)) := by
       have := hK_int.norm
       simp only [Real.norm_eq_abs] at this
       convert this using 1
       ext z; simp
-    have h_eq3 : (fun p : SpaceTime × SpaceTime => ‖(freeCovarianceKernel m (p.1 - p.2) : ℂ)‖ * ‖g p.2‖) =
+    have h_eq3 : (fun p : SpaceTime STDimension × SpaceTime STDimension => ‖(freeCovarianceKernel m (p.1 - p.2) : ℂ)‖ * ‖g p.2‖) =
         (fun p => ‖g p.2‖ * ‖(freeCovarianceKernel m (p.1 - p.2) : ℂ)‖) := by ext p; ring
     rw [h_eq3]
     let L : ℝ →L[ℝ] ℝ →L[ℝ] ℝ := ContinuousLinearMap.mul ℝ ℝ
@@ -494,7 +494,7 @@ lemma gff_covariance_timeTranslation_continuous (m : ℝ) [Fact (0 < m)]
     2. By Gaussian MGF formula, g(t) = EA·conj(EA)·(exp(C(T_{-t}f, conj(f))) - 1)
     3. C(T_s f, g) is continuous in s by dominated convergence
     4. Compose with exp and subtraction -/
-lemma gff_covariance_continuous (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
+lemma gff_covariance_continuous (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
     let μ := (gaussianFreeField_free m).toMeasure
     let A := fun t ω => Complex.exp (distributionPairingℂ_real (timeTranslationDistribution t ω) f)
     let EA := ∫ ω, Complex.exp (distributionPairingℂ_real ω f) ∂μ
@@ -574,7 +574,7 @@ lemma gff_covariance_continuous (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
 
     This combines the textbook axiom (which gives ‖∫∫ Cov‖) with triangle inequality
     to get the bound in terms of ∫∫ ‖Cov‖ which is what we need for decay estimates. -/
-lemma L2_time_average_variance_bound (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) (T : ℝ) (hT : T > 0) :
+lemma L2_time_average_variance_bound (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) (T : ℝ) (hT : T > 0) :
     let μ := (gaussianFreeField_free m).toMeasure
     let A := fun s ω => Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) f)
     let EA := ∫ ω, Complex.exp (distributionPairingℂ_real ω f) ∂μ
@@ -635,7 +635,7 @@ lemma L2_time_average_variance_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     · -- L² norm is constant in s (stationarity from OS2)
       intro s
       simp only [A]
-      have h_0 : timeTranslationDistribution 0 = id := funext timeTranslationDistribution_zero
+      have h_0 : timeTranslationDistribution (d := STDimension) 0 = id := funext timeTranslationDistribution_zero
       simp only [h_0, id_eq]
       exact gff_exp_L2_norm_constant m f s
 
@@ -661,7 +661,7 @@ lemma L2_time_average_variance_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
       (QFT.distributionPairingℂ_real_continuous _)).stronglyMeasurable
   -- Fubini integrability for the covariance triple integral swap
   -- Uses textbook axiom: L² slices + continuity + measurability → triple product integrable
-  have h_Fubini : Integrable (fun (x : FieldConfiguration × (ℝ × ℝ)) =>
+  have h_Fubini : Integrable (fun (x : FieldConfiguration STDimension × (ℝ × ℝ)) =>
       (A x.2.1 x.1 - EA) * starRingEnd ℂ (A x.2.2 x.1 - EA))
       (μ.prod ((volume.restrict (Set.Icc 0 T)).prod (volume.restrict (Set.Icc 0 T)))) :=
     OSforGFF.L2_process_covariance_fubini_integrable μ A EA T hT h_L2 h_cont_s h_sm_slice
@@ -719,7 +719,7 @@ lemma L2_time_average_variance_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
 /-! ## Clustering Implies Covariance Decay -/
 
 /-- OS4'' clustering implies covariance decay with exponent -3. -/
-lemma clustering_implies_covariance_decay (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
+lemma clustering_implies_covariance_decay (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension)
     (h_cluster : OS4''_Clustering m) :
     ∃ (c : ℝ), c ≥ 0 ∧ ∀ s u : ℝ, s ≥ 0 → u ≥ 0 →
       let μ := (gaussianFreeField_free m).toMeasure
@@ -867,7 +867,7 @@ lemma clustering_implies_covariance_decay (m : ℝ) [Fact (0 < m)] (f : TestFunc
 
 /-- The norm of the GFF covariance is integrable on [0,T] for each fixed first argument.
     Uses gff_covariance_norm_integrableOn_slice_axiom to avoid expensive type unification. -/
-lemma gff_covariance_norm_integrableOn_slice (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
+lemma gff_covariance_norm_integrableOn_slice (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension)
     (s : ℝ) (T : ℝ) :
     let μ := (gaussianFreeField_free m).toMeasure
     let A := fun t ω => Complex.exp (distributionPairingℂ_real (timeTranslationDistribution t ω) f)
@@ -883,7 +883,7 @@ lemma gff_covariance_norm_integrableOn_slice (m : ℝ) [Fact (0 < m)] (f : TestF
 /-! ## Variance Decay from Clustering -/
 
 /-- Covariance decay implies variance tends to zero. -/
-lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
+lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension)
     (c : ℝ) (hc : c ≥ 0)
     (h_cov_decay : ∀ s u : ℝ, s ≥ 0 → u ≥ 0 →
       let μ := (gaussianFreeField_free m).toMeasure
@@ -1071,12 +1071,12 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
     OS4'_Ergodicity_generating m → OS4_Ergodicity (gaussianFreeField_free m) := by
   intro h_erg n z f
   let μ := (gaussianFreeField_free m).toMeasure
-  let A : FieldConfiguration → ℂ := fun ω => ∑ j, z j * Complex.exp (distributionPairingℂ_real ω (f j))
+  let A : FieldConfiguration STDimension → ℂ := fun ω => ∑ j, z j * Complex.exp (distributionPairingℂ_real ω (f j))
 
   -- Define the "error" for each generating function
   -- Note: This matches the structure in OS4'_Ergodicity_generating
   -- Parsed as: (1/T) * (∫_s (exp - mean)) where mean is constant in s
-  let Err : Fin n → ℝ → FieldConfiguration → ℂ := fun j T ω =>
+  let Err : Fin n → ℝ → FieldConfiguration STDimension → ℂ := fun j T ω =>
     (1 / T) * ∫ s in Set.Icc (0 : ℝ) T,
       Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) (f j))
       - ∫ ω', Complex.exp (distributionPairingℂ_real ω' (f j)) ∂μ

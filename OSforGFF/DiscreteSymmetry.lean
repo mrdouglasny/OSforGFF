@@ -53,10 +53,10 @@ maps (t, x⃗) ↦ (-t, x⃗), reversing the time coordinate while preserving sp
 **Time Reflection Operation:**
 - `timeReflection`: Point transformation (t, x⃗) ↦ (-t, x⃗) on spacetime
 - `timeReflectionMatrix`: Diagonal matrix with -1 for time, +1 for spatial coordinates
-- `timeReflectionMatrix_is_orthogonal`: Proof that the matrix is orthogonal (in O(4))
+- `timeReflectionMatrix_is_orthogonal`: Proof that the matrix is orthogonal (in O(d))
 
 **Linear Algebraic Structure:**
-- `timeReflectionIsometry`: Time reflection as element of orthogonal group O(4)
+- `timeReflectionIsometry`: Time reflection as element of orthogonal group O(d)
 - `timeReflectionLinear`: Linear map version with additivity/homogeneity proofs
 - `timeReflectionCLM`: Continuous linear map version for analysis
 
@@ -67,7 +67,7 @@ maps (t, x⃗) ↦ (-t, x⃗), reversing the time coordinate while preserving sp
 - Orthogonal transformation: preserves angles and distances
 
 **Linear Isometry Structure:**
-- `timeReflectionLE`: Complete linear isometry equivalence Θ: SpaceTime ≃ₗᵢ[ℝ] SpaceTime
+- `timeReflectionLE`: Complete linear isometry equivalence Θ: SpaceTime d ≃ₗᵢ[ℝ] SpaceTime d
 - Includes proofs of:
   - `left_inv` and `right_inv`: Θ⁻¹ = Θ (self-inverse)
   - `map_add'` and `map_smul'`: Linearity
@@ -117,24 +117,25 @@ open MeasureTheory
 
 namespace QFT
 
-abbrev timeReflection (x : SpaceTime) : SpaceTime :=
+variable {d : ℕ} [NeZero d]
+
+abbrev timeReflection (x : SpaceTime d) : SpaceTime d :=
   (WithLp.equiv 2 _).symm (Function.update x.ofLp 0 (-x.ofLp 0))
 
-def timeReflectionMatrix : Matrix (Fin STDimension) (Fin STDimension) ℝ :=
+def timeReflectionMatrix : Matrix (Fin d) (Fin d) ℝ :=
   Matrix.diagonal (fun i => if i = 0 then -1 else 1)
 
 lemma timeReflectionMatrix_is_orthogonal :
-   timeReflectionMatrix ∈ Matrix.orthogonalGroup (Fin STDimension) ℝ := by
-      simp [Matrix.mem_orthogonalGroup_iff, timeReflectionMatrix, Matrix.diagonal_transpose, Matrix.diagonal_mul_diagonal]
-      simp [Matrix.diagonal]
+   (timeReflectionMatrix (d := d)) ∈ Matrix.orthogonalGroup (Fin d) ℝ := by
+      rw [Matrix.mem_orthogonalGroup_iff]
       ext i j
-      simp [Matrix.one_apply]
-      split_ifs <;> norm_num
+      simp [timeReflectionMatrix, Matrix.diagonal_apply, Matrix.one_apply]
+      split_ifs <;> simp_all
 
-def timeReflectionIsometry  : Matrix.orthogonalGroup (Fin STDimension) ℝ :=
+def timeReflectionIsometry  : Matrix.orthogonalGroup (Fin d) ℝ :=
   ⟨timeReflectionMatrix, timeReflectionMatrix_is_orthogonal⟩
 
-def timeReflectionLinear : SpaceTime →ₗ[ℝ] SpaceTime :=
+def timeReflectionLinear : SpaceTime d →ₗ[ℝ] SpaceTime d :=
 { toFun := timeReflection
   map_add' := by
     intro x y
@@ -156,13 +157,13 @@ def timeReflectionLinear : SpaceTime →ₗ[ℝ] SpaceTime :=
       simp [Function.update_self]
     · simp [Function.update_of_ne h] }
 
-def timeReflectionCLM : SpaceTime →L[ℝ] SpaceTime :=
-timeReflectionLinear.toContinuousLinearMap (E := SpaceTime) (F' := SpaceTime)
+noncomputable def timeReflectionCLM : SpaceTime d →L[ℝ] SpaceTime d :=
+timeReflectionLinear.toContinuousLinearMap (E := SpaceTime d) (F' := SpaceTime d)
 
 open InnerProductSpace
 
 /-- Time reflection preserves inner products -/
-lemma timeReflection_inner_map (x y : SpaceTime) :
+lemma timeReflection_inner_map (x y : SpaceTime d) :
     ⟪timeReflection x, timeReflection y⟫_ℝ = ⟪x, y⟫_ℝ := by
   -- Direct proof using fintype inner product
   simp only [inner]
@@ -174,7 +175,7 @@ lemma timeReflection_inner_map (x y : SpaceTime) :
   · simp [h]
 
 /-- Time reflection as a linear isometry equivalence -/
-def timeReflectionLE : SpaceTime ≃ₗᵢ[ℝ] SpaceTime :=
+def timeReflectionLE : SpaceTime d ≃ₗᵢ[ℝ] SpaceTime d :=
 { toFun := timeReflection
   invFun := timeReflection  -- Time reflection is self-inverse
   left_inv := by
@@ -214,21 +215,21 @@ def timeReflectionLE : SpaceTime ≃ₗᵢ[ℝ] SpaceTime :=
 
 /-- Time reflection preserves Lebesgue measure. -/
 lemma timeReflection_measurePreserving :
-    MeasurePreserving timeReflection volume volume := by
+    MeasurePreserving (timeReflection (d := d)) volume volume := by
   -- Any linear isometry equivalence preserves the volume measure.
   simpa [timeReflection] using (timeReflectionLE).measurePreserving
 
-example (x : SpaceTime) :
+example (x : SpaceTime d) :
     timeReflectionCLM x =
-      Function.update x (0 : Fin STDimension) (-x 0) := rfl
+      Function.update x (0 : Fin d) (-x 0) := rfl
 
 /-- Composition with time reflection as a continuous linear map on **complex-valued**
     test functions. This maps a test function `f` to the function `x ↦ f(timeReflection(x))`,
     where `timeReflection` negates the time coordinate (0th component) while
     preserving spatial coordinates. This version acts on complex test functions and
     is used to formulate the Osterwalder-Schrader star operation. -/
-noncomputable def compTimeReflection : TestFunctionℂ →L[ℝ] TestFunctionℂ := by
-  have hg_upper : ∃ (k : ℕ) (C : ℝ), ∀ (x : SpaceTime), ‖x‖ ≤ C * (1 + ‖timeReflectionCLM x‖) ^ k := by
+noncomputable def compTimeReflection : TestFunctionℂ d →L[ℝ] TestFunctionℂ d := by
+  have hg_upper : ∃ (k : ℕ) (C : ℝ), ∀ (x : SpaceTime d), ‖x‖ ≤ C * (1 + ‖timeReflectionCLM x‖) ^ k := by
     use 1; use 1; simp; intro x
     -- timeReflectionCLM is an isometry, so ‖timeReflectionCLM x‖ = ‖x‖
     have h_iso : ‖timeReflectionCLM x‖ = ‖x‖ := by
@@ -248,8 +249,8 @@ noncomputable def compTimeReflection : TestFunctionℂ →L[ℝ] TestFunctionℂ
     test functions. This version will be used when working with positive-time
     subspaces defined over ℝ, so that reflection positivity can be formulated
     without passing through complex scalars. -/
-noncomputable def compTimeReflectionReal : TestFunction →L[ℝ] TestFunction := by
-  have hg_upper : ∃ (k : ℕ) (C : ℝ), ∀ (x : SpaceTime), ‖x‖ ≤ C * (1 + ‖timeReflectionCLM x‖) ^ k := by
+noncomputable def compTimeReflectionReal : TestFunction d →L[ℝ] TestFunction d := by
+  have hg_upper : ∃ (k : ℕ) (C : ℝ), ∀ (x : SpaceTime d), ‖x‖ ≤ C * (1 + ‖timeReflectionCLM x‖) ^ k := by
     use 1; use 1; simp; intro x
     have h_iso : ‖timeReflectionCLM x‖ = ‖x‖ := by
       -- timeReflectionCLM coincides with the geometric time reflection, hence an isometry
@@ -263,7 +264,7 @@ noncomputable def compTimeReflectionReal : TestFunction →L[ℝ] TestFunction :
   exact SchwartzMap.compCLM (𝕜 := ℝ) (hg := timeReflectionCLM.hasTemperateGrowth) (hg_upper := hg_upper)
 
 /-- Time reflection is linear on real test functions. -/
-lemma compTimeReflectionReal_linear_combination {n : ℕ} (f : Fin n → TestFunction) (c : Fin n → ℝ) :
+lemma compTimeReflectionReal_linear_combination {n : ℕ} (f : Fin n → TestFunction d) (c : Fin n → ℝ) :
     compTimeReflectionReal (∑ i, c i • f i) = ∑ i, c i • compTimeReflectionReal (f i) := by
   -- This follows directly from the linearity of the continuous linear map compTimeReflectionReal
   simp only [map_sum, map_smul]

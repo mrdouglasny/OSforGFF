@@ -44,23 +44,27 @@ import OSforGFF.FunctionalAnalysis
 This file provides the foundational definitions for the Glimm-Jaffe approach to Algebraic Quantum Field Theory,
 implementing field configurations as tempered distributions and the associated generating functionals.
 
+All definitions are parametric in the spacetime dimension `d : ℕ`, with `STDimension := 4` as the
+default for the GFF project. Setting `d = 2` or `d = 3` gives the framework for lower-dimensional
+field theories (e.g. P(Φ)₂).
+
 ### Key Definitions & Framework:
 
 **Spacetime Structure:**
-- `STDimension`: Spacetime dimension (4D)
-- `SpaceTime`: Euclidean 4-space using EuclideanSpace
-- `getTimeComponent`: Extracts time coordinate (t = x₄)
-- `μ`: Standard Lebesgue measure on spacetime
+- `STDimension`: Default spacetime dimension (4)
+- `SpaceTime d`: Euclidean d-space using EuclideanSpace
+- `getTimeComponent`: Extracts time coordinate (t = x₀)
+- `μ d`: Standard Lebesgue measure on spacetime
 
 **Test Function Spaces:**
-- `TestFunction`: Real-valued Schwartz functions on spacetime
-- `TestFunction𝕜`: Generic Schwartz functions over field 𝕜
-- `TestFunctionℂ`: Complex-valued Schwartz functions
+- `TestFunction d`: Real-valued Schwartz functions on SpaceTime d
+- `TestFunction𝕜 d`: Generic Schwartz functions over field 𝕜
+- `TestFunctionℂ d`: Complex-valued Schwartz functions
 - `schwartzMul`: Multiplication operation on complex test functions
 - `schwartz_comp_clm`: Composition with continuous linear maps (extends Schwartz regularity)
 
 **Field Configurations as Distributions:**
-- `FieldConfiguration`: Tempered distributions (WeakDual of Schwartz space)
+- `FieldConfiguration d`: Tempered distributions (WeakDual of Schwartz space)
 - Proper weak-* topology for measure theory
 - Measurable space structure via Borel σ-algebra
 
@@ -93,7 +97,7 @@ using the Osterwalder-Schrader framework.
 
 Design notes (possible future changes):
 
-- Spacetime model: We currently use Euclidean ℝ^d (here d = STDimension) with Lebesgue measure.
+- Spacetime model: We currently use Euclidean ℝ^d with Lebesgue measure.
   In some applications it may be preferable to work on a compact Riemannian manifold (M, g).
   This would affect the definitions of `SpaceTime`, the reference measure μ, Fourier-analytic
   tools, and Euclidean invariance statements.
@@ -105,16 +109,27 @@ Design notes (possible future changes):
   Minlos/characteristic functionals are formulated.
 -/
 
-/-- Spacetime dimension. Currently set to 4 (Euclidean ℝ⁴).
-    Changing this value requires corresponding changes throughout the project;
-    see `docs/dimension_dependence.md` for a detailed inventory. -/
+/-! ## Spacetime dimension and type definitions -/
+
+/-- Default spacetime dimension for the GFF project (d=4). Other values:
+    d=2 for P(Φ)₂, d=3 for Φ⁴₃. -/
 abbrev STDimension := 4
-abbrev SpaceTime := EuclideanSpace ℝ (Fin STDimension)
 
-noncomputable instance : InnerProductSpace ℝ SpaceTime := by infer_instance
+instance : Fact (0 < STDimension) := ⟨by norm_num⟩
+instance : Fact (2 ≤ STDimension) := ⟨by norm_num⟩
 
-abbrev getTimeComponent (x : SpaceTime) : ℝ :=
- x ⟨0, by simp +arith⟩
+/-- Any dimension with `Fact (0 < d)` is nonzero. -/
+instance instNeZeroOfFact {d : ℕ} [Fact (0 < d)] : NeZero d :=
+  ⟨by have := Fact.out (p := 0 < d); omega⟩
+
+/-- Euclidean spacetime ℝ^d, parametric in the dimension d. -/
+abbrev SpaceTime (d : ℕ) := EuclideanSpace ℝ (Fin d)
+
+noncomputable instance (d : ℕ) : InnerProductSpace ℝ (SpaceTime d) := by infer_instance
+
+/-- Extract the time component (index 0) from a spacetime point. Requires d ≥ 1. -/
+abbrev getTimeComponent {d : ℕ} [Fact (0 < d)] (x : SpaceTime d) : ℝ :=
+  x ⟨0, Fact.out⟩
 
 open MeasureTheory NNReal ENNReal Complex
 open TopologicalSpace Measure
@@ -122,33 +137,52 @@ open TopologicalSpace Measure
 -- Also open FunLike for SchwartzMap function application
 open DFunLike (coe)
 
+/-! ## Test function and distribution spaces -/
+
+/-- Test functions on SpaceTime d: real-valued Schwartz functions S(ℝ^d). -/
+abbrev TestFunction (d : ℕ) : Type := SchwartzMap (SpaceTime d) ℝ
+
+/-- Test functions over a general scalar field 𝕜. -/
+abbrev TestFunction𝕜 (d : ℕ) (𝕜 : Type) [RCLike 𝕜] : Type := SchwartzMap (SpaceTime d) 𝕜
+
+/-- Complex-valued test functions on SpaceTime d. -/
+abbrev TestFunctionℂ (d : ℕ) := TestFunction𝕜 d ℂ
+
+/-- Field configurations as tempered distributions (dual to Schwartz space).
+    This follows the Glimm-Jaffe approach where the field measure is supported
+    on the space of distributions, not L2 functions.
+
+    Using WeakDual gives the correct weak-* topology on the dual space. -/
+abbrev FieldConfiguration (d : ℕ) := WeakDual ℝ (SchwartzMap (SpaceTime d) ℝ)
+
+-- Measurable space instance for distribution spaces
+-- WeakDual already has the correct weak-* topology, we use the Borel σ-algebra
+instance (d : ℕ) : MeasurableSpace (FieldConfiguration d) := borel _
+
+/-! ## Spatial geometry -/
+
+/-- Spatial coordinates: ℝ^{d-1} (space without time) as EuclideanSpace for L2 norm -/
+abbrev SpatialCoords (d : ℕ) := EuclideanSpace ℝ (Fin (d - 1))
+
+/-- L² space on spatial slices (real-valued) -/
+noncomputable abbrev SpatialL2 (d : ℕ) := Lp ℝ 2 (volume : Measure (SpatialCoords d))
+
 noncomputable section
 
-variable {𝕜 : Type} [RCLike 𝕜]
+variable {d : ℕ} {𝕜 : Type} [RCLike 𝕜]
 
-abbrev μ : Measure SpaceTime := volume    -- Lebesgue, just named “μ”
+/-- Standard Lebesgue measure on SpaceTime d, just named "μ". -/
+abbrev μ : Measure (SpaceTime d) := volume
 
-/- Distributions and test functions -/
-
-abbrev TestFunction : Type := SchwartzMap SpaceTime ℝ
-abbrev TestFunction𝕜 : Type := SchwartzMap SpaceTime 𝕜
-abbrev TestFunctionℂ := TestFunction𝕜 (𝕜 := ℂ)
-
-example : AddCommGroup TestFunctionℂ := by infer_instance
-example : Module ℂ TestFunctionℂ := by infer_instance
-
-/- Space-time and test function setup -/
-
-variable (x : SpaceTime)
+example : AddCommGroup (TestFunctionℂ d) := by infer_instance
+example : Module ℂ (TestFunctionℂ d) := by infer_instance
 
 /- Probability distribution over field configurations (distributions) -/
 def pointwiseMulCLM : ℂ →L[ℂ] ℂ →L[ℂ] ℂ := ContinuousLinearMap.mul ℂ ℂ
 
 /-- Multiplication lifted to the Schwartz space. -/
-def schwartzMul (g : TestFunctionℂ) : TestFunctionℂ →L[ℂ] TestFunctionℂ :=
+def schwartzMul (g : TestFunctionℂ d) : TestFunctionℂ d →L[ℂ] TestFunctionℂ d :=
   (SchwartzMap.bilinLeftCLM pointwiseMulCLM (SchwartzMap.hasTemperateGrowth_general g))
-
-
 
 /-! ## Glimm-Jaffe Distribution Framework
 
@@ -158,38 +192,27 @@ This section adds the distribution-theoretic definitions alongside
 the existing L2 framework for comparison and gradual transition.
 -/
 
-/-- Field configurations as tempered distributions (dual to Schwartz space).
-    This follows the Glimm-Jaffe approach where the field measure is supported
-    on the space of distributions, not L2 functions.
-
-    Using WeakDual gives the correct weak-* topology on the dual space. -/
-abbrev FieldConfiguration := WeakDual ℝ (SchwartzMap SpaceTime ℝ)
-
--- Measurable space instance for distribution spaces
--- WeakDual already has the correct weak-* topology, we use the Borel σ-algebra
-instance : MeasurableSpace FieldConfiguration := borel _
-
 /-- The fundamental pairing between a field configuration (distribution) and a test function.
     This is ⟨ω, f⟩ in the Glimm-Jaffe notation.
 
-    Note: FieldConfiguration = WeakDual ℝ (SchwartzMap SpaceTime ℝ) has the correct
+    Note: FieldConfiguration d = WeakDual ℝ (SchwartzMap (SpaceTime d) ℝ) has the correct
     weak-* topology, making evaluation maps x ↦ ω(x) continuous for each test function x. -/
-def distributionPairing (ω : FieldConfiguration) (f : TestFunction) : ℝ := ω f
+def distributionPairing (ω : FieldConfiguration d) (f : TestFunction d) : ℝ := ω f
 
-@[simp] lemma distributionPairing_add (ω₁ ω₂ : FieldConfiguration) (a : TestFunction) :
+@[simp] lemma distributionPairing_add (ω₁ ω₂ : FieldConfiguration d) (a : TestFunction d) :
     distributionPairing (ω₁ + ω₂) a = distributionPairing ω₁ a + distributionPairing ω₂ a := rfl
 
-@[simp] lemma distributionPairing_smul (s : ℝ) (ω : FieldConfiguration) (a : TestFunction) :
+@[simp] lemma distributionPairing_smul (s : ℝ) (ω : FieldConfiguration d) (a : TestFunction d) :
     distributionPairing (s • ω) a = s * distributionPairing ω a :=
   -- This follows from the definition of scalar multiplication in WeakDual
   rfl
 
-@[simp] lemma pairing_smul_real (ω : FieldConfiguration) (s : ℝ) (a : TestFunction) :
+@[simp] lemma pairing_smul_real (ω : FieldConfiguration d) (s : ℝ) (a : TestFunction d) :
   ω (s • a) = s * (ω a) :=
   -- This follows from the linearity of the dual pairing
   map_smul ω s a
 
-@[simp] def distributionPairingCLM (a : TestFunction) : FieldConfiguration →L[ℝ] ℝ where
+@[simp] def distributionPairingCLM (a : TestFunction d) : FieldConfiguration d →L[ℝ] ℝ where
   toFun ω := distributionPairing ω a
   map_add' ω₁ ω₂ := by
     -- WeakDual addition is pointwise: (ω₁ + ω₂) a = ω₁ a + ω₂ a
@@ -201,10 +224,10 @@ def distributionPairing (ω : FieldConfiguration) (f : TestFunction) : ℝ := ω
     -- The evaluation map is continuous by definition of WeakDual topology
     exact WeakDual.eval_continuous a
 
-@[simp] lemma distributionPairingCLM_apply (a : TestFunction) (ω : FieldConfiguration) :
+@[simp] lemma distributionPairingCLM_apply (a : TestFunction d) (ω : FieldConfiguration d) :
     distributionPairingCLM a ω = distributionPairing ω a := rfl
 
-variable [SigmaFinite μ]
+variable [SigmaFinite (μ (d := d))]
 
 /-! ## Glimm-Jaffe Generating Functional
 
@@ -215,13 +238,13 @@ where the integral is over field configurations ω (distributions).
 
 /-- The Glimm-Jaffe generating functional: Z[J] = ∫ exp(i⟨ω, J⟩) dμ(ω)
     This is the fundamental object in constructive QFT. -/
-def GJGeneratingFunctional (dμ_config : ProbabilityMeasure FieldConfiguration)
-  (J : TestFunction) : ℂ :=
+def GJGeneratingFunctional (dμ_config : ProbabilityMeasure (FieldConfiguration d))
+  (J : TestFunction d) : ℂ :=
   ∫ ω, Complex.exp (Complex.I * (distributionPairing ω J : ℂ)) ∂dμ_config.toMeasure
 
 /-- Helper function to create a Schwartz map from a complex test function by applying a continuous linear map.
     This factors out the common pattern for extracting real/imaginary parts. -/
-def schwartz_comp_clm (f : TestFunctionℂ) (L : ℂ →L[ℝ] ℝ) : TestFunction :=
+def schwartz_comp_clm (f : TestFunctionℂ d) (L : ℂ →L[ℝ] ℝ) : TestFunction d :=
   SchwartzMap.mk (fun x => L (f x)) (by
     -- L is a continuous linear map, hence smooth
     exact ContDiff.comp L.contDiff f.smooth'
@@ -250,44 +273,44 @@ def schwartz_comp_clm (f : TestFunctionℂ) (L : ℂ →L[ℝ] ℝ) : TestFuncti
       _ = C * ‖L‖ := by ring
   )
 
-omit [SigmaFinite μ]
+omit [SigmaFinite (μ (d := d))]
 
 /-- Evaluate `schwartz_comp_clm` pointwise. -/
-@[simp] lemma schwartz_comp_clm_apply (f : TestFunctionℂ) (L : ℂ →L[ℝ] ℝ) (x : SpaceTime) :
+@[simp] lemma schwartz_comp_clm_apply (f : TestFunctionℂ d) (L : ℂ →L[ℝ] ℝ) (x : SpaceTime d) :
   (schwartz_comp_clm f L) x = L (f x) := rfl
 
 /-- Decompose a complex test function into its real and imaginary parts as real test functions.
     This is more efficient than separate extraction functions. -/
-def complex_testfunction_decompose (f : TestFunctionℂ) : TestFunction × TestFunction :=
+def complex_testfunction_decompose (f : TestFunctionℂ d) : TestFunction d × TestFunction d :=
   (schwartz_comp_clm f Complex.reCLM, schwartz_comp_clm f Complex.imCLM)
 
 /-- First component of the decomposition evaluates to the real part pointwise. -/
 @[simp] lemma complex_testfunction_decompose_fst_apply
-  (f : TestFunctionℂ) (x : SpaceTime) :
+  (f : TestFunctionℂ d) (x : SpaceTime d) :
   (complex_testfunction_decompose f).1 x = (f x).re := by
   simp [complex_testfunction_decompose]
 
 /-- Second component of the decomposition evaluates to the imaginary part pointwise. -/
 @[simp] lemma complex_testfunction_decompose_snd_apply
-  (f : TestFunctionℂ) (x : SpaceTime) :
+  (f : TestFunctionℂ d) (x : SpaceTime d) :
   (complex_testfunction_decompose f).2 x = (f x).im := by
   simp [complex_testfunction_decompose]
 
 /-- Coerced-to-ℂ version (useful for complex-side algebra). -/
 @[simp] lemma complex_testfunction_decompose_fst_apply_coe
-  (f : TestFunctionℂ) (x : SpaceTime) :
+  (f : TestFunctionℂ d) (x : SpaceTime d) :
   ((complex_testfunction_decompose f).1 x : ℂ) = ((f x).re : ℂ) := by
   simp [complex_testfunction_decompose]
 
 /-- Coerced-to-ℂ version (useful for complex-side algebra). -/
 @[simp] lemma complex_testfunction_decompose_snd_apply_coe
-  (f : TestFunctionℂ) (x : SpaceTime) :
+  (f : TestFunctionℂ d) (x : SpaceTime d) :
   ((complex_testfunction_decompose f).2 x : ℂ) = ((f x).im : ℂ) := by
   simp [complex_testfunction_decompose]
 
 /-- Recomposition at a point via the decomposition. -/
 lemma complex_testfunction_decompose_recompose
-  (f : TestFunctionℂ) (x : SpaceTime) :
+  (f : TestFunctionℂ d) (x : SpaceTime d) :
   f x = ((complex_testfunction_decompose f).1 x : ℂ)
           + Complex.I * ((complex_testfunction_decompose f).2 x : ℂ) := by
   -- Reduce to the standard identity z = re z + i im z
@@ -301,37 +324,31 @@ lemma complex_testfunction_decompose_recompose
 /-- Complex version of the pairing: real field configuration with complex test function
     We extend the pairing by treating the complex test function as f(x) = f_re(x) + i*f_im(x)
     and defining ⟨ω, f⟩ = ⟨ω, f_re⟩ + i*⟨ω, f_im⟩ -/
-def distributionPairingℂ_real (ω : FieldConfiguration) (f : TestFunctionℂ) : ℂ :=
+def distributionPairingℂ_real (ω : FieldConfiguration d) (f : TestFunctionℂ d) : ℂ :=
   -- Extract real and imaginary parts using our efficient decomposition
   let ⟨f_re, f_im⟩ := complex_testfunction_decompose f
   -- Pair with the real field configuration and combine
   (ω f_re : ℂ) + Complex.I * (ω f_im : ℂ)
 
 /-- Complex version of the generating functional -/
-def GJGeneratingFunctionalℂ (dμ_config : ProbabilityMeasure FieldConfiguration)
-  (J : TestFunctionℂ) : ℂ :=
+def GJGeneratingFunctionalℂ (dμ_config : ProbabilityMeasure (FieldConfiguration d))
+  (J : TestFunctionℂ d) : ℂ :=
   ∫ ω, Complex.exp (Complex.I * (distributionPairingℂ_real ω J)) ∂dμ_config.toMeasure
 
 /-- The mean field in the Glimm-Jaffe framework -/
-def GJMean (dμ_config : ProbabilityMeasure FieldConfiguration)
-  (φ : TestFunction) : ℝ :=
+def GJMean (dμ_config : ProbabilityMeasure (FieldConfiguration d))
+  (φ : TestFunction d) : ℝ :=
   ∫ ω, distributionPairing ω φ ∂dμ_config.toMeasure
 
 /-! ## Spatial Geometry and Energy Operators -/
 
-/-- Spatial coordinates: ℝ^{d-1} (space without time) as EuclideanSpace for L2 norm -/
-abbrev SpatialCoords := EuclideanSpace ℝ (Fin (STDimension - 1))
-
-/-- L² space on spatial slices (real-valued) -/
-abbrev SpatialL2 := Lp ℝ 2 (volume : Measure SpatialCoords)
-
-/-- Extract spatial part of spacetime coordinate -/
-def spatialPart (x : SpaceTime) : SpatialCoords :=
-  (EuclideanSpace.equiv (Fin (STDimension - 1)) ℝ).symm
-    (fun i => x ⟨i.val + 1, by simp [STDimension]; omega⟩)
+/-- Extract spatial part of spacetime coordinate. Requires d ≥ 2. -/
+def spatialPart [Fact (2 ≤ d)] (x : SpaceTime d) : SpatialCoords d :=
+  (EuclideanSpace.equiv (Fin (d - 1)) ℝ).symm
+    (fun i => x ⟨i.val + 1, by have := Fact.out (p := 2 ≤ d); omega⟩)
 
 /-- The energy function E(k) = √(‖k‖² + m²) on spatial momentum space -/
-def E (m : ℝ) (k : SpatialCoords) : ℝ :=
+def E (m : ℝ) (k : SpatialCoords d) : ℝ :=
   Real.sqrt (‖k‖^2 + m^2)
 
 end

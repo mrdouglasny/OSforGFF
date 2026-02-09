@@ -31,6 +31,14 @@ open scoped MeasureTheory
 
 noncomputable section
 
+variable {d : ℕ} [Fact (0 < d)]
+
+instance : Nonempty (Fin d) := ⟨⟨0, Fact.out⟩⟩
+
+instance : NoAtoms (volume : Measure (SpaceTime d)) := by
+  unfold SpaceTime
+  infer_instance
+
 /-- If f(n+1) → L, then f(n) → L. This is because atTop is shift-invariant. -/
 private lemma tendsto_of_tendsto_succ {α : Type*} {f : ℕ → α} {L : Filter α}
     (h : Filter.Tendsto (fun n => f (n + 1)) Filter.atTop L) :
@@ -55,13 +63,13 @@ private lemma tendsto_of_tendsto_succ {α : Type*} {f : ℕ → α} {L : Filter 
 /-- Convert a ContDiffBump centered at 0 to a normalized Schwartz function.
     This produces the L¹-normalized version φ.normed volume, which integrates to 1.
     Bump functions have compact support and are smooth, so they are Schwartz. -/
-noncomputable def bumpToSchwartz (φ : ContDiffBump (0 : SpaceTime)) : TestFunction :=
+noncomputable def bumpToSchwartz (φ : ContDiffBump (0 : SpaceTime d)) : TestFunction d :=
   -- The normed bump has compact support and is C^∞, hence Schwartz
   (φ.hasCompactSupport_normed (μ := volume)).toSchwartzMap φ.contDiff_normed
 
 /-- bumpToSchwartz produces the L¹-normalized bump function. -/
 @[simp]
-theorem bumpToSchwartz_apply (φ : ContDiffBump (0 : SpaceTime)) (x : SpaceTime) :
+theorem bumpToSchwartz_apply (φ : ContDiffBump (0 : SpaceTime d)) (x : SpaceTime d) :
     bumpToSchwartz φ x = φ.normed volume x := rfl
 
 /-- Translate a Schwartz function by a vector.
@@ -69,7 +77,7 @@ theorem bumpToSchwartz_apply (φ : ContDiffBump (0 : SpaceTime)) (x : SpaceTime)
 
     Translation preserves smoothness and decay properties.
     See `SchwartzMap.translate` in FunctionalAnalysis.lean for the general version. -/
-noncomputable def translateSchwartz (f : TestFunction) (a : SpaceTime) : TestFunction :=
+noncomputable def translateSchwartz (f : TestFunction d) (a : SpaceTime d) : TestFunction d :=
   f.translate a
 
 /-- The smeared two-point function using a bump function.
@@ -77,15 +85,15 @@ noncomputable def translateSchwartz (f : TestFunction) (a : SpaceTime) : TestFun
     pointwise value as the bump width → 0.
 
     SmearedTwoPointFunction dμ φ x = ∫∫ φ(u-x) ⟨φ(u)φ(v)⟩ φ(v) du dv -/
-noncomputable def SmearedTwoPointFunction (dμ_config : ProbabilityMeasure FieldConfiguration)
-    (φ : ContDiffBump (0 : SpaceTime)) (x : SpaceTime) : ℝ :=
+noncomputable def SmearedTwoPointFunction (dμ_config : ProbabilityMeasure (FieldConfiguration d))
+    (φ : ContDiffBump (0 : SpaceTime d)) (x : SpaceTime d) : ℝ :=
   SchwingerFunction₂ dμ_config
     (translateSchwartz (bumpToSchwartz φ) x)
     (bumpToSchwartz φ)
 
 /-- A canonical sequence of bump functions with rOut → 0.
     We use rOut = 1/n for n ∈ ℕ⁺. -/
-noncomputable def standardBumpSequence (n : ℕ) (hn : n ≠ 0) : ContDiffBump (0 : SpaceTime) :=
+noncomputable def standardBumpSequence (n : ℕ) (hn : n ≠ 0) : ContDiffBump (0 : SpaceTime d) :=
   -- Create a bump with rOut = 1/n and rIn = 1/(2n)
   { rIn := 1 / (2 * n)
     rOut := 1 / n
@@ -113,7 +121,7 @@ noncomputable def standardBumpSequence (n : ℕ) (hn : n ≠ 0) : ContDiffBump (
 
     For the GFF, this limit equals freeCovarianceKernel(x) by `double_mollifier_convergence`. -/
 noncomputable def SchwingerTwoPointFunction
-    (dμ_config : ProbabilityMeasure FieldConfiguration) (x : SpaceTime) : ℝ :=
+    (dμ_config : ProbabilityMeasure (FieldConfiguration d)) (x : SpaceTime d) : ℝ :=
   -- Regularize at coincident points: S₂(0) = 0
   if x = 0 then 0
   else
@@ -125,7 +133,7 @@ noncomputable def SchwingerTwoPointFunction
 /-- SchwingerTwoPointFunction vanishes at coincident points by definition. -/
 @[simp]
 theorem schwingerTwoPointFunction_zero
-    (dμ_config : ProbabilityMeasure FieldConfiguration) :
+    (dμ_config : ProbabilityMeasure (FieldConfiguration d)) :
     SchwingerTwoPointFunction dμ_config 0 = 0 := by
   unfold SchwingerTwoPointFunction
   simp only [ite_true]
@@ -142,15 +150,15 @@ theorem schwingerTwoPointFunction_zero
 
     The proof uses `double_mollifier_convergence` from FunctionalAnalysis.lean. -/
 theorem smearedTwoPoint_tendsto_schwingerTwoPoint
-    (dμ_config : ProbabilityMeasure FieldConfiguration) (x : SpaceTime) (hx : x ≠ 0)
+    (dμ_config : ProbabilityMeasure (FieldConfiguration d)) (x : SpaceTime d) (hx : x ≠ 0)
     {ι : Type*} {l : Filter ι} [l.NeBot]
-    (φ : ι → ContDiffBump (0 : SpaceTime))
+    (φ : ι → ContDiffBump (0 : SpaceTime d))
     (hφ : Filter.Tendsto (fun i => (φ i).rOut) l (nhds 0))
     -- Key hypothesis: there exists an underlying continuous kernel
-    (C : SpaceTime → ℝ)
+    (C : SpaceTime d → ℝ)
     (hC : ContinuousOn C {y | y ≠ 0})
     -- The SchwingerFunction₂ computes the double integral against C
-    (hS₂ : ∀ (f g : TestFunction),
+    (hS₂ : ∀ (f g : TestFunction d),
       SchwingerFunction₂ dμ_config f g = ∫ u, ∫ v, f u * C (u - v) * g v) :
     Filter.Tendsto (fun i => SmearedTwoPointFunction dμ_config (φ i) x)
       l (nhds (C x)) := by
@@ -178,10 +186,10 @@ theorem smearedTwoPoint_tendsto_schwingerTwoPoint
     Note: For x = 0, the SchwingerTwoPointFunction is defined to be 0 by regularization,
     so this theorem requires x ≠ 0. -/
 theorem schwingerTwoPointFunction_eq_kernel
-    (dμ_config : ProbabilityMeasure FieldConfiguration) (x : SpaceTime) (hx : x ≠ 0)
-    (C : SpaceTime → ℝ)
+    (dμ_config : ProbabilityMeasure (FieldConfiguration d)) (x : SpaceTime d) (hx : x ≠ 0)
+    (C : SpaceTime d → ℝ)
     (hC : ContinuousOn C {y | y ≠ 0})
-    (hS₂ : ∀ (f g : TestFunction),
+    (hS₂ : ∀ (f g : TestFunction d),
       SchwingerFunction₂ dμ_config f g = ∫ u, ∫ v, f u * C (u - v) * g v) :
     SchwingerTwoPointFunction dμ_config x = C x := by
   unfold SchwingerTwoPointFunction
@@ -195,7 +203,7 @@ theorem schwingerTwoPointFunction_eq_kernel
 
     -- Define φ indexed by ℕ+ using (n+1) to avoid the n=0 issue
     -- φ n = standardBumpSequence (n+1) _, so φ n has rOut = 1/(n+1)
-    let φ : ℕ → ContDiffBump (0 : SpaceTime) := fun n => standardBumpSequence (n + 1) (Nat.succ_ne_zero n)
+    let φ : ℕ → ContDiffBump (0 : SpaceTime d) := fun n => standardBumpSequence (n + 1) (Nat.succ_ne_zero n)
 
     -- The rOut of this sequence tends to 0: 1/(n+1) → 0
     have hφ_rOut : Filter.Tendsto (fun n => (φ n).rOut) Filter.atTop (nhds 0) := by

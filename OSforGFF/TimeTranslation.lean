@@ -29,10 +29,10 @@ and tempered distributions. These are fundamental for the OS4 (Ergodicity) axiom
 
 ## Notation
 
-We work in spacetime ℝ × ℝ³ where:
+We work in spacetime ℝ × ℝ^{d-1} where:
 - The first coordinate is time (index 0)
-- The remaining 3 coordinates are space (indices 1,2,3)
-- This matches STDimension = 4 from Basic.lean
+- The remaining d-1 coordinates are space (indices 1,...,d-1)
+- The dimension d is a parameter
 
 ## Main Theorems
 
@@ -53,37 +53,39 @@ noncomputable section
 
 namespace TimeTranslation
 
+variable {d : ℕ} [Fact (0 < d)]
+
 /-! ## Time Translation on Spacetime Points
 
 Definition 0.2 from the PDF: For any s ∈ ℝ, define the time translation operator.
-The time coordinate is index 0 in our 4D spacetime.
+The time coordinate is index 0 in our d-dimensional spacetime.
 -/
 
 /-- The time coordinate index in spacetime (index 0). -/
-def timeIndex : Fin STDimension := ⟨0, by norm_num⟩
+def timeIndex : Fin d := ⟨0, Fact.out⟩
 
 /-- Extract the time component from a spacetime point. -/
-def getTime (u : SpaceTime) : ℝ := u timeIndex
+def getTime (u : SpaceTime d) : ℝ := u timeIndex
 
 /-- Time translation on spacetime points: shifts the time coordinate by s.
     (timeShift s u)_0 = u_0 + s, and (timeShift s u)_i = u_i for i ≠ 0. -/
-def timeShift (s : ℝ) (u : SpaceTime) : SpaceTime :=
+def timeShift (s : ℝ) (u : SpaceTime d) : SpaceTime d :=
   WithLp.toLp 2 (fun i => if i.val = 0 then u.ofLp i + s else u.ofLp i)
 
 @[simp]
-lemma timeShift_time (s : ℝ) (u : SpaceTime) :
+lemma timeShift_time (s : ℝ) (u : SpaceTime d) :
     getTime (timeShift s u) = getTime u + s := by
   simp only [getTime, timeIndex, timeShift]
   rfl
 
 @[simp]
-lemma timeShift_spatial (s : ℝ) (u : SpaceTime) (i : Fin STDimension) (hi : i.val ≠ 0) :
+lemma timeShift_spatial (s : ℝ) (u : SpaceTime d) (i : Fin d) (hi : i.val ≠ 0) :
     (timeShift s u) i = u i := by
   simp only [timeShift]
   exact if_neg hi
 
 /-- Time shift is a group action: T_{s+t} = T_s ∘ T_t -/
-lemma timeShift_add (s t : ℝ) (u : SpaceTime) :
+lemma timeShift_add (s t : ℝ) (u : SpaceTime d) :
     timeShift (s + t) u = timeShift s (timeShift t u) := by
   simp only [timeShift]
   congr 1
@@ -94,32 +96,32 @@ lemma timeShift_add (s t : ℝ) (u : SpaceTime) :
 
 /-- Time shift by zero is identity -/
 @[simp]
-lemma timeShift_zero (u : SpaceTime) : timeShift 0 u = u := by
+lemma timeShift_zero (u : SpaceTime d) : timeShift 0 u = u := by
   simp only [timeShift]
   congr 1
   funext i
   split_ifs <;> ring
 
 /-- Time shifts commute: T_s ∘ T_t = T_t ∘ T_s -/
-lemma timeShift_comm (s t : ℝ) (u : SpaceTime) :
+lemma timeShift_comm (s t : ℝ) (u : SpaceTime d) :
     timeShift s (timeShift t u) = timeShift t (timeShift s u) := by
   rw [← timeShift_add, ← timeShift_add, add_comm]
 
-/-- Time shift is smooth as a map SpaceTime → SpaceTime.
+/-- Time shift is smooth as a map SpaceTime d → SpaceTime d.
     This is because it's an affine map (linear + constant). -/
-lemma timeShift_contDiff (s : ℝ) : ContDiff ℝ (⊤ : ℕ∞) (timeShift s) := by
+lemma timeShift_contDiff (s : ℝ) : ContDiff ℝ (⊤ : ℕ∞) (timeShift (d := d) s) := by
   unfold timeShift
   apply contDiff_piLp'
   intro i
-  have hcoord : ContDiff ℝ (⊤ : ℕ∞) (fun x : SpaceTime => x.ofLp i) :=
+  have hcoord : ContDiff ℝ (⊤ : ℕ∞) (fun x : SpaceTime d => x.ofLp i) :=
     (contDiff_apply ℝ ℝ i).comp PiLp.contDiff_ofLp
-  show ContDiff ℝ (⊤ : ℕ∞) (fun x : SpaceTime => if i.val = 0 then x.ofLp i + s else x.ofLp i)
+  show ContDiff ℝ (⊤ : ℕ∞) (fun x : SpaceTime d => if i.val = 0 then x.ofLp i + s else x.ofLp i)
   split_ifs with h
   · exact hcoord.add contDiff_const
   · exact hcoord
 
 /-- Time shift preserves the Euclidean distance (it's an isometry) -/
-lemma timeShift_dist (s : ℝ) (u v : SpaceTime) :
+lemma timeShift_dist (s : ℝ) (u v : SpaceTime d) :
     dist (timeShift s u) (timeShift s v) = dist u v := by
   simp only [EuclideanSpace.dist_eq, timeShift]
   congr 1
@@ -130,20 +132,20 @@ lemma timeShift_dist (s : ℝ) (u v : SpaceTime) :
   · rfl
 
 /-- Time shift is an isometry -/
-lemma timeShift_isometry (s : ℝ) : Isometry (timeShift s) := by
+lemma timeShift_isometry (s : ℝ) : Isometry (timeShift (d := d) s) := by
   rw [isometry_iff_dist_eq]
   exact fun u v => timeShift_dist s u v
 
 /-- Time shift is antilipschitz (follows from being an isometry). -/
-lemma timeShift_antilipschitz (s : ℝ) : AntilipschitzWith 1 (timeShift s) :=
+lemma timeShift_antilipschitz (s : ℝ) : AntilipschitzWith 1 (timeShift (d := d) s) :=
   (timeShift_isometry s).antilipschitz
 
 /-- The constant vector used to express timeShift as id + const. -/
-def timeShiftConst (s : ℝ) : SpaceTime :=
+def timeShiftConst (s : ℝ) : SpaceTime d :=
   WithLp.toLp 2 (fun i => if i.val = 0 then s else 0)
 
 /-- timeShift s equals addition of a constant. -/
-lemma timeShift_eq_add_const (s : ℝ) (u : SpaceTime) :
+lemma timeShift_eq_add_const (s : ℝ) (u : SpaceTime d) :
     timeShift s u = u + timeShiftConst s := by
   simp only [timeShift, timeShiftConst]
   ext i
@@ -152,36 +154,36 @@ lemma timeShift_eq_add_const (s : ℝ) (u : SpaceTime) :
 
 /-- Time shift has temperate growth (key for Schwartz composition).
     This follows because timeShift is an affine map (id + constant). -/
-lemma timeShift_hasTemperateGrowth (s : ℝ) : Function.HasTemperateGrowth (timeShift s) := by
+lemma timeShift_hasTemperateGrowth (s : ℝ) : Function.HasTemperateGrowth (timeShift (d := d) s) := by
   -- The derivative is constant (= id), so has temperate growth
-  have h_fderiv_temperate : Function.HasTemperateGrowth (fderiv ℝ (timeShift s)) := by
-    have h_eq : fderiv ℝ (timeShift s) = fun _ => ContinuousLinearMap.id ℝ SpaceTime := by
+  have h_fderiv_temperate : Function.HasTemperateGrowth (fderiv ℝ (timeShift (d := d) s)) := by
+    have h_eq : fderiv ℝ (timeShift (d := d) s) = fun _ => ContinuousLinearMap.id ℝ (SpaceTime d) := by
       ext x v
-      have h : timeShift s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
+      have h : timeShift (d := d) s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
       rw [h]
       simp only [fderiv_add_const, fderiv_id', ContinuousLinearMap.id_apply]
     rw [h_eq]
     exact Function.HasTemperateGrowth.const _
   -- timeShift is differentiable
-  have h_diff : Differentiable ℝ (timeShift s) := by
+  have h_diff : Differentiable ℝ (timeShift (d := d) s) := by
     intro x
-    have h : timeShift s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
+    have h : timeShift (d := d) s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
     rw [h]
     exact differentiableAt_id.add_const _
   -- Polynomial bound: ‖timeShift s x‖ ≤ C * (1 + ‖x‖)^k
-  have h_bound : ∀ x : SpaceTime, ‖timeShift s x‖ ≤ (1 + ‖timeShiftConst s‖) * (1 + ‖x‖) ^ 1 := by
+  have h_bound : ∀ x : SpaceTime d, ‖timeShift s x‖ ≤ (1 + ‖timeShiftConst (d := d) s‖) * (1 + ‖x‖) ^ 1 := by
     intro x
     rw [timeShift_eq_add_const, pow_one]
     calc ‖x + timeShiftConst s‖
         ≤ ‖x‖ + ‖timeShiftConst s‖ := norm_add_le _ _
-      _ ≤ (1 + ‖timeShiftConst s‖) * (1 + ‖x‖) := by
-          nlinarith [norm_nonneg x, norm_nonneg (timeShiftConst s)]
+      _ ≤ (1 + ‖timeShiftConst (d := d) s‖) * (1 + ‖x‖) := by
+          nlinarith [norm_nonneg x, norm_nonneg (timeShiftConst (d := d) s)]
   exact Function.HasTemperateGrowth.of_fderiv h_fderiv_temperate h_diff h_bound
 
 /-! ## Time Translation on Schwartz Functions
 
 Definition 0.2 from the PDF: For any s ∈ ℝ, define the time translation operator on
-Schwartz functions T_s : S(ℝ × ℝ³) → S(ℝ × ℝ³) by
+Schwartz functions T_s : S(ℝ × ℝ^{d-1}) → S(ℝ × ℝ^{d-1}) by
 
   (T_s f)(t, x) := f(t + s, x)
 
@@ -196,7 +198,7 @@ is a linear map on the Schwartz space.
     Uses mathlib's `compCLMOfAntilipschitz` which requires:
     1. The composition function has temperate growth
     2. The composition function is antilipschitz -/
-def timeTranslationSchwartzCLM (s : ℝ) : TestFunction →L[ℝ] TestFunction :=
+def timeTranslationSchwartzCLM (s : ℝ) : TestFunction d →L[ℝ] TestFunction d :=
   SchwartzMap.compCLMOfAntilipschitz ℝ (timeShift_hasTemperateGrowth s) (timeShift_antilipschitz s)
 
 /-- Time translation on real-valued Schwartz functions.
@@ -210,65 +212,65 @@ def timeTranslationSchwartzCLM (s : ℝ) : TestFunction →L[ℝ] TestFunction :
     1. timeShift s has temperate growth (affine map)
     2. timeShift s is antilipschitz (isometry)
 -/
-def timeTranslationSchwartz (s : ℝ) (f : TestFunction) : TestFunction :=
+def timeTranslationSchwartz (s : ℝ) (f : TestFunction d) : TestFunction d :=
   timeTranslationSchwartzCLM s f
 
 /-- Time translation as a continuous linear map on complex-valued Schwartz functions. -/
-def timeTranslationSchwartzℂCLM (s : ℝ) : TestFunctionℂ →L[ℂ] TestFunctionℂ :=
+def timeTranslationSchwartzℂCLM (s : ℝ) : TestFunctionℂ d →L[ℂ] TestFunctionℂ d :=
   SchwartzMap.compCLMOfAntilipschitz ℂ (timeShift_hasTemperateGrowth s) (timeShift_antilipschitz s)
 
 /-- Time translation on complex-valued Schwartz functions. -/
-def timeTranslationSchwartzℂ (s : ℝ) (f : TestFunctionℂ) : TestFunctionℂ :=
+def timeTranslationSchwartzℂ (s : ℝ) (f : TestFunctionℂ d) : TestFunctionℂ d :=
   timeTranslationSchwartzℂCLM s f
 
 /-- Time translation evaluated at a point. -/
 @[simp]
-lemma timeTranslationSchwartz_apply (s : ℝ) (f : TestFunction) (u : SpaceTime) :
+lemma timeTranslationSchwartz_apply (s : ℝ) (f : TestFunction d) (u : SpaceTime d) :
     (timeTranslationSchwartz s f) u = f (timeShift s u) := by
   simp only [timeTranslationSchwartz, timeTranslationSchwartzCLM,
     SchwartzMap.compCLMOfAntilipschitz_apply, Function.comp_apply]
 
 /-- Time translation on complex functions evaluated at a point. -/
 @[simp]
-lemma timeTranslationSchwartzℂ_apply (s : ℝ) (f : TestFunctionℂ) (u : SpaceTime) :
+lemma timeTranslationSchwartzℂ_apply (s : ℝ) (f : TestFunctionℂ d) (u : SpaceTime d) :
     (timeTranslationSchwartzℂ s f) u = f (timeShift s u) := by
   simp only [timeTranslationSchwartzℂ, timeTranslationSchwartzℂCLM,
     SchwartzMap.compCLMOfAntilipschitz_apply, Function.comp_apply]
 
 /-- Time translation is a group homomorphism: T_{s+t} = T_s ∘ T_t -/
-lemma timeTranslationSchwartz_add (s t : ℝ) (f : TestFunction) :
+lemma timeTranslationSchwartz_add (s t : ℝ) (f : TestFunction d) :
     timeTranslationSchwartz (s + t) f = timeTranslationSchwartz s (timeTranslationSchwartz t f) := by
   ext u
   simp only [timeTranslationSchwartz_apply, timeShift_add, timeShift_comm]
 
 /-- Time translation on complex functions: T_{s+t} = T_s ∘ T_t -/
-lemma timeTranslationSchwartzℂ_add (s t : ℝ) (f : TestFunctionℂ) :
+lemma timeTranslationSchwartzℂ_add (s t : ℝ) (f : TestFunctionℂ d) :
     timeTranslationSchwartzℂ (s + t) f = timeTranslationSchwartzℂ s (timeTranslationSchwartzℂ t f) := by
   ext u
   simp only [timeTranslationSchwartzℂ_apply, timeShift_add, timeShift_comm]
 
 /-- Time translation by zero is identity -/
 @[simp]
-lemma timeTranslationSchwartz_zero (f : TestFunction) :
+lemma timeTranslationSchwartz_zero (f : TestFunction d) :
     timeTranslationSchwartz 0 f = f := by
   ext u
   simp only [timeTranslationSchwartz_apply, timeShift_zero]
 
 /-- Time translation by zero is identity (complex) -/
 @[simp]
-lemma timeTranslationSchwartzℂ_zero (f : TestFunctionℂ) :
+lemma timeTranslationSchwartzℂ_zero (f : TestFunctionℂ d) :
     timeTranslationSchwartzℂ 0 f = f := by
   ext u
   simp only [timeTranslationSchwartzℂ_apply, timeShift_zero]
 
 /-- Time translation preserves addition of Schwartz functions -/
-lemma timeTranslationSchwartz_add_fun (s : ℝ) (f g : TestFunction) :
+lemma timeTranslationSchwartz_add_fun (s : ℝ) (f g : TestFunction d) :
     timeTranslationSchwartz s (f + g) = timeTranslationSchwartz s f + timeTranslationSchwartz s g := by
   ext u
   simp only [timeTranslationSchwartz_apply, SchwartzMap.add_apply]
 
 /-- Time translation preserves scalar multiplication of Schwartz functions -/
-lemma timeTranslationSchwartz_smul (s : ℝ) (c : ℝ) (f : TestFunction) :
+lemma timeTranslationSchwartz_smul (s : ℝ) (c : ℝ) (f : TestFunction d) :
     timeTranslationSchwartz s (c • f) = c • timeTranslationSchwartz s f := by
   ext u
   simp only [timeTranslationSchwartz_apply, SchwartzMap.smul_apply]
@@ -281,24 +283,24 @@ The following lemmas establish the pointwise FTC formula:
 This provides the mathematical foundation for the Lipschitz bound theorem below.
 -/
 
-/-- The unit time direction vector in SpaceTime. -/
-def unitTimeDir : SpaceTime := EuclideanSpace.single timeIndex (1 : ℝ)
+/-- The unit time direction vector in SpaceTime d. -/
+def unitTimeDir : SpaceTime d := EuclideanSpace.single timeIndex (1 : ℝ)
 
 /-- timeShift is continuous in the time parameter s -/
-lemma continuous_timeShift_param (x : SpaceTime) : Continuous (fun s : ℝ => timeShift s x) := by
+lemma continuous_timeShift_param (x : SpaceTime d) : Continuous (fun s : ℝ => timeShift s x) := by
   have h_shift : (fun s : ℝ => timeShift s x) = (fun s => x + s • unitTimeDir) := by
     funext s; simp only [timeShift, unitTimeDir, EuclideanSpace.single]
     ext i; simp only [PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, Pi.single,
       Function.update, timeIndex, eq_rec_constant, dite_eq_ite]
-    split_ifs with h1 h2 <;> simp_all
+    by_cases h : i = (⟨0, Fact.out⟩ : Fin d) <;> simp_all <;> ring
   rw [h_shift]
   exact continuous_const.add (continuous_id.smul continuous_const)
 
-/-- Peetre's inequality for polynomial weights in SpaceTime.
+/-- Peetre's inequality for polynomial weights in SpaceTime d.
     (1 + ‖x‖)^k ≤ (1 + ‖x + y‖)^k * (1 + ‖y‖)^k
 
     This handles weight shifting when translating between seminorms at different points. -/
-lemma peetre_weight_bound (x y : SpaceTime) (k : ℕ) :
+lemma peetre_weight_bound (x y : SpaceTime d) (k : ℕ) :
     (1 + ‖x‖) ^ k ≤ (1 + ‖x + y‖) ^ k * (1 + ‖y‖) ^ k := by
   have h1 : ‖x‖ ≤ ‖x + y‖ + ‖y‖ := by
     calc ‖x‖ = ‖(x + y) + (-y)‖ := by simp only [add_neg_cancel_right]
@@ -314,11 +316,11 @@ lemma peetre_weight_bound (x y : SpaceTime) (k : ℕ) :
 
 /-- The iterated derivative commutes with time translation.
     D^n(T_h f)(x) = D^n f(x + h·e₀) -/
-lemma iteratedFDeriv_timeTranslationSchwartz (n : ℕ) (h : ℝ) (f : TestFunction) (x : SpaceTime) :
+lemma iteratedFDeriv_timeTranslationSchwartz (n : ℕ) (h : ℝ) (f : TestFunction d) (x : SpaceTime d) :
     iteratedFDeriv ℝ n (timeTranslationSchwartz h f) x =
     iteratedFDeriv ℝ n f (x + h • unitTimeDir) := by
   -- timeTranslationSchwartz h f = f ∘ (· + h • unitTimeDir)
-  have h_shift_eq : timeShiftConst h = h • unitTimeDir := by
+  have h_shift_eq : timeShiftConst h = h • (unitTimeDir : SpaceTime d) := by
     ext i
     simp only [timeShiftConst, unitTimeDir, EuclideanSpace.single, timeIndex]
     -- LHS: if i.val = 0 then h else 0
@@ -334,10 +336,11 @@ lemma iteratedFDeriv_timeTranslationSchwartz (n : ℕ) (h : ℝ) (f : TestFuncti
   have h_eq : ∀ z, timeTranslationSchwartz h f z = f (z + h • unitTimeDir) := by
     intro z
     rw [timeTranslationSchwartz_apply, timeShift_eq_add_const, h_shift_eq]
-  conv_lhs => rw [show (timeTranslationSchwartz h f : SpaceTime → ℝ) = fun z => f (z + h • unitTimeDir)
+  conv_lhs => rw [show (timeTranslationSchwartz h f : SpaceTime d → ℝ) = fun z => f (z + h • unitTimeDir)
     from funext h_eq]
   exact iteratedFDeriv_comp_add_right n _ x
 
+set_option maxHeartbeats 400000 in
 /-- **Locally Uniform Lipschitz Bound for Time Translation.**
 
     For any Schwartz function f and time shift h, the seminorm of T_h f - f
@@ -356,7 +359,7 @@ lemma iteratedFDeriv_timeTranslationSchwartz (n : ℕ) (h : ℝ) (f : TestFuncti
     4. Apply Peetre: ‖x‖^k ≤ (1+|h|)^k · (1+‖w‖)^k for path points w
     5. Bound (1+‖w‖)^k ≤ 2^k · max(1, ‖w‖^k) and use seminorms -/
 theorem schwartz_timeTranslation_lipschitz_seminorm
-    (k n : ℕ) (f : TestFunction) (h : ℝ) :
+    (k n : ℕ) (f : TestFunction d) (h : ℝ) :
     (SchwartzMap.seminorm ℝ k n) (timeTranslationSchwartz h f - f) ≤
     |h| * (1 + |h|) ^ k * (2 : ℝ) ^ k *
     ((SchwartzMap.seminorm ℝ k (n + 1)) f + (SchwartzMap.seminorm ℝ 0 (n + 1)) f + 1) := by
@@ -371,7 +374,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
     have h_coe : ⇑(timeTranslationSchwartz h f - f) = ⇑(timeTranslationSchwartz h f) - ⇑f := rfl
     rw [h_coe]
     -- Use sub_eq_add_neg and iteratedFDeriv_add_apply + iteratedFDeriv_neg
-    have h_neg_eq : (-⇑f : SpaceTime → ℝ) = fun x => -f x := rfl
+    have h_neg_eq : (-⇑f : SpaceTime d → ℝ) = fun x => -f x := rfl
     have h_sub_neg : ⇑(timeTranslationSchwartz h f) - ⇑f =
         ⇑(timeTranslationSchwartz h f) + (fun x => -f x) := by
       rw [← h_neg_eq]; exact sub_eq_add_neg _ _
@@ -393,7 +396,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
   -- Define the path g(t) = iteratedFDeriv ℝ n f (x + t • (h • unitTimeDir))
   -- g(0) = iteratedFDeriv ℝ n f x
   -- g(1) = iteratedFDeriv ℝ n f (x + h • unitTimeDir)
-  let y := h • unitTimeDir
+  let y := h • (unitTimeDir : SpaceTime d)
   have hy : ‖y‖ = |h| := by
     simp only [y, unitTimeDir, norm_smul, Real.norm_eq_abs]
     rw [EuclideanSpace.norm_single, norm_one, mul_one]
@@ -420,7 +423,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
       _ = (1 + ‖y‖) ^ k * (1 + ‖z‖) ^ k := mul_comm _ _
   -- Apply MVT: Define g(t) = iteratedFDeriv ℝ n f (x + t • y) for t ∈ [0,1]
   -- Then g(1) - g(0) = iteratedFDeriv at z minus iteratedFDeriv at x
-  let g : ℝ → (SpaceTime [×n]→L[ℝ] ℝ) := fun t => iteratedFDeriv ℝ n f (x + t • y)
+  let g : ℝ → (SpaceTime d [×n]→L[ℝ] ℝ) := fun t => iteratedFDeriv ℝ n f (x + t • y)
   -- g is differentiable (f is smooth)
   have hg_diff : DifferentiableOn ℝ g (Set.Icc 0 1) := by
     intro t _
@@ -490,8 +493,8 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
         -- deriv g t = fderiv g t 1
         have h1 : deriv g t = fderiv ℝ g t 1 := fderiv_apply_one_eq_deriv.symm
         -- g = iter ∘ path where path s = x + s • y
-        let path : ℝ → SpaceTime := fun s => x + s • y
-        let iter := iteratedFDeriv ℝ n (f : SpaceTime → ℝ)
+        let path : ℝ → SpaceTime d := fun s => x + s • y
+        let iter := iteratedFDeriv ℝ n (f : SpaceTime d → ℝ)
         have hg_eq : g = iter ∘ path := rfl
         -- fderiv of path at t is: s ↦ s • y
         have h_path_diff : DifferentiableAt ℝ path t :=
@@ -519,17 +522,17 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
         rfl  -- iter = iteratedFDeriv ℝ n f by definition
 
       -- Use fderiv_iteratedFDeriv: fderiv (iteratedFDeriv n f) = curryLeftEquiv ∘ iteratedFDeriv (n+1) f
-      have h_fderiv_iter : fderiv ℝ (iteratedFDeriv ℝ n (f : SpaceTime → ℝ)) (x + t • y) =
-          (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => SpaceTime) ℝ)
+      have h_fderiv_iter : fderiv ℝ (iteratedFDeriv ℝ n (f : SpaceTime d → ℝ)) (x + t • y) =
+          (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => SpaceTime d) ℝ)
             (iteratedFDeriv ℝ (n + 1) f (x + t • y)) := by
-        have := @fderiv_iteratedFDeriv ℝ _ SpaceTime _ _ ℝ _ _ f n
+        have := @fderiv_iteratedFDeriv ℝ _ (SpaceTime d) _ _ ℝ _ _ f n
         exact congrFun this (x + t • y)
 
       rw [h_deriv_eq, h_fderiv_iter]
       -- Now bound using CLM.le_opNorm and the fact that curryLeftEquiv is norm-preserving
-      calc ‖(continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => SpaceTime) ℝ)
+      calc ‖(continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => SpaceTime d) ℝ)
               (iteratedFDeriv ℝ (n + 1) f (x + t • y)) y‖
-        ≤ ‖(continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => SpaceTime) ℝ)
+        ≤ ‖(continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => SpaceTime d) ℝ)
               (iteratedFDeriv ℝ (n + 1) f (x + t • y))‖ * ‖y‖ :=
             ContinuousLinearMap.le_opNorm _ _
         _ = ‖iteratedFDeriv ℝ (n + 1) f (x + t • y)‖ * ‖y‖ := by
@@ -743,7 +746,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
 
     ## References
     Reed-Simon V.3 (Schwartz distributions), Hörmander Ch. 7 (test functions) -/
-lemma continuous_timeTranslationSchwartz (f : TestFunction) :
+lemma continuous_timeTranslationSchwartz (f : TestFunction d) :
     Continuous (fun s => timeTranslationSchwartz s f) := by
   -- Strategy: Prove continuity at each point s₀ using the group action
   -- T_{s₀+h} f = T_{s₀}(T_h f), so if T_h f → f as h → 0, then T_{s₀+h} f → T_{s₀} f
@@ -771,7 +774,7 @@ lemma continuous_timeTranslationSchwartz (f : TestFunction) :
     funext h_group
   rw [h_eq]
   -- Now use that T_{s₀} is continuous
-  have h_cont : Continuous (timeTranslationSchwartzCLM s₀) := (timeTranslationSchwartzCLM s₀).continuous
+  have h_cont : Continuous (timeTranslationSchwartzCLM (d := d) s₀) := (timeTranslationSchwartzCLM (d := d) s₀).continuous
   -- It suffices to show: T_{s-s₀} f → T_0 f = f as s → s₀
   apply Filter.Tendsto.comp h_cont.continuousAt
   -- Now prove: T_{s-s₀} f → f as s → s₀ (equivalently, T_h f → f as h → 0)
@@ -787,13 +790,13 @@ lemma continuous_timeTranslationSchwartz (f : TestFunction) :
   -- Now prove continuity at 0: T_h f → f as h → 0
   -- This uses the Mean Value estimate: ‖T_h f - f‖ ≤ |h| · C
   -- Use seminorm characterization: Schwartz topology = ⨅ seminorm topologies
-  have hw := schwartz_withSeminorms (𝕜 := ℝ) (E := SpaceTime) (F := ℝ)
-  rw [(schwartzSeminormFamily ℝ SpaceTime ℝ).withSeminorms_iff_topologicalSpace_eq_iInf.mp hw]
+  have hw := schwartz_withSeminorms (𝕜 := ℝ) (E := SpaceTime d) (F := ℝ)
+  rw [(schwartzSeminormFamily ℝ (SpaceTime d) ℝ).withSeminorms_iff_topologicalSpace_eq_iInf.mp hw]
   rw [nhds_iInf, Filter.tendsto_iInf]
   intro i
   -- For each seminorm i = (k, n), show T_h f → f in the seminorm topology
-  letI : PseudoMetricSpace TestFunction :=
-    (schwartzSeminormFamily ℝ SpaceTime ℝ i).toSeminormedAddCommGroup.toPseudoMetricSpace
+  letI : PseudoMetricSpace (TestFunction d) :=
+    (schwartzSeminormFamily ℝ (SpaceTime d) ℝ i).toSeminormedAddCommGroup.toPseudoMetricSpace
   rw [Metric.tendsto_nhds]
   intro ε hε
   -- Mean Value estimate: ‖T_h f - f‖_{k,n} ≤ |h| · L where L depends on f's seminorms
@@ -814,10 +817,10 @@ lemma continuous_timeTranslationSchwartz (f : TestFunction) :
   -- Goal: dist (T_h f) f < ε
   -- Distance = seminorm(T_h f - f) in the induced metric
   have hdist : dist (timeTranslationSchwartz h f) f =
-      (schwartzSeminormFamily ℝ SpaceTime ℝ i) (timeTranslationSchwartz h f - f) := rfl
+      (schwartzSeminormFamily ℝ (SpaceTime d) ℝ i) (timeTranslationSchwartz h f - f) := rfl
   rw [hdist]
   -- Apply the Lipschitz bound
-  have h_seminorm_eq : schwartzSeminormFamily ℝ SpaceTime ℝ i =
+  have h_seminorm_eq : schwartzSeminormFamily ℝ (SpaceTime d) ℝ i =
       SchwartzMap.seminorm ℝ i.1 i.2 := rfl
   rw [h_seminorm_eq]
   have h_lip := schwartz_timeTranslation_lipschitz_seminorm k n f h
@@ -853,12 +856,12 @@ lemma continuous_timeTranslationSchwartz (f : TestFunction) :
 
 /-! ## Time Translation on Tempered Distributions
 
-Definition 0.2 from the PDF: For φ ∈ S'(ℝ × ℝ³) (tempered distribution), define T_s φ
+Definition 0.2 from the PDF: For φ ∈ S'(ℝ × ℝ^{d-1}) (tempered distribution), define T_s φ
 by the pairing:
 
   ⟨T_s φ, f⟩ := ⟨φ, T_{-s} f⟩
 
-for all f ∈ S(ℝ × ℝ³).
+for all f ∈ S(ℝ × ℝ^{d-1}).
 -/
 
 /-- Time translation on tempered distributions (field configurations).
@@ -866,21 +869,21 @@ for all f ∈ S(ℝ × ℝ³).
     The action is defined by duality:
     ⟨T_s ω, f⟩ = ⟨ω, T_{-s} f⟩
 
-    Since FieldConfiguration = WeakDual ℝ TestFunction, and timeTranslationSchwartzCLM (-s)
+    Since FieldConfiguration d = WeakDual ℝ (TestFunction d), and timeTranslationSchwartzCLM (-s)
     is a continuous linear map, we can simply compose: T_s ω = ω ∘ T_{-s}.
 
     Continuity is automatic since composition of continuous linear maps is continuous.
 -/
-def timeTranslationDistribution (s : ℝ) (ω : FieldConfiguration) : FieldConfiguration :=
+def timeTranslationDistribution (s : ℝ) (ω : FieldConfiguration d) : FieldConfiguration d :=
   ω.comp (timeTranslationSchwartzCLM (-s))
 
 /-- The defining property of time translation on distributions. -/
 @[simp]
-lemma timeTranslationDistribution_apply (s : ℝ) (ω : FieldConfiguration) (f : TestFunction) :
+lemma timeTranslationDistribution_apply (s : ℝ) (ω : FieldConfiguration d) (f : TestFunction d) :
     (timeTranslationDistribution s ω) f = ω (timeTranslationSchwartz (-s) f) := rfl
 
 /-- Time translation on distributions is a group homomorphism: T_{s+t} = T_s ∘ T_t -/
-lemma timeTranslationDistribution_add (s t : ℝ) (ω : FieldConfiguration) :
+lemma timeTranslationDistribution_add (s t : ℝ) (ω : FieldConfiguration d) :
     timeTranslationDistribution (s + t) ω =
     timeTranslationDistribution s (timeTranslationDistribution t ω) := by
   apply DFunLike.ext
@@ -898,7 +901,7 @@ lemma timeTranslationDistribution_add (s t : ℝ) (ω : FieldConfiguration) :
 
 /-- Time translation by zero is identity on distributions -/
 @[simp]
-lemma timeTranslationDistribution_zero (ω : FieldConfiguration) :
+lemma timeTranslationDistribution_zero (ω : FieldConfiguration d) :
     timeTranslationDistribution 0 ω = ω := by
   apply DFunLike.ext
   intro f

@@ -75,7 +75,7 @@ avoids non-convergent pointwise integrals. -/
 
     This is the distributional formulation that is mathematically well-defined
     for Schwartz test functions. -/
-noncomputable def rpInnerProduct (m : ℝ) (f : TestFunctionℂ) : ℂ :=
+noncomputable def rpInnerProduct (m : ℝ) (f : TestFunctionℂ STDimension) : ℂ :=
   freeCovarianceℂ_bilinear m (star f) f
 
 /-! ## Direct Proof of Reflection Positivity
@@ -90,7 +90,7 @@ open scoped ComplexConjugate
 
 /-! ## Part 1: Core Definitions -/
 
-noncomputable def timeReflection (x : SpaceTime) : SpaceTime :=
+noncomputable def timeReflection (x : SpaceTime STDimension) : SpaceTime STDimension :=
   (WithLp.equiv 2 _).symm (Function.update x.ofLp 0 (-x.ofLp 0))
 
 lemma timeReflection_involutive : Function.Involutive timeReflection := by
@@ -101,42 +101,42 @@ lemma timeReflection_involutive : Function.Involutive timeReflection := by
   simp only [WithLp.equiv_symm_apply]
   by_cases hi : i = 0 <;> simp [hi, Function.update]
 
-noncomputable def spatialDot (k_spatial x_spatial : SpatialCoords) : ℝ :=
+noncomputable def spatialDot (k_spatial x_spatial : SpatialCoords STDimension) : ℝ :=
   ∑ i, k_spatial i * x_spatial i
 
-noncomputable def freeCovarianceℂ_bilinear (m : ℝ) (f g : TestFunctionℂ) : ℂ :=
+noncomputable def freeCovarianceℂ_bilinear (m : ℝ) (f g : TestFunctionℂ STDimension) : ℂ :=
   ∫ x, ∫ y, (f x) * (_root_.freeCovariance m x y) * (g y)
 
-noncomputable def weightedLaplaceFourier (m : ℝ) (f : TestFunctionℂ) (k_sp : SpatialCoords) : ℂ :=
+noncomputable def weightedLaplaceFourier (m : ℝ) (f : TestFunctionℂ STDimension) (k_sp : SpatialCoords STDimension) : ℂ :=
   let ω := Real.sqrt (‖k_sp‖^2 + m^2)
-  ∫ x : SpaceTime, f x * Complex.exp (-ω * x 0) *
+  ∫ x : SpaceTime STDimension, f x * Complex.exp (-ω * x 0) *
     Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x))
 
-noncomputable def rpInnerProduct (m : ℝ) (f : TestFunctionℂ) : ℂ :=
+noncomputable def rpInnerProduct (m : ℝ) (f : TestFunctionℂ STDimension) : ℂ :=
   freeCovarianceℂ_bilinear m (star f) f
 
 /-! ## Part 2: Change of Variables -/
 
 variable (m : ℝ) [Fact (0 < m)]
 
-lemma star_apply (f : TestFunctionℂ) (x : SpaceTime) :
+lemma star_apply (f : TestFunctionℂ STDimension) (x : SpaceTime STDimension) :
     (star f) x = starRingEnd ℂ (f (timeReflection x)) := rfl
 
 omit [Fact (0 < m)] in
-theorem rpInnerProduct_eq_bessel_reflected (f : TestFunctionℂ) :
+theorem rpInnerProduct_eq_bessel_reflected (f : TestFunctionℂ STDimension) :
     rpInnerProduct m f =
-      ∫ x : SpaceTime, ∫ y : SpaceTime,
+      ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
         (starRingEnd ℂ (f x)) * (_root_.freeCovariance m (timeReflection x) y : ℂ) * f y := by
   unfold rpInnerProduct freeCovarianceℂ_bilinear
   have h_star : ∀ x, (star f) x = starRingEnd ℂ (f (timeReflection x)) := star_apply f
   simp_rw [h_star]
-  have h_mp := QFT.timeReflection_measurePreserving
+  have h_mp := QFT.timeReflection_measurePreserving (d := STDimension)
   have h_inv : ∀ x, timeReflection (timeReflection x) = x := fun x => by
     simp [timeReflection, Function.update]
   let G := fun x => ∫ y, (starRingEnd ℂ (f (timeReflection x))) *
       (_root_.freeCovariance m x y : ℂ) * f y
   have h_cov : ∫ x, G x = ∫ x, G (timeReflection x) :=
-    (h_mp.integral_comp QFT.timeReflectionLE.toMeasurableEquiv.measurableEmbedding G).symm
+    (h_mp.integral_comp (QFT.timeReflectionLE (d := STDimension)).toMeasurableEquiv.measurableEmbedding G).symm
   conv_lhs => rw [h_cov]
   congr 1; ext x; simp only [G]; congr 1; ext y; rw [h_inv x]
 
@@ -145,11 +145,11 @@ theorem rpInnerProduct_eq_bessel_reflected (f : TestFunctionℂ) :
 /-- The mixed representation from the Schwinger pathway.
     This is more direct than the k₀-inside form for proving reflection positivity,
     because `(1/ω) exp(-ω|t|)` already factorizes for positive-time test functions. -/
-theorem mixed_representation (f : TestFunctionℂ)
+theorem mixed_representation (f : TestFunctionℂ STDimension)
     (hf_supp : ∀ x, x 0 ≤ 0 → f x = 0) :
     rpInnerProduct m f =
     (1 / (2 * (2 * Real.pi) ^ (STDimension - 1)) : ℝ) *
-    ∫ k_sp : SpatialCoords, ∫ x : SpaceTime, ∫ y : SpaceTime,
+    ∫ k_sp : SpatialCoords STDimension, ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
       let ω := Real.sqrt (‖k_sp‖^2 + m^2)
       (starRingEnd ℂ (f x)) * f y *
       (1 / ω : ℝ) *
@@ -160,7 +160,7 @@ theorem mixed_representation (f : TestFunctionℂ)
 
 /-! ## Part 4: Key Lemmas -/
 
-lemma energy_pos (k_sp : SpatialCoords) : 0 < Real.sqrt (‖k_sp‖^2 + m^2) := by
+lemma energy_pos (k_sp : SpatialCoords STDimension) : 0 < Real.sqrt (‖k_sp‖^2 + m^2) := by
   apply Real.sqrt_pos_of_pos
   have hm : 0 < m := Fact.out
   nlinarith [sq_nonneg ‖k_sp‖]
@@ -173,7 +173,7 @@ lemma abs_neg_sum_nonneg (x0 y0 : ℝ) (hx : 0 ≤ x0) (hy : 0 ≤ y0) :
   rw [abs_of_nonpos (by linarith : -x0 - y0 ≤ 0)]; ring
 
 omit [Fact (0 < m)] in
-lemma spatialDot_sub (k_sp x_sp y_sp : SpatialCoords) :
+lemma spatialDot_sub (k_sp x_sp y_sp : SpatialCoords STDimension) :
     spatialDot k_sp (x_sp - y_sp) = spatialDot k_sp x_sp - spatialDot k_sp y_sp := by
   simp only [spatialDot]
   have h : ∀ i, k_sp i * (x_sp - y_sp) i = k_sp i * x_sp i - k_sp i * y_sp i := by
@@ -181,25 +181,25 @@ lemma spatialDot_sub (k_sp x_sp y_sp : SpatialCoords) :
   simp_rw [h, Finset.sum_sub_distrib]
 
 omit [Fact (0 < m)] in
-lemma exp_spatial_phase_factor (k_sp : SpatialCoords) (x_sp y_sp : SpatialCoords) :
+lemma exp_spatial_phase_factor (k_sp : SpatialCoords STDimension) (x_sp y_sp : SpatialCoords STDimension) :
     Complex.exp (-Complex.I * spatialDot k_sp (x_sp - y_sp)) =
     Complex.exp (-Complex.I * spatialDot k_sp x_sp) *
     Complex.exp (Complex.I * spatialDot k_sp y_sp) := by
   rw [← Complex.exp_add, spatialDot_sub]; congr 1; push_cast; ring
 
-noncomputable def xIntegralFactor (f : TestFunctionℂ) (ω : ℝ) (k_sp : SpatialCoords) : ℂ :=
-  ∫ x : SpaceTime, (starRingEnd ℂ (f x)) *
+noncomputable def xIntegralFactor (f : TestFunctionℂ STDimension) (ω : ℝ) (k_sp : SpatialCoords STDimension) : ℂ :=
+  ∫ x : SpaceTime STDimension, (starRingEnd ℂ (f x)) *
     Complex.exp (-(ω * x 0)) * Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x))
 
-noncomputable def yIntegralFactor (f : TestFunctionℂ) (ω : ℝ) (k_sp : SpatialCoords) : ℂ :=
-  ∫ y : SpaceTime, f y *
+noncomputable def yIntegralFactor (f : TestFunctionℂ STDimension) (ω : ℝ) (k_sp : SpatialCoords STDimension) : ℂ :=
+  ∫ y : SpaceTime STDimension, f y *
     Complex.exp (-(ω * y 0)) * Complex.exp (Complex.I * spatialDot k_sp (spatialPart y))
 
 omit [Fact (0 < m)] in
-lemma norm_neg_eq (k_sp : SpatialCoords) : ‖-k_sp‖ = ‖k_sp‖ := norm_neg k_sp
+lemma norm_neg_eq (k_sp : SpatialCoords STDimension) : ‖-k_sp‖ = ‖k_sp‖ := norm_neg k_sp
 
 omit [Fact (0 < m)] in
-lemma spatialDot_neg_left (k_sp x_sp : SpatialCoords) :
+lemma spatialDot_neg_left (k_sp x_sp : SpatialCoords STDimension) :
     spatialDot (-k_sp) x_sp = -spatialDot k_sp x_sp := by
   simp only [spatialDot]
   have h : ∀ i, (-k_sp) i * x_sp i = -(k_sp i * x_sp i) := by
@@ -207,8 +207,8 @@ lemma spatialDot_neg_left (k_sp x_sp : SpatialCoords) :
   simp_rw [h, Finset.sum_neg_distrib]
 
 omit [Fact (0 < m)] in
-lemma xIntegralFactor_eq_conj_neg (f : TestFunctionℂ) (k_sp : SpatialCoords)
-    (_hf_support : ∀ x : SpaceTime, x 0 < 0 → f x = 0) :
+lemma xIntegralFactor_eq_conj_neg (f : TestFunctionℂ STDimension) (k_sp : SpatialCoords STDimension)
+    (_hf_support : ∀ x : SpaceTime STDimension, x 0 < 0 → f x = 0) :
     xIntegralFactor f (Real.sqrt (‖k_sp‖^2 + m^2)) k_sp =
     starRingEnd ℂ (weightedLaplaceFourier m f (-k_sp)) := by
   simp only [xIntegralFactor, weightedLaplaceFourier]
@@ -231,7 +231,7 @@ lemma xIntegralFactor_eq_conj_neg (f : TestFunctionℂ) (k_sp : SpatialCoords)
   · simp only [map_mul, Complex.conj_I, Complex.conj_ofReal]
 
 omit [Fact (0 < m)] in
-lemma yIntegralFactor_eq_neg (f : TestFunctionℂ) (k_sp : SpatialCoords) :
+lemma yIntegralFactor_eq_neg (f : TestFunctionℂ STDimension) (k_sp : SpatialCoords STDimension) :
     yIntegralFactor f (Real.sqrt (‖k_sp‖^2 + m^2)) k_sp =
     weightedLaplaceFourier m f (-k_sp) := by
   simp only [yIntegralFactor, weightedLaplaceFourier]
@@ -253,10 +253,10 @@ lemma yIntegralFactor_eq_neg (f : TestFunctionℂ) (k_sp : SpatialCoords) :
     - `exp(-ik_sp·r) = exp(-ik_sp·x_sp) · exp(+ik_sp·y_sp)`
 
     This avoids the round-trip through k₀ space that the old proof used. -/
-theorem factorization_to_squared_norm_direct (f : TestFunctionℂ) (k_sp : SpatialCoords)
-    (hf_support : ∀ x : SpaceTime, x 0 < 0 → f x = 0) :
+theorem factorization_to_squared_norm_direct (f : TestFunctionℂ STDimension) (k_sp : SpatialCoords STDimension)
+    (hf_support : ∀ x : SpaceTime STDimension, x 0 < 0 → f x = 0) :
     let ω := Real.sqrt (‖k_sp‖^2 + m^2)
-    ∫ x : SpaceTime, ∫ y : SpaceTime,
+    ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * f y *
       (1 / ω : ℝ) *
       Complex.exp (-(|-(x 0) - y 0| : ℝ) * ω) *
@@ -266,7 +266,7 @@ theorem factorization_to_squared_norm_direct (f : TestFunctionℂ) (k_sp : Spati
   have hω : 0 < ω := energy_pos m k_sp
   -- Step 1: Rearrange using positive-time support
   -- For x₀, y₀ ≥ 0: |−x₀−y₀| = x₀+y₀, so exp(-ω|t|) = exp(-ωx₀)·exp(-ωy₀)
-  have h_rearrange : ∀ x y : SpaceTime,
+  have h_rearrange : ∀ x y : SpaceTime STDimension,
       (starRingEnd ℂ (f x)) * f y *
         (1 / ω : ℝ) *
         Complex.exp (-(|-(x 0) - y 0| : ℝ) * ω) *
@@ -294,32 +294,32 @@ theorem factorization_to_squared_norm_direct (f : TestFunctionℂ) (k_sp : Spati
         rw [h_exp_factor]; ring
   simp_rw [h_rearrange]
   -- Step 2: Factor the double integral via Fubini
-  let fx := fun x : SpaceTime =>
+  let fx := fun x : SpaceTime STDimension =>
     (starRingEnd ℂ (f x)) * Complex.exp (-(ω * x 0)) *
       Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x))
-  let gy := fun y : SpaceTime =>
+  let gy := fun y : SpaceTime STDimension =>
     f y * Complex.exp (-(ω * y 0)) *
       Complex.exp (Complex.I * spatialDot k_sp (spatialPart y))
-  have hfx_eq : ∫ x : SpaceTime, fx x = xIntegralFactor f ω k_sp := rfl
-  have hgy_eq : ∫ y : SpaceTime, gy y = yIntegralFactor f ω k_sp := rfl
+  have hfx_eq : ∫ x : SpaceTime STDimension, fx x = xIntegralFactor f ω k_sp := rfl
+  have hgy_eq : ∫ y : SpaceTime STDimension, gy y = yIntegralFactor f ω k_sp := rfl
   have hX : xIntegralFactor f ω k_sp = starRingEnd ℂ (weightedLaplaceFourier m f (-k_sp)) :=
     xIntegralFactor_eq_conj_neg m f k_sp hf_support
   have hY : yIntegralFactor f ω k_sp = weightedLaplaceFourier m f (-k_sp) :=
     yIntegralFactor_eq_neg m f k_sp
   have h_normSq : ∀ A : ℂ, (starRingEnd ℂ A) * A = (Complex.normSq A : ℂ) := by
     intro A; rw [← Complex.normSq_eq_conj_mul_self]
-  have h_fubini : ∫ x : SpaceTime, ∫ y : SpaceTime, (↑(1 / ω) : ℂ) * fx x * gy y =
+  have h_fubini : ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension, (↑(1 / ω) : ℂ) * fx x * gy y =
       (↑(1 / ω) : ℂ) * (∫ x, fx x) * (∫ y, gy y) := by
-    have h_pull_const : ∀ (c : ℂ) (g : SpaceTime → ℂ),
-        ∫ z : SpaceTime, c * g z = c * ∫ z, g z := by
+    have h_pull_const : ∀ (c : ℂ) (g : SpaceTime STDimension → ℂ),
+        ∫ z : SpaceTime STDimension, c * g z = c * ∫ z, g z := by
       intro c g; simp_rw [← smul_eq_mul]; exact MeasureTheory.integral_smul c g
-    have h_inner : ∀ x, ∫ y : SpaceTime, (↑(1 / ω) : ℂ) * fx x * gy y =
+    have h_inner : ∀ x, ∫ y : SpaceTime STDimension, (↑(1 / ω) : ℂ) * fx x * gy y =
         (↑(1 / ω) * fx x) * ∫ y, gy y := fun x => h_pull_const (↑(1 / ω) * fx x) gy
     simp_rw [h_inner]
     have h_comm : ∀ x, (↑(1 / ω) * fx x) * ∫ y, gy y = (∫ y, gy y) * (↑(1 / ω) * fx x) := by
       intro x; ring
     simp_rw [h_comm]; rw [h_pull_const, h_pull_const]; ring
-  have h_integrand_eq : ∀ x y : SpaceTime,
+  have h_integrand_eq : ∀ x y : SpaceTime STDimension,
       (↑(1 / ω) : ℂ) *
         ((starRingEnd ℂ) (f x) * Complex.exp (-↑ω * ↑(x 0)) *
           Complex.exp (-Complex.I * ↑(spatialDot k_sp (spatialPart x)))) *
@@ -328,7 +328,7 @@ theorem factorization_to_squared_norm_direct (f : TestFunctionℂ) (k_sp : Spati
       (↑(1 / ω) : ℂ) * fx x * gy y := by
     intro x y; simp only [fx, gy, neg_mul]
   simp_rw [h_integrand_eq]
-  calc ∫ x : SpaceTime, ∫ y : SpaceTime, (↑(1 / ω) : ℂ) * fx x * gy y
+  calc ∫ x : SpaceTime STDimension, ∫ y : SpaceTime STDimension, (↑(1 / ω) : ℂ) * fx x * gy y
       = (↑(1 / ω) : ℂ) * (∫ x, fx x) * (∫ y, gy y) := h_fubini
     _ = (↑(1 / ω) : ℂ) * xIntegralFactor f ω k_sp * yIntegralFactor f ω k_sp := by
         rw [hfx_eq, hgy_eq]
@@ -347,14 +347,14 @@ theorem factorization_to_squared_norm_direct (f : TestFunctionℂ) (k_sp : Spati
 
     This follows directly from the mixed representation + factorization,
     without going through the k₀-inside form. -/
-theorem rp_equals_squared_norm_integral (f : TestFunctionℂ)
-    (hf_supp : ∀ x : SpaceTime, x 0 ≤ 0 → f x = 0) :
+theorem rp_equals_squared_norm_integral (f : TestFunctionℂ STDimension)
+    (hf_supp : ∀ x : SpaceTime STDimension, x 0 ≤ 0 → f x = 0) :
     rpInnerProduct m f =
     (1 / (2 * (2 * Real.pi) ^ (STDimension - 1)) : ℝ) *
-    ∫ k_sp : SpatialCoords,
+    ∫ k_sp : SpatialCoords STDimension,
       ((1 / Real.sqrt (‖k_sp‖^2 + m^2) *
         Complex.normSq (weightedLaplaceFourier m f (-k_sp)) : ℝ) : ℂ) := by
-  have hf_support : ∀ x : SpaceTime, x 0 < 0 → f x = 0 := fun x hx =>
+  have hf_support : ∀ x : SpaceTime STDimension, x 0 < 0 → f x = 0 := fun x hx =>
     hf_supp x (le_of_lt hx)
   rw [mixed_representation m f hf_supp]
   congr 1
@@ -372,8 +372,8 @@ theorem rp_equals_squared_norm_integral (f : TestFunctionℂ)
     Proof: By `rp_equals_squared_norm_integral`,
       ⟨Θf, f⟩_C = (1/(2(2π)^{d-1})) * ∫_{k_sp} (1/ω) |F_ω(-k_sp)|² dk_sp
     Both the prefactor and integrand are non-negative. -/
-theorem freeCovariance_reflection_positive_direct (f : TestFunctionℂ)
-    (hf_supp : ∀ x : SpaceTime, x 0 ≤ 0 → f x = 0) :
+theorem freeCovariance_reflection_positive_direct (f : TestFunctionℂ STDimension)
+    (hf_supp : ∀ x : SpaceTime STDimension, x 0 ≤ 0 → f x = 0) :
     0 ≤ (rpInnerProduct m f).re := by
   rw [rp_equals_squared_norm_integral m f hf_supp]
   rw [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
@@ -384,10 +384,10 @@ theorem freeCovariance_reflection_positive_direct (f : TestFunctionℂ)
     apply pow_nonneg
     apply mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) Real.pi_pos.le
   · -- Re(∫ ↑(real_val)) = ∫ real_val ≥ 0
-    have h_integral_real : (∫ k_sp : SpatialCoords,
+    have h_integral_real : (∫ k_sp : SpatialCoords STDimension,
         ((1 / Real.sqrt (‖k_sp‖ ^ 2 + m ^ 2) *
           Complex.normSq (weightedLaplaceFourier m f (-k_sp)) : ℝ) : ℂ)) =
-        ↑(∫ k_sp : SpatialCoords,
+        ↑(∫ k_sp : SpatialCoords STDimension,
           (1 / Real.sqrt (‖k_sp‖ ^ 2 + m ^ 2) *
             Complex.normSq (weightedLaplaceFourier m f (-k_sp)))) :=
       integral_ofReal
@@ -406,7 +406,7 @@ end RPProof
 
     Both are defined using the same Bessel kernel C(x,y) = (m/(4π²r)) K₁(mr),
     so this equality holds by definition (rfl). -/
-lemma rpInnerProduct_eq_rpProof (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
+lemma rpInnerProduct_eq_rpProof (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension) :
     rpInnerProduct m f = RPProof.rpInnerProduct m f := by
   -- Both sides expand to the same integral using freeCovariance (Bessel)
   unfold rpInnerProduct RPProof.rpInnerProduct
@@ -424,8 +424,8 @@ lemma rpInnerProduct_eq_rpProof (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
 
     **Proof:** Bridge to RPProof, then apply the direct proof
     via momentum representation and non-negativity of the integrand. -/
-theorem freeCovariance_reflection_positive_bilinear (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
-    (hf_supp : ∀ x : SpaceTime, x 0 ≤ 0 → f x = 0) :
+theorem freeCovariance_reflection_positive_bilinear (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ STDimension)
+    (hf_supp : ∀ x : SpaceTime STDimension, x 0 ≤ 0 → f x = 0) :
   0 ≤ (rpInnerProduct m f).re := by
   rw [rpInnerProduct_eq_rpProof]
   exact RPProof.freeCovariance_reflection_positive_direct m f hf_supp
@@ -436,7 +436,7 @@ The result extends to real test functions via embedding. -/
 
 /-- For real test functions, `star (toComplex f) = compTimeReflection (toComplex f)`.
     This is because conjugation is identity for real-valued functions. -/
-lemma star_toComplex_eq_compTimeReflection (f : TestFunction) :
+lemma star_toComplex_eq_compTimeReflection (f : TestFunction STDimension) :
     star (toComplex f) = compTimeReflection (toComplex f) := by
   ext x
   -- star f is defined as starTestFunction f
@@ -447,15 +447,15 @@ lemma star_toComplex_eq_compTimeReflection (f : TestFunction) :
 
 /-- The rpInnerProduct of a real test function equals the complex bilinear form
     with compTimeReflection. -/
-lemma rpInnerProduct_toComplex_eq (m : ℝ) (f : TestFunction) :
+lemma rpInnerProduct_toComplex_eq (m : ℝ) (f : TestFunction STDimension) :
     rpInnerProduct m (toComplex f) =
       freeCovarianceℂ_bilinear m (compTimeReflection (toComplex f)) (toComplex f) := by
   unfold rpInnerProduct
   rw [star_toComplex_eq_compTimeReflection]
 
 /-- For real test functions, the reflection positivity inner product is non-negative. -/
-theorem freeCovariance_reflection_positive_bilinear_real (m : ℝ) [Fact (0 < m)] (f : TestFunction)
-    (hf_supp : ∀ x : SpaceTime, x 0 ≤ 0 → f x = 0) :
+theorem freeCovariance_reflection_positive_bilinear_real (m : ℝ) [Fact (0 < m)] (f : TestFunction STDimension)
+    (hf_supp : ∀ x : SpaceTime STDimension, x 0 ≤ 0 → f x = 0) :
   0 ≤ ∫ x, ∫ y, (QFT.compTimeReflectionReal f) x * freeCovariance m x y * f y := by
   -- Use the complex theorem for toComplex f
   have h_complex := freeCovariance_reflection_positive_bilinear m (toComplex f) (by
@@ -475,8 +475,8 @@ theorem freeCovariance_reflection_positive_bilinear_real (m : ℝ) [Fact (0 < m)
   exact h_complex
 
 /-- Alias for `freeCovariance_reflection_positive_bilinear_real` to match expected name. -/
-theorem freeCovariance_reflection_positive_real (m : ℝ) [Fact (0 < m)] (f : TestFunction)
-    (hf_supp : ∀ x : SpaceTime, x 0 ≤ 0 → f x = 0) :
+theorem freeCovariance_reflection_positive_real (m : ℝ) [Fact (0 < m)] (f : TestFunction STDimension)
+    (hf_supp : ∀ x : SpaceTime STDimension, x 0 ≤ 0 → f x = 0) :
   0 ≤ ∫ x, ∫ y, (QFT.compTimeReflectionReal f) x * freeCovariance m x y * f y :=
   freeCovariance_reflection_positive_bilinear_real m f hf_supp
 
