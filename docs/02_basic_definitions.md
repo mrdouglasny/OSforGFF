@@ -48,16 +48,16 @@ Key structures:
 
 | Declaration | Description |
 |-------------|-------------|
-| [`SpatialCoords`](../OSforGFF/Basic.lean#L329) | Spatial coordinates $\mathbb{R}^3$ |
-| [`spatialPart`](../OSforGFF/Basic.lean#L335) | Spatial projection $\mathbb{R}^4 \to \mathbb{R}^3$ |
-| [`E`](../OSforGFF/Basic.lean#L339) | Relativistic energy $E(m,k) = \sqrt{\|k\|^2 + m^2}$ |
+| [`SpatialCoords`](../OSforGFF/Basic.lean#L323) | Spatial coordinates $\mathbb{R}^3$ |
+| [`spatialPart`](../OSforGFF/Basic.lean#L329) | Spatial projection $\mathbb{R}^4 \to \mathbb{R}^3$ |
+| [`E`](../OSforGFF/Euclidean.lean#L113) | Relativistic energy $E(m,k) = \sqrt{\lVert k\rVert^2 + m^2}$ |
 
 ### Key Declarations (`OSforGFF/SpacetimeDecomp.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`spacetimeDecomp`](../OSforGFF/SpacetimeDecomp.lean#L50) | Measurable equivalence $\mathbb{R}^4 \cong \mathbb{R} \times \mathbb{R}^3$ |
-| [`spacetimeDecomp_measurePreserving`](../OSforGFF/SpacetimeDecomp.lean#L64) | The decomposition preserves Lebesgue measure |
+| [`spacetimeDecomp`](../OSforGFF/SpacetimeDecomp.lean#L49) | Measurable equivalence $\mathbb{R}^4 \cong \mathbb{R} \times \mathbb{R}^3$ |
+| [`spacetimeDecomp_measurePreserving`](../OSforGFF/SpacetimeDecomp.lean#L63) | The decomposition preserves Lebesgue measure |
 
 ### Key Declarations (`OSforGFF/PositiveTimeTestFunction_real.lean`)
 
@@ -142,7 +142,7 @@ Time translation is the one-parameter subgroup of the Euclidean group that shift
 | [`timeTranslationSchwartz_add`](../OSforGFF/TimeTranslation.lean#L239) | $T_{s+t} = T_s \circ T_t$ |
 | [`timeTranslationSchwartz_zero`](../OSforGFF/TimeTranslation.lean#L252) | $T_0 = \mathrm{id}$ |
 | [`continuous_timeTranslationSchwartz`](../OSforGFF/TimeTranslation.lean#L746) | $s \mapsto T_s f$ continuous $\mathbb{R} \to \mathcal{S}$ |
-| [`schwartz_timeTranslation_lipschitz_seminorm`](../OSforGFF/TimeTranslation.lean#L358) | $\|T_h f - f\|_{k,n} \le \lvert h\rvert(1+\lvert h\rvert)^k 2^k(\|f\|_{k,n+1}+\|f\|_{0,n+1}+1)$ |
+| [`schwartz_timeTranslation_lipschitz_seminorm`](../OSforGFF/TimeTranslation.lean#L358) | $\lVert T_h f - f\rVert_{k,n} \le \lvert h\rvert(1+\lvert h\rvert)^k 2^k(\lVert f\rVert_{k,n+1}+\lVert f\rVert_{0,n+1}+1)$ |
 | [`timeTranslationDistribution`](../OSforGFF/TimeTranslation.lean#L874) | $T_s$ on field configurations |
 | [`timeTranslationDistribution_add`](../OSforGFF/TimeTranslation.lean#L883) | $T_{s+t}^* = T_s^* \circ T_t^*$ |
 
@@ -166,9 +166,9 @@ where $G_f(t) = \int_{\mathbb{R}^3} \|f(t, v)\|\ dv$ is the spatial marginal.
 
 | Declaration | Description |
 |-------------|-------------|
-| [`schwartz_vanishing_linear_bound`](../OSforGFF/SchwartzProdIntegrable.lean#L39) | $f\mid_{t\le 0}=0 \implies \|f(t,x)\| \le Ct$ for $t > 0$ |
-| [`schwartz_vanishing_ftc_decay`](../OSforGFF/SchwartzProdIntegrable.lean#L353) | $\|f(t,x)\| \le Ct/(1+\|x\|)^4$ for positive-time-supported $f$ |
-| [`spatialNormIntegral`](../OSforGFF/SchwartzProdIntegrable.lean#L308) | $G_f(t) = \int_{\mathbb{R}^3}\|f(t,x)\|\ dx$ |
+| [`schwartz_vanishing_linear_bound`](../OSforGFF/SchwartzProdIntegrable.lean#L39) | $f\mid_{t\le 0}=0 \implies \lvert f(t,x)\rvert \le Ct$ for $t > 0$ |
+| [`schwartz_vanishing_ftc_decay`](../OSforGFF/SchwartzProdIntegrable.lean#L353) | $\lvert f(t,x)\rvert \le Ct/(1+\lVert x\rVert)^4$ for positive-time-supported $f$ |
+| [`spatialNormIntegral`](../OSforGFF/SchwartzProdIntegrable.lean#L308) | $G_f(t) = \int_{\mathbb{R}^3}\lvert f(t,x)\rvert\ dx$ |
 | [`spatialNormIntegral_linear_bound`](../OSforGFF/SchwartzProdIntegrable.lean#L607) | $G_f(t) \le Ct$ for positive-time-supported Schwartz $f$ |
 | [`schwartz_time_slice_integrable`](../OSforGFF/SchwartzProdIntegrable.lean#L247) | Each time slice of a Schwartz function is integrable in spatial variables |
 

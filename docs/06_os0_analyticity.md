@@ -40,11 +40,11 @@ The five hypotheses verified are:
 | [`gff_integrand_integrable`](../OSforGFF/OS0_GFF.lean#L536) | $\exp(i\langle\omega, \sum z_i J_i\rangle) \in L^1(\mu_{\mathrm{GFF}})$ |
 | [`gff_integrand_fderiv_measurable`](../OSforGFF/OS0_GFF.lean#L562) | $\omega \mapsto D_z \exp(i\langle\omega, \sum z_i J_i\rangle)$ is measurable |
 | [`gff_integrand_fderiv_bound`](../OSforGFF/OS0_GFF.lean#L681) | Local $L^1$ bound on the Frechet derivative |
-| [`norm_exp_I_distributionPairingℂ_real`](../OSforGFF/OS0_GFF.lean#L269) | $\|e^{i\langle\omega,f\rangle}\| = e^{-\omega(f_{\mathrm{im}})}$ |
-| [`gff_exp_abs_pairing_integrable`](../OSforGFF/OS0_GFF.lean#L461) | $\exp\|\omega(f)\| \in L^1(\mu_{\mathrm{GFF}})$ |
-| [`gff_exp_abs_pairing_memLp`](../OSforGFF/OS0_GFF.lean#L328) | $\exp\|\omega(f)\| \in L^p(\mu_{\mathrm{GFF}})$ for $p < \infty$ |
+| [`norm_exp_I_distributionPairingℂ_real`](../OSforGFF/OS0_GFF.lean#L269) | $\lvert e^{i\langle\omega,f\rangle}\rvert = e^{-\omega(f_{\mathrm{im}})}$ |
+| [`gff_exp_abs_pairing_integrable`](../OSforGFF/OS0_GFF.lean#L461) | $\exp\lvert\omega(f)\rvert \in L^1(\mu_{\mathrm{GFF}})$ |
+| [`gff_exp_abs_pairing_memLp`](../OSforGFF/OS0_GFF.lean#L328) | $\exp\lvert\omega(f)\rvert \in L^p(\mu_{\mathrm{GFF}})$ for $p < \infty$ |
 | [`gff_exp_abs_sum_memLp`](../OSforGFF/OS0_GFF.lean#L469) | $\exp(\sum_i |\omega(g_i)|) \in L^2(\mu_{\mathrm{GFF}})$ |
-| [`gff_integrand_norm_integrable`](../OSforGFF/OS0_GFF.lean#L522) | $\|\exp(i\langle\omega,f\rangle)\| \in L^1(\mu_{\mathrm{GFF}})$ |
+| [`gff_integrand_norm_integrable`](../OSforGFF/OS0_GFF.lean#L522) | $\lvert\exp(i\langle\omega,f\rangle)\rvert \in L^1(\mu_{\mathrm{GFF}})$ |
 | [`distributionPairingℂ_real_continuous`](../OSforGFF/OS0_GFF.lean#L152) | $\omega \mapsto \langle\omega, f\rangle$ is continuous |
 | [`differentiable_analyticAt_finDim`](../OSforGFF/OS0_GFF.lean#L86) | Goursat's theorem in $n$ dimensions: $\mathbb{C}$-differentiable $\Rightarrow$ analytic |
 

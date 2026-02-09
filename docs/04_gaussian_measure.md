@@ -60,8 +60,8 @@ From the complex Gaussian identity $Z[J] = e^{-\frac{1}{2}S_2(J,J)}$:
 | [`schwartz_nuclear`](../OSforGFF/NuclearSpace.lean#L145) | Schwartz space is nuclear (axiom) |
 | [`minlos_uniqueness`](../OSforGFF/Minlos.lean#L89) | Derived: two measures with same CF on nuclear space are equal |
 | [`gaussian_characteristic_functional`](../OSforGFF/Minlos.lean#L104) | $f \mapsto e^{-\frac{1}{2}C(f,f)}$ |
-| [`gaussian_rbf_pd_innerProduct`](../OSforGFF/Minlos.lean#L129) | $e^{-\|h\|^2/2}$ is positive-definite |
-| [`gaussian_positive_definite_via_embedding`](../OSforGFF/Minlos.lean#L141) | $e^{-\frac{1}{2}C(f,f)}$ is positive-definite when $C(f,f) = \|Tf\|^2$ |
+| [`gaussian_rbf_pd_innerProduct`](../OSforGFF/Minlos.lean#L129) | $e^{-\lVert h\rVert^2/2}$ is positive-definite |
+| [`gaussian_positive_definite_via_embedding`](../OSforGFF/Minlos.lean#L141) | $e^{-\frac{1}{2}C(f,f)}$ is positive-definite when $C(f,f) = \lVert Tf\rVert^2$ |
 | [`minlos_gaussian_construction`](../OSforGFF/Minlos.lean#L186) | $\exists\ \mu$ with $\int e^{i\langle\omega,f\rangle}\ d\mu = e^{-\frac{1}{2}C(f,f)}$ |
 | [`gaussian_measure_characteristic_functional`](../OSforGFF/Minlos.lean#L221) | Same, returning `ProbabilityMeasure` |
 | [`gaussian_measure_symmetry`](../OSforGFF/Minlos.lean#L254) | If $g$ preserves $C$, then $g_*\mu = \mu$ |
@@ -70,11 +70,11 @@ From the complex Gaussian identity $Z[J] = e^{-\frac{1}{2}S_2(J,J)}$:
 
 | Declaration | Description |
 |-------------|-------------|
-| [`CovarianceForm`](../OSforGFF/MinlosAnalytic.lean#L50) | Structure packaging a bilinear form $Q$ with its properties |
-| [`negMap`](../OSforGFF/MinlosAnalytic.lean#L60) | The negation map $\omega \mapsto -\omega$ |
-| [`negMap_measurable`](../OSforGFF/MinlosAnalytic.lean#L63) | Negation is measurable |
-| [`integral_neg_invariance`](../OSforGFF/MinlosAnalytic.lean#L72) | $\mu$ is invariant under $\omega \mapsto -\omega$ |
-| [`moment_zero_from_realCF`](../OSforGFF/MinlosAnalytic.lean#L189) | $\int\langle\omega,a\rangle\ d\mu = 0$ |
+| [`CovarianceForm`](../OSforGFF/MinlosAnalytic.lean#L52) | Structure packaging a bilinear form $Q$ with its properties |
+| [`negMap`](../OSforGFF/MinlosAnalytic.lean#L63) | The negation map $\omega \mapsto -\omega$ |
+| [`negMap_measurable`](../OSforGFF/MinlosAnalytic.lean#L66) | Negation is measurable |
+| [`integral_neg_invariance`](../OSforGFF/MinlosAnalytic.lean#L75) | $\mu$ is invariant under $\omega \mapsto -\omega$ |
+| [`moment_zero_from_realCF`](../OSforGFF/MinlosAnalytic.lean#L196) | $\int\langle\omega,a\rangle\ d\mu = 0$ |
 
 ### GFF Construction (`GFFMconstruct.lean`)
 

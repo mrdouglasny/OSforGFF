@@ -30,12 +30,12 @@ Key supporting types and functions:
 |-------------|-------------|
 | [`OS0_Analyticity`](../OSforGFF/OS_Axioms.lean#L73) | $z \mapsto Z[\sum z_i J_i]$ is analytic on $\mathbb{C}^n$ |
 | [`TwoPointIntegrable`](../OSforGFF/OS_Axioms.lean#L79) | $S_2(x)$ is locally integrable |
-| [`OS1_Regularity`](../OSforGFF/OS_Axioms.lean#L83) | $\|Z[f]\| \le e^{c(\|f\|_1 + \|f\|_p^p)}$ for some $p \in [1,2]$, $c > 0$ |
+| [`OS1_Regularity`](../OSforGFF/OS_Axioms.lean#L83) | $\lvert Z[f]\rvert \le e^{c(\lVert f\rVert_1 + \lVert f\rVert_p^p)}$ for some $p \in [1,2]$, $c > 0$ |
 | [`OS2_EuclideanInvariance`](../OSforGFF/OS_Axioms.lean#L91) | $Z[g \cdot f] = Z[f]$ for all $g \in E(4)$ |
-| [`OS3_ReflectionPositivity`](../OSforGFF/OS_Axioms.lean#L100) | $\sum_{ij} c_i c_j \mathrm{Re} Z[f_i - \Theta f_j] \ge 0$ |
-| [`OS4_Clustering`](../OSforGFF/OS_Axioms.lean#L123) | $\|Z[f + T_a g] - Z[f]Z[g]\| \to 0$ as $\|a\| \to \infty$ |
+| [`OS3_ReflectionPositivity`](../OSforGFF/OS_Axioms.lean#L100) | $\sum_{ij} c_i c_j \mathrm{Re}\left(Z[f_i - \Theta f_j]\right) \ge 0$ |
+| [`OS4_Clustering`](../OSforGFF/OS_Axioms.lean#L123) | $\lvert Z[f + T_a g] - Z[f]Z[g]\rvert \to 0$ as $\lVert a\rVert \to \infty$ |
 | [`OS4_Ergodicity`](../OSforGFF/OS_Axioms.lean#L136) | $\frac{1}{T}\int_0^T A(T_s \varphi)\ ds \to \mathbb{E}_\mu[A]$ in $L^2(\mu)$ |
-| [`OS4_PolynomialClustering`](../OSforGFF/OS_Axioms.lean#L158) | $\|\mathbb{E}[e^{\langle\varphi,f\rangle + \langle T_s\varphi,g\rangle}] - \mathbb{E}[e^{\langle\varphi,f\rangle}]\mathbb{E}[e^{\langle\varphi,g\rangle}]\| \le c(1+s)^{-\alpha}$ |
+| [`OS4_PolynomialClustering`](../OSforGFF/OS_Axioms.lean#L158) | $\lvert\mathbb{E}[e^{\langle\varphi,f\rangle + \langle T_s\varphi,g\rangle}] - \mathbb{E}[e^{\langle\varphi,f\rangle}]\mathbb{E}[e^{\langle\varphi,g\rangle}]\rvert \le c(1+s)^{-\alpha}$ |
 
 ## Axiom Definitions
 

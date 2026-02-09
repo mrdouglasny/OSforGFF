@@ -11,7 +11,7 @@ For any mass parameter $m > 0$, the GFF probability measure $\mu_{\mathrm{GFF}}(
 - **OS0** (Analyticity): The generating functional is analytic in the test functions.
 - **OS1** (Regularity): The generating functional satisfies exponential bounds.
 - **OS2** (Euclidean Invariance): The measure is invariant under 4D Euclidean transformations.
-- **OS3** (Reflection Positivity): The quadratic form $\sum_{ij} c_i c_j\  \mathrm{Re}\  Z[f_i - \Theta f_j] \geq 0$.
+- **OS3** (Reflection Positivity): The quadratic form $\sum_{ij} c_i c_j\  \mathrm{Re}\left(Z[f_i - \Theta f_j]\right) \geq 0$.
 - **OS4** (Clustering): Distant test functions become statistically independent.
 - **OS4** (Ergodicity): Time averages of generating-function observables converge to ensemble averages.
 
@@ -21,10 +21,10 @@ For any mass parameter $m > 0$, the GFF probability measure $\mu_{\mathrm{GFF}}(
 |-------------|------|-------------|
 | [`gaussianFreeField_satisfies_all_OS_axioms`](../OSforGFF/GFFmaster.lean#L48) | `GFFmaster.lean` | **Master theorem**: conjunction of all OS axioms |
 | [`QFT.gaussianFreeField_satisfies_OS0`](../OSforGFF/OS0_GFF.lean#L1120) | `OS0_GFF.lean` | OS0: $z \mapsto Z[\sum z_i J_i]$ analytic |
-| [`gaussianFreeField_satisfies_OS1_revised`](../OSforGFF/OS1_GFF.lean#L528) | `OS1_GFF.lean` | OS1: $|Z[f]| \le e^{c\|f\|_2^2}$ |
+| [`gaussianFreeField_satisfies_OS1_revised`](../OSforGFF/OS1_GFF.lean#L528) | `OS1_GFF.lean` | OS1: $\lvert Z[f]\rvert \le e^{c\lVert f\rVert_2^2}$ |
 | [`gaussian_satisfies_OS2`](../OSforGFF/GaussianFreeField.lean#L219) | `GaussianFreeField.lean` | OS2: $Z[g\cdot f] = Z[f]$ for $g \in E(4)$ |
-| [`QFT.gaussianFreeField_OS3_real`](../OSforGFF/OS3_GFF.lean#L509) | `OS3_GFF.lean` | OS3: $\sum c_ic_j\ \mathrm{Re}\ Z[f_i-\Theta f_j] \ge 0$ |
-| [`QFT.gaussianFreeField_satisfies_OS4`](../OSforGFF/OS4_Clustering.lean#L475) | `OS4_Clustering.lean` | OS4: $Z[f+T_ag] \to Z[f]Z[g]$ as $\|a\|\to\infty$ |
+| [`QFT.gaussianFreeField_OS3_real`](../OSforGFF/OS3_GFF.lean#L509) | `OS3_GFF.lean` | OS3: $\sum c_ic_j\ \mathrm{Re}\left(Z[f_i-\Theta f_j]\right) \ge 0$ |
+| [`QFT.gaussianFreeField_satisfies_OS4`](../OSforGFF/OS4_Clustering.lean#L475) | `OS4_Clustering.lean` | OS4: $Z[f+T_ag] \to Z[f]Z[g]$ as $\lVert a\rVert\to\infty$ |
 | [`OS4_PolynomialClustering_implies_OS4_Ergodicity`](../OSforGFF/OS4_Ergodicity.lean#L1339) | `OS4_Ergodicity.lean` | OS4 Ergodicity: $\frac{1}{T}\int_0^T A(T_s\phi)\ ds \xrightarrow{L^2} \mathbb{E}[A]$ |
 
 ## How Each Axiom Feeds In

@@ -20,15 +20,15 @@ This section develops $L^2$ space infrastructure and properties of bilinear form
 | [`schwartzToL2`](../OSforGFF/FunctionalAnalysis.lean#L254) | $\mathcal{S}(\mathbb{R}^d,\mathbb{C}) \hookrightarrow L^2$ as CLM |
 | [`schwartzToL2'`](../OSforGFF/FunctionalAnalysis.lean#L260) | Variant for `EuclideanSpace` |
 | [`linfty_mul_L2_CLM`](../OSforGFF/FunctionalAnalysis.lean#L303) | $L^\infty$ multiplier as CLM on $L^2$ |
-| [`linfty_mul_L2_CLM_norm_bound`](../OSforGFF/FunctionalAnalysis.lean#L347) | $\|gf\|_2 \le C\|f\|_2$ |
-| [`locallyIntegrable_of_rpow_decay_real`](../OSforGFF/FunctionalAnalysis.lean#L513) | $\|f(x)\| \le C\|x\|^{-\alpha},\ \alpha < d \implies$ locally integrable ($d \ge 3$) |
+| [`linfty_mul_L2_CLM_norm_bound`](../OSforGFF/FunctionalAnalysis.lean#L347) | $\lVert gf\rVert_2 \le C\lVert f\rVert_2$ |
+| [`locallyIntegrable_of_rpow_decay_real`](../OSforGFF/FunctionalAnalysis.lean#L513) | $\lvert f(x)\rvert \le C\lVert x\rVert^{-\alpha},\ \alpha < d \implies$ locally integrable ($d \ge 3$) |
 | [`integrableOn_ball_of_rpow_decay`](../OSforGFF/FunctionalAnalysis.lean#L408) | Integrability on balls for power-law singularity |
 | [`schwartz_bilinear_integrable_of_translationInvariant_L1`](../OSforGFF/FunctionalAnalysis.lean#L585) | $f(x)\ K_0(x-y)\ g(y)$ integrable when $K_0 \in L^1$ |
-| [`schwartz_integrable_decay`](../OSforGFF/FunctionalAnalysis.lean#L887) | $\|f(x)\| \le C(1+\|x\|)^{-N}$ for all $N$ |
-| [`schwartz_vanishing_linear_bound_general`](../OSforGFF/FunctionalAnalysis.lean#L758) | $f\mid_{t\le 0}=0 \implies \|f(t,x)\| \le Ct$ |
+| [`schwartz_integrable_decay`](../OSforGFF/FunctionalAnalysis.lean#L887) | $\lvert f(x)\rvert \le C(1+\lVert x\rVert)^{-N}$ for all $N$ |
+| [`schwartz_vanishing_linear_bound_general`](../OSforGFF/FunctionalAnalysis.lean#L758) | $f\mid_{t\le 0}=0 \implies \lvert f(t,x)\rvert \le Ct$ |
 | [`SchwartzMap.translate`](../OSforGFF/FunctionalAnalysis.lean#L858) | Translation of Schwartz functions |
 | [`double_mollifier_convergence`](../OSforGFF/FunctionalAnalysis.lean#L1045) | Double convolution with bump functions $\to$ kernel value |
-| [`polynomial_decay_integrable_3d`](../OSforGFF/FunctionalAnalysis.lean#L553) | $(1+\|x\|)^{-4}$ integrable in $\mathbb{R}^3$ |
+| [`polynomial_decay_integrable_3d`](../OSforGFF/FunctionalAnalysis.lean#L553) | $(1+\lVert x\rVert)^{-4}$ integrable in $\mathbb{R}^3$ |
 
 ### Detailed Proof Outline
 
@@ -68,7 +68,7 @@ The final result combines both pieces using the triangle inequality.
 
 | Declaration | Description |
 |-------------|-------------|
-| [`PolynomialDecayBound`](../OSforGFF/QuantitativeDecay.lean#L58) | Structure: $\|f(x)\| \le C(1+\|x\|)^{-N}$ |
+| [`PolynomialDecayBound`](../OSforGFF/QuantitativeDecay.lean#L58) | Structure: $\lvert f(x)\rvert \le C(1+\lVert x\rVert)^{-N}$ |
 | [`schwartz_has_polynomial_decay`](../OSforGFF/QuantitativeDecay.lean#L70) | Schwartz functions have polynomial decay of any integer order |
 | [`schwartz_has_polynomial_decay_real`](../OSforGFF/QuantitativeDecay.lean#L103) | Same for any real exponent $N > 0$ |
 | [`exp_decay_implies_polynomial_decay`](../OSforGFF/QuantitativeDecay.lean#L122) | $e^{-mx} \le C(1+x)^{-\alpha}$ for any $\alpha$ |
@@ -121,14 +121,14 @@ Key identities proved:
 
 | Declaration | Description |
 |-------------|-------------|
-| [`fourier_exponential_decay`](../OSforGFF/FourierTransforms.lean#L521) | $\widehat{e^{-\mu\|x\|}} = 2\mu/(k^2+\mu^2)$ |
+| [`fourier_exponential_decay`](../OSforGFF/FourierTransforms.lean#L521) | $\widehat{e^{-\mu\lvert x\rvert}} = 2\mu/(k^2+\mu^2)$ |
 | [`fourier_exponential_decay'`](../OSforGFF/FourierTransforms.lean#L483) | Same with opposite sign convention |
 | [`fourier_exp_decay_positive_halfline`](../OSforGFF/FourierTransforms.lean#L328) | $\int_0^\infty e^{ikx}\ e^{-\mu x}\ dx$ |
 | [`fourier_exp_decay_negative_halfline`](../OSforGFF/FourierTransforms.lean#L386) | $\int_{-\infty}^0 e^{ikx}\ e^{\mu x}\ dx$ |
 | [`fourier_inversion_exp_decay`](../OSforGFF/FourierTransforms.lean#L641) | $(2\pi)^{-1}\int e^{ikx}\ 2\mu/(k^2+\mu^2)\ dk$ |
-| [`fourier_lorentzian_1d`](../OSforGFF/FourierTransforms.lean#L723) | $\int e^{ikx}/(k^2+\mu^2)\ dk = (\pi/\mu)\ e^{-\mu\|x\|}$ |
-| [`integrable_exponential_decay`](../OSforGFF/FourierTransforms.lean#L138) | $e^{-\mu\|x\|} \in L^1(\mathbb{R})$ |
-| [`integrable_exponential_decay_fourier`](../OSforGFF/FourierTransforms.lean#L161) | $e^{ikx}\ e^{-\mu\|x\|} \in L^1(\mathbb{R})$ |
+| [`fourier_lorentzian_1d`](../OSforGFF/FourierTransforms.lean#L723) | $\int e^{ikx}/(k^2+\mu^2)\ dk = (\pi/\mu)\ e^{-\mu\lvert x\rvert}$ |
+| [`integrable_exponential_decay`](../OSforGFF/FourierTransforms.lean#L138) | $e^{-\mu\lvert x\rvert} \in L^1(\mathbb{R})$ |
+| [`integrable_exponential_decay_fourier`](../OSforGFF/FourierTransforms.lean#L161) | $e^{ikx}\ e^{-\mu\lvert x\rvert} \in L^1(\mathbb{R})$ |
 | [`tendsto_cexp_atTop_zero`](../OSforGFF/FourierTransforms.lean#L224) | $e^{cx} \to 0$ as $x \to +\infty$ when $\mathrm{Re}(c) < 0$ |
 | [`tendsto_cexp_atBot_zero`](../OSforGFF/FourierTransforms.lean#L239) | $e^{cx} \to 0$ as $x \to -\infty$ when $\mathrm{Re}(c) > 0$ |
 
@@ -159,9 +159,9 @@ This section provides measure-theoretic estimates for time averages of stochasti
 
 | Declaration | Description |
 |-------------|-------------|
-| [`sq_setIntegral_le_measure_mul_setIntegral_sq_proved`](../OSforGFF/L2TimeIntegral.lean#L86) | $\|\int_{[a,b]} f\|^2 \le (b-a)\int_{[a,b]}\|f\|^2$ |
+| [`sq_setIntegral_le_measure_mul_setIntegral_sq_proved`](../OSforGFF/L2TimeIntegral.lean#L86) | $\lVert\int_{[a,b]} f\rVert^2 \le (b-a)\int_{[a,b]}\lVert f\rVert^2$ |
 | [`L2_time_average_bound`](../OSforGFF/L2TimeIntegral.lean#L204) | $L^2$ norm of time average $\le$ sup of slicewise $L^2$ |
-| [`time_average_memLp_two`](../OSforGFF/L2TimeIntegral.lean#L348) | Time average of $L^2$ process $\in L^2$ |
+| [`time_average_memLp_two`](../OSforGFF/OS4_Ergodicity.lean#L267) | Time average of $L^2$ process $\in L^2$ |
 | [`memLp_prod_of_uniform_slicewise_bound`](../OSforGFF/L2TimeIntegral.lean#L298) | Product $L^2$ from uniform slicewise bounds |
 | [`double_integral_polynomial_decay_bound_proved`](../OSforGFF/L2TimeIntegral.lean#L495) | $\int_0^T\int_0^T(1+\lvert s-u\rvert)^{-\alpha}\ ds\ du \le CT$ |
 | [`L2_variance_time_average_bound`](../OSforGFF/L2TimeIntegral.lean#L725) | $\mathrm{Var}(\text{time avg}) \le \iint \mathrm{Cov}$ |
@@ -204,7 +204,7 @@ This section develops the theory of positive-definite functions and matrices nee
 |-------------|-------------|
 | [`IsPositiveDefinite`](../OSforGFF/PositiveDefinite.lean#L36) | Positive-definite function on an additive group |
 | [`IsPositiveDefiniteKernel`](../OSforGFF/GaussianRBF.lean#L24) | Positive-definite kernel $K(x,y)$ |
-| [`gaussian_rbf_pd_innerProduct_proof`](../OSforGFF/GaussianRBF.lean#L223) | $h \mapsto e^{-\|h\|^2/2}$ is positive definite |
+| [`gaussian_rbf_pd_innerProduct_proof`](../OSforGFF/GaussianRBF.lean#L223) | $h \mapsto e^{-\lVert h\rVert^2/2}$ is positive definite |
 
 ---
 

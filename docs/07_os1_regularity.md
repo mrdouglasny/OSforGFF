@@ -36,16 +36,16 @@ The proof has two parts:
 | Declaration | Description |
 |-------------|-------------|
 | [`gaussianFreeField_satisfies_OS1_revised`](../OSforGFF/OS1_GFF.lean#L528) | Main theorem: GFF satisfies OS1 with $p=2$, $c=1/(2m^2)$ |
-| [`fourier_plancherel_schwartz`](../OSforGFF/OS1_GFF.lean#L60) | $\|\hat{f}\|_{L^2} = \|f\|_{L^2}$ for Schwartz functions |
+| [`fourier_plancherel_schwartz`](../OSforGFF/OS1_GFF.lean#L60) | $\lVert\hat{f}\rVert_{L^2} = \lVert f\rVert_{L^2}$ for Schwartz functions |
 | [`SchwingerTwoPointFunction_GFF`](../OSforGFF/OS1_GFF.lean#L83) | $S_2^{\mathrm{GFF}}(x) := C_{\mathrm{free}}(x)$ |
 | [`schwingerTwoPoint_eq_freeCovarianceKernel`](../OSforGFF/OS1_GFF.lean#L87) | $S_2^{\mathrm{GFF}}(x) = C_{\mathrm{free}}(m, x)$ (definitional) |
 | [`schwingerTwoPointFunction_eq_GFF`](../OSforGFF/OS1_GFF.lean#L99) | Abstract $S_2(x) = S_2^{\mathrm{GFF}}(x)$ for $x \ne 0$ |
-| [`schwinger_two_point_decay_bound_GFF`](../OSforGFF/OS1_GFF.lean#L145) | $\|S_2^{\mathrm{GFF}}(x-y)\| \le C\|x-y\|^{-2}$ |
-| [`schwinger_two_point_decay_bound`](../OSforGFF/OS1_GFF.lean#L162) | $\|S_2(x-y)\| \le C\|x-y\|^{-2}$ |
+| [`schwinger_two_point_decay_bound_GFF`](../OSforGFF/OS1_GFF.lean#L145) | $\lvert S_2^{\mathrm{GFF}}(x-y)\rvert \le C\lVert x-y\rVert^{-2}$ |
+| [`schwinger_two_point_decay_bound`](../OSforGFF/OS1_GFF.lean#L162) | $\lvert S_2(x-y)\rvert \le C\lVert x-y\rVert^{-2}$ |
 | [`schwingerTwoPoint_measurable`](../OSforGFF/OS1_GFF.lean#L189) | $S_2$ is AE-strongly measurable |
-| [`gff_generating_norm_eq`](../OSforGFF/OS1_GFF.lean#L219) | $\|Z[f]\| = \exp(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle)$ |
+| [`gff_generating_norm_eq`](../OSforGFF/OS1_GFF.lean#L219) | $\lvert Z[f]\rvert = \exp(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle)$ |
 | [`gff_generating_bound_by_imaginary`](../OSforGFF/OS1_GFF.lean#L229) | $\exp(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle) \le \exp(\tfrac{1}{2}\langle f_{\mathrm{im}}, Cf_{\mathrm{im}}\rangle)$ |
-| [`gff_generating_L2_bound`](../OSforGFF/OS1_GFF.lean#L468) | $\|Z[f]\| \le \exp((1/(2m^2))\|f\|_{L^2}^2)$ |
+| [`gff_generating_L2_bound`](../OSforGFF/OS1_GFF.lean#L468) | $\lvert Z[f]\rvert \le \exp((1/(2m^2))\lVert f\rVert_{L^2}^2)$ |
 
 ## Detailed Proof Outline
 
@@ -54,7 +54,7 @@ The proof has two parts:
 **Step 1: Norm via complex exponential.**
 For the GFF, $Z[f] = \exp(-\tfrac{1}{2}\langle f, Cf\rangle_{\mathbb{C}})$. Taking norms:
 
-$$\|Z[f]\| = |\exp(-\tfrac{1}{2}\langle f, Cf\rangle_{\mathbb{C}})| = \exp\left(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle_{\mathbb{C}}\right)$$
+$$|Z[f]| = |\exp(-\tfrac{1}{2}\langle f, Cf\rangle_{\mathbb{C}})| = \exp\left(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle_{\mathbb{C}}\right)$$
 
 This uses the identity $|e^z| = e^{\mathrm{Re}(z)}$ and the Gaussian structure of the GFF measure via `gff_complex_generating` and `gff_two_point_equals_covarianceℂ_free`.
 
@@ -84,14 +84,14 @@ where the last equality is the Plancherel theorem (`fourier_plancherel_schwartz`
 
 Since $\|f_{\mathrm{im}}\|_{L^2} \le \|f\|_{L^2}$ pointwise ($|f_{\mathrm{im}}(x)| \le |f(x)|$), combining gives:
 
-$$\|Z[f]\| \le \exp\left(\frac{1}{2m^2}\|f\|_{L^2}^2\right)$$
+$$|Z[f]| \le \exp\left(\frac{1}{2m^2}\|f\|_{L^2}^2\right)$$
 
 **Lean lemma**: `gff_generating_L2_bound`
 
 **Step 4: Add $L^1$ term.**
 Since $\|f\|_{L^1} \ge 0$, the $L^2$ bound is strengthened to match the OS1 form:
 
-$$\|Z[f]\| \le \exp\left(\frac{1}{2m^2}\left(\|f\|_{L^1} + \|f\|_{L^2}^2\right)\right)$$
+$$|Z[f]| \le \exp\left(\frac{1}{2m^2}\left(\|f\|_{L^1} + \|f\|_{L^2}^2\right)\right)$$
 
 ### Part 2: Two-Point Local Integrability
 

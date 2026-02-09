@@ -7,14 +7,15 @@ The OS4 axiom comes in two related forms: **clustering** (distant regions become
 ### Key definitions
 
 **Clustering.** For any real test functions $f, g$ and $\varepsilon > 0$, there exists $R > 0$ such that for all translations $a \in \mathbb{R}^4$ with $\|a\| > R$:
-$$\|Z[f + T_a g] - Z[f] \cdot Z[g]\| < \varepsilon$$
-where $T_a g(x) = g(x - a)$ is the spatial translation of $g$.
+$$|Z[f + T_a g] - Z[f] \cdot Z[g]| < \varepsilon$$
+where $Z[f] = \int e^{i\langle\omega,f\rangle}\ d\mu(\omega)$ is the generating functional and $T_a g(x) = g(x - a)$ is the spatial translation of $g$.
 
-**Polynomial clustering.** For test functions $f, g$ and time translations $T_s$ along the time axis, there exists $c \geq 0$ such that for all $s \geq 0$:
-$$\left\|\mathbb{E}_\mu[e^{\langle\phi, f\rangle + \langle T_s\phi, g\rangle}] - \mathbb{E}_\mu[e^{\langle\phi, f\rangle}] \cdot \mathbb{E}_\mu[e^{\langle\phi, g\rangle}]\right\| \leq c\ (1+s)^{-\alpha}$$
+**Polynomial clustering.** For complex test functions $f, g$ and time translations $T_s$ along the time axis, there exists $c \geq 0$ such that for all $s \geq 0$:
+$$\left|M[f, T_s g] - M[f] \cdot M[g]\right| \leq c\ (1+s)^{-\alpha}$$
+where $M[f] = \int e^{\langle\omega, f\rangle}\ d\mu(\omega)$ is the moment generating functional (without $i$).
 
-**Ergodicity.** For generating-function observables $A(\phi) = \sum_j z_j e^{\langle\phi, f_j\rangle}$, the time average converges to the ensemble average in $L^2(\mu)$:
-$$\lim_{T\to\infty} \int_\Omega \left\|\frac{1}{T}\int_0^T A(T_s\phi)\ ds - \mathbb{E}_\mu[A(\phi)]\right\|^2 d\mu = 0$$
+**Ergodicity.** For MGF observables $A(\phi) = \sum_j z_j e^{\langle\phi, f_j\rangle}$, the time average converges to the ensemble average in $L^2(\mu)$:
+$$\lim_{T\to\infty} \int_\Omega \left|\frac{1}{T}\int_0^T A(T_s\phi)\ ds - \mathbb{E}_\mu[A(\phi)]\right|^2 d\mu = 0$$
 
 ## Proof Strategy
 
@@ -22,15 +23,15 @@ $$\lim_{T\to\infty} \int_\Omega \left\|\frac{1}{T}\int_0^T A(T_s\phi)\ ds - \mat
 
 The proof exploits the **Gaussian factorization formula** for the generating functional:
 
-1. For Gaussian measures, $Z[f] = \exp(-\tfrac{1}{2}\langle f, Cf\rangle)$, so the bilinear expansion gives:
+1. For the GFF, $Z[f] = \exp(-\tfrac{1}{2}C(f,f))$ for real test functions, so the bilinear expansion gives:
 $$Z[f + T_a g] = Z[f] \cdot Z[T_a g] \cdot \exp(-S_2(f, T_a g))$$
-where $S_2(f, T_a g) = \langle f, C(T_a g)\rangle$ is the cross covariance (2-point Schwinger function).
+where $S_2(f, T_a g) = C(f, T_a g)$ is the cross covariance (2-point Schwinger function).
 
 2. By **Euclidean invariance** (OS2): $Z[T_a g] = Z[g]$.
 
 3. The **cross term decays** as $\|a\| \to \infty$ because the propagator $C(x-y) \sim 1/\|x-y\|^2$ at large distances, and the Schwartz test functions provide rapid localization.
 
-4. Since $|Z[f]| \leq 1$ for real test functions and $|e^{-z} - 1| \leq 2|z|$ for $|z| \leq 1$, we conclude $\|Z[f + T_ag] - Z[f]Z[g]\| \leq 2|S_2(f, T_ag)| \to 0$.
+4. Since $|Z[f]| \leq 1$ for real test functions and $|e^{-z} - 1| \leq 2|z|$ for $|z| \leq 1$, we conclude $|Z[f + T_ag] - Z[f]Z[g]| \leq 2|S_2(f, T_ag)| \to 0$.
 
 ### OS4 Polynomial Clustering
 
@@ -71,7 +72,7 @@ $$\mathrm{Var}\left(\frac{1}{T}\int_0^T A(T_s\phi)\ ds\right) \leq \frac{1}{T^2}
 | [`gff_mgf_formula`](../OSforGFF/OS4_MGF.lean#L176) | $\mathbb{E}[e^{\langle\phi, J\rangle}] = e^{\frac{1}{2}C(J,J)}$ |
 | [`gff_generating_time_invariant`](../OSforGFF/OS4_MGF.lean#L207) | $Z[T_sf] = Z[f]$ |
 | [`gff_joint_mgf_factorization`](../OSforGFF/OS4_MGF.lean#L220) | $\mathbb{E}[e^{\langle\phi,f+g\rangle}] = Z[f]\ Z[g]\ e^{C(f,g)}$ |
-| [`exp_sub_one_bound_general`](../OSforGFF/OS4_MGF.lean#L252) | $\|e^x - 1\| \leq \|x\| e^{\|x\|}$ |
+| [`exp_sub_one_bound_general`](../OSforGFF/OS4_MGF.lean#L252) | $|e^x - 1| \leq |x| e^{|x|}$ |
 
 ### Clustering (`OS4_Clustering.lean`)
 
@@ -79,12 +80,12 @@ $$\mathrm{Var}\left(\frac{1}{T}\int_0^T A(T_s\phi)\ ds\right) \leq \frac{1}{T^2}
 |-------------|-------------|
 | [`schwinger2_sum_expansion`](../OSforGFF/OS4_Clustering.lean#L71) | $S_2(f+g, f+g) = S_2(f,f) + 2S_2(f,g) + S_2(g,g)$ |
 | [`gff_generating_sum_factorization`](../OSforGFF/OS4_Clustering.lean#L104) | $Z[f+g] = Z[f] \cdot Z[g] \cdot e^{-S_2(f,g)}$ |
-| [`gff_generating_norm_le_one_real`](../OSforGFF/OS4_Clustering.lean#L161) | $\|Z[f]\| \leq 1$ for real $f$ |
-| [`GFF_OS4_from_small_decay_real`](../OSforGFF/OS4_Clustering.lean#L197) | $|S_2(f, T_ag)| < \delta \implies \|Z[f+T_ag] - Z[f]Z[g]\| < 2\delta$ |
-| [`schwartz_cross_covariance_decay_real`](../OSforGFF/OS4_Clustering.lean#L336) | $S_2(f, T_ag) \to 0$ as $\|a\| \to \infty$ |
+| [`gff_generating_norm_le_one_real`](../OSforGFF/OS4_Clustering.lean#L161) | $|Z[f]| \leq 1$ for real $f$ |
+| [`GFF_OS4_from_small_decay_real`](../OSforGFF/OS4_Clustering.lean#L197) | $|S_2(f, T_ag)| < \delta \implies |Z[f+T_ag] - Z[f]Z[g]| < 2\delta$ |
+| [`schwartz_cross_covariance_decay_real`](../OSforGFF/OS4_Clustering.lean#L336) | $S_2(f, T_ag) \to 0$ as $\lVert a\rVert \to \infty$ |
 | [`gaussianFreeField_satisfies_OS4`](../OSforGFF/OS4_Clustering.lean#L475) | **Main clustering theorem**: GFF satisfies `OS4_Clustering` |
 | [`freeCovarianceClustering_real`](../OSforGFF/OS4_Clustering.lean#L524) | Covariance clustering for the GFF |
-| [`gaussianFreeField_satisfies_OS4_PolynomialClustering`](../OSforGFF/OS4_Clustering.lean#L636) | $|Z[f+T_ag]-Z[f]Z[g]| \le c(1+\|a\|)^{-\alpha}$ for any $\alpha > 0$ |
+| [`gaussianFreeField_satisfies_OS4_PolynomialClustering`](../OSforGFF/OS4_Clustering.lean#L636) | $\lvert Z[f+T_ag]-Z[f]Z[g]\rvert \le c(1+\lVert a\rVert)^{-\alpha}$ for any $\alpha > 0$ |
 
 ### Ergodicity (`OS4_Ergodicity.lean`)
 
@@ -93,8 +94,8 @@ $$\mathrm{Var}\left(\frac{1}{T}\int_0^T A(T_s\phi)\ ds\right) \leq \frac{1}{T^2}
 | [`OS4'_Ergodicity_generating`](../OSforGFF/OS4_Ergodicity.lean#L82) | Ergodicity for single generating functions $e^{\langle\phi,f\rangle}$ |
 | [`OS4''_Clustering`](../OSforGFF/OS4_Ergodicity.lean#L95) | Polynomial clustering with $\alpha = 6$ |
 | [`gff_exp_time_translated_memLp_two`](../OSforGFF/OS4_Ergodicity.lean#L125) | $e^{\langle T_s\phi, f\rangle} \in L^2(\mu)$ |
-| [`gff_exp_L2_norm_constant`](../OSforGFF/OS4_Ergodicity.lean#L219) | $\|e^{\langle T_s\phi, f\rangle}\|_{L^2}$ is constant in $s$ |
-| [`time_average_memLp_two`](../OSforGFF/L2TimeIntegral.lean#L348) | $\frac{1}{T}\int_0^T e^{\langle T_s\phi, f\rangle}\ ds \in L^2(\mu)$ |
+| [`gff_exp_L2_norm_constant`](../OSforGFF/OS4_Ergodicity.lean#L219) | $\lVert e^{\langle T_s\phi, f\rangle}\rVert_{L^2}$ is constant in $s$ |
+| [`time_average_memLp_two`](../OSforGFF/OS4_Ergodicity.lean#L267) | $\frac{1}{T}\int_0^T e^{\langle T_s\phi, f\rangle}\ ds \in L^2(\mu)$ |
 | [`gff_product_expectation_stationarity`](../OSforGFF/OS4_Ergodicity.lean#L374) | $\mathbb{E}[A(T_s\phi)\overline{A(T_u\phi)}]$ depends only on $s-u$ |
 | [`gff_covariance_continuous`](../OSforGFF/OS4_Ergodicity.lean#L497) | $s \mapsto \mathrm{Cov}(A(T_s\phi), A(\phi))$ is continuous |
 | [`L2_time_average_variance_bound`](../OSforGFF/OS4_Ergodicity.lean#L577) | $\mathrm{Var}(\frac{1}{T}\int_0^T A_s) \le \frac{1}{T^2}\int_0^T\int_0^T \lvert\mathrm{Cov}(s,u)\rvert\ ds\ du$ |
