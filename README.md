@@ -20,7 +20,7 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
   OS4_Ergodicity (μ_GFF m)
 ```
 
-**Status:** 0 sorries, 3 assumed axioms (see below), ~32,000 lines of Lean across 47 files.
+**Status:** Version 1.0, February 2026. 0 sorries, 3 assumed axioms (see below), ~32,000 lines of Lean across 47 files.
 
 ### Assumed Axioms
 
@@ -255,6 +255,10 @@ Requires Lean 4 and Mathlib (pinned via `lake-manifest.json`).
 ## Authors
 
 Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
+
+### Coding Assistance
+
+Claude Opus 4.6, Gemini 3 Pro, GPT-5.2 Codex
 
 ## License
 
