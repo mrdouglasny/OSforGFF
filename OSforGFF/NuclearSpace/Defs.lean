@@ -2,10 +2,12 @@ import Mathlib.Analysis.LocallyConvex.WithSeminorms
 import Mathlib.Analysis.Normed.Group.Completion
 import Mathlib.Analysis.Normed.Module.Completion
 import Mathlib.Analysis.Normed.Group.FunctionSeries
+import Mathlib.Analysis.Normed.Group.Quotient
 import Mathlib.Analysis.Seminorm
 import Mathlib.Analysis.Normed.Operator.Extend
 import Mathlib.LinearAlgebra.Quotient.Basic
 import Mathlib.Topology.Algebra.InfiniteSum.Module
+import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 import Mathlib.Topology.Algebra.Module.Basic
 import Mathlib.Topology.MetricSpace.Completion
 import Mathlib.Topology.UniformSpace.Completion
@@ -31,25 +33,32 @@ namespace OSforGFF
 
 /-- A continuous linear map between normed spaces is **nuclear** if it admits a
 representation \(T(x)=\sum_n (\varphi_n(x))\,y_n\) with \(\sum_n \|\varphi_n\|\,\|y_n\|<\infty\). -/
-def IsNuclearMap {E F : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
-    (T : E →L[ℝ] F) : Prop :=
-  ∃ (φ : ℕ → (E →L[ℝ] ℝ)) (y : ℕ → F),
+def IsNuclearMap {𝕜 E F : Type*} [NontriviallyNormedField 𝕜]
+    [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedAddCommGroup F] [NormedSpace 𝕜 F] [CompleteSpace F]
+    (T : E →L[𝕜] F) : Prop :=
+  ∃ (φ : ℕ → (E →L[𝕜] 𝕜)) (y : ℕ → F),
     Summable (fun n => ‖φ n‖ * ‖y n‖) ∧
     ∀ x, T x = ∑' n, (φ n x) • y n
 
 namespace IsNuclearMap
 
-section
+section Basic
 
-variable {E F G : Type*}
-  [NormedAddCommGroup E] [NormedSpace ℝ E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
-  [NormedAddCommGroup G] [NormedSpace ℝ G] [CompleteSpace G]
+variable {𝕜 E F G : Type*} [NontriviallyNormedField 𝕜]
+  [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+  [NormedAddCommGroup F] [NormedSpace 𝕜 F] [CompleteSpace F]
+  [NormedAddCommGroup G] [NormedSpace 𝕜 G] [CompleteSpace G]
+
+/-- The zero map is nuclear. -/
+theorem zero : IsNuclearMap (0 : E →L[𝕜] F) := by
+  refine ⟨fun _ => 0, fun _ => (0 : F), ?_, ?_⟩
+  · simp
+  · intro x
+    simp
 
 /-- Post-composition preserves nuclearity. -/
-theorem comp_left {T : E →L[ℝ] F} (hT : IsNuclearMap T) (S : F →L[ℝ] G) :
+theorem comp_left {T : E →L[𝕜] F} (hT : IsNuclearMap T) (S : F →L[𝕜] G) :
     IsNuclearMap (S.comp T) := by
   rcases hT with ⟨φ, y, hsum, hrepr⟩
   refine ⟨φ, fun n => S (y n), ?_, ?_⟩
@@ -88,12 +97,131 @@ theorem comp_left {T : E →L[ℝ] F} (hT : IsNuclearMap T) (S : F →L[ℝ] G) 
       _ = ∑' n : ℕ, (φ n x) • S (y n) := by
         simp [map_smul]
 
-omit [CompleteSpace F] in
+/-- Scalar multiplication preserves nuclearity. -/
+theorem smul (c : 𝕜) {T : E →L[𝕜] F} (hT : IsNuclearMap T) :
+    IsNuclearMap (c • T) := by
+  rcases hT with ⟨φ, y, hsum, hrepr⟩
+  refine ⟨φ, fun n => c • y n, ?_, ?_⟩
+  · -- summability of `‖φ n‖ * ‖c • y n‖`
+    have hle : ∀ n, ‖φ n‖ * ‖c • y n‖ ≤ ‖c‖ * (‖φ n‖ * ‖y n‖) := by
+      intro n
+      -- This is actually an equality.
+      have : ‖φ n‖ * ‖c • y n‖ = ‖c‖ * (‖φ n‖ * ‖y n‖) := by
+        calc
+          ‖φ n‖ * ‖c • y n‖ = ‖φ n‖ * (‖c‖ * ‖y n‖) := by simp [norm_smul]
+          _ = ‖c‖ * (‖φ n‖ * ‖y n‖) := by ring
+      exact this.le
+    have hnonneg : ∀ n, 0 ≤ ‖φ n‖ * ‖c • y n‖ :=
+      fun n => mul_nonneg (norm_nonneg _) (norm_nonneg _)
+    have hsum' : Summable (fun n => ‖c‖ * (‖φ n‖ * ‖y n‖)) := hsum.mul_left ‖c‖
+    exact Summable.of_nonneg_of_le hnonneg hle hsum'
+  · intro x
+    -- Move scalar multiplication inside the series.
+    have hterms_norm : Summable (fun n => ‖(φ n x) • y n‖) := by
+      -- same estimate as in `comp_left`
+      have hle : ∀ n, ‖(φ n x) • y n‖ ≤ ‖x‖ * (‖φ n‖ * ‖y n‖) := by
+        intro n
+        have hxφ : ‖φ n x‖ ≤ ‖φ n‖ * ‖x‖ := by simpa using (φ n).le_opNorm x
+        calc
+          ‖(φ n x) • y n‖ = ‖φ n x‖ * ‖y n‖ := by simp [norm_smul]
+          _ ≤ (‖φ n‖ * ‖x‖) * ‖y n‖ := by
+            exact mul_le_mul_of_nonneg_right hxφ (norm_nonneg _)
+          _ = ‖x‖ * (‖φ n‖ * ‖y n‖) := by ring
+      have hsumx : Summable (fun n => ‖x‖ * (‖φ n‖ * ‖y n‖)) := hsum.mul_left ‖x‖
+      have hnonneg : ∀ n, 0 ≤ ‖(φ n x) • y n‖ := fun n => norm_nonneg _
+      exact Summable.of_nonneg_of_le hnonneg hle hsumx
+    have hterms : Summable (fun n => (φ n x) • y n) :=
+      hterms_norm.of_norm
+    calc
+      (c • T) x = c • (∑' n : ℕ, (φ n x) • y n) := by
+        simp [ContinuousLinearMap.smul_apply, hrepr x]
+      _ = ∑' n : ℕ, c • ((φ n x) • y n) := by
+        -- `tsum` commutes with scalar multiplication.
+        symm
+        simpa using (tsum_const_smul'' (f := fun n : ℕ => (φ n x) • y n) c)
+      _ = ∑' n : ℕ, (φ n x) • (c • y n) := by
+        refine tsum_congr ?_
+        intro n
+        -- commute scalars
+        simp [smul_smul, mul_comm]
+
+/-- Addition preserves nuclearity. -/
+theorem add {T U : E →L[𝕜] F} (hT : IsNuclearMap T) (hU : IsNuclearMap U) :
+    IsNuclearMap (T + U) := by
+  classical
+  rcases hT with ⟨φ₁, y₁, hsum₁, hrepr₁⟩
+  rcases hU with ⟨φ₂, y₂, hsum₂, hrepr₂⟩
+  let φ : ℕ → (E →L[𝕜] 𝕜) := fun n => if Even n then φ₁ (Nat.div2 n) else φ₂ (Nat.div2 n)
+  let y : ℕ → F := fun n => if Even n then y₁ (Nat.div2 n) else y₂ (Nat.div2 n)
+  refine ⟨φ, y, ?_, ?_⟩
+  · -- Summability of `‖φ n‖ * ‖y n‖` by even/odd splitting.
+    have he : Summable (fun k : ℕ => ‖φ (2 * k)‖ * ‖y (2 * k)‖) := by
+      simpa [φ, y] using hsum₁
+    have ho : Summable (fun k : ℕ => ‖φ (2 * k + 1)‖ * ‖y (2 * k + 1)‖) := by
+      simpa [φ, y] using hsum₂
+    exact Summable.even_add_odd he ho
+  · intro x
+    -- Build the even and odd subsequence sums and combine.
+    have hterms₁_norm : Summable (fun n => ‖(φ₁ n x) • y₁ n‖) := by
+      -- reuse the standard bound with `hsum₁`
+      have hle : ∀ n, ‖(φ₁ n x) • y₁ n‖ ≤ ‖x‖ * (‖φ₁ n‖ * ‖y₁ n‖) := by
+        intro n
+        have hxφ : ‖φ₁ n x‖ ≤ ‖φ₁ n‖ * ‖x‖ := by simpa using (φ₁ n).le_opNorm x
+        calc
+          ‖(φ₁ n x) • y₁ n‖ = ‖φ₁ n x‖ * ‖y₁ n‖ := by simp [norm_smul]
+          _ ≤ (‖φ₁ n‖ * ‖x‖) * ‖y₁ n‖ := by
+            exact mul_le_mul_of_nonneg_right hxφ (norm_nonneg _)
+          _ = ‖x‖ * (‖φ₁ n‖ * ‖y₁ n‖) := by ring
+      have hsumx : Summable (fun n => ‖x‖ * (‖φ₁ n‖ * ‖y₁ n‖)) := hsum₁.mul_left ‖x‖
+      have hnonneg : ∀ n, 0 ≤ ‖(φ₁ n x) • y₁ n‖ := fun n => norm_nonneg _
+      exact Summable.of_nonneg_of_le hnonneg hle hsumx
+    have hterms₁ : Summable (fun n => (φ₁ n x) • y₁ n) :=
+      hterms₁_norm.of_norm
+    have hterms₂_norm : Summable (fun n => ‖(φ₂ n x) • y₂ n‖) := by
+      have hle : ∀ n, ‖(φ₂ n x) • y₂ n‖ ≤ ‖x‖ * (‖φ₂ n‖ * ‖y₂ n‖) := by
+        intro n
+        have hxφ : ‖φ₂ n x‖ ≤ ‖φ₂ n‖ * ‖x‖ := by simpa using (φ₂ n).le_opNorm x
+        calc
+          ‖(φ₂ n x) • y₂ n‖ = ‖φ₂ n x‖ * ‖y₂ n‖ := by simp [norm_smul]
+          _ ≤ (‖φ₂ n‖ * ‖x‖) * ‖y₂ n‖ := by
+            exact mul_le_mul_of_nonneg_right hxφ (norm_nonneg _)
+          _ = ‖x‖ * (‖φ₂ n‖ * ‖y₂ n‖) := by ring
+      have hsumx : Summable (fun n => ‖x‖ * (‖φ₂ n‖ * ‖y₂ n‖)) := hsum₂.mul_left ‖x‖
+      have hnonneg : ∀ n, 0 ≤ ‖(φ₂ n x) • y₂ n‖ := fun n => norm_nonneg _
+      exact Summable.of_nonneg_of_le hnonneg hle hsumx
+    have hterms₂ : Summable (fun n => (φ₂ n x) • y₂ n) :=
+      hterms₂_norm.of_norm
+    -- Define the combined term sequence.
+    let a : ℕ → F := fun n => (φ n x) • y n
+    have ha_even : HasSum (fun n : ℕ => a (2 * n)) (T x) := by
+      -- even terms are exactly the `T` terms
+      have : HasSum (fun n : ℕ => (φ₁ n x) • y₁ n) (∑' n : ℕ, (φ₁ n x) • y₁ n) :=
+        hterms₁.hasSum
+      simpa [a, φ, y, hrepr₁ x] using this
+    have ha_odd : HasSum (fun n : ℕ => a (2 * n + 1)) (U x) := by
+      have : HasSum (fun n : ℕ => (φ₂ n x) • y₂ n) (∑' n : ℕ, (φ₂ n x) • y₂ n) :=
+        hterms₂.hasSum
+      simpa [a, φ, y, hrepr₂ x] using this
+    have ha : HasSum a (T x + U x) :=
+      HasSum.even_add_odd ha_even ha_odd
+    -- Conclude by rewriting `T+U` and using the computed `tsum`.
+    have : (∑' n : ℕ, a n) = T x + U x := ha.tsum_eq
+    simp [a, ContinuousLinearMap.add_apply, this]
+
+end Basic
+
+section CompRight
+
+variable {𝕜 E F G : Type*} [NontriviallyNormedField 𝕜]
+  [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+  [NormedAddCommGroup F] [NormedSpace 𝕜 F]
+  [NormedAddCommGroup G] [NormedSpace 𝕜 G] [CompleteSpace G]
+
 /-- Pre-composition preserves nuclearity. -/
-theorem comp_right {T : F →L[ℝ] G} (hT : IsNuclearMap T) (R : E →L[ℝ] F) :
+theorem comp_right {T : F →L[𝕜] G} (hT : IsNuclearMap T) (R : E →L[𝕜] F) :
     IsNuclearMap (T.comp R) := by
   rcases hT with ⟨φ, y, hsum, hrepr⟩
-  let φ' : ℕ → (E →L[ℝ] ℝ) := fun n => (φ n).comp R
+  let φ' : ℕ → (E →L[𝕜] 𝕜) := fun n => (φ n).comp R
   refine ⟨φ', y, ?_, ?_⟩
   · have hleφ : ∀ n, ‖φ' n‖ ≤ ‖φ n‖ * ‖R‖ := by
       intro n
@@ -101,28 +229,28 @@ theorem comp_right {T : F →L[ℝ] G} (hT : IsNuclearMap T) (R : E →L[ℝ] F)
     have hle : ∀ n, ‖φ' n‖ * ‖y n‖ ≤ ‖R‖ * (‖φ n‖ * ‖y n‖) := by
       intro n
       have hy : 0 ≤ ‖y n‖ := norm_nonneg _
-      have hR : 0 ≤ ‖R‖ := norm_nonneg _
       calc
         ‖φ' n‖ * ‖y n‖ ≤ (‖φ n‖ * ‖R‖) * ‖y n‖ := by
           exact mul_le_mul_of_nonneg_right (hleφ n) hy
         _ = ‖R‖ * (‖φ n‖ * ‖y n‖) := by ring
-    have hnonneg : ∀ n, 0 ≤ ‖φ' n‖ * ‖y n‖ := fun n => mul_nonneg (norm_nonneg _) (norm_nonneg _)
+    have hnonneg : ∀ n, 0 ≤ ‖φ' n‖ * ‖y n‖ :=
+      fun n => mul_nonneg (norm_nonneg _) (norm_nonneg _)
     have hsum' : Summable (fun n => ‖R‖ * (‖φ n‖ * ‖y n‖)) := hsum.mul_left ‖R‖
-    have hle' : ∀ n, ‖φ' n‖ * ‖y n‖ ≤ ‖R‖ * (‖φ n‖ * ‖y n‖) := hle
-    exact Summable.of_nonneg_of_le hnonneg hle' hsum'
+    exact Summable.of_nonneg_of_le hnonneg hle hsum'
   · intro x
     simp [φ', ContinuousLinearMap.comp_apply, hrepr (R x)]
 
-end
+end CompRight
 
 end IsNuclearMap
 
 section BanachOfSeminorm
 
-variable {E : Type*} [AddCommGroup E] [Module ℝ E]
+variable {𝕜 : Type*} [NormedField 𝕜]
+variable {E : Type*} [AddCommGroup E] [Module 𝕜 E]
 
 /-- The kernel of a seminorm, as a submodule. -/
-def seminormKer (p : Seminorm ℝ E) : Submodule ℝ E where
+def seminormKer (p : Seminorm 𝕜 E) : Submodule 𝕜 E where
   carrier := { x | p x = 0 }
   zero_mem' := by simp
   add_mem' := by
@@ -140,19 +268,19 @@ def seminormKer (p : Seminorm ℝ E) : Submodule ℝ E where
     have hx0 : p x = 0 := hx
     simpa [hx0] using (map_smul_eq_mul p c x)
 
-lemma mem_seminormKer_iff (p : Seminorm ℝ E) (x : E) :
+@[simp] lemma mem_seminormKer_iff (p : Seminorm 𝕜 E) (x : E) :
     x ∈ seminormKer (E := E) p ↔ p x = 0 :=
   Iff.rfl
 
 /-! ### The normed space induced by a seminorm -/
 
 /-- The normed space obtained by quotienting `E` by the kernel of `p`. -/
-abbrev QuotBySeminorm (p : Seminorm ℝ E) : Type _ :=
+abbrev QuotBySeminorm (p : Seminorm 𝕜 E) : Type _ :=
   E ⧸ seminormKer (E := E) p
 
 namespace QuotBySeminorm
 
-variable (p : Seminorm ℝ E)
+variable (p : Seminorm 𝕜 E)
 
 lemma seminorm_eq_of_sub_mem_ker {x y : E} (h : x - y ∈ seminormKer (E := E) p) :
     p x = p y := by
@@ -180,7 +308,7 @@ lemma seminorm_eq_of_sub_mem_ker {x y : E} (h : x - y ∈ seminormKer (E := E) p
   exact le_antisymm hx_le hy_le
 
 /-- The induced norm on `E ⧸ ker p` given by the seminorm `p` on representatives. -/
-noncomputable def norm : QuotBySeminorm p → ℝ :=
+noncomputable def norm : QuotBySeminorm (E := E) p → ℝ :=
   Quotient.lift (fun x : E => p x) (by
     intro x y hxy
     have hsub : x - y ∈ seminormKer (E := E) p := by
@@ -188,12 +316,12 @@ noncomputable def norm : QuotBySeminorm p → ℝ :=
     exact seminorm_eq_of_sub_mem_ker (E := E) p hsub)
 
 lemma norm_mk (x : E) :
-    norm p (Submodule.Quotient.mk (p := seminormKer (E := E) p) x) = p x := rfl
+    norm (E := E) p (Submodule.Quotient.mk (p := seminormKer (E := E) p) x) = p x := rfl
 
-noncomputable instance instAddGroupNorm : AddGroupNorm (QuotBySeminorm p) where
-  toFun := norm p
+noncomputable instance instAddGroupNorm : AddGroupNorm (QuotBySeminorm (E := E) p) where
+  toFun := norm (E := E) p
   map_zero' := by
-    have : (0 : QuotBySeminorm p) =
+    have : (0 : QuotBySeminorm (E := E) p) =
         Submodule.Quotient.mk (p := seminormKer (E := E) p) (0 : E) := by
       simp
     rw [this]
@@ -204,7 +332,8 @@ noncomputable instance instAddGroupNorm : AddGroupNorm (QuotBySeminorm p) where
     refine Quotient.inductionOn₂ r s ?_
     intro x y
     have hadd :
-        (Submodule.Quotient.mk (p := seminormKer (E := E) p) (x + y) : QuotBySeminorm p) =
+        (Submodule.Quotient.mk (p := seminormKer (E := E) p) (x + y) :
+            QuotBySeminorm (E := E) p) =
           Submodule.Quotient.mk (p := seminormKer (E := E) p) x +
             Submodule.Quotient.mk (p := seminormKer (E := E) p) y := by
       simp
@@ -214,11 +343,12 @@ noncomputable instance instAddGroupNorm : AddGroupNorm (QuotBySeminorm p) where
     refine Quotient.inductionOn r ?_
     intro x
     have hneg :
-        (-Submodule.Quotient.mk (p := seminormKer (E := E) p) x : QuotBySeminorm p) =
+        (-Submodule.Quotient.mk (p := seminormKer (E := E) p) x :
+            QuotBySeminorm (E := E) p) =
           Submodule.Quotient.mk (p := seminormKer (E := E) p) (-x) := by
       simp
-    change norm p (Submodule.Quotient.mk (p := seminormKer (E := E) p) (-x)) =
-        norm p (Submodule.Quotient.mk (p := seminormKer (E := E) p) x)
+    change norm (E := E) p (Submodule.Quotient.mk (p := seminormKer (E := E) p) (-x)) =
+        norm (E := E) p (Submodule.Quotient.mk (p := seminormKer (E := E) p) x)
     change p (-x) = p x
     exact map_neg_eq_map p x
   eq_zero_of_map_eq_zero' := by
@@ -227,40 +357,42 @@ noncomputable instance instAddGroupNorm : AddGroupNorm (QuotBySeminorm p) where
     intro x hx
     exact (Submodule.Quotient.mk_eq_zero (p := seminormKer (E := E) p) (x := x)).2 hx
 
-noncomputable instance instNormedAddCommGroup : NormedAddCommGroup (QuotBySeminorm p) :=
+noncomputable instance instNormedAddCommGroup :
+    NormedAddCommGroup (QuotBySeminorm (E := E) p) :=
   AddGroupNorm.toNormedAddCommGroup (instAddGroupNorm (E := E) p)
 
-instance instNormedSpace : NormedSpace ℝ (QuotBySeminorm p) where
+instance instNormedSpace : NormedSpace 𝕜 (QuotBySeminorm (E := E) p) where
   norm_smul_le := by
     intro a x
     refine Quotient.inductionOn x ?_
     intro y
     have hmksmul :
-        (a • (Submodule.Quotient.mk (p := seminormKer (E := E) p) y) : QuotBySeminorm p) =
+        (a • (Submodule.Quotient.mk (p := seminormKer (E := E) p) y) :
+            QuotBySeminorm (E := E) p) =
           Submodule.Quotient.mk (p := seminormKer (E := E) p) (a • y) := by
       simp
-    change norm p (a • (Submodule.Quotient.mk (p := seminormKer (E := E) p) y)) ≤
-        |a| * norm p (Submodule.Quotient.mk (p := seminormKer (E := E) p) y)
+    change norm (E := E) p (a • (Submodule.Quotient.mk (p := seminormKer (E := E) p) y)) ≤
+        ‖a‖ * norm (E := E) p (Submodule.Quotient.mk (p := seminormKer (E := E) p) y)
     rw [hmksmul]
-    have h : p (a • y) = |a| * p y := by
-      simpa [Real.norm_eq_abs] using (map_smul_eq_mul p a y)
-    simpa [norm_mk] using (le_of_eq h)
+    have h : p (a • y) = ‖a‖ * p y := by
+      simpa using (map_smul_eq_mul p a y)
+    simpa [norm_mk (E := E) (p := p)] using (le_of_eq h)
 
 end QuotBySeminorm
 
 /-! ### Completion: a Banach space -/
 
 /-- The completion of `E ⧸ ker p`, a Banach space. -/
-abbrev BanachOfSeminorm (p : Seminorm ℝ E) : Type _ :=
+abbrev BanachOfSeminorm (p : Seminorm 𝕜 E) : Type _ :=
   UniformSpace.Completion (QuotBySeminorm (E := E) p)
 
 namespace BanachOfSeminorm
 
-variable (p : Seminorm ℝ E)
+variable (p : Seminorm 𝕜 E)
 
 /-- The canonical continuous linear embedding `E ⧸ ker p → Completion (E ⧸ ker p)`. -/
 noncomputable def coeCLM :
-    QuotBySeminorm (E := E) p →L[ℝ] BanachOfSeminorm (E := E) p :=
+    QuotBySeminorm (E := E) p →L[𝕜] BanachOfSeminorm (E := E) p :=
   { toLinearMap :=
       { toFun := fun x => (x : BanachOfSeminorm (E := E) p)
         map_add' := by
@@ -289,7 +421,7 @@ end BanachOfSeminorm
 
 namespace QuotBySeminorm
 
-variable {p q : Seminorm ℝ E}
+variable {p q : Seminorm 𝕜 E}
 
 /-- If `q ≤ p`, then `ker p ≤ ker q`. -/
 lemma seminormKer_mono_of_le (hpq : q ≤ p) :
@@ -302,9 +434,9 @@ lemma seminormKer_mono_of_le (hpq : q ≤ p) :
   have hge : 0 ≤ q x := by simp
   exact le_antisymm hle hge
 
-/-- The induced linear map `E ⧸ ker p →ₗ[ℝ] E ⧸ ker q` when `q ≤ p`. -/
+/-- The induced linear map `E ⧸ ker p →ₗ[𝕜] E ⧸ ker q` when `q ≤ p`. -/
 noncomputable def inclₗ (hpq : q ≤ p) :
-    QuotBySeminorm (E := E) p →ₗ[ℝ] QuotBySeminorm (E := E) q :=
+    QuotBySeminorm (E := E) p →ₗ[𝕜] QuotBySeminorm (E := E) q :=
   (seminormKer (E := E) p).mapQ (seminormKer (E := E) q) (LinearMap.id) (by
     simpa using seminormKer_mono_of_le (E := E) (p := p) (q := q) hpq)
 
@@ -316,7 +448,7 @@ noncomputable def inclₗ (hpq : q ≤ p) :
 
 /-- The induced continuous linear map on quotients when `q ≤ p`. -/
 noncomputable def inclCLM (hpq : q ≤ p) :
-    QuotBySeminorm (E := E) p →L[ℝ] QuotBySeminorm (E := E) q := by
+    QuotBySeminorm (E := E) p →L[𝕜] QuotBySeminorm (E := E) q := by
   classical
   refine (inclₗ (E := E) (p := p) (q := q) hpq).mkContinuous 1 ?_
   intro x
@@ -336,14 +468,14 @@ end QuotBySeminorm
 
 namespace BanachOfSeminorm
 
-variable {p q : Seminorm ℝ E}
+variable {p q : Seminorm 𝕜 E}
 
 /-- The canonical continuous linear inclusion `BanachOfSeminorm p →L BanachOfSeminorm q` for `q ≤ p`. -/
 noncomputable def inclCLM (hpq : q ≤ p) :
-    BanachOfSeminorm (E := E) p →L[ℝ] BanachOfSeminorm (E := E) q :=
-  let e : QuotBySeminorm (E := E) p →L[ℝ] BanachOfSeminorm (E := E) p :=
+    BanachOfSeminorm (E := E) p →L[𝕜] BanachOfSeminorm (E := E) q :=
+  let e : QuotBySeminorm (E := E) p →L[𝕜] BanachOfSeminorm (E := E) p :=
     BanachOfSeminorm.coeCLM (E := E) p
-  let f0 : QuotBySeminorm (E := E) p →L[ℝ] BanachOfSeminorm (E := E) q :=
+  let f0 : QuotBySeminorm (E := E) p →L[𝕜] BanachOfSeminorm (E := E) q :=
     (BanachOfSeminorm.coeCLM (E := E) q).comp (QuotBySeminorm.inclCLM (E := E) (p := p) (q := q) hpq)
   f0.extend e
 

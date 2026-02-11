@@ -45,7 +45,6 @@ Pushforward ↔ precomposition rule used to prove projectivity via characteristi
 functions. -/
 theorem charFun_map_clm (μ : Measure E) (L : E →L[ℝ] F) (t : F) :
     charFun (μ.map L) t = charFun μ (L.adjoint t) := by
-  classical
   simp only [MeasureTheory.charFun]
   have hL : AEMeasurable (fun x : E => L x) μ :=
     (L.continuous.measurable.aemeasurable)
@@ -98,7 +97,6 @@ theorem existsUnique_gaussianOfPosSemidef_charFun
         MeasureTheory.charFun μ.toMeasure t =
           Complex.exp (-(1 / 2 : ℂ) *
             ⟪t, (Matrix.toEuclideanCLM (n := n) (𝕜 := ℝ) Sigma) t⟫_ℝ) := by
-  classical
   refine ⟨⟨gaussianOfPosSemidef (n := n) Sigma hSigma, inferInstance⟩, ?_, ?_⟩
   · intro t
     simpa using (charFun_gaussianOfPosSemidef (n := n) Sigma hSigma t)
