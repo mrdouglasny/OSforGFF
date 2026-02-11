@@ -102,10 +102,8 @@ theorem smul (c : 𝕜) {T : E →L[𝕜] F} (hT : IsNuclearMap T) :
     IsNuclearMap (c • T) := by
   rcases hT with ⟨φ, y, hsum, hrepr⟩
   refine ⟨φ, fun n => c • y n, ?_, ?_⟩
-  · -- summability of `‖φ n‖ * ‖c • y n‖`
-    have hle : ∀ n, ‖φ n‖ * ‖c • y n‖ ≤ ‖c‖ * (‖φ n‖ * ‖y n‖) := by
+  · have hle : ∀ n, ‖φ n‖ * ‖c • y n‖ ≤ ‖c‖ * (‖φ n‖ * ‖y n‖) := by
       intro n
-      -- This is actually an equality.
       have : ‖φ n‖ * ‖c • y n‖ = ‖c‖ * (‖φ n‖ * ‖y n‖) := by
         calc
           ‖φ n‖ * ‖c • y n‖ = ‖φ n‖ * (‖c‖ * ‖y n‖) := by simp [norm_smul]
@@ -116,9 +114,7 @@ theorem smul (c : 𝕜) {T : E →L[𝕜] F} (hT : IsNuclearMap T) :
     have hsum' : Summable (fun n => ‖c‖ * (‖φ n‖ * ‖y n‖)) := hsum.mul_left ‖c‖
     exact Summable.of_nonneg_of_le hnonneg hle hsum'
   · intro x
-    -- Move scalar multiplication inside the series.
     have hterms_norm : Summable (fun n => ‖(φ n x) • y n‖) := by
-      -- same estimate as in `comp_left`
       have hle : ∀ n, ‖(φ n x) • y n‖ ≤ ‖x‖ * (‖φ n‖ * ‖y n‖) := by
         intro n
         have hxφ : ‖φ n x‖ ≤ ‖φ n‖ * ‖x‖ := by simpa using (φ n).le_opNorm x
@@ -136,13 +132,11 @@ theorem smul (c : 𝕜) {T : E →L[𝕜] F} (hT : IsNuclearMap T) :
       (c • T) x = c • (∑' n : ℕ, (φ n x) • y n) := by
         simp [ContinuousLinearMap.smul_apply, hrepr x]
       _ = ∑' n : ℕ, c • ((φ n x) • y n) := by
-        -- `tsum` commutes with scalar multiplication.
         symm
         simpa using (tsum_const_smul'' (f := fun n : ℕ => (φ n x) • y n) c)
       _ = ∑' n : ℕ, (φ n x) • (c • y n) := by
         refine tsum_congr ?_
         intro n
-        -- commute scalars
         simp [smul_smul, mul_comm]
 
 /-- Addition preserves nuclearity. -/
@@ -154,16 +148,13 @@ theorem add {T U : E →L[𝕜] F} (hT : IsNuclearMap T) (hU : IsNuclearMap U) :
   let φ : ℕ → (E →L[𝕜] 𝕜) := fun n => if Even n then φ₁ (Nat.div2 n) else φ₂ (Nat.div2 n)
   let y : ℕ → F := fun n => if Even n then y₁ (Nat.div2 n) else y₂ (Nat.div2 n)
   refine ⟨φ, y, ?_, ?_⟩
-  · -- Summability of `‖φ n‖ * ‖y n‖` by even/odd splitting.
-    have he : Summable (fun k : ℕ => ‖φ (2 * k)‖ * ‖y (2 * k)‖) := by
+  · have he : Summable (fun k : ℕ => ‖φ (2 * k)‖ * ‖y (2 * k)‖) := by
       simpa [φ, y] using hsum₁
     have ho : Summable (fun k : ℕ => ‖φ (2 * k + 1)‖ * ‖y (2 * k + 1)‖) := by
       simpa [φ, y] using hsum₂
     exact Summable.even_add_odd he ho
   · intro x
-    -- Build the even and odd subsequence sums and combine.
     have hterms₁_norm : Summable (fun n => ‖(φ₁ n x) • y₁ n‖) := by
-      -- reuse the standard bound with `hsum₁`
       have hle : ∀ n, ‖(φ₁ n x) • y₁ n‖ ≤ ‖x‖ * (‖φ₁ n‖ * ‖y₁ n‖) := by
         intro n
         have hxφ : ‖φ₁ n x‖ ≤ ‖φ₁ n‖ * ‖x‖ := by simpa using (φ₁ n).le_opNorm x
@@ -191,10 +182,8 @@ theorem add {T U : E →L[𝕜] F} (hT : IsNuclearMap T) (hU : IsNuclearMap U) :
       exact Summable.of_nonneg_of_le hnonneg hle hsumx
     have hterms₂ : Summable (fun n => (φ₂ n x) • y₂ n) :=
       hterms₂_norm.of_norm
-    -- Define the combined term sequence.
     let a : ℕ → F := fun n => (φ n x) • y n
     have ha_even : HasSum (fun n : ℕ => a (2 * n)) (T x) := by
-      -- even terms are exactly the `T` terms
       have : HasSum (fun n : ℕ => (φ₁ n x) • y₁ n) (∑' n : ℕ, (φ₁ n x) • y₁ n) :=
         hterms₁.hasSum
       simpa [a, φ, y, hrepr₁ x] using this
@@ -204,9 +193,62 @@ theorem add {T U : E →L[𝕜] F} (hT : IsNuclearMap T) (hU : IsNuclearMap U) :
       simpa [a, φ, y, hrepr₂ x] using this
     have ha : HasSum a (T x + U x) :=
       HasSum.even_add_odd ha_even ha_odd
-    -- Conclude by rewriting `T+U` and using the computed `tsum`.
     have : (∑' n : ℕ, a n) = T x + U x := ha.tsum_eq
     simp [a, ContinuousLinearMap.add_apply, this]
+
+/-- A nuclear representation yields an operator-norm bound. -/
+theorem opNorm_le_tsum (T : E →L[𝕜] F) (hT : IsNuclearMap T) :
+    ∃ (φ : ℕ → (E →L[𝕜] 𝕜)) (y : ℕ → F),
+      Summable (fun n => ‖φ n‖ * ‖y n‖) ∧
+        (∀ x, T x = ∑' n, (φ n x) • y n) ∧
+          ‖T‖ ≤ ∑' n, ‖φ n‖ * ‖y n‖ := by
+  classical
+  rcases hT with ⟨φ, y, hsum, hrepr⟩
+  refine ⟨φ, y, hsum, hrepr, ?_⟩
+  refine ContinuousLinearMap.opNorm_le_bound T (by
+    have : 0 ≤ (∑' n, ‖φ n‖ * ‖y n‖) := by
+      have h0 : ∀ n, 0 ≤ ‖φ n‖ * ‖y n‖ := fun _ =>
+        mul_nonneg (norm_nonneg _) (norm_nonneg _)
+      exact tsum_nonneg h0
+    simpa using this) ?_
+  intro x
+  have hterms_norm : Summable (fun n => ‖(φ n x) • y n‖) := by
+    have hle : ∀ n, ‖(φ n x) • y n‖ ≤ ‖x‖ * (‖φ n‖ * ‖y n‖) := by
+      intro n
+      have hxφ : ‖φ n x‖ ≤ ‖φ n‖ * ‖x‖ := by simpa using (φ n).le_opNorm x
+      calc
+        ‖(φ n x) • y n‖ = ‖φ n x‖ * ‖y n‖ := by simp [norm_smul]
+        _ ≤ (‖φ n‖ * ‖x‖) * ‖y n‖ := by
+          exact mul_le_mul_of_nonneg_right hxφ (norm_nonneg _)
+        _ = ‖x‖ * (‖φ n‖ * ‖y n‖) := by ring
+    have hsumx : Summable (fun n => ‖x‖ * (‖φ n‖ * ‖y n‖)) := hsum.mul_left ‖x‖
+    have hnonneg : ∀ n, 0 ≤ ‖(φ n x) • y n‖ := fun _ => norm_nonneg _
+    exact Summable.of_nonneg_of_le hnonneg hle hsumx
+  have hterms : Summable (fun n => (φ n x) • y n) :=
+    hterms_norm.of_norm
+  have hle_tsum :
+      ‖∑' n : ℕ, (φ n x) • y n‖ ≤ ‖x‖ * (∑' n : ℕ, ‖φ n‖ * ‖y n‖) := by
+    have hle' : (∑' n : ℕ, ‖(φ n x) • y n‖) ≤ ∑' n : ℕ, ‖x‖ * (‖φ n‖ * ‖y n‖) :=
+      hterms_norm.tsum_le_tsum (fun n => by
+        have hxφ : ‖φ n x‖ ≤ ‖φ n‖ * ‖x‖ := by simpa using (φ n).le_opNorm x
+        calc
+          ‖(φ n x) • y n‖ = ‖φ n x‖ * ‖y n‖ := by simp [norm_smul]
+          _ ≤ (‖φ n‖ * ‖x‖) * ‖y n‖ := by
+            exact mul_le_mul_of_nonneg_right hxφ (norm_nonneg _)
+          _ = ‖x‖ * (‖φ n‖ * ‖y n‖) := by ring)
+        (hsum.mul_left ‖x‖)
+    calc
+      ‖∑' n : ℕ, (φ n x) • y n‖ ≤ ∑' n : ℕ, ‖(φ n x) • y n‖ :=
+        norm_tsum_le_tsum_norm hterms_norm
+      _ ≤ ∑' n : ℕ, ‖x‖ * (‖φ n‖ * ‖y n‖) := hle'
+      _ = ‖x‖ * (∑' n : ℕ, ‖φ n‖ * ‖y n‖) := by
+            simpa [smul_eq_mul, mul_assoc] using
+              (tsum_const_smul'' (f := fun n : ℕ => (‖φ n‖ * ‖y n‖ : ℝ)) ‖x‖)
+  have : T x = ∑' n : ℕ, (φ n x) • y n := hrepr x
+  calc
+    ‖T x‖ = ‖∑' n : ℕ, (φ n x) • y n‖ := by simp [this]
+    _ ≤ ‖x‖ * (∑' n : ℕ, ‖φ n‖ * ‖y n‖) := hle_tsum
+    _ = (∑' n : ℕ, ‖φ n‖ * ‖y n‖) * ‖x‖ := by ring
 
 end Basic
 
