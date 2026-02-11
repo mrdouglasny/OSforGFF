@@ -2,6 +2,7 @@ import Mathlib.MeasureTheory.Measure.CharacteristicFunction
 import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
+import OSforGFF.FiniteDimGaussian
 
 /-!
 # Finite-dimensional characteristic-function API (Bochner pipeline scaffolding)
@@ -13,9 +14,13 @@ Bochner–Minlos strategy:
 - uniqueness of a finite measure from its characteristic function (`Measure.ext_of_charFun`),
   specialized to Euclidean spaces.
 
-The **existence** direction of Bochner's theorem (continuous positive-definite normalized
+The **general existence** direction of Bochner's theorem (continuous positive-definite normalized
 `φ : E → ℂ` gives a unique probability measure with `charFun μ = φ`) is not currently available in
-mathlib and will be developed in this project in a later phase.
+mathlib.
+
+However, for the **Gaussian** characteristic functions arising from a positive semidefinite
+covariance matrix, existence is available in `OSforGFF/FiniteDimGaussian.lean`, and we
+provide it here as part of the Bochner–Minlos pipeline infrastructure.
 -/
 
 open scoped RealInnerProductSpace
@@ -71,6 +76,43 @@ theorem Measure.ext_of_charFun_euclidean
   Measure.ext_of_charFun h
 
 end Uniqueness
+
+section Gaussian
+
+open scoped MatrixOrder
+open scoped RealInnerProductSpace InnerProductSpace
+
+open OSforGFF.FiniteDimGaussian
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+/-- Gaussian existence+uniqueness from a positive semidefinite covariance matrix, packaged in the
+`ProbabilityMeasure` form.
+
+This is the finite-dimensional “Bochner theorem” for the Gaussian characteristic functions used
+throughout the project. -/
+theorem existsUnique_gaussianOfPosSemidef_charFun
+    (Sigma : Matrix n n ℝ) (hSigma : Sigma.PosSemidef) :
+    ∃! μ : ProbabilityMeasure (EuclideanSpace ℝ n),
+      ∀ t : EuclideanSpace ℝ n,
+        MeasureTheory.charFun μ.toMeasure t =
+          Complex.exp (-(1 / 2 : ℂ) *
+            ⟪t, (Matrix.toEuclideanCLM (n := n) (𝕜 := ℝ) Sigma) t⟫_ℝ) := by
+  classical
+  refine ⟨⟨gaussianOfPosSemidef (n := n) Sigma hSigma, inferInstance⟩, ?_, ?_⟩
+  · intro t
+    simpa using (charFun_gaussianOfPosSemidef (n := n) Sigma hSigma t)
+  · intro ν hν
+    have hcf : MeasureTheory.charFun (gaussianOfPosSemidef (n := n) Sigma hSigma) =
+        MeasureTheory.charFun ν.toMeasure := by
+      funext t
+      simpa [hν t] using (charFun_gaussianOfPosSemidef (n := n) Sigma hSigma t)
+    have : (gaussianOfPosSemidef (n := n) Sigma hSigma) = ν.toMeasure :=
+      Measure.ext_of_charFun hcf
+    ext s hs
+    simp [this]
+
+end Gaussian
 
 end
 
