@@ -43,7 +43,65 @@ theorem exists_family :
                 (hpmono (Nat.le_of_lt hnm))) :=
   NuclearSpaceStd.nuclear_family (E := E)
 
+/-!
+### A chosen seminorm family
+
+To avoid destructing `exists_family` repeatedly, we fix (noncomputably) one seminorm family
+generating the topology, together with its monotonicity and nuclearity properties.
+-/
+
+noncomputable def seminormFamily : ℕ → Seminorm ℝ E := by
+  exact Classical.choose (exists_family (E := E))
+
+lemma seminormFamily_spec :
+    ∃ hpmono : Monotone (seminormFamily (E := E)),
+      WithSeminorms (seminormFamily (E := E)) ∧
+        ∀ n : ℕ, ∃ m : ℕ, ∃ hnm : n < m,
+          IsNuclearMap
+            (BanachOfSeminorm.inclCLM (E := E)
+              (p := seminormFamily (E := E) m) (q := seminormFamily (E := E) n)
+              (hpmono (Nat.le_of_lt hnm))) := by
+  simpa [seminormFamily] using (Classical.choose_spec (exists_family (E := E)))
+
+lemma seminormFamily_mono : Monotone (seminormFamily (E := E)) := by
+  rcases seminormFamily_spec (E := E) with ⟨hpmono, _⟩
+  exact hpmono
+
+lemma seminormFamily_withSeminorms : WithSeminorms (seminormFamily (E := E)) := by
+  rcases seminormFamily_spec (E := E) with ⟨_, hp⟩
+  exact hp.1
+
+lemma seminormFamily_isNuclearMap (n : ℕ) :
+    ∃ hpmono : Monotone (seminormFamily (E := E)),
+      ∃ m : ℕ, ∃ hnm : n < m,
+        IsNuclearMap
+          (BanachOfSeminorm.inclCLM (E := E)
+            (p := seminormFamily (E := E) m) (q := seminormFamily (E := E) n)
+            (hpmono (Nat.le_of_lt hnm))) := by
+  rcases seminormFamily_spec (E := E) with ⟨hpmono, hp⟩
+  exact ⟨hpmono, hp.2 n⟩
+
+section Consequences
+
+/-!
+Basic topological consequences of the existence of a countable seminorm family generating the
+topology. These instances are obtained by choosing such a family from `exists_family`.
+-/
+
+noncomputable instance : IsTopologicalAddGroup E := by
+  exact (seminormFamily_withSeminorms (E := E)).topologicalAddGroup
+
+noncomputable instance : ContinuousSMul ℝ E := by
+  exact (seminormFamily_withSeminorms (E := E)).continuousSMul
+
+noncomputable instance : LocallyConvexSpace ℝ E := by
+  exact (seminormFamily_withSeminorms (E := E)).toLocallyConvexSpace
+
+noncomputable instance : FirstCountableTopology E := by
+  exact (seminormFamily_withSeminorms (E := E)).firstCountableTopology
+
+end Consequences
+
 end NuclearSpaceStd
 
 end OSforGFF
-
