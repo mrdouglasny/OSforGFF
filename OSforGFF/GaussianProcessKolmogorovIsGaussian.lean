@@ -1,5 +1,6 @@
 import OSforGFF.GaussianProcessKolmogorov
 import OSforGFF.FiniteDimGaussianIsGaussian
+import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Def
 
 /-!
 # `IsGaussian` for Kolmogorov finite-dimensional laws
@@ -34,6 +35,30 @@ instance (K : ι → ι → ℝ) (J : Finset ι) (hJ : (covMatrix K J).PosSemide
       ((gaussianOfPosSemidef (n := J) (covMatrix K J) hJ).map e) := by
     infer_instance
   simpa [gaussianFiniteLaw, e, PiLp.coe_continuousLinearEquiv] using this
+
+variable (K : ι → ι → ℝ) (hK : ∀ J : Finset ι, (covMatrix K J).PosSemidef)
+
+/-- The finite-dimensional marginals of `gaussianProcessOfKernel` are Gaussian. -/
+lemma hasGaussianLaw_restrict_gaussianProcessOfKernel (I : Finset ι) :
+    ProbabilityTheory.HasGaussianLaw
+      (fun ω : ι → ℝ => I.restrict ω)
+      (gaussianProcessOfKernel (ι := ι) K hK) := by
+  classical
+  refine ⟨?_⟩
+  have hmap :
+      (gaussianProcessOfKernel (ι := ι) K hK).map (fun ω : ι → ℝ => I.restrict ω) =
+        gaussianFiniteLaw (ι := ι) K I (hK I) := by
+    simpa [gaussianFamily] using (isProjectiveLimit_gaussianProcessOfKernel (ι := ι) K hK I)
+  simpa [hmap] using (by
+    infer_instance :
+      ProbabilityTheory.IsGaussian (gaussianFiniteLaw (ι := ι) K I (hK I)))
+
+/-- Under `gaussianProcessOfKernel`, the coordinate evaluation process is a Gaussian process. -/
+theorem isGaussianProcess_eval_gaussianProcessOfKernel :
+    ProbabilityTheory.IsGaussianProcess (Ω := ι → ℝ) (E := ℝ) (T := ι)
+      (fun i (ω : ι → ℝ) => ω i) (gaussianProcessOfKernel (ι := ι) K hK) := by
+  refine ⟨fun I => ?_⟩
+  simpa using (hasGaussianLaw_restrict_gaussianProcessOfKernel (ι := ι) (K := K) (hK := hK) I)
 
 end
 
