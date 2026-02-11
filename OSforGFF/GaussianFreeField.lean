@@ -21,7 +21,7 @@ import OSforGFF.GFFIsGaussian
 import OSforGFF.Euclidean
 import OSforGFF.DiscreteSymmetry
 import OSforGFF.FunctionalAnalysis
-import OSforGFF.Minlos
+import OSforGFF.MinlosAxiomatic
 import OSforGFF.Covariance
 import OSforGFF.MinlosAnalytic
 import OSforGFF.Schwinger

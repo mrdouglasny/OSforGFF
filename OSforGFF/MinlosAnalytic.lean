@@ -17,7 +17,7 @@ import Mathlib.Topology.Constructions
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 import OSforGFF.Basic
-import OSforGFF.Minlos
+import OSforGFF.MinlosAxiomatic
 import Mathlib.MeasureTheory.Measure.Map
 import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
