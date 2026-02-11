@@ -11,6 +11,9 @@ package «OSforGFF» where
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git"
 
+lean_lib KolmogorovExtension4 where
+  srcDir := "."
+
 @[default_target]
 lean_lib «OSforGFF» where
   -- add any library configuration options here
