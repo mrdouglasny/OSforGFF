@@ -89,6 +89,28 @@ lemma mem_range_toFun_of_linearMap_of_le_seminormFamily (L : E →ₗ[ℝ] ℝ) 
     (fun f : E => L f) ∈ Set.range (toFun (E := E)) := by
   exact mem_range_toFun_of_continuousLinearMap (E := E) L (continuous_of_le_seminormFamily (E := E) L hle)
 
+/-- **Range bridge (a.e. version).**
+
+If a random sample path `ω : E → ℝ` agrees almost surely with a linear functional bounded by a
+chosen `NuclearSpaceStd` seminorm, then `ω` is almost surely in the range of `toFun`. -/
+theorem ae_mem_range_toFun_of_ae_exists_linearMap_of_le_seminormFamily
+    {μ : Measure (E → ℝ)}
+    (h :
+      ∀ᵐ ω ∂μ,
+        ∃ (n : ℕ) (C : ℝ≥0) (L : E →ₗ[ℝ] ℝ),
+          (∀ f : E, L f = ω f) ∧
+            (normSeminorm ℝ ℝ).comp L ≤ C • (seminormFamily (E := E) n)) :
+    ∀ᵐ ω ∂μ, ω ∈ Set.range (toFun (E := E)) := by
+  filter_upwards [h] with ω hω
+  rcases hω with ⟨n, C, L, hL, hle⟩
+  have hωeq : ω = fun f : E => L f := by
+    funext f
+    symm
+    exact hL f
+  have : (fun f : E => L f) ∈ Set.range (toFun (E := E)) :=
+    mem_range_toFun_of_linearMap_of_le_seminormFamily (E := E) (L := L) (n := n) (C := C) hle
+  simpa [hωeq] using this
+
 end SeminormBounds
 
 @[fun_prop]

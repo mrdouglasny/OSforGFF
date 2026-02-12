@@ -4,6 +4,8 @@ import OSforGFF.MinlosGaussianSeminormBoundsStd
 import OSforGFF.NuclearSpaceStd
 import Mathlib.Algebra.Module.RingHom
 import Mathlib.LinearAlgebra.Countable
+import Mathlib.Topology.Metrizable.Basic
+import Mathlib.MeasureTheory.OuterMeasure.BorelCantelli
 
 /-!
 # Support/regularity lemmas for the Gaussian Kolmogorov construction
@@ -14,8 +16,8 @@ At this stage we focus on **countable** spans, where almost-sure linearity can b
 running into uncountable intersections.
 -/
 
-open Complex MeasureTheory
-open scoped BigOperators NNReal RealInnerProductSpace ProbabilityTheory
+open Complex MeasureTheory Filter
+open scoped BigOperators ENNReal NNReal RealInnerProductSpace ProbabilityTheory
 
 namespace OSforGFF
 
@@ -134,12 +136,9 @@ theorem ae_eval_eq_zero_of_seminormFamily_eq_zero
         Var[(fun ω : E → ℝ => ω f); μ] ≤ 0 := by
       have : Var[(fun ω : E → ℝ => ω f); μ] ≤ ((C : ℝ) * (seminormFamily (E := E) n) f) ^ 2 :=
         by simpa [μ] using hvar_le f
-      -- the RHS is `0` because `seminormFamily n f = 0`
       simpa [hf0] using this
     exact le_antisymm hle0 (ProbabilityTheory.variance_nonneg (fun ω : E → ℝ => ω f) μ)
-  -- Convert `Var = 0` to `ae`-equality with the mean.
   have hEV0 : ProbabilityTheory.evariance (fun ω : E → ℝ => ω f) μ = 0 := by
-    -- `eVar = ofReal Var` under `MemLp`.
     have : ENNReal.ofReal (Var[(fun ω : E → ℝ => ω f); μ]) =
         ProbabilityTheory.evariance (fun ω : E → ℝ => ω f) μ :=
       hmemLp.ofReal_variance_eq
@@ -149,14 +148,231 @@ theorem ae_eval_eq_zero_of_seminormFamily_eq_zero
     have hmeas : AEMeasurable (fun ω : E → ℝ => ω f) μ :=
       (measurable_pi_apply f).aemeasurable
     simpa using (ProbabilityTheory.evariance_eq_zero_iff (μ := μ) hmeas).1 hEV0
-  -- Finish by rewriting the mean as `0`.
   have h_ae0 :
       (fun ω : E → ℝ => ω f) =ᵐ[μ] fun _ => (0 : ℝ) := by
     simpa [hmean] using h_ae_mean
-  -- Unpack the `ae` statement.
   have : ∀ᵐ ω ∂μ, (ω f : ℝ) = 0 := by
     simpa [Filter.EventuallyEq] using h_ae0
   simpa [μ] using this
+
+section QLinearKernel
+
+variable {ι : Type*} [Countable ι] (v : ι → E)
+
+-- Provide the canonical `ℚ`-module structure by restricting scalars along `ℚ →+* ℝ`.
+local instance : Module ℚ E := Module.compHom E (algebraMap ℚ ℝ)
+
+/-- The ℚ-submodule of `Submodule.span ℚ (Set.range v)` on which `seminormFamily n` vanishes. -/
+def qSpanSeminormFamilyKer (n : ℕ) :
+    Submodule ℚ (Submodule.span ℚ (Set.range v)) where
+  carrier := {x | seminormFamily (E := E) n (x : E) = 0}
+  zero_mem' := by simp
+  add_mem' := by
+    intro x y hx hy
+    have hx0 : seminormFamily (E := E) n (x : E) = 0 := hx
+    have hy0 : seminormFamily (E := E) n (y : E) = 0 := hy
+    have hle :
+        seminormFamily (E := E) n ((x + y : Submodule.span ℚ (Set.range v)) : E) ≤ 0 := by
+      calc
+        seminormFamily (E := E) n ((x + y : Submodule.span ℚ (Set.range v)) : E)
+            ≤ seminormFamily (E := E) n (x : E) + seminormFamily (E := E) n (y : E) :=
+          by simpa using (map_add_le_add (seminormFamily (E := E) n) (x : E) (y : E))
+        _ = 0 := by simp [hx0, hy0]
+    have hge : 0 ≤ seminormFamily (E := E) n ((x + y : Submodule.span ℚ (Set.range v)) : E) :=
+      apply_nonneg _ _
+    exact le_antisymm hle hge
+  smul_mem' := by
+    intro q x hx
+    have hx0 : seminormFamily (E := E) n (x : E) = 0 := hx
+    have :
+        seminormFamily (E := E) n ((q • x : Submodule.span ℚ (Set.range v)) : E) =
+          ‖(q : ℝ)‖ * seminormFamily (E := E) n (x : E) := by
+      simpa using (map_smul_eq_mul (seminormFamily (E := E) n) (q : ℝ) (x : E))
+    simpa [this, hx0]
+
+omit [Countable ι] in
+@[simp]
+lemma mem_qSpanSeminormFamilyKer_iff (n : ℕ) (x : Submodule.span ℚ (Set.range v)) :
+    x ∈ qSpanSeminormFamilyKer (E := E) (v := v) n ↔ seminormFamily (E := E) n (x : E) = 0 :=
+  Iff.rfl
+
+/-- On a countable ℚ-span, we can package *simultaneously*:
+
+* existence of a ℚ-linear realization of the sample path, and
+* vanishing on the kernel of a controlling seminorm from `NuclearSpaceStd`.
+
+This is a preparatory step towards descending sample paths to local Banach quotients. -/
+theorem ae_exists_qLinear_on_qSpan_and_vanish_seminormFamily_ker
+    (T : E →ₗ[ℝ] H)
+    (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
+    ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧
+      (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+        ∃ L : Submodule.span ℚ (Set.range v) →ₗ[ℚ] ℝ,
+          (∀ x : Submodule.span ℚ (Set.range v), L x = ω (x : E)) ∧
+          (∀ x : Submodule.span ℚ (Set.range v),
+            seminormFamily (E := E) n (x : E) = 0 → L x = 0)) := by
+  rcases ae_eval_eq_zero_of_seminormFamily_eq_zero (E := E) (H := H) (T := T) h_sq with
+    ⟨n, C, hC0, hker⟩
+  refine ⟨n, C, hC0, ?_⟩
+  have hLin :
+      (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+        ∃ L : Submodule.span ℚ (Set.range v) →ₗ[ℚ] ℝ, ∀ x, L x = ω (x : E)) :=
+    ae_exists_qLinear_on_qSpan (E := E) (H := H) (v := v) T
+  have hKerAll :
+      (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+        ∀ x : Submodule.span ℚ (Set.range v), seminormFamily (E := E) n (x : E) = 0 → ω (x : E) = 0) := by
+    have hx :
+        ∀ x : Submodule.span ℚ (Set.range v),
+          ∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+            seminormFamily (E := E) n (x : E) = 0 → ω (x : E) = 0 := by
+      intro x
+      simpa using (hker (x : E))
+    refine (ae_all_iff).2 ?_
+    intro x
+    exact hx x
+  filter_upwards [hLin, hKerAll] with ω hωLin hωKer
+  rcases hωLin with ⟨L, hL⟩
+  refine ⟨L, hL, ?_⟩
+  intro x hx0
+  simpa [hL x] using hωKer x hx0
+
+/-- Strengthening of `ae_exists_qLinear_on_qSpan_and_vanish_seminormFamily_ker`:
+the ℚ-linear realization factors through the quotient by the kernel submodule. -/
+theorem ae_exists_qLinear_on_qSpan_quotient_seminormFamilyKer
+    (T : E →ₗ[ℝ] H)
+    (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
+    ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧
+      (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+        ∃ Lq :
+          (Submodule.span ℚ (Set.range v) ⧸ qSpanSeminormFamilyKer (E := E) (v := v) n) →ₗ[ℚ] ℝ,
+          ∀ x : Submodule.span ℚ (Set.range v),
+            Lq ((qSpanSeminormFamilyKer (E := E) (v := v) n).mkQ x) = ω (x : E)) := by
+  rcases ae_exists_qLinear_on_qSpan_and_vanish_seminormFamily_ker (E := E) (H := H) (v := v) T h_sq with
+    ⟨n, C, hC0, hpack⟩
+  refine ⟨n, C, hC0, ?_⟩
+  filter_upwards [hpack] with ω hω
+  rcases hω with ⟨L, hL, hLker⟩
+  let K : Submodule ℚ (Submodule.span ℚ (Set.range v)) :=
+    qSpanSeminormFamilyKer (E := E) (v := v) n
+  have hK : K ≤ LinearMap.ker L := by
+    intro x hx
+    have hx0 : seminormFamily (E := E) n (x : E) = 0 :=
+      (mem_qSpanSeminormFamilyKer_iff (E := E) (v := v) n x).1 hx
+    simpa [LinearMap.mem_ker] using hLker x hx0
+  refine ⟨K.liftQ L hK, ?_⟩
+  intro x
+  simp [K, hL x]
+
+end QLinearKernel
+
+/-!
+## Dense countable families in local Banach spaces
+
+The local Banach spaces `BanachOfSeminorm (seminormFamily n)` will later be used to control
+sample-path regularity. A first basic step is that the canonical map
+`E → BanachOfSeminorm (seminormFamily n)` has dense range.
+
+This lemma is intentionally stated without any continuity assumptions on `E → QuotBySeminorm p`,
+avoiding clashes between the quotient topology inherited from `E` and the norm topology on
+`QuotBySeminorm p`. -/
+
+theorem denseRange_toBanachOfSeminorm_seminormFamily (n : ℕ) :
+    DenseRange fun x : E =>
+      (BanachOfSeminorm.coeCLM (E := E) (seminormFamily (E := E) n))
+        (Submodule.Quotient.mk
+          (p := seminormKer (E := E) (seminormFamily (E := E) n)) x) := by
+  classical
+  let p : Seminorm ℝ E := seminormFamily (E := E) n
+  let f : E → QuotBySeminorm (E := E) p :=
+    Submodule.Quotient.mk (p := seminormKer (E := E) p)
+  let g : QuotBySeminorm (E := E) p → BanachOfSeminorm (E := E) p :=
+    BanachOfSeminorm.coeCLM (E := E) p
+  have hg : DenseRange g :=
+    BanachOfSeminorm.denseRange_coeCLM (E := E) (p := p)
+  have hf : Function.Surjective f :=
+    Submodule.Quotient.mk_surjective (p := seminormKer (E := E) p)
+  have hrange : Set.range (g ∘ f) = Set.range g := by
+    ext y
+    constructor
+    · rintro ⟨x, rfl⟩
+      exact ⟨f x, rfl⟩
+    · rintro ⟨xq, rfl⟩
+      rcases hf xq with ⟨x, rfl⟩
+      exact ⟨x, rfl⟩
+  have hcomp : DenseRange (g ∘ f) := by
+    simpa [DenseRange, hrange.symm] using hg
+  simpa [p, f, g, Function.comp] using hcomp
+
+section DenseCountableFamilies
+
+open TopologicalSpace
+open OSforGFF.NuclearSpaceStd
+
+/-- For each local Banach space `BanachOfSeminorm (seminormFamily n)`, there exists a
+countable family `v : ℕ → E` whose image is dense under the canonical map
+`E → BanachOfSeminorm (seminormFamily n)`. -/
+theorem exists_denseSeq_toBanachOfSeminorm_seminormFamily (n : ℕ) :
+    ∃ v : ℕ → E, DenseRange fun k : ℕ =>
+      (BanachOfSeminorm.coeCLM (E := E) (seminormFamily (E := E) n))
+        (Submodule.Quotient.mk
+          (p := seminormKer (E := E) (seminormFamily (E := E) n)) (v k)) := by
+  classical
+  let p : Seminorm ℝ E := seminormFamily (E := E) n
+  let j : E → BanachOfSeminorm (E := E) p := fun x =>
+    (BanachOfSeminorm.coeCLM (E := E) p)
+      (Submodule.Quotient.mk (p := seminormKer (E := E) p) x)
+  have hDense : DenseRange j := by
+    simpa [j, p] using (denseRange_toBanachOfSeminorm_seminormFamily (E := E) (n := n))
+  haveI : TopologicalSpace.SeparableSpace (BanachOfSeminorm (E := E) p) := by
+    simpa [p] using (NuclearSpaceStd.separableSpace_banachOfSeminorm_seminormFamily (E := E) n)
+  have hSep : TopologicalSpace.IsSeparable (Set.range j) :=
+    TopologicalSpace.IsSeparable.of_separableSpace (s := Set.range j)
+  rcases hSep.exists_countable_dense_subset with ⟨t, htj, htcount, hclosure⟩
+  have ht_dense : Dense t := by
+    have huniv : (Set.univ : Set (BanachOfSeminorm (E := E) p)) ⊆ closure t := by
+      have : closure (Set.range j) ⊆ closure t := by
+        simpa [closure_closure] using (closure_mono hclosure)
+      simpa [hDense.closure_range] using this
+    intro x
+    exact huniv (by simp)
+  have ht_nonempty : t.Nonempty := by
+    have h_range_nonempty : (Set.range j).Nonempty := ⟨j 0, ⟨0, rfl⟩⟩
+    have ht_ne : t ≠ (∅ : Set (BanachOfSeminorm (E := E) p)) := by
+      intro ht0
+      have : Set.range j ⊆ (∅ : Set (BanachOfSeminorm (E := E) p)) := by
+        simp [ht0] at hclosure
+      have : Set.range j = (∅ : Set (BanachOfSeminorm (E := E) p)) :=
+        (Set.subset_empty_iff).1 this
+      exact h_range_nonempty.ne_empty this
+    exact Set.nonempty_iff_ne_empty.2 ht_ne
+  rcases htcount.exists_eq_range ht_nonempty with ⟨u, rfl⟩
+  have hu_in : ∀ k : ℕ, u k ∈ Set.range j := by
+    intro k
+    exact htj (Set.mem_range_self k)
+  choose v hv using hu_in
+  refine ⟨v, ?_⟩
+  have : (fun k : ℕ => j (v k)) = u := by
+    funext k
+    simpa using (hv k)
+  have hu_dense : DenseRange u := by
+    simpa [DenseRange] using ht_dense
+  simpa [this, j, p] using hu_dense
+
+/-- A single countable family dense in *all* local Banach spaces
+`BanachOfSeminorm (seminormFamily n)`. -/
+theorem exists_denseSeq_family_toBanachOfSeminorm_seminormFamily :
+    ∃ v : (ℕ × ℕ) → E,
+      ∀ n : ℕ, DenseRange fun k : ℕ =>
+        (BanachOfSeminorm.coeCLM (E := E) (seminormFamily (E := E) n))
+          (Submodule.Quotient.mk
+            (p := seminormKer (E := E) (seminormFamily (E := E) n)) (v (n, k))) := by
+  choose v hv using fun n : ℕ =>
+    exists_denseSeq_toBanachOfSeminorm_seminormFamily (E := E) (n := n)
+  refine ⟨fun nk => v nk.1 nk.2, ?_⟩
+  intro n
+  simpa using hv n
+
+end DenseCountableFamilies
 
 /-- Chebyshev bound for the evaluation random variables, using the seminorm control coming from
 `NuclearSpaceStd`. -/
@@ -175,12 +391,10 @@ theorem exists_prob_abs_eval_ge_le_seminormFamily
     simpa [μ] using (memLp_eval (E := E) (H := H) (T := T) f (p := (2 : ENNReal)) (by simp))
   have hmean : μ[(fun ω : E → ℝ => ω f)] = 0 := by
     simpa [μ] using (integral_eval_eq_zero (E := E) (H := H) (T := T) f)
-  -- Apply Chebyshev to `X = fun ω => ω f`, and rewrite `μ[X] = 0`.
   have hcheb :
       μ {ω | c ≤ |(ω f : ℝ) - μ[(fun ω : E → ℝ => ω f)]|} ≤
         ENNReal.ofReal (Var[(fun ω : E → ℝ => ω f); μ] / c ^ 2) := by
     simpa [μ] using (ProbabilityTheory.meas_ge_le_variance_div_sq (μ := μ) hMemLp hc)
-  -- Rewrite the event and use the variance bound.
   have hevent :
       {ω : E → ℝ | c ≤ |(ω f : ℝ) - μ[(fun ω : E → ℝ => ω f)]|} =
         {ω : E → ℝ | c ≤ |(ω f : ℝ)|} := by
@@ -189,7 +403,6 @@ theorem exists_prob_abs_eval_ge_le_seminormFamily
   have hvar_le' :
       Var[(fun ω : E → ℝ => ω f); μ] ≤ ((C : ℝ) * (seminormFamily (E := E) n) f) ^ 2 := by
     simpa [μ] using hvar_le f
-  -- Combine.
   have hdiv :
       Var[(fun ω : E → ℝ => ω f); μ] / c ^ 2 ≤
         (((C : ℝ) * (seminormFamily (E := E) n) f) ^ 2) / c ^ 2 := by
@@ -200,6 +413,93 @@ theorem exists_prob_abs_eval_ge_le_seminormFamily
     ENNReal.ofReal_le_ofReal hdiv
   have := hcheb.trans hof
   simpa [μ, hevent] using this
+
+set_option maxHeartbeats 400000 in
+/-- **Borel–Cantelli consequence of the Chebyshev bound.**
+
+For the controlling seminorm `seminormFamily n`, if a sequence `(u k)` has square-summable
+seminorm values, then evaluations `ω (u k)` converge to `0` almost surely. -/
+theorem exists_ae_tendsto_eval_atTop_nhds_zero_of_summable_seminormFamily_sq
+    (T : E →ₗ[ℝ] H)
+    (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
+    ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧
+      ∀ u : ℕ → E,
+        Summable (fun k : ℕ => (seminormFamily (E := E) n (u k)) ^ 2) →
+          (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+            Tendsto (fun k : ℕ => (ω (u k) : ℝ)) atTop (nhds 0)) := by
+  classical
+  rcases exists_prob_abs_eval_ge_le_seminormFamily (E := E) (H := H) (T := T) h_sq with
+    ⟨n, C, hC0, hprob⟩
+  refine ⟨n, C, hC0, ?_⟩
+  intro u hsum
+  let μ : Measure (E → ℝ) := gaussianProcess (E := E) (H := H) T
+  have hAE_eps :
+      ∀ m : ℕ,
+        (∀ᵐ ω ∂μ, ∀ᶠ k in atTop, |(ω (u k) : ℝ)| < (1 / (m + 1 : ℝ))) := by
+    intro m
+    -- Apply Borel–Cantelli to the sets `{ω | ε ≤ |ω(u k)|}` with `ε = 1/(m+1)`.
+    have hε : 0 < (1 / (m + 1 : ℝ)) := by positivity
+    let s : ℕ → Set (E → ℝ) := fun k => {ω | (1 / (m + 1 : ℝ)) ≤ |(ω (u k) : ℝ)|}
+    have hs_le :
+        ∀ k : ℕ, μ (s k) ≤
+          ENNReal.ofReal ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) /
+            ((1 / (m + 1 : ℝ)) ^ 2)) := by
+      intro k
+      simpa [μ, s] using (hprob (u k) (c := (1 / (m + 1 : ℝ))) hε)
+    have hsum_real :
+        Summable (fun k : ℕ =>
+          ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) /
+            ((1 / (m + 1 : ℝ)) ^ 2))) := by
+      have hsumCp :
+          Summable (fun k : ℕ =>
+            (((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2)) := by
+        have hscaled :
+            Summable (fun k : ℕ =>
+              ((C : ℝ) ^ 2) * ((seminormFamily (E := E) n (u k)) ^ 2)) :=
+          hsum.mul_left ((C : ℝ) ^ 2)
+        refine hscaled.congr (fun k => ?_)
+        simp [mul_pow]
+      have hsumMul :
+          Summable (fun k : ℕ =>
+            (((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) * ((m + 1 : ℝ) ^ 2)) := by
+        have h := hsumCp.mul_left ((m + 1 : ℝ) ^ 2)
+        refine h.congr (fun k => ?_)
+        simp [mul_comm]
+      refine hsumMul.congr (fun k => ?_)
+      field_simp
+    have hsum_ennreal :
+        (∑' k : ℕ,
+            ENNReal.ofReal
+              ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) /
+                ((1 / (m + 1 : ℝ)) ^ 2))) ≠ ∞ :=
+      hsum_real.tsum_ofReal_ne_top
+    have hs_tsum_ne_top : (∑' k : ℕ, μ (s k)) ≠ ∞ := by
+      have hle_tsum :
+          (∑' k : ℕ, μ (s k)) ≤
+            ∑' k : ℕ,
+              ENNReal.ofReal
+                ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) /
+                  ((1 / (m + 1 : ℝ)) ^ 2)) :=
+        ENNReal.tsum_le_tsum (fun k => hs_le k)
+      exact ne_top_of_le_ne_top hsum_ennreal hle_tsum
+    have hAE := (MeasureTheory.ae_eventually_notMem (μ := μ) (s := s) hs_tsum_ne_top)
+    filter_upwards [hAE] with ω hω
+    have : ∀ᶠ k in atTop, ¬((1 / (m + 1 : ℝ)) ≤ |(ω (u k) : ℝ)|) := by
+      simpa [s] using hω
+    filter_upwards [this] with k hk
+    exact lt_of_not_ge hk
+  have hAE_all :
+      (∀ᵐ ω ∂μ,
+        ∀ m : ℕ, ∀ᶠ k in atTop, |(ω (u k) : ℝ)| < (1 / (m + 1 : ℝ))) := by
+    exact (MeasureTheory.ae_all_iff).2 hAE_eps
+  filter_upwards [hAE_all] with ω hω
+  rw [Metric.tendsto_nhds]
+  intro ε hε
+  obtain ⟨m, hm⟩ := exists_nat_one_div_lt hε
+  have h_event : ∀ᶠ k in atTop, |(ω (u k) : ℝ)| < (1 / (m + 1 : ℝ)) := hω m
+  have h_event' : ∀ᶠ k in atTop, |(ω (u k) : ℝ)| < ε :=
+    h_event.mono (fun k hk => lt_trans hk hm)
+  simpa [Real.dist_0_eq_abs] using h_event'
 
 end VarianceBounds
 
