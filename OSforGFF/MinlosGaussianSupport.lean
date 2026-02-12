@@ -281,7 +281,6 @@ theorem denseRange_toBanachOfSeminorm_seminormFamily (n : ℕ) :
       (BanachOfSeminorm.coeCLM (E := E) (seminormFamily (E := E) n))
         (Submodule.Quotient.mk
           (p := seminormKer (E := E) (seminormFamily (E := E) n)) x) := by
-  classical
   let p : Seminorm ℝ E := seminormFamily (E := E) n
   let f : E → QuotBySeminorm (E := E) p :=
     Submodule.Quotient.mk (p := seminormKer (E := E) p)
@@ -316,7 +315,6 @@ theorem exists_denseSeq_toBanachOfSeminorm_seminormFamily (n : ℕ) :
       (BanachOfSeminorm.coeCLM (E := E) (seminormFamily (E := E) n))
         (Submodule.Quotient.mk
           (p := seminormKer (E := E) (seminormFamily (E := E) n)) (v k)) := by
-  classical
   let p : Seminorm ℝ E := seminormFamily (E := E) n
   let j : E → BanachOfSeminorm (E := E) p := fun x =>
     (BanachOfSeminorm.coeCLM (E := E) p)
@@ -427,7 +425,6 @@ theorem exists_ae_tendsto_eval_atTop_nhds_zero_of_summable_seminormFamily_sq
         Summable (fun k : ℕ => (seminormFamily (E := E) n (u k)) ^ 2) →
           (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
             Tendsto (fun k : ℕ => (ω (u k) : ℝ)) atTop (nhds 0)) := by
-  classical
   rcases exists_prob_abs_eval_ge_le_seminormFamily (E := E) (H := H) (T := T) h_sq with
     ⟨n, C, hC0, hprob⟩
   refine ⟨n, C, hC0, ?_⟩
@@ -500,6 +497,52 @@ theorem exists_ae_tendsto_eval_atTop_nhds_zero_of_summable_seminormFamily_sq
   have h_event' : ∀ᶠ k in atTop, |(ω (u k) : ℝ)| < ε :=
     h_event.mono (fun k hk => lt_trans hk hm)
   simpa [Real.dist_0_eq_abs] using h_event'
+
+/-- **Borel–Cantelli with varying thresholds** (seminorm-controlled Gaussian process).
+
+If a sequence `(u k)` has small seminorm values compared to a threshold sequence `(c k)` in a
+square-summable way, then almost surely `|ω (u k)| < c k` eventually. -/
+theorem exists_ae_eventually_abs_eval_lt_of_summable_seminormFamily_sq_div
+    (T : E →ₗ[ℝ] H)
+    (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
+    ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧
+      ∀ u : ℕ → E, ∀ c : ℕ → ℝ,
+        (∀ k, 0 < c k) →
+        Summable (fun k : ℕ =>
+          ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) / ((c k) ^ 2))) →
+          (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+            ∀ᶠ k in atTop, |(ω (u k) : ℝ)| < c k) := by
+  rcases exists_prob_abs_eval_ge_le_seminormFamily (E := E) (H := H) (T := T) h_sq with
+    ⟨n, C, hC0, hprob⟩
+  refine ⟨n, C, hC0, ?_⟩
+  intro u c hc hsum
+  let μ : Measure (E → ℝ) := gaussianProcess (E := E) (H := H) T
+  let s : ℕ → Set (E → ℝ) := fun k => {ω | c k ≤ |(ω (u k) : ℝ)|}
+  have hs_le :
+      ∀ k : ℕ, μ (s k) ≤
+        ENNReal.ofReal
+          ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) / ((c k) ^ 2)) := by
+    intro k
+    simpa [μ, s] using (hprob (u k) (c := c k) (hc k))
+  have hsum_ennreal :
+      (∑' k : ℕ,
+          ENNReal.ofReal
+            ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) / ((c k) ^ 2))) ≠ ∞ :=
+    hsum.tsum_ofReal_ne_top
+  have hs_tsum_ne_top : (∑' k : ℕ, μ (s k)) ≠ ∞ := by
+    have hle_tsum :
+        (∑' k : ℕ, μ (s k)) ≤
+          ∑' k : ℕ,
+            ENNReal.ofReal
+              ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) / ((c k) ^ 2)) :=
+      ENNReal.tsum_le_tsum (fun k => hs_le k)
+    exact ne_top_of_le_ne_top hsum_ennreal hle_tsum
+  have hAE := (MeasureTheory.ae_eventually_notMem (μ := μ) (s := s) hs_tsum_ne_top)
+  filter_upwards [hAE] with ω hω
+  have : ∀ᶠ k in atTop, ¬(c k ≤ |(ω (u k) : ℝ)|) := by
+    simpa [s] using hω
+  filter_upwards [this] with k hk
+  exact lt_of_not_ge hk
 
 end VarianceBounds
 
