@@ -29,8 +29,6 @@ theorem exists_bound_seminormFamily
     (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
     ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧
       (normSeminorm ℝ H).comp T ≤ C • (seminormFamily (E := E) n) := by
-  classical
-  -- Apply the general lemma to the chosen seminorm family.
   have hp : WithSeminorms (seminormFamily (E := E)) :=
     NuclearSpaceStd.seminormFamily_withSeminorms (E := E)
   have hpmono : Monotone (seminormFamily (E := E)) :=
@@ -44,4 +42,3 @@ end MinlosGaussianSeminormBoundsStd
 end
 
 end OSforGFF
-
