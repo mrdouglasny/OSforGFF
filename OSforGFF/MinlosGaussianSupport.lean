@@ -5,6 +5,7 @@ import OSforGFF.NuclearSpaceStd
 import Mathlib.Algebra.Module.RingHom
 import Mathlib.LinearAlgebra.Countable
 import Mathlib.Topology.Metrizable.Basic
+import Mathlib.Analysis.PSeries
 import Mathlib.MeasureTheory.OuterMeasure.BorelCantelli
 
 /-!
@@ -543,6 +544,155 @@ theorem exists_ae_eventually_abs_eval_lt_of_summable_seminormFamily_sq_div
     simpa [s] using hω
   filter_upwards [this] with k hk
   exact lt_of_not_ge hk
+
+/-- **Absolute summability criterion** (via Borel–Cantelli and a comparison series).
+
+If eventually `|ω (u k)|` is bounded by a summable deterministic majorant `c k`, then the series
+`∑ |ω (u k)|` converges almost surely.  We obtain this under the same seminorm-squared summability
+assumption as in `exists_ae_eventually_abs_eval_lt_of_summable_seminormFamily_sq_div`. -/
+theorem exists_ae_summable_abs_eval_of_summable_seminormFamily_sq_div
+    (T : E →ₗ[ℝ] H)
+    (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
+    ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧
+      ∀ u : ℕ → E, ∀ c : ℕ → ℝ,
+        (∀ k, 0 < c k) →
+        Summable c →
+        Summable (fun k : ℕ =>
+          ((((C : ℝ) * (seminormFamily (E := E) n (u k))) ^ 2) / ((c k) ^ 2))) →
+          (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+            Summable (fun k : ℕ => |(ω (u k) : ℝ)|)) := by
+  rcases exists_ae_eventually_abs_eval_lt_of_summable_seminormFamily_sq_div
+      (E := E) (H := H) (T := T) h_sq with ⟨n, C, hC0, hAE⟩
+  refine ⟨n, C, hC0, ?_⟩
+  intro u c hc hsumc hsum
+  have h_event :
+      (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+        ∀ᶠ k in atTop, |(ω (u k) : ℝ)| < c k) :=
+    hAE u c hc hsum
+  filter_upwards [h_event] with ω hω
+  rcases (eventually_atTop.1 hω) with ⟨N, hN⟩
+  have htail :
+      Summable (fun k : ℕ => |(ω (u (k + N)) : ℝ)|) := by
+    have hle : ∀ k : ℕ, |(ω (u (k + N)) : ℝ)| ≤ c (k + N) := by
+      intro k
+      exact le_of_lt (hN (k + N) (Nat.le_add_left _ _))
+    have hsum_tail_c : Summable (fun k : ℕ => c (k + N)) :=
+      (_root_.summable_nat_add_iff N).2 hsumc
+    exact Summable.of_nonneg_of_le (fun k => abs_nonneg _) hle hsum_tail_c
+  exact (_root_.summable_nat_add_iff N).1 htail
+
+/-- **Cauchy criterion for evaluations along fast Cauchy sequences in `E`.**
+
+If increments `w (k+1) - w k` are small enough in the controlling seminorm (at a polynomial rate),
+then almost surely `k ↦ ω (w k)` is a Cauchy sequence. This is a convenient input for defining
+limits along completions of seminorm quotients. -/
+theorem exists_ae_cauchySeq_eval_of_le_pow_four
+    (T : E →ₗ[ℝ] H)
+    (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
+    ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧
+      ∀ w : ℕ → E,
+        (∀ k : ℕ, seminormFamily (E := E) n (w (k + 1) - w k) ≤ (1 / ((k + 1 : ℕ) : ℝ) ^ 4)) →
+          (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+            CauchySeq (fun k : ℕ => (ω (w k) : ℝ))) := by
+  rcases exists_ae_summable_abs_eval_of_summable_seminormFamily_sq_div
+      (E := E) (H := H) (T := T) h_sq with ⟨n, C, hC0, hsumAE⟩
+  refine ⟨n, C, hC0, ?_⟩
+  intro w hw
+  -- Work with increments `u k = w (k+1) - w k` and majorant `c k = 1/(k+1)^2`.
+  let u : ℕ → E := fun k => w (k + 1) - w k
+  let c : ℕ → ℝ := fun k => 1 / ((k + 1 : ℕ) : ℝ) ^ 2
+  have hc_pos : ∀ k : ℕ, 0 < c k := by
+    intro k
+    have : 0 < ((k + 1 : ℕ) : ℝ) ^ 2 := by positivity
+    simpa [c] using (one_div_pos.2 this)
+  have hsum_c : Summable c := by
+    have h0 : Summable (fun n : ℕ => (1 / ((n : ℝ) ^ (2 : ℕ)) : ℝ)) :=
+      (Real.summable_one_div_nat_pow (p := 2)).2 (by decide)
+    simpa [c] using ((_root_.summable_nat_add_iff 1).2 h0)
+  have hsum_ratio :
+      Summable (fun k : ℕ =>
+        ((((C : ℝ) * seminormFamily (E := E) n (u k)) ^ 2) / ((c k) ^ 2))) := by
+    have hle :
+        ∀ k : ℕ,
+          ((((C : ℝ) * seminormFamily (E := E) n (u k)) ^ 2) / ((c k) ^ 2))
+            ≤ ((C : ℝ) ^ 2) * (1 / ((k + 1 : ℕ) : ℝ) ^ 4) := by
+      intro k
+      have hp : seminormFamily (E := E) n (u k) ≤ 1 / ((k + 1 : ℕ) : ℝ) ^ 4 := by
+        simpa [u] using hw k
+      have hp_nonneg : 0 ≤ seminormFamily (E := E) n (u k) := apply_nonneg _ _
+      have hC_nonneg : 0 ≤ (C : ℝ) := by exact_mod_cast C.2
+      have hc_sq : (c k) ^ 2 = 1 / ((k + 1 : ℕ) : ℝ) ^ 4 := by
+        have hpow : ((↑k + 1 : ℝ) ^ 2) ^ 2 = (↑k + 1 : ℝ) ^ 4 := by
+          simpa using (pow_mul (↑k + 1 : ℝ) 2 2).symm
+        simp [c, Nat.cast_add, hpow]
+      have hsq :
+          ((seminormFamily (E := E) n (u k)) ^ 2) ≤ (1 / ((k + 1 : ℕ) : ℝ) ^ 4) ^ 2 :=
+        pow_le_pow_left₀ hp_nonneg hp 2
+      calc
+        ((((C : ℝ) * seminormFamily (E := E) n (u k)) ^ 2) / ((c k) ^ 2))
+            = (((C : ℝ) ^ 2) * ((seminormFamily (E := E) n (u k)) ^ 2)) / ((c k) ^ 2) := by
+                simp [mul_pow]
+        _ ≤ (((C : ℝ) ^ 2) * ((1 / ((k + 1 : ℕ) : ℝ) ^ 4) ^ 2)) / ((c k) ^ 2) := by
+              gcongr
+        _ = ((C : ℝ) ^ 2) * (1 / ((k + 1 : ℕ) : ℝ) ^ 4) := by
+              have ha0 : (1 / ((k + 1 : ℕ) : ℝ) ^ 4 : ℝ) ≠ 0 := by
+                have hk0 : (((k + 1 : ℕ) : ℝ) ^ 4 : ℝ) ≠ 0 := by
+                  exact pow_ne_zero 4 (by exact_mod_cast (Nat.succ_ne_zero k))
+                exact one_div_ne_zero hk0
+              rw [hc_sq]
+              have :
+                  ((1 / ((k + 1 : ℕ) : ℝ) ^ 4) ^ 2) / (1 / ((k + 1 : ℕ) : ℝ) ^ 4)
+                    = (1 / ((k + 1 : ℕ) : ℝ) ^ 4) := by
+                have h :=
+                  (mul_div_cancel_right₀ (1 / ((k + 1 : ℕ) : ℝ) ^ 4)
+                    (b := 1 / ((k + 1 : ℕ) : ℝ) ^ 4) ha0)
+                simpa only [pow_two] using h
+              rw [mul_div_assoc]
+              exact congrArg (fun t : ℝ => ((C : ℝ) ^ 2) * t) this
+    have hnonneg :
+        ∀ k : ℕ, 0 ≤
+          ((((C : ℝ) * seminormFamily (E := E) n (u k)) ^ 2) / ((c k) ^ 2)) := by
+      intro k
+      exact div_nonneg (sq_nonneg _) (sq_nonneg _)
+    have hsum_base : Summable (fun k : ℕ => ((C : ℝ) ^ 2) * (1 / ((k + 1 : ℕ) : ℝ) ^ 4)) := by
+      have h0 : Summable (fun n : ℕ => (1 / ((n : ℝ) ^ (4 : ℕ)) : ℝ)) :=
+        (Real.summable_one_div_nat_pow (p := 4)).2 (by decide)
+      have h0' : Summable (fun k : ℕ => (1 / ((k + 1 : ℕ) : ℝ) ^ 4 : ℝ)) := by
+        simpa using ((_root_.summable_nat_add_iff 1).2 h0)
+      exact h0'.mul_left ((C : ℝ) ^ 2)
+    exact Summable.of_nonneg_of_le hnonneg hle hsum_base
+  have hsum_abs :
+      ∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+        Summable (fun k : ℕ => |(ω (u k) : ℝ)|) :=
+    hsumAE (u := u) (c := c) hc_pos hsum_c hsum_ratio
+  let v : (ℕ ⊕ ℕ) → E := fun s =>
+    Sum.rec (fun k => w k) (fun k => u k) s
+  have hadd :
+      (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+        ∀ i j : (ℕ ⊕ ℕ), ω (v i + v j) = ω (v i) + ω (v j)) := by
+    simpa [v] using (OSforGFF.MinlosGaussianKolmogorov.ae_eval_add_all
+      (E := E) (H := H) (T := T) v)
+  filter_upwards [hsum_abs, hadd] with ω hsumω haddω
+  have hdist :
+      Summable (fun k : ℕ => dist (ω (w k) : ℝ) (ω (w (k + 1)) : ℝ)) := by
+    have hdiff :
+        ∀ k : ℕ, dist (ω (w k) : ℝ) (ω (w (k + 1)) : ℝ) = |(ω (u k) : ℝ)| := by
+      intro k
+      have haddk :
+          ω (w k + u k) = ω (w k) + ω (u k) := by
+        simpa [v] using haddω (Sum.inl k) (Sum.inr k)
+      have hwku : w k + u k = w (k + 1) := by
+        simp [u, add_comm, sub_eq_add_neg]
+      have hlin : (ω (w (k + 1)) : ℝ) = ω (w k) + ω (u k) := by
+        simpa [hwku] using haddk
+      have hsub : (ω (w (k + 1)) : ℝ) - ω (w k) = ω (u k) := by
+        simp [hlin]
+      have habs :
+          |(ω (w (k + 1)) : ℝ) - ω (w k)| = |(ω (u k) : ℝ)| := by
+        simpa using congrArg abs hsub
+      simpa [Real.dist_eq, abs_sub_comm] using habs
+    simpa [hdiff] using hsumω
+  exact cauchySeq_of_summable_dist (f := fun k : ℕ => (ω (w k) : ℝ)) hdist
 
 end VarianceBounds
 
