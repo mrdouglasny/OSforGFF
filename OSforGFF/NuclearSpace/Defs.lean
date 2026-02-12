@@ -142,7 +142,6 @@ theorem smul (c : 𝕜) {T : E →L[𝕜] F} (hT : IsNuclearMap T) :
 /-- Addition preserves nuclearity. -/
 theorem add {T U : E →L[𝕜] F} (hT : IsNuclearMap T) (hU : IsNuclearMap U) :
     IsNuclearMap (T + U) := by
-  classical
   rcases hT with ⟨φ₁, y₁, hsum₁, hrepr₁⟩
   rcases hU with ⟨φ₂, y₂, hsum₂, hrepr₂⟩
   let φ : ℕ → (E →L[𝕜] 𝕜) := fun n => if Even n then φ₁ (Nat.div2 n) else φ₂ (Nat.div2 n)
@@ -202,7 +201,6 @@ theorem opNorm_le_tsum (T : E →L[𝕜] F) (hT : IsNuclearMap T) :
       Summable (fun n => ‖φ n‖ * ‖y n‖) ∧
         (∀ x, T x = ∑' n, (φ n x) • y n) ∧
           ‖T‖ ≤ ∑' n, ‖φ n‖ * ‖y n‖ := by
-  classical
   rcases hT with ⟨φ, y, hsum, hrepr⟩
   refine ⟨φ, y, hsum, hrepr, ?_⟩
   refine ContinuousLinearMap.opNorm_le_bound T (by
@@ -249,6 +247,57 @@ theorem opNorm_le_tsum (T : E →L[𝕜] F) (hT : IsNuclearMap T) :
     ‖T x‖ = ‖∑' n : ℕ, (φ n x) • y n‖ := by simp [this]
     _ ≤ ‖x‖ * (∑' n : ℕ, ‖φ n‖ * ‖y n‖) := hle_tsum
     _ = (∑' n : ℕ, ‖φ n‖ * ‖y n‖) * ‖x‖ := by ring
+
+/-- A nuclear continuous linear map has separable range. -/
+theorem isSeparable_range [TopologicalSpace.SeparableSpace 𝕜] {T : E →L[𝕜] F} (hT : IsNuclearMap T) :
+    TopologicalSpace.IsSeparable (Set.range T) := by
+  rcases hT with ⟨φ, y, hsum, hrepr⟩
+  let S : Submodule 𝕜 F := Submodule.span 𝕜 (Set.range y)
+  have h_range_subset : Set.range T ⊆ closure (S : Set F) := by
+    rintro z ⟨x, rfl⟩
+    let f : ℕ → F := fun n => (φ n x) • y n
+    have hterms_norm : Summable (fun n => ‖f n‖) := by
+      have hle : ∀ n, ‖f n‖ ≤ ‖x‖ * (‖φ n‖ * ‖y n‖) := by
+        intro n
+        have hxφ : ‖φ n x‖ ≤ ‖φ n‖ * ‖x‖ := by
+          simpa using (φ n).le_opNorm x
+        calc
+          ‖f n‖ = ‖φ n x‖ * ‖y n‖ := by simp [f, norm_smul]
+          _ ≤ (‖φ n‖ * ‖x‖) * ‖y n‖ := by
+                exact mul_le_mul_of_nonneg_right hxφ (norm_nonneg _)
+          _ = ‖x‖ * (‖φ n‖ * ‖y n‖) := by ring
+      have hsumx : Summable (fun n => ‖x‖ * (‖φ n‖ * ‖y n‖)) := hsum.mul_left ‖x‖
+      have hnonneg : ∀ n, 0 ≤ ‖f n‖ := fun _ => norm_nonneg _
+      exact Summable.of_nonneg_of_le hnonneg hle hsumx
+    have hterms : Summable f := hterms_norm.of_norm
+    have hhas : HasSum f (T x) := by
+      simpa [f, hrepr x] using (hterms.hasSum : HasSum f (∑' n, f n))
+    have htend :
+        Filter.Tendsto (fun N : ℕ => Finset.sum (Finset.range N) (fun n => f n))
+          Filter.atTop (nhds (T x)) :=
+      hhas.tendsto_sum_nat
+    have hmem : ∀ N : ℕ, (Finset.sum (Finset.range N) (fun n => f n)) ∈ (S : Set F) := by
+      intro N
+      refine S.sum_mem ?_
+      intro n hn
+      exact S.smul_mem (φ n x) (Submodule.subset_span (Set.mem_range_self n))
+    exact mem_closure_of_tendsto htend (Filter.Eventually.of_forall hmem)
+  have hS_sep : TopologicalSpace.IsSeparable (closure (S : Set F)) := by
+    have hy_sep : TopologicalSpace.IsSeparable (Set.range y) :=
+      (Set.countable_range y).isSeparable
+    have hspan : TopologicalSpace.IsSeparable (S : Set F) := by
+      simpa [S] using (hy_sep.span (R := 𝕜) (M := F))
+    exact hspan.closure
+  exact hS_sep.mono h_range_subset
+
+/-- A nuclear continuous linear map with dense range has separable codomain. -/
+theorem separableSpace_of_denseRange [TopologicalSpace.SeparableSpace 𝕜] {T : E →L[𝕜] F}
+    (hT : IsNuclearMap T) (h_dense : DenseRange T) : TopologicalSpace.SeparableSpace F := by
+  have hsep : TopologicalSpace.IsSeparable (Set.range T) :=
+    isSeparable_range (𝕜 := 𝕜) (E := E) (F := F) hT
+  have hdense : Dense (Set.range T) := by
+    exact dense_iff_closure_eq.2 h_dense.closure_range
+  exact (hdense.isSeparable_iff).1 hsep
 
 end Basic
 
@@ -491,7 +540,6 @@ noncomputable def inclₗ (hpq : q ≤ p) :
 /-- The induced continuous linear map on quotients when `q ≤ p`. -/
 noncomputable def inclCLM (hpq : q ≤ p) :
     QuotBySeminorm (E := E) p →L[𝕜] QuotBySeminorm (E := E) q := by
-  classical
   refine (inclₗ (E := E) (p := p) (q := q) hpq).mkContinuous 1 ?_
   intro x
   refine Quotient.inductionOn x ?_
@@ -526,7 +574,6 @@ lemma inclCLM_coe (hpq : q ≤ p) (x : QuotBySeminorm (E := E) p) :
     inclCLM (E := E) (p := p) (q := q) hpq (x : BanachOfSeminorm (E := E) p) =
       (QuotBySeminorm.inclCLM (E := E) (p := p) (q := q) hpq x :
         BanachOfSeminorm (E := E) q) := by
-  classical
   simpa [inclCLM] using
     (ContinuousLinearMap.extend_eq
       (f := (BanachOfSeminorm.coeCLM (E := E) q).comp
@@ -535,6 +582,16 @@ lemma inclCLM_coe (hpq : q ≤ p) (x : QuotBySeminorm (E := E) p) :
       (h_dense := BanachOfSeminorm.denseRange_coeCLM (E := E) (p := p))
       (h_e := BanachOfSeminorm.isUniformInducing_coeCLM (E := E) (p := p))
       x)
+
+lemma denseRange_inclCLM (hpq : q ≤ p) :
+    DenseRange (inclCLM (E := E) (p := p) (q := q) hpq) := by
+  refine (BanachOfSeminorm.denseRange_coeCLM (E := E) (p := q)).mono ?_
+  rintro y ⟨xq, rfl⟩
+  refine Submodule.Quotient.induction_on (p := seminormKer (E := E) q) xq ?_
+  intro x
+  refine ⟨(Submodule.Quotient.mk (p := seminormKer (E := E) p) x :
+      QuotBySeminorm (E := E) p), ?_⟩
+  simp [BanachOfSeminorm.coeCLM, QuotBySeminorm.inclCLM, QuotBySeminorm.inclₗ_mk]
 
 end BanachOfSeminorm
 

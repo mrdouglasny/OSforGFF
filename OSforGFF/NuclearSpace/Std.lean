@@ -81,6 +81,28 @@ lemma seminormFamily_isNuclearMap (n : ℕ) :
   rcases seminormFamily_spec (E := E) with ⟨hpmono, hp⟩
   exact ⟨hpmono, hp.2 n⟩
 
+/-- The local Banach spaces coming from the chosen seminorm family are separable.
+
+This is a standard nuclearity consequence: the inclusion maps are nuclear and have dense range,
+hence their codomains are separable. -/
+theorem separableSpace_banachOfSeminorm_seminormFamily (n : ℕ) :
+    TopologicalSpace.SeparableSpace
+      (BanachOfSeminorm (E := E) (seminormFamily (E := E) n)) := by
+  classical
+  rcases seminormFamily_isNuclearMap (E := E) n with ⟨hpmono, m, hnm, hNuc⟩
+  let T :
+      BanachOfSeminorm (E := E) (seminormFamily (E := E) m)
+        →L[ℝ] BanachOfSeminorm (E := E) (seminormFamily (E := E) n) :=
+    BanachOfSeminorm.inclCLM (E := E)
+      (p := seminormFamily (E := E) m) (q := seminormFamily (E := E) n)
+      (hpmono (Nat.le_of_lt hnm))
+  have h_dense : DenseRange T :=
+    BanachOfSeminorm.denseRange_inclCLM (E := E)
+      (p := seminormFamily (E := E) m) (q := seminormFamily (E := E) n)
+      (hpq := hpmono (Nat.le_of_lt hnm))
+  -- Apply the general nuclear → separable lemma.
+  simpa [T] using (IsNuclearMap.separableSpace_of_denseRange (T := T) hNuc h_dense)
+
 section Consequences
 
 /-!

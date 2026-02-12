@@ -45,6 +45,44 @@ theorem seminorm_norm_comp_le_finset_sup
     simpa using this
   exact Seminorm.bound_of_continuous (𝕜 := ℝ) (p := p) (hp := hp) ((normSeminorm ℝ H).comp T) hq
 
+/-- In the common situation where the generating seminorm family is monotone (e.g. indexed by `ℕ`),
+the finite supremum bound from `seminorm_norm_comp_le_finset_sup` can be replaced by a bound using
+a **single** seminorm from the family. -/
+theorem seminorm_norm_comp_le_single_nat
+    (p : ℕ → Seminorm ℝ E) (hp : WithSeminorms p) (hpmono : Monotone p)
+    (T : E →ₗ[ℝ] H)
+    (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
+    ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧ (normSeminorm ℝ H).comp T ≤ C • p n := by
+  rcases seminorm_norm_comp_le_finset_sup (E := E) (H := H) (p := p) hp T h_sq with ⟨s, C, hC0, hle⟩
+  classical
+  by_cases hs : s.Nonempty
+  · refine ⟨s.max' hs, C, hC0, ?_⟩
+    -- `s.sup p ≤ p (max' s)` by monotonicity.
+    have hsup : s.sup p ≤ p (s.max' hs) := by
+      refine Finset.sup_le ?_
+      intro i hi
+      exact hpmono (Finset.le_max' _ _ hi)
+    -- Multiply the pointwise inequality by `C`.
+    have hsupC : C • s.sup p ≤ C • p (s.max' hs) := by
+      -- unfold the order on seminorms
+      intro x
+      have hx := hsup x
+      -- scalar multiplication on seminorms is pointwise scalar multiplication on `ℝ`
+      simpa [Seminorm.smul_apply, NNReal.smul_def, smul_eq_mul, mul_assoc] using
+        (mul_le_mul_of_nonneg_left hx (show (0 : ℝ) ≤ C by exact_mod_cast C.2))
+    exact hle.trans hsupC
+  · -- If `s = ∅`, then `s.sup p = ⊥`, so the bound is already a single seminorm bound (trivially).
+    have hs' : s = ∅ := Finset.not_nonempty_iff_eq_empty.mp hs
+    refine ⟨0, C, hC0, ?_⟩
+    -- In this case, `s.sup p = ⊥`, so the RHS in `hle` is `C • ⊥ = ⊥`.
+    -- Hence the desired bound holds because `⊥ ≤ C • p 0`.
+    have hsup : C • s.sup p ≤ C • p 0 := by
+      subst hs'
+      intro x
+      -- `s.sup p = ⊥`, so the LHS is `0`, and the RHS is nonnegative.
+      simp [Seminorm.smul_apply, NNReal.smul_def, smul_eq_mul, mul_nonneg]
+    exact hle.trans hsup
+
 end MinlosGaussianSeminormBounds
 
 end

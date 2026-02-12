@@ -1,4 +1,5 @@
 import OSforGFF.MinlosGaussianKolmogorov
+import OSforGFF.NuclearSpaceStd
 import OSforGFF.WeakDualMeasurability
 
 import Mathlib.MeasureTheory.Measure.Comap
@@ -21,9 +22,10 @@ The genuinely hard work is proving the concentration assumption; this file makes
 explicit and derives the clean downstream consequences.
 -/
 
-open scoped BigOperators
+open scoped BigOperators NNReal
 
 open MeasureTheory Complex
+open Topology
 
 namespace OSforGFF
 
@@ -38,6 +40,7 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
 
 -- We work with the Borel σ-algebra on `WeakDual`.
 instance : MeasurableSpace (WeakDual ℝ E) := borel _
+instance : BorelSpace (WeakDual ℝ E) := ⟨rfl⟩
 
 /-- The coercion `WeakDual ℝ E → (E → ℝ)` (forgetting linearity/continuity structure). -/
 def toFun : WeakDual ℝ E → (E → ℝ) := fun ω => fun f => ω f
@@ -49,6 +52,56 @@ lemma toFun_injective : Function.Injective (toFun (E := E)) := by
   apply DFunLike.ext
   intro f
   simpa [toFun] using congrArg (fun g : E → ℝ => g f) h
+
+lemma mem_range_toFun (ω : WeakDual ℝ E) : toFun (E := E) ω ∈ Set.range (toFun (E := E)) := by
+  exact ⟨ω, rfl⟩
+
+/-- If a function comes from a continuous linear map, it is in the range of `toFun`. -/
+lemma mem_range_toFun_of_continuousLinearMap (L : E →ₗ[ℝ] ℝ) (hL : Continuous L) :
+    (fun f : E => L f) ∈ Set.range (toFun (E := E)) := by
+  refine ⟨(⟨L, hL⟩ : WeakDual ℝ E), ?_⟩
+  rfl
+
+section SeminormBounds
+
+open OSforGFF.NuclearSpaceStd
+
+variable [NuclearSpaceStd E]
+
+/-- A linear functional bounded by a chosen `NuclearSpaceStd` seminorm is continuous. -/
+lemma continuous_of_le_seminormFamily (L : E →ₗ[ℝ] ℝ) {n : ℕ} {C : ℝ≥0} :
+    (normSeminorm ℝ ℝ).comp L ≤ C • (seminormFamily (E := E) n) → Continuous L := by
+  intro hle
+  have hp : WithSeminorms (seminormFamily (E := E)) :=
+    NuclearSpaceStd.seminormFamily_withSeminorms (E := E)
+  have hcont :
+      Continuous (L : E →ₛₗ[RingHom.id ℝ] ℝ) := by
+    refine Seminorm.cont_withSeminorms_normedSpace (𝕝 := ℝ) (𝕝₂ := ℝ) (F := ℝ) hp
+      (f := (L : E →ₛₗ[RingHom.id ℝ] ℝ)) ?_
+    refine ⟨{n}, C, ?_⟩
+    simpa [Finset.sup_singleton] using hle
+  simpa using hcont
+
+/-- If a function is represented by a linear functional bounded by a chosen seminorm,
+then it lies in the range of `toFun`. -/
+lemma mem_range_toFun_of_linearMap_of_le_seminormFamily (L : E →ₗ[ℝ] ℝ) {n : ℕ} {C : ℝ≥0}
+    (hle : (normSeminorm ℝ ℝ).comp L ≤ C • (seminormFamily (E := E) n)) :
+    (fun f : E => L f) ∈ Set.range (toFun (E := E)) := by
+  exact mem_range_toFun_of_continuousLinearMap (E := E) L (continuous_of_le_seminormFamily (E := E) L hle)
+
+end SeminormBounds
+
+@[fun_prop]
+lemma continuous_toFun : Continuous (toFun (E := E)) := by
+  simpa [toFun] using (WeakDual.coeFn_continuous (𝕜 := ℝ) (E := E))
+
+@[measurability]
+lemma measurable_toFun : Measurable (toFun (E := E)) := by
+  simpa [toFun] using OSforGFF.WeakDual.measurable_coeFun (E := E)
+
+lemma isEmbedding_toFun : IsEmbedding (toFun (E := E)) := by
+  simpa [WeakDual, toFun] using
+    (WeakBilin.isEmbedding (B := topDualPairing ℝ E) (hB := ContinuousLinearMap.coe_injective))
 
 /-!
 ## The pulled-back measure on `WeakDual`

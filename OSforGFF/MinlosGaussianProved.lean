@@ -6,7 +6,7 @@ import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # Gaussian Minlos (proved core, conditional on support)
 
-This file connects the Gaussian Kolmogorov construction to the `gaussian_characteristic_functional`
+We connect the Gaussian Kolmogorov construction to the `gaussian_characteristic_functional`
 API from `OSforGFF.Minlos`.
 
 At this stage we still assume the (hard) support/measurable-embedding hypotheses needed to descend
@@ -54,11 +54,10 @@ theorem gaussian_measure_characteristic_functional_of_ae_range
   classical
   refine ⟨gaussianProcessWeakDual (E := E) (H := H) T h_embed h_ae_range, ?_⟩
   intro f
-  -- Use the Kolmogorov identity transported to `WeakDual`, then rewrite the RHS.
+  -- we use the Kolmogorov identity transported to `WeakDual`, then rewrite the RHS.
   have h :=
     MinlosGaussianToWeakDual.integral_exp_eval_eq (E := E) (H := H) (T := T)
       (h_embed := h_embed) (h_ae_range := h_ae_range) f
-  -- `kernel T f f = ‖T f‖^2`, so the exponential matches `gaussian_characteristic_functional`.
   simpa [gaussian_characteristic_functional, MinlosGaussianKolmogorov.kernel,
     inner_self_eq_norm_sq] using h
 
@@ -82,7 +81,6 @@ theorem gaussian_measure_characteristic_functional_of_ae_range'
     gaussian_measure_characteristic_functional_of_ae_range (E := E) (H := H) T h_embed h_ae_range
   refine ⟨μ, ?_⟩
   intro f
-  -- Rewrite the RHS using `h_eq` and the diagonal of `kernel`.
   have :
       gaussian_characteristic_functional
           (MinlosGaussianKolmogorov.kernel (E := E) (H := H) T) f
@@ -95,4 +93,3 @@ end MinlosGaussianProved
 end
 
 end OSforGFF
-
