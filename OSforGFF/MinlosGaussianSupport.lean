@@ -373,6 +373,176 @@ theorem exists_denseSeq_family_toBanachOfSeminorm_seminormFamily :
 
 end DenseCountableFamilies
 
+/-!
+## Fast approximation sequences in `BanachOfSeminorm`
+
+For later support/regularity arguments we will need to approximate points in the local Banach spaces
+`BanachOfSeminorm (seminormFamily n)` by sequences coming from `E` with *very* fast decay of the
+successive increments measured by `seminormFamily n`.
+-/
+
+section FastApproximation
+
+open OSforGFF.NuclearSpaceStd
+
+variable [NuclearSpaceStd E]
+
+/-- The canonical map `E → BanachOfSeminorm (seminormFamily n)`. -/
+def toBanachOfSeminorm_seminormFamily (n : ℕ) :
+    E → BanachOfSeminorm (E := E) (seminormFamily (E := E) n) := fun x =>
+  (BanachOfSeminorm.coeCLM (E := E) (seminormFamily (E := E) n))
+    (Submodule.Quotient.mk (p := seminormKer (E := E) (seminormFamily (E := E) n)) x)
+
+
+lemma norm_toBanachOfSeminorm_seminormFamily (n : ℕ) (x : E) :
+    ‖toBanachOfSeminorm_seminormFamily (E := E) n x‖ = seminormFamily (E := E) n x := by
+  let p : Seminorm ℝ E := seminormFamily (E := E) n
+  have hcoe :
+      toBanachOfSeminorm_seminormFamily (E := E) n x =
+        ((Submodule.Quotient.mk (p := seminormKer (E := E) p) x :
+          QuotBySeminorm (E := E) p) : BanachOfSeminorm (E := E) p) := by
+    rfl
+  calc
+    ‖toBanachOfSeminorm_seminormFamily (E := E) n x‖
+        = ‖((Submodule.Quotient.mk (p := seminormKer (E := E) p) x :
+              QuotBySeminorm (E := E) p) : BanachOfSeminorm (E := E) p)‖ := by
+            simp [hcoe]
+    _ = ‖(Submodule.Quotient.mk (p := seminormKer (E := E) p) x :
+            QuotBySeminorm (E := E) p)‖ := by
+          simp
+    _ = p x := by
+          change
+              QuotBySeminorm.norm (E := E) p
+                (Submodule.Quotient.mk (p := seminormKer (E := E) p) x) = p x
+          simp [QuotBySeminorm.norm_mk]
+
+lemma dist_toBanachOfSeminorm_seminormFamily (n : ℕ) (x y : E) :
+    dist (toBanachOfSeminorm_seminormFamily (E := E) n x)
+      (toBanachOfSeminorm_seminormFamily (E := E) n y)
+      = seminormFamily (E := E) n (x - y) := by
+  have hsub :
+      toBanachOfSeminorm_seminormFamily (E := E) n (x - y) =
+        toBanachOfSeminorm_seminormFamily (E := E) n x -
+          toBanachOfSeminorm_seminormFamily (E := E) n y := by
+    simp [toBanachOfSeminorm_seminormFamily]
+  calc
+    dist (toBanachOfSeminorm_seminormFamily (E := E) n x)
+          (toBanachOfSeminorm_seminormFamily (E := E) n y)
+        = ‖toBanachOfSeminorm_seminormFamily (E := E) n x -
+              toBanachOfSeminorm_seminormFamily (E := E) n y‖ := by
+            simp [dist_eq_norm]
+    _ = ‖toBanachOfSeminorm_seminormFamily (E := E) n (x - y)‖ := by
+          simp [hsub]
+    _ = seminormFamily (E := E) n (x - y) := by
+          simpa using (norm_toBanachOfSeminorm_seminormFamily (E := E) (n := n) (x := x - y))
+
+/-- Given a dense sequence in `BanachOfSeminorm (seminormFamily n)`, approximate any point by a
+sequence in `E` with very small successive increments (measured by `seminormFamily n`). -/
+theorem exists_fastCauchySeq_toBanachOfSeminorm_seminormFamily
+    (n : ℕ) {v : ℕ → E}
+    (hv :
+      DenseRange fun k : ℕ =>
+        toBanachOfSeminorm_seminormFamily (E := E) n (v k))
+    (x : BanachOfSeminorm (E := E) (seminormFamily (E := E) n)) :
+    ∃ w : ℕ → E,
+      (∀ k : ℕ,
+          dist x (toBanachOfSeminorm_seminormFamily (E := E) n (w k)) <
+            (1 / (2 * ((k + 1 : ℕ) : ℝ) ^ 4))) ∧
+      (∀ k : ℕ,
+          seminormFamily (E := E) n (w (k + 1) - w k) ≤ (1 / ((k + 1 : ℕ) : ℝ) ^ 4)) := by
+  let ε : ℕ → ℝ := fun k => 1 / (2 * ((k + 1 : ℕ) : ℝ) ^ 4)
+  have hε_pos : ∀ k : ℕ, 0 < ε k := by
+    intro k
+    have : 0 < (2 : ℝ) * ((k + 1 : ℕ) : ℝ) ^ 4 := by positivity
+    simpa [ε] using (one_div_pos.2 this)
+  have hw_exists :
+      ∀ k : ℕ, ∃ i : ℕ,
+        dist x (toBanachOfSeminorm_seminormFamily (E := E) n (v i)) < ε k := by
+    intro k
+    rcases hv.exists_dist_lt x (hε_pos k) with ⟨i, hi⟩
+    exact ⟨i, by simpa [ε] using hi⟩
+  choose i hi using hw_exists
+  refine ⟨fun k => v (i k), ?_, ?_⟩
+  · intro k
+    simpa [ε] using (hi k)
+  · intro k
+    have hdist :
+        dist (toBanachOfSeminorm_seminormFamily (E := E) n (v (i (k + 1))))
+              (toBanachOfSeminorm_seminormFamily (E := E) n (v (i k)))
+          ≤ dist (toBanachOfSeminorm_seminormFamily (E := E) n (v (i (k + 1)))) x +
+              dist x (toBanachOfSeminorm_seminormFamily (E := E) n (v (i k))) := by
+        simpa using
+          (dist_triangle (toBanachOfSeminorm_seminormFamily (E := E) n (v (i (k + 1)))) x
+            (toBanachOfSeminorm_seminormFamily (E := E) n (v (i k))))
+    have h1 : dist (toBanachOfSeminorm_seminormFamily (E := E) n (v (i (k + 1)))) x < ε (k + 1) := by
+      simpa [dist_comm] using (hi (k + 1))
+    have h0 : dist x (toBanachOfSeminorm_seminormFamily (E := E) n (v (i k))) < ε k := hi k
+    have hdist_lt :
+        dist (toBanachOfSeminorm_seminormFamily (E := E) n (v (i (k + 1))))
+              (toBanachOfSeminorm_seminormFamily (E := E) n (v (i k)))
+          < ε (k + 1) + ε k := by
+        exact lt_of_le_of_lt hdist (add_lt_add h1 h0)
+    have hinc :
+        seminormFamily (E := E) n (v (i (k + 1)) - v (i k)) =
+          dist (toBanachOfSeminorm_seminormFamily (E := E) n (v (i (k + 1))))
+              (toBanachOfSeminorm_seminormFamily (E := E) n (v (i k))) := by
+        set a : E := v (i (k + 1))
+        set b : E := v (i k)
+        have hsub :
+            toBanachOfSeminorm_seminormFamily (E := E) n (a - b) =
+              toBanachOfSeminorm_seminormFamily (E := E) n a -
+                toBanachOfSeminorm_seminormFamily (E := E) n b := by
+          simp [toBanachOfSeminorm_seminormFamily]
+        calc
+          seminormFamily (E := E) n (a - b)
+              = ‖toBanachOfSeminorm_seminormFamily (E := E) n (a - b)‖ := by
+                  symm
+                  simpa using (norm_toBanachOfSeminorm_seminormFamily (E := E) (n := n) (x := a - b))
+          _ = ‖toBanachOfSeminorm_seminormFamily (E := E) n a -
+                toBanachOfSeminorm_seminormFamily (E := E) n b‖ := by
+                  simp [hsub]
+          _ = dist (toBanachOfSeminorm_seminormFamily (E := E) n a)
+                (toBanachOfSeminorm_seminormFamily (E := E) n b) := by
+                  simp [dist_eq_norm]
+    have hε_le :
+        ε (k + 1) + ε k ≤ (1 / ((k + 1 : ℕ) : ℝ) ^ 4) := by
+      have hε_mon : ε (k + 1) ≤ ε k := by
+        have ha : 0 < (2 : ℝ) * ((k + 1 : ℕ) : ℝ) ^ 4 := by positivity
+        have hpow : ((k + 1 : ℕ) : ℝ) ^ 4 ≤ ((k + 2 : ℕ) : ℝ) ^ 4 := by
+          refine pow_le_pow_left₀ (by positivity) ?_ 4
+          exact_mod_cast (Nat.le_succ (k + 1))
+        have hab :
+            (2 : ℝ) * ((k + 1 : ℕ) : ℝ) ^ 4 ≤ (2 : ℝ) * ((k + 2 : ℕ) : ℝ) ^ 4 := by
+          gcongr
+        have h' :
+            (1 / ((2 : ℝ) * ((k + 2 : ℕ) : ℝ) ^ 4)) ≤
+              (1 / ((2 : ℝ) * ((k + 1 : ℕ) : ℝ) ^ 4)) :=
+          one_div_le_one_div_of_le ha hab
+        have hadd : (↑k + 1 + 1 : ℝ) = (↑k + 2 : ℝ) := by ring
+        simpa [ε, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm, hadd] using h'
+      have hsum : ε (k + 1) + ε k ≤ ε k + ε k := by gcongr
+      have h2 : (2 : ℝ) * ε k = 1 / ((k + 1 : ℕ) : ℝ) ^ 4 := by
+        have h2ne : (2 : ℝ) ≠ 0 := by norm_num
+        calc
+          (2 : ℝ) * ε k = (2 : ℝ) / (2 * ((k + 1 : ℕ) : ℝ) ^ 4) := by
+            simp [ε, div_eq_mul_inv, mul_left_comm, mul_comm]
+          _ = ((2 : ℝ) / 2) / (((k + 1 : ℕ) : ℝ) ^ 4) := by
+            simp [div_mul_eq_div_div]
+          _ = 1 / ((k + 1 : ℕ) : ℝ) ^ 4 := by
+            simp [h2ne]
+      calc
+        ε (k + 1) + ε k ≤ ε k + ε k := hsum
+        _ = (2 : ℝ) * ε k := by ring
+        _ = (1 / ((k + 1 : ℕ) : ℝ) ^ 4) := h2
+    have :
+        seminormFamily (E := E) n (v (i (k + 1)) - v (i k)) ≤ (1 / ((k + 1 : ℕ) : ℝ) ^ 4) := by
+      have : seminormFamily (E := E) n (v (i (k + 1)) - v (i k)) < ε (k + 1) + ε k := by
+        simpa [hinc] using hdist_lt
+      exact this.le.trans hε_le
+    simpa [sub_eq_add_neg] using this
+
+end FastApproximation
+
 /-- Chebyshev bound for the evaluation random variables, using the seminorm control coming from
 `NuclearSpaceStd`. -/
 theorem exists_prob_abs_eval_ge_le_seminormFamily
@@ -413,7 +583,6 @@ theorem exists_prob_abs_eval_ge_le_seminormFamily
   have := hcheb.trans hof
   simpa [μ, hevent] using this
 
-set_option maxHeartbeats 400000 in
 /-- **Borel–Cantelli consequence of the Chebyshev bound.**
 
 For the controlling seminorm `seminormFamily n`, if a sequence `(u k)` has square-summable
