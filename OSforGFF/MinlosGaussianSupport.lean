@@ -435,7 +435,7 @@ theorem exists_ae_tendsto_eval_atTop_nhds_zero_of_summable_seminormFamily_sq
       ∀ m : ℕ,
         (∀ᵐ ω ∂μ, ∀ᶠ k in atTop, |(ω (u k) : ℝ)| < (1 / (m + 1 : ℝ))) := by
     intro m
-    -- Apply Borel–Cantelli to the sets `{ω | ε ≤ |ω(u k)|}` with `ε = 1/(m+1)`.
+    -- we apply Borel–Cantelli to the sets `{ω | ε ≤ |ω(u k)|}` with `ε = 1/(m+1)`.
     have hε : 0 < (1 / (m + 1 : ℝ)) := by positivity
     let s : ℕ → Set (E → ℝ) := fun k => {ω | (1 / (m + 1 : ℝ)) ≤ |(ω (u k) : ℝ)|}
     have hs_le :
@@ -598,7 +598,6 @@ theorem exists_ae_cauchySeq_eval_of_le_pow_four
       (E := E) (H := H) (T := T) h_sq with ⟨n, C, hC0, hsumAE⟩
   refine ⟨n, C, hC0, ?_⟩
   intro w hw
-  -- Work with increments `u k = w (k+1) - w k` and majorant `c k = 1/(k+1)^2`.
   let u : ℕ → E := fun k => w (k + 1) - w k
   let c : ℕ → ℝ := fun k => 1 / ((k + 1 : ℕ) : ℝ) ^ 2
   have hc_pos : ∀ k : ℕ, 0 < c k := by
