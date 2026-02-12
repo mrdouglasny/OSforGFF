@@ -205,12 +205,8 @@ lemma restrict_toEuclideanCLM_extend {I J : Finset ι} (hJI : J ⊆ I) (x : Eucl
       (Matrix.toEuclideanCLM (n := J) (𝕜 := ℝ) (covMatrix K J)) x := by
   classical
   ext j
-  -- Rewrite both sides as explicit finite sums over coordinates.
-  -- The only content is that the `extendEuclidean` coordinates vanish outside `J`, so the `I`-sum
-  -- reduces to a `J`-sum.
   simp only [restrictEuclidean_apply, Matrix.ofLp_toEuclideanCLM, extendEuclidean_apply, Matrix.mulVec,
     dotProduct]
-  -- Turn the `I`-sum into a sum over the subset of indices coming from `J`.
   let s : Set I := { i : I | (i.1 : ι) ∈ J }
   have h₁ :
       (∑ i : I,
@@ -229,10 +225,9 @@ lemma restrict_toEuclideanCLM_extend {I J : Finset ι} (hJI : J ⊆ I) (x : Eucl
     · intro i hi
       have hiJ : (i.1 : ι) ∉ J := by simpa [s] using hi
       simp [hiJ]
-  -- Reindex the remaining sum using the obvious equivalence `s ≃ J`.
   let e : s ≃ J :=
     { toFun := fun i => ⟨i.1.1, i.2⟩
-      invFun := fun j' => ⟨⟨j'.1, hJI j'.2⟩, by simpa [s] using j'.2⟩
+      invFun := fun j' => ⟨⟨j'.1, hJI j'.2⟩, by simp [s] ⟩
       left_inv := by
         intro i
         apply Subtype.ext
@@ -249,13 +244,7 @@ lemma restrict_toEuclideanCLM_extend {I J : Finset ι} (hJI : J ⊆ I) (x : Eucl
       (f := fun i : s => covMatrix K I ⟨j.1, hJI j.2⟩ i.1 * x ⟨i.1.1, i.2⟩)
       (g := fun j' : J => covMatrix K I ⟨j.1, hJI j.2⟩ ⟨j'.1, hJI j'.2⟩ * x j') ?_
     intro i
-    -- `e` is the identity on the underlying `ι` coordinate.
     simp [e]
-  -- Finish by identifying the covariance matrix entries.
-  -- (`covMatrix` is just restriction of the kernel `K` to the finite set.)
-  -- Use `h₁` and `h₂` to reindex the `I`-sum into a `J`-sum, then identify matrix entries.
-  -- First, rewrite the `I`-sum using `h₁`, then the resulting `s`-sum using `h₂`.
-  -- This avoids relying on `simp` to match these equalities.
   calc
     (∑ i : I,
         covMatrix K I ⟨j.1, hJI j.2⟩ i *
@@ -271,31 +260,24 @@ lemma gaussianOfPosSemidef_map_restrictEuclidean {I J : Finset ι} (hJI : J ⊆ 
         (restrictEuclidean (I := I) (J := J) hJI) =
       gaussianOfPosSemidef (n := J) (covMatrix K J) (hK J) := by
   classical
-  -- Use extensionality by characteristic functions on `EuclideanSpace`.
   refine MeasureTheory.Measure.ext_of_charFun (μ :=
       (gaussianOfPosSemidef (n := I) (covMatrix K I) (hK I)).map
         (restrictEuclidean (I := I) (J := J) hJI))
     (ν := gaussianOfPosSemidef (n := J) (covMatrix K J) (hK J)) ?_
   funext t
-  -- Pushforward along a CLM acts on `charFun` by the adjoint.
   have hmap :=
     charFun_map_continuousLinearMap
       (μ := gaussianOfPosSemidef (n := I) (covMatrix K I) (hK I))
       (L := restrictEuclidean (I := I) (J := J) hJI) (t := t)
-  -- Rewrite the adjoint as `extendEuclidean`.
   have hadj :
       (restrictEuclidean (I := I) (J := J) hJI).adjoint t =
         extendEuclidean (I := I) (J := J) t := by
-    simpa using congrArg (fun L => L t) (restrictEuclidean_adjoint (I := I) (J := J) hJI)
-  -- Compute both characteristic functions using the explicit formula.
-  -- The only nontrivial step is identifying the quadratic form, which follows from the
-  -- finite-dimensional consistency lemma `restrict_toEuclideanCLM_extend`.
+    simp
   have hinner :
       ⟪extendEuclidean (I := I) (J := J) t,
           (Matrix.toEuclideanCLM (n := I) (𝕜 := ℝ) (covMatrix K I))
             (extendEuclidean (I := I) (J := J) t)⟫_ℝ =
         ⟪t, (Matrix.toEuclideanCLM (n := J) (𝕜 := ℝ) (covMatrix K J)) t⟫_ℝ := by
-    -- Use the adjoint relation `extend = restrict†`, then rewrite the restricted vector.
     have hR :
         ⟪(restrictEuclidean (I := I) (J := J) hJI).adjoint t,
             (Matrix.toEuclideanCLM (n := I) (𝕜 := ℝ) (covMatrix K I))
@@ -310,9 +292,7 @@ lemma gaussianOfPosSemidef_map_restrictEuclidean {I J : Finset ι} (hJI : J ⊆ 
           (x := (Matrix.toEuclideanCLM (n := I) (𝕜 := ℝ) (covMatrix K I))
                 (extendEuclidean (I := I) (J := J) t))
           (y := t))
-    -- Now rewrite the adjoint and the restricted vector.
     simpa [hadj, restrict_toEuclideanCLM_extend (K := K) (I := I) (J := J) hJI] using hR
-  -- Finish by rewriting with the characteristic function formulas.
   have hIchar :
       MeasureTheory.charFun
           ((gaussianOfPosSemidef (n := I) (covMatrix K I) (hK I)).map
@@ -321,7 +301,6 @@ lemma gaussianOfPosSemidef_map_restrictEuclidean {I J : Finset ι} (hJI : J ⊆ 
           ⟪extendEuclidean (I := I) (J := J) t,
             (Matrix.toEuclideanCLM (n := I) (𝕜 := ℝ) (covMatrix K I))
               (extendEuclidean (I := I) (J := J) t)⟫_ℝ) := by
-    -- pushforward + adjoint action on `charFun`, then apply the Gaussian formula
     simpa [hmap, hadj] using
       (charFun_gaussianOfPosSemidef (n := I) (covMatrix K I) (hK I)
         (t := extendEuclidean (I := I) (J := J) t))
@@ -330,7 +309,6 @@ lemma gaussianOfPosSemidef_map_restrictEuclidean {I J : Finset ι} (hJI : J ⊆ 
         Complex.exp (-(1 / 2 : ℂ) *
           ⟪t, (Matrix.toEuclideanCLM (n := J) (𝕜 := ℝ) (covMatrix K J)) t⟫_ℝ) := by
     simpa using (charFun_gaussianOfPosSemidef (n := J) (covMatrix K J) (hK J) (t := t))
-  -- Combine.
   simpa [hIchar, hJchar, hinner]
 
 -- Projectivity for the transported measures on the plain Π-type `J → ℝ`.
@@ -339,15 +317,11 @@ lemma gaussianFamily_isProjective :
       (gaussianFamily (ι := ι) K hK) := by
   intro I J hJI
   classical
-  -- Unfold the family into `gaussianFiniteLaw`.
   dsimp [gaussianFamily, gaussianFiniteLaw]
-  -- Work on the `EuclideanSpace` measures, then transport by `ofLp`.
-  -- Let `μI` and `μJ` be the centered Gaussian measures on `EuclideanSpace ℝ I` and `EuclideanSpace ℝ J`.
   set μI : Measure (EuclideanSpace ℝ I) :=
     gaussianOfPosSemidef (n := I) (covMatrix K I) (hK I)
   set μJ : Measure (EuclideanSpace ℝ J) :=
     gaussianOfPosSemidef (n := J) (covMatrix K J) (hK J)
-  -- Rewrite the RHS by composing the maps.
   have hmeas_ofLpI : Measurable (ofLp : EuclideanSpace ℝ I → I → ℝ) := by fun_prop
   have hmeas_ofLpJ : Measurable (ofLp : EuclideanSpace ℝ J → J → ℝ) := by fun_prop
   have hmeas_restrict₂ :
@@ -356,36 +330,29 @@ lemma gaussianFamily_isProjective :
   have hmeas_restrictEuclidean :
       Measurable (restrictEuclidean (I := I) (J := J) hJI) := by
     exact (restrictEuclidean (I := I) (J := J) hJI).continuous.measurable
-  -- Identify the two ways of restricting coordinates: `Finset.restrict₂` on functions corresponds to
-  -- `restrictEuclidean` on `EuclideanSpace`, after applying `ofLp`.
   have hcomp :
       (Finset.restrict₂ (π := fun _ : ι => ℝ) hJI) ∘ (ofLp : EuclideanSpace ℝ I → I → ℝ) =
         (ofLp : EuclideanSpace ℝ J → J → ℝ) ∘
           (restrictEuclidean (I := I) (J := J) hJI) := by
     funext y
     ext j
-    -- Both sides are `y` restricted to `J`.
     simp [Finset.restrict₂_def]
-  -- Use projectivity on `EuclideanSpace`, then transport by `ofLp`.
   calc
     Measure.map (ofLp : EuclideanSpace ℝ J → J → ℝ) μJ
         = Measure.map (ofLp : EuclideanSpace ℝ J → J → ℝ)
             (Measure.map (restrictEuclidean (I := I) (J := J) hJI) μI) := by
-            -- This is the projective consistency on `EuclideanSpace`.
             simpa [μI, μJ] using
               congrArg (fun ν => Measure.map (ofLp : EuclideanSpace ℝ J → J → ℝ) ν)
                 (gaussianOfPosSemidef_map_restrictEuclidean (K := K) (hK := hK) (I := I) (J := J)
                   hJI).symm
     _ = Measure.map ((ofLp : EuclideanSpace ℝ J → J → ℝ) ∘
             (restrictEuclidean (I := I) (J := J) hJI)) μI := by
-          -- `map` twice is `map` of the composition.
           simpa [Measure.map_map hmeas_ofLpJ hmeas_restrictEuclidean, μI]
     _ = Measure.map ((Finset.restrict₂ (π := fun _ : ι => ℝ) hJI) ∘
             (ofLp : EuclideanSpace ℝ I → I → ℝ)) μI := by
           simpa [hcomp]
     _ = (Measure.map (Finset.restrict₂ (π := fun _ : ι => ℝ) hJI)
             (Measure.map (ofLp : EuclideanSpace ℝ I → I → ℝ) μI)) := by
-          -- Unfold the composition back to two `map`s.
           symm
           simpa [Measure.map_map hmeas_restrict₂ hmeas_ofLpI, μI]
 
