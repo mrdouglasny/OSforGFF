@@ -176,14 +176,8 @@ lemma pairing_linear_combo
 /-! ## Helper lemmas for real→complex Schwartz embedding -/
 
 /-- The norm of the ℝ-linear embedding ℝ → ℂ is exactly 1. -/
-lemma Complex.norm_ofRealCLM : ‖Complex.ofRealCLM‖ = 1 := by
-  apply ContinuousLinearMap.opNorm_eq_of_bounds
-  · norm_num
-  · intro x; simp [Complex.norm_real]
-  · intro N hN hbound
-    specialize hbound 1
-    simp only [Complex.ofRealCLM_apply, norm_one, mul_one] at hbound
-    convert hbound using 2; norm_num
+lemma Complex.norm_ofRealCLM : ‖Complex.ofRealCLM‖ = 1 :=
+  ofRealCLM_norm
 
 /-- Composing a continuous multilinear map (to ℝ) with the real→complex embedding
     preserves the operator norm, since the embedding is an isometry. -/

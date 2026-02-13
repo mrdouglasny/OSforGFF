@@ -237,7 +237,7 @@ lemma freeCovarianceFormR_reflection_expansion
     calc
       freeCovarianceFormR m u (-v)
           = freeCovarianceFormR m (-v) u := by
-              simp [freeCovarianceFormR_symm]
+              exact freeCovarianceFormR_symm m u (-v)
       _ = -freeCovarianceFormR m v u := h_neg_left v u
       _ = -freeCovarianceFormR m u v := by
             simp [freeCovarianceFormR_symm]
@@ -261,7 +261,7 @@ lemma freeCovarianceFormR_reflection_expansion
     calc
       freeCovarianceFormR m f (f - θg)
           = freeCovarianceFormR m (f - θg) f := by
-              simp [sub_eq_add_neg, freeCovarianceFormR_symm]
+              exact freeCovarianceFormR_symm m f (f - θg)
       _ = freeCovarianceFormR m f f
             + freeCovarianceFormR m (-θg) f := h_add'
       _ = Cf + (-freeCovarianceFormR m θg f) := by
@@ -291,12 +291,12 @@ lemma freeCovarianceFormR_reflection_expansion
         freeCovarianceFormR m (-θg) (-θg)
             = -freeCovarianceFormR m θg (-θg) := h₁'
         _ = -(-freeCovarianceFormR m θg θg) := by
-              simpa using congrArg (fun t => -t) h₂'
+              exact neg_inj.mpr h₂'
         _ = freeCovarianceFormR m θg θg := by simp
     calc
       freeCovarianceFormR m (-θg) (f - θg)
           = freeCovarianceFormR m (f - θg) (-θg) := by
-              simp [sub_eq_add_neg, freeCovarianceFormR_symm]
+              exact freeCovarianceFormR_symm m (-θg) (f - θg)
       _ = freeCovarianceFormR m f (-θg)
             + freeCovarianceFormR m (-θg) (-θg) := h_add'
       _ = -freeCovarianceFormR m f θg
@@ -419,7 +419,7 @@ lemma gaussianFreeField_real_entry_factor
         calc
         Real.exp (-(1 / 2 : ℝ) * (Cf + Cg - 2 * Cfg))
           = Real.exp (A + Cfg) := by
-              simpa using (congrArg Real.exp h_factor)
+              exact Real.exp_eq_exp.mpr h_factor
         _ = Real.exp A * Real.exp Cfg := by
               simp [Real.exp_add]
         _ =

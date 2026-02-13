@@ -292,8 +292,7 @@ theorem gaussian_rbf_pd_innerProduct_proof :
   have h_inner_pd : IsPositiveDefiniteKernel (fun (u v : H) => (⟪u, v⟫_ℝ : ℂ)) := innerProduct_is_pd_kernel
   have h_exp_inner_pd : IsPositiveDefiniteKernel (fun (u v : H) => cexp (⟪u, v⟫_ℝ : ℂ)) := by
     apply exp_is_pd_kernel _ h_inner_pd
-    · intro u v
-      simp only [Complex.ofReal_im]
+    · exact fun _ _ => ofReal_im ⟪_, _⟫_ℝ
     · intro u v
       simp only [real_inner_comm]
   exact h_exp_inner_pd m x d

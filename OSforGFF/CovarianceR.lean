@@ -444,8 +444,7 @@ lemma embeddingMap_continuous (m : ℝ) [Fact (0 < m)] :
       = (fun f => embeddingMap m f) := by
     funext f
     simp [embeddingMapCLM_apply]
-  change Continuous fun f : TestFunction => embeddingMap m f
-  simpa [h_fun_eq] using h
+  exact (continuous_congr (congrFun h_fun_eq)).mp h
 
 /-- Continuity of the real covariance quadratic form f ↦ C(f,f). -/
 theorem freeCovarianceFormR_continuous (m : ℝ) [Fact (0 < m)] :
@@ -678,8 +677,7 @@ lemma freeCovarianceFormR_reflection_invariant
           = freeCovarianceℂ_bilinear m (QFT.compTimeReflection fc) (QFT.compTimeReflection gc) := h₁.symm
       _ = freeCovarianceℂ_bilinear m fc gc := h_complex
       _ = (freeCovarianceFormR m f g : ℂ) := h₂
-  have h_real := congrArg Complex.re h_complex_eq
-  simpa using h_real
+  exact ofReal_inj.mp h_complex_eq
 
 /-- Mixed-time-reflection identity for the real free covariance. -/
 lemma freeCovarianceFormR_reflection_cross
@@ -721,7 +719,7 @@ lemma freeCovarianceFormR_reflection_cross
     freeCovarianceFormR m (QFT.compTimeReflectionReal f) g
         = freeCovarianceFormR m f (QFT.compTimeReflectionReal g) := h_step
     _ = freeCovarianceFormR m (QFT.compTimeReflectionReal g) f := by
-        simpa using (freeCovarianceFormR_symm m f (QFT.compTimeReflectionReal g))
+        exact freeCovarianceFormR_symm m f (compTimeReflectionReal g)
 
 /-- Left linearity of freeCovarianceFormR for any fixed right argument. -/
 lemma freeCovarianceFormR_left_linear_any_right

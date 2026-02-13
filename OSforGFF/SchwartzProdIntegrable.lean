@@ -198,7 +198,7 @@ lemma spacetimeOfTimeSpace_norm_ge (t : ℝ) (x : SpatialCoords3) :
     rw [hsq]; nlinarith [sq_nonneg t]
   have hx : 0 ≤ ‖x‖ := norm_nonneg _
   have hy : 0 ≤ ‖spacetimeOfTimeSpace t x‖ := norm_nonneg _
-  nlinarith [sq_nonneg ‖x‖, sq_nonneg ‖spacetimeOfTimeSpace t x‖, hsq_le]
+  exact (sq_le_sq₀ hx hy).mp hsq_le
 
 /-- Linear embedding of ℝ³ into ℝ⁴ as the spatial subspace at time 0.
     This maps x ↦ (0, x₀, x₁, x₂), i.e., spacetimeOfTimeSpace 0 x. -/
@@ -237,10 +237,7 @@ lemma continuous_spacetimeOfTimeSpace_right (t : ℝ) : Continuous (spacetimeOfT
     rfl
   have h_cont : Continuous (fun x => timeOrigin t + spatialEmbedCLM x) :=
     continuous_const.add spatialEmbedCLM.continuous
-  have h_eq : spacetimeOfTimeSpace t = (fun x => timeOrigin t + spatialEmbedCLM x) :=
-    funext h_decompose
-  rw [h_eq]
-  exact h_cont
+  exact (continuous_congr h_decompose).mpr h_cont
 
 /-- A Schwartz function restricted to a fixed time slice is integrable over ℝ³.
     Uses decay transfer: 4D Schwartz decay implies 3D integrability via norm comparison. -/

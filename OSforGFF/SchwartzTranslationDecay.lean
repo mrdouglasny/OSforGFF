@@ -63,41 +63,8 @@ omit [MeasurableSpace E] [BorelSpace E] in
 Proof: Schwartz decay gives ‖x‖^k · ‖f(x)‖ ≤ seminorm k 0 f for all k.
 Taking k = 1: ‖f(x)‖ ≤ C/‖x‖ → 0 as ‖x‖ → ∞. -/
 lemma schwartz_tendsto_zero (f : SchwartzMap E ℂ) :
-    Tendsto f (cocompact E) (nhds 0) := by
-  rw [Metric.tendsto_nhds]
-  intro ε hε
-  -- Use the seminorm bound: ‖x‖ * ‖f x‖ ≤ seminorm ℝ 1 0 f =: C
-  let C := SchwartzMap.seminorm ℝ 1 0 f
-  have hC_nonneg : 0 ≤ C := apply_nonneg _ _
-  -- For ‖x‖ > C/ε, we have ‖f x‖ ≤ C/‖x‖ < ε
-  rw [Filter.eventually_iff_exists_mem]
-  refine ⟨(closedBall 0 (C / ε + 1))ᶜ, ?_, ?_⟩
-  · rw [Filter.mem_cocompact]
-    exact ⟨closedBall 0 (C / ε + 1), isCompact_closedBall 0 _, fun x hx => hx⟩
-  · intro x hx
-    simp only [mem_compl_iff, mem_closedBall, dist_zero_right, not_le] at hx
-    simp only [dist_zero_right]
-    have hx_pos : 0 < ‖x‖ := by
-      have : 0 ≤ C / ε := div_nonneg hC_nonneg hε.le
-      linarith
-    have hbound := SchwartzMap.norm_pow_mul_le_seminorm ℝ f 1 x
-    simp only [pow_one] at hbound
-    -- ‖f x‖ ≤ C / ‖x‖ < ε
-    have h1 : ‖f x‖ ≤ C / ‖x‖ := by
-      rw [le_div_iff₀ hx_pos]
-      calc ‖f x‖ * ‖x‖ = ‖x‖ * ‖f x‖ := mul_comm _ _
-        _ ≤ C := hbound
-    have h2 : C / ‖x‖ < ε := by
-      have key : C < ε * ‖x‖ := by
-        calc C ≤ C / ε * ε + ε := by
-                by_cases hC_zero : C = 0
-                · simp [hC_zero, hε.le]
-                · rw [div_mul_cancel₀ _ (ne_of_gt hε)]; linarith
-          _ = (C / ε + 1) * ε := by ring
-          _ < ‖x‖ * ε := by nlinarith
-          _ = ε * ‖x‖ := mul_comm _ _
-      exact (div_lt_iff₀ hx_pos).mpr key
-    linarith
+    Tendsto f (cocompact E) (nhds 0) :=
+  zero_at_infty f
 
 /-! ## Kernel decomposition -/
 
@@ -234,7 +201,7 @@ lemma bounded_of_continuous_tendsto_zero
   · have : ‖g x‖ ∈ Set.image (‖g ·‖) K := ⟨x, hx, rfl⟩
     have hle : ‖g x‖ ∈ closedBall (0 : ℝ) M := hM this
     simp only [mem_closedBall, dist_zero_right, Real.norm_eq_abs, abs_norm] at hle
-    exact le_trans hle (le_max_left _ _)
+    exact le_sup_of_le_left hle
   · exact le_trans (le_of_lt (hK x hx)) (le_max_right _ _)
 
 /-- For integrable f and ε > 0, there exists a compact set K with small tail integral.
@@ -1177,7 +1144,7 @@ theorem schwartz_bilinear_translation_decay_proof
           apply Tendsto.comp Complex.continuous_ofReal.continuousAt
           -- K_tail(x - y) = K_tail(0) = 0 for all y (since x = y in subsingleton)
           have h_sub_zero : ∀ y : E, x - y = 0 := fun y => by
-            rw [Subsingleton.elim x y, sub_self]
+            exact Subsingleton.eq_zero (x - y)
           have hK_tail_zero : kernelTail K R₀ (0 : E) = 0 := by
             unfold kernelTail
             rw [indicator_of_notMem]

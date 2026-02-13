@@ -148,7 +148,7 @@ lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : 
       have h_pos : 0 ≤ Real.exp |ω (complex_testfunction_decompose g).1| := Real.exp_nonneg _
       rw [Real.norm_eq_abs, abs_of_nonneg h_pos, sq, ← Real.exp_add]
       ring_nf
-    · exact (Real.continuous_exp.comp (continuous_abs.comp (WeakDual.eval_continuous _))).aestronglyMeasurable
+    · exact MemLp.aestronglyMeasurable h_L2
   -- The bound: ‖exp(z)‖² = exp(2 Re z) ≤ exp(2|Re z|)
   have h_sq_norm_bound : ∀ ω : FieldConfiguration,
       ‖Complex.exp (distributionPairingℂ_real ω g)‖^2 ≤
@@ -630,8 +630,7 @@ lemma L2_time_average_variance_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     -- Use the proved theorem from L2TimeIntegral for L² on product space
     apply OSforGFF.memLp_prod_of_uniform_slicewise_bound μ A T h_meas
     · -- Each A_s is in L²(μ) by Fernique
-      intro s
-      exact gff_exp_time_translated_memLp_two m s f
+      exact fun s => gff_exp_time_translated_memLp_two m s f
     · -- L² norm is constant in s (stationarity from OS2)
       intro s
       simp only [A]
@@ -1045,7 +1044,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunction�
 
   -- Squeeze theorem
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h_tends
-  · filter_upwards with T; exact h_nonneg T
+  · exact Filter.Eventually.of_forall h_nonneg
   · filter_upwards [Filter.eventually_gt_atTop 0] with T hT; exact h_upper T hT
 
 /-! ## Main Theorem Chain -/
@@ -1244,60 +1243,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
       _ = Z * ∫ ω, ∑ j, ‖Err j T ω‖^2 ∂μ := by rw [← MeasureTheory.integral_const_mul]
       _ = Z * ∑ j, ∫ ω, ‖Err j T ω‖^2 ∂μ := by
           congr 1
-          rw [MeasureTheory.integral_finset_sum]
-          -- Each ‖Err j T ·‖² is integrable by gff_err_sq_integrable (for T > 0)
-          -- For T ≤ 0, the interval [0,T] is empty/trivial
-          intro j _
-          -- gff_err_sq_integrable gives integrability for ((1/T) • ∫ exp) - mean
-          -- We need to show Err j T · matches this form (up to smul vs mul)
-          have h_int := gff_err_sq_integrable m T hT (f j)
-          -- Convert from smul to mul and unfold Err
-          simp only [Complex.real_smul, Complex.ofReal_div, Complex.ofReal_one] at h_int
-          -- The Err definition unfolds to the same form
-          convert h_int using 2
-          rename_i ω
-          simp only [Err]
-          -- Need: ‖(1/T) * ∫(exp - mean)‖² = ‖(1/T) * ∫ exp - mean‖²
-          -- By linearity: ∫_[0,T](f - c) = ∫f - T*c, so (1/T)*(∫f - T*c) = (1/T)*∫f - c
-          -- Prove the inner expressions are equal, then the norms and squares match
-          congr 2
-          -- Define the time-translated exp and the mean
-          let exp_s := fun s => Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) (f j))
-          let mean := ∫ ω', Complex.exp (distributionPairingℂ_real ω' (f j)) ∂μ
-          -- Volume of [0,T] is finite
-          have h_vol_fin : volume (Set.Icc (0 : ℝ) T) ≠ ⊤ := by
-            simp only [Real.volume_Icc, sub_zero, ne_eq]
-            exact ENNReal.ofReal_ne_top
-          -- The mean is independent of s, so ∫_[0,T] mean = T * mean
-          have h_const : ∫ s in Set.Icc (0 : ℝ) T, mean = T * mean := by
-            rw [MeasureTheory.setIntegral_const]
-            simp only [Measure.real, Real.volume_Icc, sub_zero]
-            rw [ENNReal.toReal_ofReal (le_of_lt hT)]
-            -- T • mean = ↑T * mean (scalar multiplication equals multiplication for ℂ)
-            simp only [Complex.real_smul]
-          -- exp_s is continuous in s (time translation is continuous)
-          have h_exp_cont : Continuous exp_s := by
-            apply Complex.continuous_exp.comp
-            exact continuous_distributionPairingℂ_timeTranslation ω (f j)
-          -- Therefore integrable on compact [0,T]
-          have h_exp_int : MeasureTheory.IntegrableOn exp_s (Set.Icc 0 T) := by
-            exact h_exp_cont.integrableOn_Icc
-          -- Constant is always integrable on finite measure set
-          have h_const_int : MeasureTheory.IntegrableOn (fun _ => mean) (Set.Icc 0 T) := by
-            exact MeasureTheory.integrableOn_const h_vol_fin
-          -- Apply integral_sub: ∫(f - c) = ∫f - ∫c
-          have h_sub : ∫ s in Set.Icc (0 : ℝ) T, (exp_s s - mean) =
-              (∫ s in Set.Icc (0 : ℝ) T, exp_s s) - T * mean := by
-            rw [MeasureTheory.integral_sub h_exp_int h_const_int, h_const]
-          -- Now compute: (1/T) * (∫f - T*mean) = (1/T)*∫f - mean
-          simp only [exp_s, mean] at h_sub
-          rw [h_sub]
-          -- (1/T) * (∫f - T*mean) = (1/T)*∫f - mean
-          have hT_ne : (T : ℂ) ≠ 0 := by
-            simp only [ne_eq, Complex.ofReal_eq_zero]
-            exact ne_of_gt hT
-          field_simp
-          ring
+          exact integral_finset_sum Finset.univ fun i a => h_each_int i
       _ = Z * ∑ j, Var_j j T := rfl
 
   -- Squeeze: 0 ≤ variance ≤ Z · (∑ Var_j) → 0
@@ -1311,7 +1257,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
     simp only [mul_zero] at this; exact this
 
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h_tends_upper
-  · filter_upwards with T; exact h_nonneg T
+  · exact Filter.Eventually.of_forall h_nonneg
   · filter_upwards [Filter.eventually_gt_atTop 0] with T hT; exact h_upper T hT
 
 /-- OS4'' → OS4': Polynomial clustering implies generating function ergodicity. -/

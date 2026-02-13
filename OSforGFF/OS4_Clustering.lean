@@ -312,7 +312,7 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
         · exact mul_le_mul h_Zf_le h_Zg_le (norm_nonneg _) (by linarith)
         · exact le_refl _
         · exact norm_nonneg _
-        · exact mul_nonneg (by linarith) (by linarith)
+        · exact mul_self_nonneg 1
     _ = ‖Complex.exp (-S₂ fC T_a_gC) - 1‖ := by ring
     _ ≤ 2 * ‖-S₂ fC T_a_gC‖ := Complex.norm_exp_sub_one_le h_S2_small
     _ = 2 * |SchwingerFunction₂ (gaussianFreeField_free m) f (g.translate a)| := by

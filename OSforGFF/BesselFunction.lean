@@ -648,7 +648,7 @@ lemma besselK1_mul_self_le (z : ℝ) (hz : 0 < z) (hz_le : z ≤ 1) :
     have h_neg_F1 : -F 1 = 2/z * exp (-z * exp 1 / 2) := by simp only [F]; ring
     -- f is integrable on (1, ∞) by comparison with g
     have hf_int_Ioi : IntegrableOn f (Ioi 1) :=
-      hf_int_Ici.mono_set (fun x hx => by simp only [mem_Ioi, mem_Ici] at *; linarith)
+      hf_int_Ici.mono_set (fun x hx => by exact mem_Ici_of_Ioi hx)
     -- Relate ∫ on Ici to ∫ on Ioi
     have h_Ici_eq_Ioi : ∫ t in Ici 1, f t = ∫ t in Ioi 1, f t :=
       setIntegral_congr_set Ioi_ae_eq_Ici.symm
@@ -706,9 +706,7 @@ lemma besselK1_near_origin_bound (z : ℝ) (hz : 0 < z) (hz_small : z ≤ 1) :
     besselK1 z ≤ (cosh 1 + 2) / z := by
   have h_bound := besselK1_mul_self_le z hz hz_small
   -- z * K₁(z) ≤ cosh(1) + 2, so K₁(z) ≤ (cosh(1) + 2) / z
-  rw [le_div_iff₀ hz]
-  calc besselK1 z * z = z * besselK1 z := by ring
-    _ ≤ cosh 1 + 2 := h_bound
+  exact (le_div_iff₀' hz).mpr h_bound
 
 /-- The radial integrand r² K₁(mr) is integrable on (0, ∞) for m > 0.
 

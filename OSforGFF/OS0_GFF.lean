@@ -125,7 +125,7 @@ theorem holomorphic_integral_of_locally_L1_bound
     exact ((h_analytic w z).differentiableAt).hasFDerivAt
   -- Apply hasFDerivAt_integral_of_dominated_of_fderiv_le
   have h_result := hasFDerivAt_integral_of_dominated_of_fderiv_le (𝕜 := ℂ) (Metric.ball_mem_nhds z₀ hε_pos)
-    (by filter_upwards with z using h_meas z)
+    (by exact Filter.Eventually.of_forall h_meas)
     (h_int z₀)
     (h_fderiv_meas z₀)
     h_fderiv_bnd
@@ -545,7 +545,7 @@ theorem gff_integrand_integrable (n : ℕ) (J : Fin n → TestFunctionℂ) (z : 
   have h_meas : AEStronglyMeasurable
       (fun ω => Complex.exp (Complex.I * distributionPairingℂ_real ω (∑ i, z i • J i)))
       (μ_GFF m).toMeasure := gff_integrand_measurable m n J z
-  exact h_norm.mono' h_meas (by filter_upwards with ω; exact le_refl _)
+  exact (integrable_norm_iff h_meas).mp h_norm
 
 /-- The Fréchet derivative of the GFF integrand is measurable in ω.
 

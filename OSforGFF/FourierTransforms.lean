@@ -153,7 +153,7 @@ lemma integrable_exponential_decay (μ : ℝ) (hμ : 0 < μ) :
       simp only [Set.mem_Ioi] at hx
       rw [abs_of_pos hx]
     rw [integrableOn_congr_fun h1 measurableSet_Ioi]
-    exact integrableOn_exp_mul_Ioi (neg_neg_of_pos hμ) 0
+    exact exp_neg_integrableOn_Ioi 0 hμ
 
 /-- The Fourier integrand of exponential decay is integrable.
     Proof: |exp(ikx)| = 1, so the norm of the integrand equals exp(-μ|x|),
@@ -166,7 +166,7 @@ lemma integrable_exponential_decay_fourier (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
   · apply Continuous.aestronglyMeasurable
     refine Complex.continuous_exp.comp ?_
     refine Continuous.mul ?_ continuous_ofReal
-    exact Continuous.mul continuous_const continuous_const
+    exact continuous_const
   · filter_upwards with x
     rw [Complex.norm_exp]
     simp only [Complex.mul_re, Complex.I_re, Complex.ofReal_re, zero_mul,
@@ -254,15 +254,7 @@ theorem integrableOn_exp_decay_Ioi (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
     simp only [Complex.sub_re, Complex.mul_re, Complex.I_re, Complex.ofReal_re,
                Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero]
     linarith
-  have hneg_pos : 0 < -((Complex.I * k - μ).re) := neg_pos.mpr hc_re
-  have h_exp_int : IntegrableOn (fun x => Real.exp ((Complex.I * k - μ).re * x)) (Set.Ioi 0) volume := by
-    have h := exp_neg_integrableOn_Ioi 0 hneg_pos; convert h using 2; simp only [neg_neg]
-  apply Integrable.mono' h_exp_int
-  · exact (Complex.measurable_exp.comp (by measurability)).aestronglyMeasurable.restrict
-  · filter_upwards [ae_restrict_mem (measurableSet_Ioi (a := (0 : ℝ)))] with x _
-    rw [Complex.norm_exp]
-    simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
-    exact le_refl _
+  exact integrableOn_exp_mul_complex_Ioi hc_re 0
 
 /-- Exponential e^{bx} is integrable on (-∞, a) when b > 0.
     Proved by change of variables from exp_neg_integrableOn_Ioi. -/
@@ -283,9 +275,8 @@ theorem exp_pos_integrableOn_Iio (a : ℝ) {b : ℝ} (h : 0 < b) :
 /-- Exponential e^{bx} is integrable on (-∞, a] when b > 0.
     Follows from Iio version since measure of a point is 0. -/
 theorem exp_pos_integrableOn_Iic (a : ℝ) {b : ℝ} (h : 0 < b) :
-    MeasureTheory.IntegrableOn (fun x => Real.exp (b * x)) (Set.Iic a) MeasureTheory.volume := by
-  rw [integrableOn_Iic_iff_integrableOn_Iio]
-  exact exp_pos_integrableOn_Iio a h
+    MeasureTheory.IntegrableOn (fun x => Real.exp (b * x)) (Set.Iic a) MeasureTheory.volume :=
+  integrableOn_exp_mul_Iic h a
 
 /-- The integrand e^{(ik+μ)x} is integrable on (-∞, 0] when μ > 0.
     This follows from the exponential decay since Re(ik + μ) = μ > 0. -/
@@ -297,18 +288,7 @@ theorem integrableOn_exp_growth_Iic (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
     simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.ofReal_re,
                Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero, zero_add]
     exact hμ
-  have h_exp_int : IntegrableOn (fun x => Real.exp ((Complex.I * k + μ).re * x)) (Set.Iic 0) volume := by
-    have hsimp : (Complex.I * k + μ).re = μ := by
-      simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.ofReal_re,
-                 Complex.I_im, Complex.ofReal_im, mul_zero, zero_mul, sub_zero, zero_add]
-    rw [hsimp]
-    exact exp_pos_integrableOn_Iic 0 hμ
-  apply Integrable.mono' h_exp_int
-  · exact (Complex.measurable_exp.comp (by measurability)).aestronglyMeasurable.restrict
-  · filter_upwards [ae_restrict_mem measurableSet_Iic] with x _
-    rw [Complex.norm_exp]
-    simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
-    exact le_refl _
+  exact integrableOn_exp_mul_complex_Iic hc_re 0
 
 /-- ik - μ is nonzero when μ ≠ 0 (since Re(ik - μ) = -μ ≠ 0). -/
 lemma ik_sub_ne_zero (μ : ℝ) (hμ : μ ≠ 0) (k : ℝ) : Complex.I * k - (μ : ℂ) ≠ 0 := by

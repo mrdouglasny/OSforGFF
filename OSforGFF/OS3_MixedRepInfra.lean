@@ -426,7 +426,7 @@ lemma heatKernelPositionSpace_integrable (s : ℝ) (hs : 0 < s) (a : SpaceTime) 
     Integrable (fun y : SpaceTime => heatKernelPositionSpace s ‖a - y‖)
       (volume : Measure SpaceTime) := by
   apply integrable_of_integral_eq_one
-  simpa using (heatKernelPositionSpace_integral_translated s hs a)
+  exact heatKernelPositionSpace_integral_translated s hs a
 
 /-- Nonnegativity of the Schwinger bound integrand (fixed s > 0). -/
 lemma schwinger_bound_integrand_nonneg (s : ℝ) (hs : 0 < s)
@@ -660,13 +660,7 @@ theorem schwinger_bound_integrable_fubini (m : ℝ) [Fact (0 < m)] (f : TestFunc
   · refine (ae_restrict_mem measurableSet_Ioi).mono ?_
     intro s hs
     have hs' : 0 < s := hs
-    have h_xy : Integrable
-        (fun p : SpaceTime × SpaceTime =>
-          ‖f p.1‖ * Cf * Real.exp (-s * m^2) *
-            heatKernelPositionSpace s ‖timeReflection p.1 - p.2‖)
-        (volume.prod volume) :=
-      schwinger_bound_integrable_xy s hs' f Cf m hCf_nonneg h_f_int
-    simpa [F] using h_xy
+    exact schwinger_bound_integrable_xy s hs' f Cf m hCf_nonneg h_f_int
   · -- integrable of s ↦ ∫_{x,y} ‖F(s,x,y)‖
     have h_exp_ne_zero : (∫ s in Set.Ioi 0, Real.exp (-s * m^2)) ≠ 0 := by
       rw [h_exp_int]
@@ -1206,8 +1200,7 @@ lemma fubini_s_ksp_integrand_stronglyMeasurable (m : ℝ) (f : TestFunctionℂ) 
   · -- exp(-I * spatialDot k_sp (...))
     refine Complex.measurable_exp.comp ?_
     refine Measurable.mul ?_ ?_
-    · refine Measurable.neg ?_
-      exact measurable_const
+    · exact measurable_const
     · refine Complex.measurable_ofReal.comp ?_
       -- spatialDot k_sp (spatialPart x.2 - spatialPart y) = inner k_sp (spatialPart x.2 - spatialPart y)
       -- Use spatialDot_eq_inner to rewrite, then use Measurable.inner
@@ -1493,8 +1486,7 @@ lemma heat_kernel_moment_integral (s : ℝ) (hs : 0 < s) :
           congr 1
           congr 1
           -- s / √s = √s (since s = √s · √s)
-          field_simp
-          rw [hsq]
+          exact div_sqrt
 
   -- Step 3a: Pull out the constant √(π/s) from the integral
   have h_pull_const : ∫ x₀ in Set.Ioi 0, ∫ y₀ in Set.Ioi 0,
@@ -1616,7 +1608,7 @@ lemma heat_kernel_moment_integral (s : ℝ) (hs : 0 < s) :
                     apply Measurable.div_const
                     apply Measurable.neg
                     apply Measurable.pow_const
-                    exact measurable_fst.add measurable_snd
+                    exact measurable_add
                 · -- Pointwise bound on Ioi 0 × Ioi 0
                   filter_upwards [MeasureTheory.ae_restrict_mem (measurableSet_Ioi.prod measurableSet_Ioi)] with ⟨x, y⟩ hxy
                   simp only [Set.mem_prod, Set.mem_Ioi] at hxy
@@ -2077,7 +2069,7 @@ lemma spacetime_fubini_linear_vanishing_bound (f : TestFunctionℂ)
       apply Measurable.div_const
       apply Measurable.neg
       apply Measurable.pow_const
-      exact measurable_fst.add measurable_snd
+      exact measurable_add
 
   -- Apply Tonelli factorization theorem (schwartz_tonelli_spacetime)
   -- This gives: ∫∫_{SpaceTime²} ‖f x‖ · ‖f y‖ · K(x₀,y₀) = ∫∫_{ℝ²} K(t₁,t₂) · G(t₁) · G(t₂) dt
@@ -2227,7 +2219,7 @@ lemma spacetime_fubini_linear_vanishing_bound (f : TestFunctionℂ)
                 apply Measurable.div_const; apply Measurable.neg
                 apply Measurable.pow_const; exact measurable_const.add measurable_id
               · exact measurable_const
-              · exact measurable_const.mul measurable_id
+              · exact measurable_const_mul C_sp
             · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with t₂ ht₂
               simp only [Set.mem_Ioi] at ht₂
               simp only [K]
@@ -2273,7 +2265,7 @@ lemma spacetime_fubini_linear_vanishing_bound (f : TestFunctionℂ)
                 · apply Measurable.mul measurable_const
                   apply Real.measurable_exp.comp
                   apply Measurable.div_const; apply Measurable.neg; apply Measurable.pow_const
-                  exact measurable_fst.add measurable_snd
+                  exact measurable_add
                 · exact hG_meas.comp measurable_fst
                 · exact hG_meas.comp measurable_snd
               exact (h_joint_meas.stronglyMeasurable.integral_prod_right').aestronglyMeasurable

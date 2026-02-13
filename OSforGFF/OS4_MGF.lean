@@ -274,10 +274,7 @@ lemma exp_sub_one_bound_general (x : ℂ) : ‖Complex.exp x - 1‖ ≤ ‖x‖ 
           ≤ Real.exp ‖x‖ := by linarith [hexp_pos]
         _ ≤ ‖x‖ * Real.exp ‖x‖ := by
             have h1 : 1 ≤ ‖x‖ := le_of_lt hr1
-            calc Real.exp ‖x‖
-                = 1 * Real.exp ‖x‖ := by ring
-              _ ≤ ‖x‖ * Real.exp ‖x‖ := by
-                  apply mul_le_mul_of_nonneg_right h1 (le_of_lt hexp_pos)
+            exact (le_mul_iff_one_le_left hexp_pos).mpr h1
   linarith
 
 end OS4infra

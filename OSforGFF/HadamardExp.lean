@@ -263,8 +263,7 @@ lemma summable_hadamardQuadSeries
     intro i
     classical
     apply hasSum_sum
-    intro j _
-    simpa using (h_single i j).hasSum
+    exact fun j _ => (h_single i j).hasSum
 
   have h_inner :
       ∀ i : ι, Summable (fun n : ℕ =>
@@ -276,16 +275,7 @@ lemma summable_hadamardQuadSeries
   have h_outer : Summable (fun n : ℕ => ∑ i : ι, ∑ j : ι,
       (1 / (Nat.factorial n : ℝ)) * (x i * (R i j) ^ n * x j)) := by
     classical
-    have h_outer_hasSum :
-        HasSum (fun n : ℕ => ∑ i : ι, ∑ j : ι,
-            (1 / (Nat.factorial n : ℝ)) * (x i * (R i j) ^ n * x j))
-          (∑ i : ι, ∑ j : ι, tsum (fun n : ℕ =>
-            (1 / (Nat.factorial n : ℝ)) * (x i * (R i j) ^ n * x j))) := by
-      apply hasSum_sum
-      intro i _
-      -- `hasSum_sum` expects a `HasSum` for the inner sequence
-      simpa using h_inner_hasSum i
-    exact h_outer_hasSum.summable
+    exact summable_sum fun i a => h_inner i
 
   -- Identify the quadratic form with the double sum built above.
   have h_eq :

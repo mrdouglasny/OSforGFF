@@ -93,13 +93,8 @@ open scoped ComplexConjugate
 noncomputable def timeReflection (x : SpaceTime) : SpaceTime :=
   (WithLp.equiv 2 _).symm (Function.update x.ofLp 0 (-x.ofLp 0))
 
-lemma timeReflection_involutive : Function.Involutive timeReflection := by
-  intro x
-  simp only [timeReflection]
-  apply PiLp.ext
-  intro i
-  simp only [WithLp.equiv_symm_apply]
-  by_cases hi : i = 0 <;> simp [hi, Function.update]
+lemma timeReflection_involutive : Function.Involutive timeReflection :=
+  _root_.timeReflection_involutive
 
 noncomputable def spatialDot (k_spatial x_spatial : SpatialCoords) : ℝ :=
   ∑ i, k_spatial i * x_spatial i

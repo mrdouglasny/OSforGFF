@@ -42,8 +42,7 @@ lemma spacetimeDecomp_symm_norm_ge (t : ℝ) (v : SpatialCoords) :
   have h_sq_ge : ‖spacetimeDecomp.symm (t, v)‖^2 ≥ ‖v‖^2 := by
     rw [h_decomp]; nlinarith [sq_nonneg t]
   have h_norm_nonneg : 0 ≤ ‖spacetimeDecomp.symm (t, v)‖ := norm_nonneg _
-  have h_v_nonneg : 0 ≤ ‖v‖ := norm_nonneg _
-  nlinarith [sq_nonneg (‖spacetimeDecomp.symm (t, v)‖ - ‖v‖)]
+  exact le_of_sq_le_sq h_sq_ge h_norm_nonneg
 
 /-- Slice integrability: for fixed t, the slice is integrable over SpatialCoords. -/
 lemma schwartz_slice_integrable (f : SchwartzMap SpaceTime ℂ) (t : ℝ) :

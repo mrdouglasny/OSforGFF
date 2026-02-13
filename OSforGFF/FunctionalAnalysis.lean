@@ -141,16 +141,8 @@ lemma SchwartzMap.hasTemperateGrowth_general
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
     (g : 𝓢(E, V)) :
-    Function.HasTemperateGrowth (⇑g) := by
-  refine ⟨g.smooth', ?_⟩
-  intro n
-  -- take k = 0 in the decay estimate
-  rcases g.decay' 0 n with ⟨C, hC⟩
-  refine ⟨0, C, ?_⟩
-  intro x
-  have : ‖x‖ ^ 0 * ‖iteratedFDeriv ℝ n g x‖ ≤ C := by
-    simpa using hC x
-  simpa using this
+    Function.HasTemperateGrowth (⇑g) :=
+  hasTemperateGrowth g
 
 /- Measure lifting from real to complex Lp spaces -/
 
@@ -704,10 +696,7 @@ lemma SchwartzMap.integrable_mul_bounded (f : SchwartzMap E ℂ) (g : E → ℂ)
   -- Then convert by commutativity
   have hg_ae : AEStronglyMeasurable g μ := hg_meas.aestronglyMeasurable
   have hg_ae_bdd : ∀ᵐ x ∂μ, ‖g x‖ ≤ 1 := Filter.Eventually.of_forall hg_bdd
-  have h := hf_int.bdd_mul hg_ae hg_ae_bdd
-  -- h : Integrable (fun x => g x * f x), convert to f x * g x
-  convert h using 1
-  ext x; ring
+  exact Integrable.mul_bdd hf_int hg_ae hg_ae_bdd
 
 /-- The conjugate of a Schwartz function is integrable. -/
 lemma SchwartzMap.integrable_conj (f : SchwartzMap E ℂ) :
@@ -728,10 +717,8 @@ Lemmas about complex exponentials of pure imaginary arguments, used in Fourier a
 -/
 
 /-- Complex exponential of pure imaginary argument has norm 1. -/
-lemma norm_exp_I_mul_real (r : ℝ) : ‖Complex.exp (Complex.I * r)‖ = 1 := by
-  rw [Complex.norm_exp]
-  simp only [Complex.mul_re, Complex.I_re, Complex.ofReal_re, zero_mul,
-    Complex.I_im, Complex.ofReal_im, mul_zero, sub_zero, Real.exp_zero]
+lemma norm_exp_I_mul_real (r : ℝ) : ‖Complex.exp (Complex.I * r)‖ = 1 :=
+  norm_exp_I_mul_ofReal r
 
 /-- Complex exponential of negative pure imaginary argument has norm 1. -/
 lemma norm_exp_neg_I_mul_real (r : ℝ) : ‖Complex.exp (-Complex.I * r)‖ = 1 := by

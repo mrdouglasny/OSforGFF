@@ -53,7 +53,7 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
   os1 := gaussianFreeField_satisfies_OS1_revised m
   -- OS2 from Euclidean invariance of free covariance
   os2 := gaussian_satisfies_OS2 (μ_GFF m)
-    (by simpa using isGaussianGJ_gaussianFreeField_free m)
+    (by exact isGaussianGJ_gaussianFreeField_free m)
     (QFT.CovarianceEuclideanInvariantℂ_μ_GFF m)
   -- OS3 from the Schur-Hadamard argument
   os3 := QFT.gaussianFreeField_OS3_real m

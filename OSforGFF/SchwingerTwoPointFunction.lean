@@ -34,21 +34,8 @@ noncomputable section
 /-- If f(n+1) → L, then f(n) → L. This is because atTop is shift-invariant. -/
 private lemma tendsto_of_tendsto_succ {α : Type*} {f : ℕ → α} {L : Filter α}
     (h : Filter.Tendsto (fun n => f (n + 1)) Filter.atTop L) :
-    Filter.Tendsto f Filter.atTop L := by
-  rw [Filter.Tendsto] at h ⊢
-  intro s hs
-  rw [Filter.mem_map]
-  have h' := h hs
-  rw [Filter.mem_map] at h'
-  rw [Filter.mem_atTop_sets] at h' ⊢
-  obtain ⟨N, hN⟩ := h'
-  use N + 1
-  intro n hn
-  have hn' : n - 1 ≥ N := by omega
-  have h'' := hN (n - 1) hn'
-  simp only [Set.mem_preimage] at h'' ⊢
-  have : n - 1 + 1 = n := Nat.sub_add_cancel (by omega : 1 ≤ n)
-  rwa [this] at h''
+    Filter.Tendsto f Filter.atTop L :=
+  (Filter.tendsto_add_atTop_iff_nat 1).mp h
 
 /-! ### Two-Point Schwinger Function Infrastructure -/
 

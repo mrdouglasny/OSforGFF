@@ -214,9 +214,6 @@ lemma moment_zero_from_realCF
   have : ∫ ω, (ω a : ℂ) ∂μ.toMeasure = - ∫ ω, (ω a : ℂ) ∂μ.toMeasure := by
     simpa [hflip, integral_neg, hInt1] using hInv
   -- 2 · ∫ X = 0 ⇒ ∫ X = 0
-  have hsum : (2 : ℂ) • (∫ ω, (ω a : ℂ) ∂μ.toMeasure) = 0 := by
-    simpa [two_smul] using congrArg (fun z => z + ∫ ω, (ω a : ℂ) ∂μ.toMeasure) this
-  have htwo : (2 : ℂ) ≠ 0 := by norm_num
-  exact (smul_eq_zero.mp hsum).resolve_left htwo
+  exact self_eq_neg.mp this
 
 end MinlosAnalytic

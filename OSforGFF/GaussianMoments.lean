@@ -243,9 +243,7 @@ theorem covariance_bilinear_from_general
   CovarianceBilinear (gaussianFreeField_free m) := by
   -- Apply the general construction from integrability
   apply CovarianceBilinear_of_integrable
-  intro φ ψ
-  -- Use the 2-point integrable theorem (implemented separately to avoid circular deps)
-  exact gaussian_pairing_product_integrable_free_2point m φ ψ
+  exact fun φ ψ => gaussian_pairing_product_integrable_free_2point m φ ψ
 
 end
 

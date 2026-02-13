@@ -206,26 +206,7 @@ theorem freeCovarianceℂ_bilinear_integrable
     (m : ℝ) [Fact (0 < m)] (f g : TestFunctionℂ) :
     Integrable (fun p : SpaceTime × SpaceTime =>
       (f p.1) * (freeCovariance m p.1 p.2) * (g p.2)) volume := by
-  -- Use symmetry: freeCovariance m x y depends only on ‖x - y‖ = ‖y - x‖
-  -- freeCovarianceKernel m z = freeCovariance m 0 z depends only on ‖z‖
-  -- So freeCovariance m x y = freeCovarianceKernel m (x - y)
-  have h_transl_inv : ∀ x y, freeCovariance m x y = freeCovarianceKernel m (x - y) := by
-    intro x y
-    unfold freeCovarianceKernel freeCovariance freeCovarianceBessel
-    simp only [zero_sub, norm_neg]
-  -- Rewrite the integrand using translation invariance
-  have h_eq : (fun p : SpaceTime × SpaceTime => f p.1 * (freeCovariance m p.1 p.2 : ℂ) * g p.2) =
-      (fun p => f p.1 * ((freeCovarianceKernel m (p.1 - p.2) : ℝ) : ℂ) * g p.2) := by
-    ext p
-    rw [h_transl_inv p.1 p.2]
-  rw [h_eq]
-  -- The kernel K₀ lifted to ℂ is integrable
-  have hK_int : Integrable (fun z : SpaceTime => (freeCovarianceKernel m z : ℂ)) volume := by
-    have h := freeCovarianceKernel_integrable m (Fact.out)
-    exact Integrable.ofReal h
-  -- Now apply the L¹ theorem
-  exact schwartz_bilinear_integrable_of_translationInvariant_L1
-    (fun z => (freeCovarianceKernel m z : ℂ)) hK_int f g
+  exact freeCovarianceℂ_bilinear_integrable' m f g
 
 /-- Integrability of the covariance kernel evaluated on a time-reflected test function.
     This follows directly from `freeCovarianceℂ_bilinear_integrable` since `compTimeReflection`

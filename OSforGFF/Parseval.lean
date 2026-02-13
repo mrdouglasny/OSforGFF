@@ -161,13 +161,7 @@ lemma freeCovariance_regulated_eq_complex_integral (α : ℝ) (m : ℝ) (x y : S
     conv_rhs => rw [← integral_conj]
     rw [h1]
     congr 1; funext k; exact hf_conj k
-  have h_im_zero : I.im = 0 := by
-    have : I.im = -I.im := by
-      calc I.im = (starRingEnd ℂ I).im := by rw [← h_self_conj]
-        _ = -I.im := Complex.conj_im I
-    linarith
-  calc (I.re : ℂ) = I.re + I.im * Complex.I := by simp [h_im_zero]
-    _ = I := Complex.re_add_im I
+  exact conj_eq_iff_re.mp (id (Eq.symm h_self_conj))
 
 /-! ### Regulated Parseval Identity - Full Proof
 
@@ -189,33 +183,18 @@ lemma phase_bound (k x y : SpaceTime) :
 
 /-- The free propagator is bounded by 1/m². -/
 lemma freePropagatorMomentum_le_inv_sq (m : ℝ) [Fact (0 < m)] (k : SpaceTime) :
-    freePropagatorMomentum m k ≤ 1 / m^2 := by
-  simp only [freePropagatorMomentum]
-  apply one_div_le_one_div_of_le
-  · exact pow_pos (Fact.out : 0 < m) 2
-  · linarith [sq_nonneg ‖k‖]
+    freePropagatorMomentum m k ≤ 1 / m^2 :=
+  freePropagator_bounded k
 
 /-- The free propagator is strictly positive. -/
 lemma freePropagatorMomentum_pos' (m : ℝ) [Fact (0 < m)] (k : SpaceTime) :
-    0 < freePropagatorMomentum m k := by
-  simp only [freePropagatorMomentum]
-  apply one_div_pos.mpr
-  apply add_pos_of_nonneg_of_pos (sq_nonneg _)
-  exact pow_pos (Fact.out : 0 < m) 2
+    0 < freePropagatorMomentum m k :=
+  freePropagator_pos k
 
 /-- The Gaussian regulator exp(-α‖k‖²) is integrable for α > 0. -/
 lemma gaussian_regulator_integrable (α : ℝ) (hα : 0 < α) :
     Integrable (fun k : SpaceTime => Real.exp (-α * ‖k‖^2)) volume := by
-  have hα_re : (0 : ℝ) < (α : ℂ).re := by simp [hα]
-  have h := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add (V := SpaceTime) hα_re 0 0
-  simp only [zero_mul, add_zero] at h
-  have h' : Integrable (fun k : SpaceTime => (Real.exp (-α * ‖k‖^2) : ℂ)) volume := by
-    have heq : ∀ k : SpaceTime, Complex.exp (-↑α * ↑‖k‖ ^ 2) = ↑(Real.exp (-α * ‖k‖ ^ 2)) := by
-      intro k
-      simp only [← Complex.ofReal_neg, ← Complex.ofReal_mul, ← Complex.ofReal_pow, Complex.ofReal_exp]
-    simp_rw [heq] at h
-    exact h
-  exact h'.re
+  exact gaussian_regulator_integrable' α hα
 
 /-- The Gaussian regulator is continuous. -/
 lemma gaussian_regulator_continuous (α : ℝ) :
@@ -549,11 +528,8 @@ lemma y_integral_eq_physicsFT_conj (f : TestFunctionℂ) (k : SpaceTime) :
 
 /-- The product physicsFT f k * conj(physicsFT f k) = ‖physicsFT f k‖² -/
 lemma physicsFT_mul_conj (f : TestFunctionℂ) (k : SpaceTime) :
-    physicsFT f k * starRingEnd ℂ (physicsFT f k) = (‖physicsFT f k‖^2 : ℂ) := by
-  have h := Complex.mul_conj (physicsFT f k)
-  simp only [starRingEnd_apply] at h ⊢
-  rw [h]
-  simp only [Complex.ofReal_pow, Complex.normSq_eq_norm_sq]
+    physicsFT f k * starRingEnd ℂ (physicsFT f k) = (‖physicsFT f k‖^2 : ℂ) :=
+  mul_conj' (physicsFT f k)
 
 /-- The factorized form simplifies to an integral of |physics FT|². -/
 lemma factorized_to_physicsFT_norm_sq (α : ℝ) (m : ℝ) (f : TestFunctionℂ) :
@@ -626,8 +602,7 @@ lemma integrable_schwartz_propagator_mathlib (m : ℝ) [Fact (0 < m)] (f : TestF
     have hmpos : 0 < m := Fact.out
     have hm2pos : 0 < m^2 := sq_pos_of_pos hmpos
     have hden : m^2 ≤ (2 * Real.pi)^2 * ‖k‖^2 + m^2 := by linarith [sq_nonneg (2 * Real.pi * ‖k‖)]
-    rw [one_div, one_div]
-    exact inv_anti₀ hm2pos hden
+    exact one_div_le_one_div_of_le hm2pos hden
   have h_nonneg : ∀ k, 0 ≤ ‖(SchwartzMap.fourierTransformCLM ℂ f) k‖^2 *
       freePropagatorMomentum_mathlib m k := fun k =>
     mul_nonneg (sq_nonneg _) (freePropagatorMomentum_mathlib_nonneg m Fact.out k)

@@ -91,7 +91,7 @@ theorem sq_setIntegral_le_measure_mul_setIntegral_sq_proved
   · -- Use Hölder with p = q = 2
     have hpq : (2:ℝ).HolderConjugate 2 := ⟨by norm_num, by norm_num, by norm_num⟩
     haveI : IsFiniteMeasure (volume.restrict (Icc a b)) := by
-      rw [isFiniteMeasure_restrict]; simp [Real.volume_Icc]
+      exact Real.isFiniteMeasure_restrict_Icc a b
     have h_memLp1 : MemLp (fun (_ : ℝ) => (1:ℂ)) (ENNReal.ofReal 2)
         (volume.restrict (Icc a b)) := by
       rw [show ENNReal.ofReal 2 = (2 : ENNReal) from by norm_num]; exact memLp_const 1
@@ -511,7 +511,7 @@ theorem double_integral_polynomial_decay_bound_proved (α : ℝ) (hα : α > 1) 
   -- Integrable on all of ℝ: Iic 0 ∪ Ioi 0 = univ, Iic 0 = Iio 0 ∪ {0}
   have h_integrable : Integrable g volume := by
     rw [← integrableOn_univ, ← Iic_union_Ioi (a := (0:ℝ)),
-        show Iic (0:ℝ) = Iio 0 ∪ {0} from by ext x; simp [le_iff_lt_or_eq]]
+        show Iic (0:ℝ) = Iio 0 ∪ {0} from Eq.symm Iio_union_right]
     exact (h_iio.union (integrableOn_singleton (hx := by simp))).union h_ioi
   -- g ≥ 0 everywhere
   have h_nonneg : ∀ t : ℝ, 0 ≤ g t := fun t => by positivity
@@ -653,9 +653,8 @@ private lemma memLp_two_weighted_sum {n : ℕ} (w : Fin n → ℝ) (f : Fin n �
       (memLp_two_weighted _ _ (hf_int _) (hf_meas _))
 
 private lemma integrable_sq_of_memLp_two {f : α → ℝ} (hf : MemLp f 2 μ) :
-    Integrable (fun x => (f x)^2) μ := by
-  rw [memLp_two_iff_integrable_sq_norm hf.aestronglyMeasurable] at hf
-  exact hf.congr (by filter_upwards with x; simp [Real.norm_eq_abs, sq_abs])
+    Integrable (fun x => (f x)^2) μ :=
+  MemLp.integrable_sq hf
 
 /-- **Minkowski inequality for weighted L² sums** (proved theorem)
 
@@ -796,7 +795,7 @@ theorem L2_variance_time_average_bound (μ : Measure Ω) [IsProbabilityMeasure �
     rw [integral_sub hsu hEA_conjA,
         integral_sub (hs.mul_const _) (integrable_const _),
         integral_mul_const, integral_const_mul, integral_conj, integral_const,
-        h_mean s, h_mean u, show μ.real univ = (1 : ℝ) from by simp [Measure.real, measure_univ],
+        h_mean s, h_mean u, show μ.real univ = (1 : ℝ) from probReal_univ,
         one_smul]; ring
   have h_complex_eq :
       ∫ ω, ((∫ s in Icc 0 T, A s ω) - ↑T * EA) *

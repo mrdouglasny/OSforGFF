@@ -66,10 +66,9 @@ noncomputable section
 
 /-- Helper theorem: integral of a real-valued function, coerced to ℂ, equals `ofReal` of the real integral. -/
 theorem integral_ofReal_eq {α} [MeasurableSpace α] (μ : Measure α) (h : α → ℝ)
-  (hf : Integrable h μ) :
+  (_hf : Integrable h μ) :
   ∫ x, (h x : ℂ) ∂μ = Complex.ofReal (∫ x, h x ∂μ) := by
-  -- Use the fact that continuous linear maps commute with integrals
-  exact (Complex.ofRealCLM : ℝ →L[ℝ] ℂ).integral_comp_comm hf
+  exact integral_complex_ofReal
 
 
 /-- Helper lemma: Schwartz functions are L²-integrable. -/
@@ -487,7 +486,7 @@ lemma freeCovarianceBessel_pos (m : ℝ) (hm : 0 < m) (x y : SpaceTime) (hxy : x
     apply mul_pos
     · have hpi : 0 < Real.pi := Real.pi_pos
       positivity
-    · exact norm_pos_iff.mpr (sub_ne_zero.mpr hxy)
+    · exact norm_sub_pos_iff.mpr hxy
   · exact besselK1_pos (m * ‖x - y‖) (mul_pos hm (norm_pos_iff.mpr (sub_ne_zero.mpr hxy)))
 
 /-! ### Connecting Fourier Representation to Schwinger Representation
@@ -740,9 +739,7 @@ theorem fubini_schwinger_integrand (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 <
   -- The phase has norm 1 (since -I * real has real part 0)
   have hphase_norm : ∀ k, ‖phase k‖ = 1 := fun k => by
     simp only [hphase_def]
-    rw [Complex.norm_exp]
-    simp only [Complex.neg_re, Complex.mul_re, Complex.I_re, Complex.ofReal_re,
-      Complex.ofReal_im, mul_zero, sub_zero, neg_zero, zero_mul, Real.exp_zero]
+    exact norm_exp_neg_I_mul_real ⟪k, x - y⟫_ℝ
   -- Define the complex integrand on the product space
   set f : SpaceTime × ℝ → ℂ := fun p =>
     if p.2 > 0 then Complex.exp (-(↑(α + p.2) : ℂ) * ‖p.1‖^2 - ↑(p.2 * m^2)) * phase p.1
@@ -839,7 +836,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
   -- Key positivity facts
   have hnorm_pos : 0 < normalisation := by
     rw [hnorm_def]
-    exact pow_pos (by linarith [Real.pi_pos] : 0 < 2 * Real.pi) STDimension
+    exact pow_pos two_pi_pos STDimension
   have hnorm_ne : normalisation ≠ 0 := ne_of_gt hnorm_pos
 
   have hr_pos : 0 < ‖r‖ := by
@@ -1569,7 +1566,7 @@ lemma aestronglyMeasurable_freeCovariance (m : ℝ) [Fact (0 < m)] :
       have h_eq : {y : SpaceTime | x = y} = {x} := by
         ext y; simp only [Set.mem_setOf_eq, Set.mem_singleton_iff, eq_comm]
       rw [h_eq]
-      exact MeasureTheory.measure_singleton (μ := (volume : Measure SpaceTime)) x
+      exact measure_singleton x
   -- Step 3: Helper lemma - AEStronglyMeasurable on a conull set implies full AEStronglyMeasurable
   have h_lift : ∀ {f : SpaceTime × SpaceTime → ℂ} {s : Set (SpaceTime × SpaceTime)},
       MeasurableSet s → (volume.prod volume) sᶜ = 0 →

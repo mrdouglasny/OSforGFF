@@ -87,7 +87,7 @@ lemma psd_cauchy_schwarz
       x ⬝ᵥ (B.transpose * B).mulVec y
           = x ⬝ᵥ B.transpose.mulVec v := by simp [h1]
       _ = (Matrix.vecMul x B.transpose) ⬝ᵥ v := by
-        simpa using (Matrix.dotProduct_mulVec x B.transpose v)
+        exact dotProduct_mulVec x Bᵀ v
       _ = (B.mulVec x) ⬝ᵥ v := by
         -- rewrite vecMul x Bᵀ = B *ᵥ x, then apply to dotProduct _ ⬝ᵥ v
         have := (Matrix.vecMul_transpose (A := B) (x := x))
@@ -100,7 +100,7 @@ lemma psd_cauchy_schwarz
       x ⬝ᵥ (B.transpose * B).mulVec x
           = x ⬝ᵥ B.transpose.mulVec u := by simp [h1]
       _ = (Matrix.vecMul x B.transpose) ⬝ᵥ u := by
-        simpa using (Matrix.dotProduct_mulVec x B.transpose u)
+        exact dotProduct_mulVec x Bᵀ u
       _ = u ⬝ᵥ u := by
         have := (Matrix.vecMul_transpose (A := B) (x := x))
         simpa [hu] using congrArg (fun w => w ⬝ᵥ u) this
@@ -112,7 +112,7 @@ lemma psd_cauchy_schwarz
       y ⬝ᵥ (B.transpose * B).mulVec y
           = y ⬝ᵥ B.transpose.mulVec v := by simp [h1]
       _ = (Matrix.vecMul y B.transpose) ⬝ᵥ v := by
-        simpa using (Matrix.dotProduct_mulVec y B.transpose v)
+        exact dotProduct_mulVec y Bᵀ v
       _ = v ⬝ᵥ v := by
         have := (Matrix.vecMul_transpose (A := B) (x := y))
         simpa [hv] using congrArg (fun w => w ⬝ᵥ v) this

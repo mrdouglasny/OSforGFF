@@ -135,6 +135,6 @@ lemma PositiveTimeTestFunction.zero_on_nonpositive
       simpa [positiveTimeSet, HasPositiveTime] using hx_mem_pos
     have : getTimeComponent x < getTimeComponent x := lt_of_le_of_lt hx hx_pos
     exact (lt_irrefl _ this)
-  simpa using image_eq_zero_of_notMem_tsupport hx_not_support
+  exact image_eq_zero_of_notMem_tsupport hx_not_support
 
 end

@@ -427,7 +427,7 @@ private lemma expIPartial_norm_le (x : ℝ) (N : ℕ) :
   have h_nonneg :
       ∀ n, 0 ≤ (|x| : ℝ) ^ n / (n.factorial : ℝ) := by
     intro n
-    exact div_nonneg (pow_nonneg (abs_nonneg x) n) (by exact_mod_cast Nat.zero_le (n.factorial))
+    exact div_nonneg (pow_nonneg (abs_nonneg x) n) (by exact Nat.cast_nonneg' n.factorial)
 
   have h₃ :
       (Finset.range (N+1)).sum (fun n => (|x| : ℝ) ^ n / (n.factorial : ℝ))
@@ -446,13 +446,8 @@ private lemma expIPartial_norm_le (x : ℝ) (N : ℕ) :
 
 /-- Product over `Fin n` of a constant equals the n-th power (for our integrand). -/
 private lemma prod_const_pow (x : ℝ) (n : ℕ) :
-  (∏ _i : Fin n, x) = x ^ n := by
-  classical
-  -- Standard finitary identity; available as `Finset.card_univ` + `Finset.prod_const`.
-  --   ∏_{i∈univ} x = x^(Fintype.card (Fin n)) = x^n
-  have h : (∏ _i : Fin n, x) = x ^ (Fintype.card (Fin n)) := by
-    simp [Finset.prod_const]
-  simp only [Fintype.card_fin, h]
+  (∏ _i : Fin n, x) = x ^ n :=
+  Fin.prod_const n x
 
 /-- Identify `S_n(J,…,J)` as the integral of the n-th power of `⟨ω,J⟩`. -/
 private lemma schwinger_eq_integral_pow

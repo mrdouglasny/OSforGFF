@@ -62,22 +62,8 @@ lemma diagEmbed_ne_zero_of_ne_zero {x : ι → ℝ} (hx : x ≠ 0) : diagEmbed (
 
 /-- Finite sum over pairs equals iterated double sum over coordinates (binderless sums). -/
 lemma sum_pairs_eq_double (g : ι × ι → ℝ) :
-  (∑ p, g p) = ∑ i, ∑ j, g (i, j) := by
-  classical
-  -- Expand both sides to Finset.univ sums and use sum_product
-  show (Finset.univ.sum (fun p : ι × ι => g p))
-      = (Finset.univ.sum (fun i : ι => Finset.univ.sum (fun j : ι => g (i, j))))
-  -- Replace g p by g (p.1, p.2)
-  have : (Finset.univ.sum (fun p : ι × ι => g p))
-        = (Finset.univ.sum (fun p : ι × ι => g (p.1, p.2))) := by
-    simp
-  calc
-    Finset.univ.sum (fun p : ι × ι => g p)
-        = Finset.univ.sum (fun p : ι × ι => g (p.1, p.2)) := this
-    _ = (Finset.univ.product (Finset.univ)).sum (fun p : ι × ι => g (p.1, p.2)) := rfl
-    _ = Finset.univ.sum (fun i : ι => Finset.univ.sum (fun j : ι => g (i, j))) := by
-      rw [← Finset.sum_product]
-      congr
+  (∑ p, g p) = ∑ i, ∑ j, g (i, j) :=
+  Fintype.sum_prod_type g
 
 /-- Compute (kronLike A B).mulVec y at a pair (i,j) as a double sum (binderless sums). -/
 lemma kronLike_mulVec
@@ -201,7 +187,7 @@ lemma frobenius_pos_of_psd_posdef
   (G B : Matrix ι ι ℝ) (hG_psd : G.PosSemidef) (hG_ne_zero : G ≠ 0) (hB : B.PosDef) :
   0 < ∑ j, ∑ l, G j l * B j l := by
   -- Delegate to the standalone proof to avoid duplication
-  simpa using (_root_.frobenius_pos_of_psd_posdef (ι:=ι) G B hG_psd hG_ne_zero hB)
+  exact _root_.frobenius_pos_of_psd_posdef G B hG_psd hG_ne_zero hB
 
 /-- Gram-type PSD: if `A` is positive definite, then the matrix
 `G j l = ∑ i, (colSlice y j) i * (A * colSlice y l)_i` is positive semidefinite. -/
@@ -482,9 +468,7 @@ lemma kronLike_posDef
     have hG_psd : G.PosSemidef := by
       -- G is a Gram matrix built from A and the slices of y
       simpa [G] using gram_psd_from_A_posdef (ι:=ι) A hA y
-    have : 0 < ∑ j, ∑ l, G j l * B j l :=
-      frobenius_pos_of_psd_posdef (ι:=ι) G B hG_psd hG_ne_zero hB
-    exact this
+    exact frobenius_pos_of_psd_posdef G B hG_psd hG_ne_zero hB
 
 /-- Schur product theorem (real case, finite index):
 If A B are positive definite matrices over ℝ, then the Hadamard product is positive definite. -/
@@ -526,7 +510,7 @@ If A B are positive definite matrices over ℝ, then the Hadamard product is pos
             = ∑ p, y p * ((kronLike (ι:=ι) A B).mulVec y) p := by
               simp [dotProduct]
         _ = ∑ i, ∑ j, y (i, j) * ((kronLike (ι:=ι) A B).mulVec y) (i, j) := by
-              simpa using sum_pairs_eq_double (ι:=ι) (g := fun p => y p * ((kronLike (ι:=ι) A B).mulVec y) p)
+              exact sum_pairs_eq_double fun p => y p * (kronLike A B).mulVec y p
         _ = ∑ i, ∑ j, y (i, j) * (∑ k, ∑ l, (A i k * B j l) * y (k, l)) := by
               apply Finset.sum_congr rfl; intro i _; apply Finset.sum_congr rfl; intro j _
               simp [kronLike_mulVec]

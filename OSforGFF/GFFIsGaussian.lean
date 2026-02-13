@@ -147,9 +147,7 @@ lemma gff_slice_analytic_z0 (f g : TestFunction) (t : ℂ) :
     have hc := AnalyticOn.comp h2param he_an (fun _ _ => trivial)
     convert hc using 2
   -- AnalyticOn on univ → AnalyticOnNhd on univ
-  intro x _
-  rw [← analyticWithinAt_univ]
-  exact hcomp x (Set.mem_univ x)
+  exact analyticOn_univ.mp hcomp
 
 /-- Derived from gff_slice_analytic_z0 by swapping f ↔ g and using add_comm. -/
 lemma gff_slice_analytic_z1 (f g : TestFunction) (z₀ : ℂ) :
@@ -544,4 +542,4 @@ theorem isGaussianGJ_gaussianFreeField_free (m : ℝ) [Fact (0 < m)] :
     isGaussianGJ (gaussianFreeField_free m) := by
   constructor
   · exact gaussianFreeField_free_centered m
-  · intro J; simpa using (gff_complex_generating m J)
+  · exact fun J => gff_complex_generating m J
