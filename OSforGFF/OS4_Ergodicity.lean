@@ -1243,7 +1243,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] :
       _ = Z * ∫ ω, ∑ j, ‖Err j T ω‖^2 ∂μ := by rw [← MeasureTheory.integral_const_mul]
       _ = Z * ∑ j, ∫ ω, ‖Err j T ω‖^2 ∂μ := by
           congr 1
-          exact integral_finset_sum Finset.univ fun i a => h_each_int i
+          exact integral_finset_sum Finset.univ fun i a ↦ h_each_int i
       _ = Z * ∑ j, Var_j j T := rfl
 
   -- Squeeze: 0 ≤ variance ≤ Z · (∑ Var_j) → 0
