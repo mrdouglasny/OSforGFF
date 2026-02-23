@@ -96,7 +96,8 @@ theorem schwingerTwoPoint_eq_freeCovarianceKernel (m : ℝ) [Fact (0 < m)] (x : 
     2. SchwingerFunction₂ for the GFF computes ∫∫ f(u) C(u-v) g(v) du dv
 
     Both are standard properties of the GFF; the sorries encode these standard facts. -/
-theorem schwingerTwoPointFunction_eq_GFF (m : ℝ) [Fact (0 < m)] (x : SpaceTime) (hx : x ≠ 0) :
+theorem schwingerTwoPointFunction_eq_GFF (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (x : SpaceTime) (hx : x ≠ 0) :
   SchwingerTwoPointFunction (gaussianFreeField_free m) x = SchwingerTwoPointFunction_GFF m x := by
   -- Use schwingerTwoPointFunction_eq_kernel
   have h_cont : ContinuousOn (freeCovarianceKernel m) {y : SpaceTime | y ≠ 0} :=
@@ -133,8 +134,8 @@ theorem schwingerTwoPointFunction_eq_GFF (m : ℝ) [Fact (0 < m)] (x : SpaceTime
 /-- The abstract SchwingerTwoPointFunction equals freeCovarianceKernel for the GFF.
     This is the version needed for downstream proofs using TwoPointIntegrable.
     Note: Only holds for x ≠ 0 since the covariance is undefined at coincident points. -/
-theorem schwingerTwoPointFunction_eq_freeCovarianceKernel (m : ℝ) [Fact (0 < m)] (x : SpaceTime)
-    (hx : x ≠ 0) :
+theorem schwingerTwoPointFunction_eq_freeCovarianceKernel (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (x : SpaceTime) (hx : x ≠ 0) :
   SchwingerTwoPointFunction (gaussianFreeField_free m) x = freeCovarianceKernel m x := by
   rw [schwingerTwoPointFunction_eq_GFF m x hx, schwingerTwoPoint_eq_freeCovarianceKernel]
 
@@ -159,7 +160,8 @@ theorem schwinger_two_point_decay_bound_GFF (m : ℝ) [Fact (0 < m)] :
     Uses the bridge lemma to connect to the concrete GFF definition.
     Note: At x = y (coincident points), the bound still holds since the abstract
     definition regularizes S(0) = 0 and 0^(-2) = 0 by Mathlib convention. -/
-theorem schwinger_two_point_decay_bound (m : ℝ) [Fact (0 < m)] :
+theorem schwinger_two_point_decay_bound (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
   ∃ C : ℝ, C > 0 ∧
     ∀ x y : SpaceTime,
       ‖SchwingerTwoPointFunction (gaussianFreeField_free m) (x - y)‖ ≤
@@ -186,7 +188,8 @@ theorem schwinger_two_point_decay_bound (m : ℝ) [Fact (0 < m)] :
 /-- The abstract two-point Schwinger function is measurable.
     This uses the bridge lemma to connect to the concrete GFF definition.
     The functions agree on the complement of {0}, which has full measure. -/
-theorem schwingerTwoPoint_measurable (m : ℝ) [Fact (0 < m)] :
+theorem schwingerTwoPoint_measurable (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
     AEStronglyMeasurable (fun x => SchwingerTwoPointFunction (gaussianFreeField_free m) x) volume := by
   -- Use that the abstract and concrete definitions agree except possibly at 0
   -- Since {0} is a null set in Lebesgue measure, AE strong measurability follows from
@@ -216,7 +219,8 @@ Elementary bound on the GFF generating function using complex exponential proper
 /-- The norm of the GFF generating function equals the exponential of minus one-half
     the real part of the covariance. This is an elementary property of complex exponentials:
     |exp(z)| = exp(Re z). -/
-lemma gff_generating_norm_eq (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
+lemma gff_generating_norm_eq (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (f : TestFunctionℂ) :
   ‖GJGeneratingFunctionalℂ (gaussianFreeField_free m) f‖ =
     Real.exp (-(1/2) * (freeCovarianceℂ_bilinear m f f).re) := by
   rw [gff_complex_generating, gff_two_point_equals_covarianceℂ_free, Complex.norm_exp]
@@ -403,10 +407,13 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
   have h_weight_pull :
       ∫ k, ‖F k‖^2 * freePropagatorMomentum_mathlib m k ∂volume ≤
         (1 / m^2) * ∫ k, ‖F k‖^2 ∂volume := by
-    have h_const_pull : ∫ k, (1 / m^2) * ‖F k‖^2 ∂volume
-        = (1 / m^2) * ∫ k, ‖F k‖^2 ∂volume :=
-      integral_const_mul_eq (μ := volume) (c := (1 / m^2))
-        (f := fun k => ‖F k‖^2) hF_sq_int
+    have h_const_pull :
+        ∫ k, (1 / m^2) * ‖F k‖^2 ∂volume = (1 / m^2) * ∫ k, ‖F k‖^2 ∂volume := by
+      -- Prefer the normalization `x⁻¹` (used by simp) over `1 / x`.
+      have : ∫ k, (m ^ 2)⁻¹ * ‖F k‖ ^ 2 ∂volume = (m ^ 2)⁻¹ * ∫ k, ‖F k‖ ^ 2 ∂volume := by
+        simpa using (MeasureTheory.integral_const_mul (m ^ 2)⁻¹ (fun k => ‖F k‖ ^ 2))
+      -- Convert back to `1 / m^2`.
+      simpa [div_eq_mul_inv, mul_assoc] using this
     calc
       ∫ k, ‖F k‖^2 * freePropagatorMomentum_mathlib m k ∂volume
           ≤ ∫ k, (1 / m^2) * ‖F k‖^2 ∂volume := h_int_le
@@ -465,7 +472,8 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
 /-- The GFF generating functional satisfies the exponential bound
     |Z[f]| ≤ exp((1/2m²)||f||²_{L²}). This combines the norm equality,
     the bound by imaginary part, and the L² bound to give the final OS1 estimate. -/
-lemma gff_generating_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
+lemma gff_generating_L2_bound (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (f : TestFunctionℂ) :
   ‖GJGeneratingFunctionalℂ (gaussianFreeField_free m) f‖ ≤
     Real.exp ((1 / (2 * m^2)) * ∫ x, ‖f x‖^2 ∂volume) := by
   set fIm := (complex_testfunction_decompose f).2
@@ -486,7 +494,8 @@ Using the axioms above, we establish local integrability of the Schwinger functi
 /-- The two-point Schwinger function is locally integrable.
     This follows from the polynomial decay bound |S_2(x)| ≤ C|x|^{-2}.
     In d=4 spacetime dimensions, |x|^{-2} is locally integrable since 2 < 4. -/
-lemma gff_two_point_locally_integrable (m : ℝ) [Fact (0 < m)] :
+lemma gff_two_point_locally_integrable (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
   TwoPointIntegrable (gaussianFreeField_free m) := by
   unfold TwoPointIntegrable
   -- Obtain the decay bound
@@ -525,7 +534,8 @@ open MeasureTheory
 
     Note: Named `_revised` because the alternative OS0 proof in `GaussianFreeField.lean`
     uses the same module; both are valid, and `GFFmaster.lean` uses this one. -/
-theorem gaussianFreeField_satisfies_OS1_revised (m : ℝ) [Fact (0 < m)] :
+theorem gaussianFreeField_satisfies_OS1_revised (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
   OS1_Regularity (gaussianFreeField_free m) := by
   -- Choose parameters p = 2 and c = 1/(2 m^2)
   refine ⟨(2 : ℝ), (1 / (2 * m^2)), by norm_num, by norm_num, ?cpos, ?bound, ?tpInt⟩

@@ -63,15 +63,6 @@ Note: This file is NOT in the import chain for the master theorem.
 noncomputable section
 /-! ### Small helper lemmas for integration and complex algebra -/
 
-
-/-- Helper theorem: integral of a real-valued function, coerced to ℂ, equals `ofReal` of the real integral. -/
-theorem integral_ofReal_eq {α} [MeasurableSpace α] (μ : Measure α) (h : α → ℝ)
-  (hf : Integrable h μ) :
-  ∫ x, (h x : ℂ) ∂μ = Complex.ofReal (∫ x, h x ∂μ) := by
-  -- Use the fact that continuous linear maps commute with integrals
-  exact (Complex.ofRealCLM : ℝ →L[ℝ] ℂ).integral_comp_comm hf
-
-
 /-- Helper lemma: Schwartz functions are L²-integrable. -/
 lemma schwartz_L2_integrable (f : TestFunctionℂ) :
   Integrable (fun k => ‖f k‖^2) volume := by
@@ -81,20 +72,6 @@ lemma schwartz_L2_integrable (f : TestFunctionℂ) :
   have hf_meas : AEStronglyMeasurable f volume := hf_memLp.1
   -- Translate the `L^2` membership into integrability of the squared norm.
   simpa using (memLp_two_iff_integrable_sq_norm hf_meas).1 hf_memLp
-
-/-- Helper theorem: Integrability is preserved by multiplying a real integrand with a real constant. -/
-theorem integral_const_mul {α} [MeasurableSpace α] (μ : Measure α) (c : ℝ)
-  (f : α → ℝ) (hf : Integrable f μ) :
-  Integrable (fun x => c * f x) μ := by
-  exact MeasureTheory.Integrable.const_mul hf c
-
-/-- Helper theorem: Integral of a real constant multiple pulls out of the integral. -/
-theorem integral_const_mul_eq {α} [MeasurableSpace α] (μ : Measure α) (c : ℝ)
-  (f : α → ℝ) (hf : Integrable f μ) :
-  ∫ x, c * f x ∂ μ = c * ∫ x, f x ∂ μ := by
-  -- The integrability assumption ensures both integrals are well-defined
-  have := hf  -- Acknowledge we need integrability for the integral to be well-defined
-  exact MeasureTheory.integral_const_mul c f
 
 /-- Helper theorem: Monotonicity of the real integral for pointwise ≤ between nonnegative functions,
     assuming the larger one is integrable. -/
@@ -714,9 +691,9 @@ theorem integrable_schwinger_fourier_integrand (α : ℝ) (hα : 0 < α) (m : �
   -- Step 6: Apply Integrable.mono'
   exact Integrable.mono' hgh_int hf_meas (Filter.Eventually.of_forall hf_le)
 
-/-- **Fubini swap axiom for Schwinger integrand with phase.**
+/-- **Fubini swap lemma for the Schwinger integrand with phase.**
 
-    This axiom asserts that the integration order can be swapped for the
+    This lemma asserts that the integration order can be swapped for the
     Gaussian × phase integrand appearing in the Schwinger representation:
 
     Re[∫_k (∫_t exp(-(α+t)‖k‖²) * exp(-tm²) dt) * phase(k) dk]
@@ -1175,7 +1152,7 @@ theorem freeCovariance_regulated_tendsto_bessel (m : ℝ) (hm : 0 < m) (x y : Sp
   -- Step 3: The limit equals the Bessel form
   have h_limit_eq := covarianceSchwingerRep_eq_freeCovarianceBessel m hm x y hxy
   rw [← h_limit_eq]
-  -- Step 4: Use Fubini axiom to equate the Fourier and Schwinger forms
+  -- Step 4: Use the Fubini lemma to equate the Fourier and Schwinger forms
   have h_eq : ∀ α ∈ Set.Ioi (0 : ℝ), covarianceSchwingerRegulated α m ‖x - y‖ = freeCovariance_regulated α m x y :=
     fun α hα => (fubini_schwinger_fourier α hα m hm x y hxy).symm
   exact h_schwinger_conv.congr' (eventually_nhdsWithin_of_forall h_eq)
@@ -2008,9 +1985,10 @@ lemma freeCovarianceKernel_continuousOn (m : ℝ) (hm : 0 < m) :
   apply ContinuousOn.congr _ h_eq
   exact hg_cont.comp h_norm_cont h_norm_pos
 
-/-- The bilinear form f(x) * C(x,y) * g(y) is integrable on product space for Schwartz f, g.
-    This uses the L¹ integrability of the translation-invariant Bessel kernel. -/
-theorem freeCovarianceℂ_bilinear_integrable' (m : ℝ) [Fact (0 < m)] (f g : TestFunctionℂ) :
+/-- The bilinear form `f(x) * C(x,y) * g(y)` is integrable on the product space
+for Schwartz `f`, `g`. This uses the \(L^1\) integrability of the translation-invariant
+Bessel kernel. -/
+theorem freeCovarianceℂ_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f g : TestFunctionℂ) :
     Integrable (fun p : SpaceTime × SpaceTime =>
       (f p.1) * (freeCovariance m p.1 p.2 : ℂ) * (g p.2)) volume := by
   have h_transl_inv : ∀ x y, freeCovariance m x y = freeCovarianceKernel m (x - y) := by

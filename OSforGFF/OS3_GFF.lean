@@ -32,6 +32,11 @@ noncomputable section
 
 namespace QFT
 
+-- The Kolmogorov+nuclear construction of the free GFF requires the standard nuclearity package on
+-- `TestFunction`. We keep it as an explicit typeclass parameter throughout this file.
+variable [OSforGFF.NuclearSpaceStd TestFunction]
+
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Reflection positivity for a single positive-time test function in the real setting. -/
 private lemma freeCovarianceFormR_reflection_nonneg
     (m : ℝ) [Fact (0 < m)] (f : PositiveTimeTestFunction) :
@@ -44,6 +49,7 @@ private lemma freeCovarianceFormR_reflection_nonneg
   have h := freeCovariance_reflection_positive_real (m := m) (f := f.val) hf_supp
   simpa [freeCovarianceFormR] using h
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Entrywise exponential preserves PSD on real symmetric PSD matrices (finite index).
     Bridge lemma to be discharged using HadamardExp (Hadamard series) machinery. -/
 private lemma entrywiseExp_posSemidef_of_posSemidef
@@ -63,6 +69,7 @@ private lemma entrywiseExp_posSemidef_of_posSemidef
 attribute [local simp] inner_sub_right inner_sub_left
 
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Reflection matrix built from the real covariance is positive semidefinite.
     This is the real analogue of covariance reflection positivity. -/
 lemma freeCovarianceFormR_reflection_matrix_posSemidef
@@ -211,6 +218,7 @@ lemma freeCovarianceFormR_reflection_matrix_posSemidef
   rw [← hg]
   exact freeCovarianceFormR_reflection_nonneg m g
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Quadratic expansion identity for reflected arguments. -/
 lemma freeCovarianceFormR_reflection_expansion
     (m : ℝ) [Fact (0 < m)] (f g : TestFunction) :

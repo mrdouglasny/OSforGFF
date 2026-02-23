@@ -751,11 +751,11 @@ theorem bilinear_covariance_regulated_tendstoℂ (m : ℝ) [Fact (0 < m)] (f g :
   -- Define the dominating function (scaled Bessel form)
   let bound : SpaceTime × SpaceTime → ℝ := fun p =>
     Real.exp (m^2) * ‖f p.1‖ * |freeCovariance m p.1 p.2| * ‖g p.2‖
-  -- The bound is integrable (scaling of freeCovarianceℂ_bilinear_integrable)
+  -- The bound is integrable (scaling of `freeCovarianceℂ_bilinear_integrable`)
   have h_bound_int : Integrable bound (volume.prod volume) := by
-    -- Use freeCovarianceℂ_bilinear_integrable': f * C * g is integrable
+    -- Use `freeCovarianceℂ_bilinear_integrable`: `f * C * g` is integrable
     -- Then Integrable.norm gives ‖f‖ * |C| * ‖g‖ integrable, and const_mul scales by exp(m²)
-    have h_int := freeCovarianceℂ_bilinear_integrable' m f g
+    have h_int := freeCovarianceℂ_bilinear_integrable m f g
     -- The norm of f(x) * C(x,y) * g(y) equals ‖f(x)‖ * |C(x,y)| * ‖g(y)‖
     have h_norm_eq : ∀ p : SpaceTime × SpaceTime,
         ‖f p.1 * (freeCovariance m p.1 p.2 : ℂ) * g p.2‖ = ‖f p.1‖ * |freeCovariance m p.1 p.2| * ‖g p.2‖ := by
@@ -868,7 +868,7 @@ theorem bilinear_covariance_regulated_tendstoℂ (m : ℝ) [Fact (0 < m)] (f g :
   --
   -- Technical note: The proof requires showing:
   -- 1. F α is integrable (follows from freeCovariance_regulated_bilinear_integrable + norm equality)
-  -- 2. F_limit is integrable (follows from freeCovarianceℂ_bilinear_integrable' + norm equality)
+  -- 2. F_limit is integrable (follows from `freeCovarianceℂ_bilinear_integrable` + norm equality)
   -- 3. Fubini converts product integrals to iterated integrals
   --
   -- These are routine measure theory facts that follow from ‖conj z‖ = ‖z‖.
@@ -898,7 +898,7 @@ theorem bilinear_covariance_regulated_tendstoℂ (m : ℝ) [Fact (0 < m)] (f g :
   have h_fubini_limit : ∫ p, F_limit p ∂(volume.prod volume) =
       ∫ x, ∫ y, f x * (freeCovariance m x y : ℂ) * starRingEnd ℂ (g y) := by
     -- Same structure as h_fubini_reg: F_limit is integrable and Fubini applies
-    have h_int := freeCovarianceℂ_bilinear_integrable' m f g
+    have h_int := freeCovarianceℂ_bilinear_integrable m f g
     -- Transfer integrability using norm equality ‖conj z‖ = ‖z‖
     have h_norm_eq : ∀ p : SpaceTime × SpaceTime,
         ‖f p.1 * (freeCovariance m p.1 p.2 : ℂ) * g p.2‖ = ‖F_limit p‖ := fun p => by

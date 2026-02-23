@@ -148,13 +148,15 @@ theorem freeCovarianceℂ_bilinear_euclidean_invariant (g : E) (f h : TestFuncti
 
 /-- The free GFF measure satisfies the complex covariance Euclidean invariance property.
     This removes the `h_euc` hypothesis from the master theorem. -/
-theorem CovarianceEuclideanInvariantℂ_μ_GFF :
+theorem CovarianceEuclideanInvariantℂ_μ_GFF
+    [OSforGFF.NuclearSpaceStd TestFunction] :
     CovarianceEuclideanInvariantℂ (μ_GFF m) := by
   intro g f h
   -- Reduce SchwingerFunctionℂ₂ to freeCovarianceℂ_bilinear via the Gaussian structure
   -- μ_GFF m = gaussianFreeField_free m
   simp only [μ_GFF]
-  rw [gff_two_point_equals_covarianceℂ_free, gff_two_point_equals_covarianceℂ_free]
+  rw [gff_two_point_equals_covarianceℂ_free (m := m),
+    gff_two_point_equals_covarianceℂ_free (m := m)]
   exact freeCovarianceℂ_bilinear_euclidean_invariant m g f h
 
 end QFT

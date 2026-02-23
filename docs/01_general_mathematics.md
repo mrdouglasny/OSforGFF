@@ -208,18 +208,33 @@ This section develops the theory of positive-definite functions and matrices nee
 
 ---
 
-## 6. Nuclear Space Axiom
+## 6. Schwartz nuclearity hypothesis (discharged in this repository)
 
 ### Mathematical Background
 
-A small number of standard mathematical results are assumed as axioms (via `axiom`) because their proofs would require substantial Mathlib extensions.
+This repository currently contains **0 `axiom`s** and **0 `sorry`s** in the Lean codebase.
 
-### Key Declarations (`OSforGFF/NuclearSpace.lean`)
+The free GFF construction (and hence the OS master theorem) requires the standard functional-analytic
+fact that the Schwartz test-function space \(\mathcal{S}(\mathbb{R}^4)\) is nuclear, in the precise
+“countable seminorm family + nuclear local Banach inclusions” sense used by the
+Kolmogorov+nuclear-support theorem.  This nuclearity input is **proved** here via the spacetime
+Hermite coefficient development; see
+[`OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean`](../OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean).
+
+In Lean this is represented either as:
+
+- `NuclearSpaceStd TestFunction` (existence of some countable seminorm family with nuclear
+  inclusions), or more canonically as
+- `SchwartzNuclearInclusion` (nuclear inclusions for a *specific* monotone seminorm sequence
+  extracted from Mathlib’s Schwartz seminorm family; see below).
+
+### Key declarations
 
 | Declaration | Description |
 |-------------|-------------|
-| [`NuclearSpace`](../OSforGFF/NuclearSpace.lean#L126) | Nuclear space via Hilbert-Schmidt embedding characterization |
-| [`schwartz_nuclear`](../OSforGFF/NuclearSpace.lean#L145) | $\mathcal{S}$ is nuclear (assumed) |
+| [`OSforGFF.NuclearSpaceStd`](../OSforGFF/NuclearSpace/Std.lean) | “Countable seminorm family + nuclear inclusions” nuclearity package |
+| [`OSforGFF.schwartzSeminormSeq`](../OSforGFF/NuclearSpace/Schwartz.lean) | Canonical monotone ℕ-indexed Schwartz seminorm sequence |
+| [`OSforGFF.SchwartzNuclearInclusion`](../OSforGFF/NuclearSpace/Schwartz.lean) | Canonical Schwartz nuclearity hypothesis (proved via spacetime Hermite coefficients) |
 
 ## References
 
@@ -228,3 +243,4 @@ A small number of standard mathematical results are assumed as axioms (via `axio
 - Rudin, W. *Functional Analysis*.
 - Glimm, J. and Jaffe, A. *Quantum Physics: A Functional Integral Point of View*.
 - Schilling, R. *Measures, Integrals and Martingales*.
+- Trèves, F. *Topological Vector Spaces, Distributions and Kernels*, Academic Press, 1967, Chapter 51 (nuclearity of Schwartz space).

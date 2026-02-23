@@ -69,11 +69,17 @@ open DFunLike (coe)
 noncomputable section
 open scoped MeasureTheory Complex BigOperators SchwartzMap
 
-/-- OS0 (Analyticity): The generating functional is analytic in the test functions. -/
+/-- OS0 (Holomorphicity / Analyticity): the generating functional is complex differentiable
+in finite-dimensional complex directions.
+
+In Glimm–Jaffe this is stated as analyticity.  In finite dimensions, complex Fréchet
+differentiability (“holomorphicity”) implies analyticity; Mathlib has the needed
+holomorphic⇒analytic infrastructure for one complex variable, and we use this holomorphic
+formulation as the robust core axiom. -/
 def OS0_Analyticity (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
   ∀ (n : ℕ) (J : Fin n → TestFunctionℂ),
-    AnalyticOn ℂ (fun z : Fin n → ℂ =>
-      GJGeneratingFunctionalℂ dμ_config (∑ i, z i • J i)) Set.univ
+    Differentiable ℂ (fun z : Fin n → ℂ =>
+      GJGeneratingFunctionalℂ dμ_config (∑ i, z i • J i))
 
 /-- Two-point function local integrability condition for p = 2 -/
 def TwoPointIntegrable (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=

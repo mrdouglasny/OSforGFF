@@ -6,6 +6,7 @@ Authors: Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 
 import OSforGFF.OS0_GFF
 import OSforGFF.GaussianMoments
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-!
 ## Complex GFF Results via OS0 Analyticity
@@ -37,6 +38,7 @@ noncomputable section
 namespace GFFIsGaussian
 
 variable (m : ℝ) [Fact (0 < m)]
+variable [OSforGFF.NuclearSpaceStd TestFunction]
 
 /-- For the Gaussian Free Field measure, the product of two complex pairings with test functions
     is integrable. Uses the direct 2-point theorem from GaussianMoments. -/
@@ -55,6 +57,7 @@ The proofs use OS0's derivative interchange machinery:
 4. Computing ∂²Z/∂t∂s|₀ two ways (Gaussian formula vs integral) gives S₂ = Q
 -/
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Bilinearity expansion of Q(tf+sg, tf+sg).
     Q(tf+sg, tf+sg) = t²Q(f,f) + 2ts Q(f,g) + s²Q(g,g) -/
 lemma freeCovarianceFormR_bilinear_expand (f g : TestFunction) (t s : ℝ) :
@@ -94,20 +97,18 @@ lemma gff_cf_two_testfunctions (f g : TestFunction) (t s : ℝ) :
 
 /-! ## OS0-Based Derivative Machinery
 
-The following lemmas use OS0's analyticity to compute mixed derivatives. -/
+The following lemmas use OS0's **complex differentiability** (holomorphicity) to justify
+identity-theorem arguments by passing to 1D slices (where Mathlib has `holomorphic ⇒ analytic`). -/
 
-/-- OS0 specialized to two test functions gives analyticity of Z[tf + sg] in (t,s) ∈ ℂ² -/
-lemma gff_two_param_analytic (f g : TestFunction) :
-    AnalyticOn ℂ (fun z : Fin 2 → ℂ =>
-      GJGeneratingFunctionalℂ (gaussianFreeField_free m) (z 0 • toComplex f + z 1 • toComplex g))
-      Set.univ := by
-  -- Direct application of gaussianFreeField_satisfies_OS0 with n=2, J = ![toComplex f, toComplex g]
+/-- OS0 specialized to two test functions gives differentiability of
+`z ↦ Z[z₀•f + z₁•g]` as a map `ℂ² → ℂ`. -/
+lemma gff_two_param_differentiable (f g : TestFunction) :
+    Differentiable ℂ (fun z : Fin 2 → ℂ =>
+      GJGeneratingFunctionalℂ (gaussianFreeField_free m) (z 0 • toComplex f + z 1 • toComplex g)) := by
+  -- Direct application of `gaussianFreeField_satisfies_OS0` with `n = 2`, `J = ![toComplex f, toComplex g]`.
   have h := gaussianFreeField_satisfies_OS0 m 2 ![toComplex f, toComplex g]
+  -- Rewrite `∑ i, z i • J i` as `z 0 • f + z 1 • g`.
   convert h using 2
-  -- Goal: GJGeneratingFunctionalℂ _ (z 0 • toComplex f + z 1 • toComplex g) =
-  --       GJGeneratingFunctionalℂ _ (∑ i, z i • ![toComplex f, toComplex g] i)
-  -- μ_GFF m = gaussianFreeField_free m by definition (abbrev)
-  -- For the test function argument, use Fin.sum_univ_two
   congr 1
   simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
 
@@ -128,28 +129,52 @@ lemma gff_slice_analytic_z0 (f g : TestFunction) (t : ℂ) :
     AnalyticOnNhd ℂ (fun z₀ : ℂ =>
       GJGeneratingFunctionalℂ (gaussianFreeField_free m) (z₀ • toComplex f + t • toComplex g))
       Set.univ := by
-  -- From gff_two_param_analytic, the function F(z) = Z[z₀•f + z₁•g] is analytic on (Fin 2 → ℂ)
-  have h2param := gff_two_param_analytic m f g
-  -- The embedding e(z₀) = ![z₀, t] is analytic
-  let e : ℂ → (Fin 2 → ℂ) := fun z₀ => ![z₀, t]
-  have he_an : AnalyticOn ℂ e Set.univ := by
-    intro x _
-    rw [analyticWithinAt_univ]
-    apply AnalyticAt.pi
-    intro i
-    fin_cases i
-    · exact analyticAt_id
-    · exact analyticAt_const
-  -- Composition is analytic
-  have hcomp : AnalyticOn ℂ (fun z₀ : ℂ =>
-      GJGeneratingFunctionalℂ (gaussianFreeField_free m) (z₀ • toComplex f + t • toComplex g))
-      Set.univ := by
-    have hc := AnalyticOn.comp h2param he_an (fun _ _ => trivial)
-    convert hc using 2
-  -- AnalyticOn on univ → AnalyticOnNhd on univ
-  intro x _
-  rw [← analyticWithinAt_univ]
-  exact hcomp x (Set.mem_univ x)
+  -- From OS0 we have holomorphicity in two complex variables.
+  have h2param :
+      Differentiable ℂ (fun z : Fin 2 → ℂ =>
+        GJGeneratingFunctionalℂ (gaussianFreeField_free m) (z 0 • toComplex f + z 1 • toComplex g)) :=
+    gff_two_param_differentiable m f g
+  -- Compose with the affine embedding `z₀ ↦ ![z₀, t]`.
+  let e : ℂ → (Fin 2 → ℂ) := fun z₀ => (Pi.single 0 z₀) + (Pi.single 1 t)
+  have he_diff : Differentiable ℂ e := by
+    -- `z ↦ Pi.single 0 z` is linear, hence differentiable; the other term is constant.
+    simpa [e] using
+      (ContinuousLinearMap.differentiable (ContinuousLinearMap.single ℂ (fun _ : Fin 2 => ℂ) 0)).add
+        (differentiable_const (c := Pi.single 1 t))
+  have h_slice_diff :
+      Differentiable ℂ (fun z₀ : ℂ =>
+        GJGeneratingFunctionalℂ (gaussianFreeField_free m) (z₀ • toComplex f + t • toComplex g)) := by
+    -- Compose OS0's two-variable differentiability with `e`, then simplify the coordinates.
+    have hcomp :
+        Differentiable ℂ
+          ((fun z : Fin 2 → ℂ =>
+              GJGeneratingFunctionalℂ (gaussianFreeField_free m)
+                (z 0 • toComplex f + z 1 • toComplex g)) ∘ e) :=
+      h2param.comp he_diff
+    have hcomp' :
+        Differentiable ℂ (fun z₀ : ℂ =>
+          GJGeneratingFunctionalℂ (gaussianFreeField_free m)
+            ((e z₀) 0 • toComplex f + (e z₀) 1 • toComplex g)) := by
+      simpa [Function.comp] using hcomp
+    have h_eq :
+        (fun z₀ : ℂ =>
+          GJGeneratingFunctionalℂ (gaussianFreeField_free m)
+            ((e z₀) 0 • toComplex f + (e z₀) 1 • toComplex g)) =
+          (fun z₀ : ℂ =>
+            GJGeneratingFunctionalℂ (gaussianFreeField_free m)
+              (z₀ • toComplex f + t • toComplex g)) := by
+      funext z₀
+      -- Evaluate the `Fin 2` coordinates of `e z₀`.
+      have h0 : (e z₀) 0 = z₀ := by
+        simp [e]
+      have h1 : (e z₀) 1 = t := by
+        simp [e]
+      simp [h0, h1]
+    simpa [h_eq] using hcomp'
+  -- On `ℂ`, holomorphicity is equivalent to analyticity.
+  exact (analyticOnNhd_univ_iff_differentiable (f := fun z₀ : ℂ =>
+      GJGeneratingFunctionalℂ (gaussianFreeField_free m) (z₀ • toComplex f + t • toComplex g))).2
+    h_slice_diff
 
 /-- Derived from gff_slice_analytic_z0 by swapping f ↔ g and using add_comm. -/
 lemma gff_slice_analytic_z1 (f g : TestFunction) (z₀ : ℂ) :
@@ -160,7 +185,7 @@ lemma gff_slice_analytic_z1 (f g : TestFunction) (z₀ : ℂ) :
   simp only [add_comm (z₀ • toComplex f)] at h ⊢
   convert h using 2
 
-omit [Fact (0 < m)] in
+omit [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Slice of Gaussian RHS is analytic (exp of polynomial). -/
 lemma gaussian_rhs_slice_analytic_z0 (f g : TestFunction) (t : ℂ) :
     AnalyticOnNhd ℂ (fun z₀ : ℂ =>
@@ -182,7 +207,7 @@ lemma gaussian_rhs_slice_analytic_z0 (f g : TestFunction) (t : ℂ) :
     exact h1
   · exact analyticOnNhd_const
 
-omit [Fact (0 < m)] in
+omit [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Slice of Gaussian RHS is analytic in the second variable. -/
 lemma gaussian_rhs_slice_analytic_z1 (f g : TestFunction) (z₀ : ℂ) :
     AnalyticOnNhd ℂ (fun z₁ : ℂ =>
@@ -445,12 +470,21 @@ lemma schwinger_eq_covarianceℂ_on_reals (f g : TestFunction) :
     have hg : MemLp (fun ω => distributionPairing ω g) 2 (gaussianFreeField_free m).toMeasure :=
       gaussianFreeField_pairing_memLp m g 2 (by simp)
     exact hf.integrable_mul hg
-  -- Step 3: Pull cast outside integral: ∫ ↑(f ω) dμ = ↑(∫ f ω dμ)
-  rw [integral_ofReal_eq _ _ h_int]
-  -- Step 4: Apply the real Schwinger = covariance equality and agreement on reals
-  -- Note: ω f is notation for distributionPairing ω f, and convert handles this
-  convert congrArg (↑· : ℝ → ℂ) (schwinger_eq_covariance_real m f g) using 2
-  · exact freeCovarianceℂ_bilinear_agrees_on_reals m f g
+  -- Step 3–4: Pull the `ℝ → ℂ` cast outside the integral, then use the real identity and
+  -- `freeCovarianceℂ_bilinear_agrees_on_reals`.
+  calc
+    ∫ (ω : FieldConfiguration), ↑(distributionPairing ω f * distributionPairing ω g)
+        ∂↑(gaussianFreeField_free m) =
+        (↑(∫ (ω : FieldConfiguration), distributionPairing ω f * distributionPairing ω g
+            ∂(gaussianFreeField_free m).toMeasure) : ℂ) := by
+          -- `∫ (f : ℝ) = (∫ f : ℝ)` coerced to `ℂ`.
+          simpa using (integral_ofReal (𝕜 := ℂ)
+            (μ := (gaussianFreeField_free m).toMeasure)
+            (f := fun ω => distributionPairing ω f * distributionPairing ω g))
+    _ = (freeCovarianceFormR m f g : ℂ) := by
+          simpa using congrArg (↑· : ℝ → ℂ) (schwinger_eq_covariance_real m f g)
+    _ = freeCovarianceℂ_bilinear m (toComplex f) (toComplex g) := by
+          simpa using (freeCovarianceℂ_bilinear_agrees_on_reals m f g).symm
 
 end GFFIsGaussian
 
@@ -464,7 +498,8 @@ end GFFIsGaussian
     both S₂ and freeCovarianceℂ_bilinear are bilinear, and they agree on real inputs.
 
     For any complex f = fRe + I•fIm, g = gRe + I•gIm, we expand by bilinearity. -/
-theorem gff_two_point_equals_covarianceℂ_free (m : ℝ) [Fact (0 < m)] (f g : TestFunctionℂ) :
+theorem gff_two_point_equals_covarianceℂ_free (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (f g : TestFunctionℂ) :
     SchwingerFunctionℂ₂ (gaussianFreeField_free m) f g = freeCovarianceℂ_bilinear m f g := by
   -- Decompose complex test functions into real and imaginary parts
   let fRe := (complex_testfunction_decompose f).1
@@ -524,13 +559,14 @@ theorem gff_two_point_equals_covarianceℂ_free (m : ℝ) [Fact (0 < m)] (f g : 
     This follows from gff_real_characteristic (for real J) extended to complex J
     via analyticity (gaussianFreeField_satisfies_OS0). Both sides are analytic in J
     and agree on real J, hence they are equal everywhere. -/
-theorem gff_complex_generating (m : ℝ) [Fact (0 < m)] :
+theorem gff_complex_generating (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
     ∀ J : TestFunctionℂ,
       GJGeneratingFunctionalℂ (gaussianFreeField_free m) J =
         Complex.exp (-(1/2 : ℂ) * SchwingerFunctionℂ₂ (gaussianFreeField_free m) J J) := by
   intro J
   -- Use gff_two_point_equals_covarianceℂ_free: S₂ = freeCovarianceℂ_bilinear
-  rw [gff_two_point_equals_covarianceℂ_free]
+  rw [gff_two_point_equals_covarianceℂ_free (m := m) (f := J) (g := J)]
   -- Now goal is: Z[J] = exp(-½ freeCovarianceℂ_bilinear m J J)
   -- Use gff_complex_characteristic_OS0 (via OS0 + identity theorem, no MinlosAnalytic dependency)
   exact GFFIsGaussian.gff_complex_characteristic_OS0 m J
@@ -540,8 +576,9 @@ theorem gff_complex_generating (m : ℝ) [Fact (0 < m)] :
     This combines:
     1. Centering: E[⟨ω,φ⟩] = 0 (from gaussianFreeField_free_centered)
     2. Gaussian CF: Z[J] = exp(-½ S₂(J,J)) (from gff_complex_generating) -/
-theorem isGaussianGJ_gaussianFreeField_free (m : ℝ) [Fact (0 < m)] :
+theorem isGaussianGJ_gaussianFreeField_free (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
     isGaussianGJ (gaussianFreeField_free m) := by
   constructor
   · exact gaussianFreeField_free_centered m
-  · intro J; simpa using (gff_complex_generating m J)
+  · intro J; simpa using (gff_complex_generating (m := m) J)

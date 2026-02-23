@@ -43,6 +43,8 @@ open TopologicalSpace SchwartzMap
 
 noncomputable section
 
+variable [OSforGFF.NuclearSpaceStd TestFunction]
+
 /-! ## n-Point Integrability for Gaussian Free Fields -/
 
 namespace GaussianMoments

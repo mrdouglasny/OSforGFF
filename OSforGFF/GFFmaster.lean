@@ -17,7 +17,12 @@ elsewhere:
 - OS4 Clustering is proved in `OSforGFF/OS4_Clustering.lean` via Gaussian factorization and decay
 - OS4 Ergodicity is proved in `OSforGFF/OS4_Ergodicity.lean` via polynomial clustering → ergodicity
 
-We expose an unconditional master theorem: all five OS axioms hold for the free GFF.
+We expose the master theorem (stated with the standard nuclearity package
+`[OSforGFF.NuclearSpaceStd TestFunction]`), together with a canonical wrapper under
+`[OSforGFF.SchwartzNuclearInclusion]`.
+
+In the spacetime Hermite model this nuclearity input is discharged; see
+`OSforGFF/GFFmasterProved.lean` for a wrapper with no additional hypotheses beyond `m > 0`.
 -/
 
 import OSforGFF.GaussianFreeField
@@ -27,6 +32,7 @@ import OSforGFF.OS1_GFF
 import OSforGFF.OS2_GFF
 import OSforGFF.OS4_Clustering
 import OSforGFF.OS4_Ergodicity
+import OSforGFF.NuclearSpace.Schwartz
 
 open scoped BigOperators
 
@@ -44,8 +50,11 @@ noncomputable section
 - OS4 Clustering is supplied by `QFT.gaussianFreeField_satisfies_OS4` via Gaussian factorization
 - OS4 Ergodicity is supplied by polynomial clustering (α=6) → ergodicity
 
-This is an unconditional theorem with no assumptions beyond m > 0. -/
-theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
+This theorem is conditional on the standard nuclearity package for `TestFunction`
+(`OSforGFF.NuclearSpaceStd TestFunction`) in order to construct the free GFF measure
+via the Kolmogorov+nuclear support theorem. -/
+theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)]
+    [NuclearSpaceStd TestFunction] :
     SatisfiesAllOS (μ_GFF m) where
   -- OS0 from the holomorphic integral theorem (differentiation under the integral)
   os0 := QFT.gaussianFreeField_satisfies_OS0 m
@@ -62,6 +71,21 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
   -- OS4 Ergodicity: polynomial clustering (α=6) implies ergodicity
   os4_ergodicity := OS4_Ergodicity.OS4_PolynomialClustering_implies_OS4_Ergodicity m
     (QFT.gaussianFreeField_satisfies_OS4_PolynomialClustering m 6 (by norm_num))
+
+/-!
+For the Schwartz test-function space, the *canonical* remaining hypothesis is packaged as
+`OSforGFF.SchwartzNuclearInclusion` (see `OSforGFF/NuclearSpace/Schwartz.lean`).  It implies the
+typeclass `[NuclearSpaceStd TestFunction]` required by the construction, so we offer a convenience
+wrapper with the sharper assumption.
+
+In the spacetime Hermite model, this hypothesis is discharged; see
+`OSforGFF.NuclearSpace.PhysHermiteSpaceTimeSchwartzNuclearInclusion`.
+-/
+
+theorem gaussianFreeField_satisfies_all_OS_axioms_of_schwartzNuclearInclusion (m : ℝ) [Fact (0 < m)]
+    [SchwartzNuclearInclusion] :
+    SatisfiesAllOS (μ_GFF m) := by
+  simpa using (gaussianFreeField_satisfies_all_OS_axioms (m := m))
 
 end
 

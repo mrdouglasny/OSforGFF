@@ -103,8 +103,9 @@ noncomputable def standardBumpSequence (n : ℕ) (hn : n ≠ 0) : ContDiffBump (
 
     where φ_ε is a standard bump function with outer radius ε.
 
-    This replaces the old DiracDelta-based definition, which was conceptually correct
-    but used sorry since delta functions are distributions, not test functions.
+    This replaces the old DiracDelta-based definition: while conceptually correct,
+    it lives in the distributional setting. Here we stay within test functions (Schwartz space)
+    and define the pointwise two-point function via bump-function regularization.
 
     **Regularization at coincident points**: At x = 0, the two-point function is
     mathematically undefined (it would be infinite for most QFTs). We regularize

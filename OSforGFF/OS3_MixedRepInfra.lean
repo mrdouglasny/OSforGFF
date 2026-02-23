@@ -1914,7 +1914,7 @@ lemma heatKernelMomentExt_parametric_eq_setIntegral (s : ℝ) (t₁ : ℝ) (ht�
     is integrable on (0,∞).
 
     **Proof sketch**:
-    1. heatKernelMomentExt is integrable on ℝ² (sorry - uses Tonelli + finite integral)
+    1. heatKernelMomentExt is integrable on ℝ² (Tonelli + finite integral bound)
     2. By Fubini, t₁ ↦ ∫ t₂, heatKernelMomentExt(t₁,t₂) is integrable on ℝ
     3. The set integral on (0,∞) equals the full integral (zero outside)
     4. Multiply by constant c preserves integrability -/

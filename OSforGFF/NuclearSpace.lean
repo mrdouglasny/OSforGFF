@@ -17,7 +17,6 @@ and suffices for the GFF construction via the Minlos theorem.
 - `Seminorm.IsOrthonormalSeq` — p-orthonormal finite sequences
 - `Seminorm.IsHilbertSchmidtEmbedding` — Hilbert-Schmidt condition on inclusions
 - `NuclearSpace` — nuclear space via Hilbertian seminorms with HS embeddings
-- `schwartz_nuclear` — axiom: Schwartz space is nuclear
 
 ## References
 
@@ -129,22 +128,5 @@ class NuclearSpace (E : Type*) [AddCommGroup E] [Module ℝ E] [TopologicalSpace
       (∀ n, (p n).IsHilbertian) ∧
       (WithSeminorms (fun n => p n)) ∧
       (∀ n, ∃ m, n < m ∧ (p m).IsHilbertSchmidtEmbedding (p n))
-
-/-! ### Schwartz Space is Nuclear -/
-
-/-- **Schwartz space is nuclear**: For any finite-dimensional real normed space E
-    and any real normed space F, the Schwartz space 𝓢(E, F) is a nuclear space.
-
-    **Proof sketch** (Gel'fand-Vilenkin Vol. 4, Thm 3 in Ch. 4; Trèves Ch. 51):
-    The Hermite functions {hₙ} form an ONB for L²(ℝᵈ) and are eigenfunctions of the
-    harmonic oscillator H = -Δ + |x|². The Sobolev-Hermite norms
-      ‖f‖_k² = ∑ₙ (1+n)^{2k} |⟨f, hₙ⟩|²
-    are Hilbertian and generate the Schwartz topology. The inclusion from level k+1
-    to level k has eigenvalues (1+n)^{-1}, and ∑ₙ (1+n)^{-2} = π²/6 < ∞,
-    so each inclusion is Hilbert-Schmidt. -/
-axiom schwartz_nuclear {E F : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
-    [NormedAddCommGroup F] [NormedSpace ℝ F] :
-    NuclearSpace (SchwartzMap E F)
 
 end
