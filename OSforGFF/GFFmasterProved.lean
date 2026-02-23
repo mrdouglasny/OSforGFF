@@ -24,3 +24,19 @@ end
 
 end OSforGFF
 
+namespace QFT
+
+noncomputable section
+
+/-- The free GFF in the spacetime Hermite model, packaged as a `EuclideanQFT` model.
+
+This uses the global nuclearity instance provided by
+`OSforGFF.NuclearSpace.PhysHermiteSpaceTimeSchwartzNuclearInclusion`. -/
+noncomputable def gaussianFreeField_EuclideanQFT_proved (m : ℝ) [Fact (0 < m)] :
+    EuclideanQFT :=
+  ⟨_root_.μ_GFF m, OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_proved (m := m)⟩
+
+end
+
+end QFT
+

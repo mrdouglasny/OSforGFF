@@ -183,3 +183,18 @@ structure SatisfiesAllOS (dμ_config : ProbabilityMeasure FieldConfiguration) : 
   os3 : OS3_ReflectionPositivity dμ_config
   os4_clustering : OS4_Clustering dμ_config
   os4_ergodicity : OS4_Ergodicity dμ_config
+
+/-! ## A PhysLean-style “model” container -/
+
+namespace QFT
+
+/-- A Euclidean QFT in the Glimm–Jaffe sense: a probability measure on field configurations
+together with proofs of the Osterwalder–Schrader axioms.
+
+This is a lightweight “interface” container: the *API* is `SatisfiesAllOS`, and concrete models
+(Hermite, Fourier/momentum, lattice, …) can be expressed as inhabitants of this structure. -/
+structure EuclideanQFT : Type where
+  μ : ProbabilityMeasure FieldConfiguration
+  os : SatisfiesAllOS μ
+
+end QFT

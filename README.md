@@ -15,18 +15,25 @@ theorem gaussianFreeField_satisfies_all_OS_axioms_proved (m : ℝ) [Fact (0 < m)
   SatisfiesAllOS (μ_GFF m)
 ```
 
+For a bundled “model” interface (PhysLean-style), see `QFT.EuclideanQFT` and the packaged GFF model:
+
+```lean
+noncomputable def QFT.gaussianFreeField_EuclideanQFT_proved (m : ℝ) [Fact (0 < m)] :
+  QFT.EuclideanQFT
+```
+
 **Status:** Version 1.0, February 2026. 0 sorries, 0 `axiom`s, ~32,000 lines of Lean across 47 files.
 
 ### Assumptions / hypotheses
 
-The development packages the Schwartz nuclearity input as a typeclass (`SchwartzNuclearInclusion`,
-implying `NuclearSpaceStd TestFunction`). In this repository it is discharged (via spacetime Hermite
+The development packages the Schwartz nuclearity input as the predicate `SchwartzNuclearInclusion`
+(a `Prop` implying `NuclearSpaceStd TestFunction`). In this repository it is discharged (via spacetime Hermite
 coefficients), so the wrapper theorem `gaussianFreeField_satisfies_all_OS_axioms_proved` has no
 additional hypotheses beyond `m > 0`.
 
 | Hypothesis | Where used | Mathematical content |
 |-----------|------------|---------------------|
-| `[OSforGFF.SchwartzNuclearInclusion]` | `OSforGFF/GFFmaster.lean` (via `gaussianFreeField_satisfies_all_OS_axioms_of_schwartzNuclearInclusion`) | Nuclearity of the canonical Schwartz local Banach inclusions; this implies `NuclearSpaceStd TestFunction` and is used to descend the Kolmogorov Gaussian process to a probability measure on `S'(ℝ⁴)` |
+| `OSforGFF.SchwartzNuclearInclusion` | `OSforGFF/GFFmaster.lean` (via `gaussianFreeField_satisfies_all_OS_axioms_of_schwartzNuclearInclusion`) | Nuclearity of the canonical Schwartz local Banach inclusions; this implies `NuclearSpaceStd TestFunction` and is used to descend the Kolmogorov Gaussian process to a probability measure on `S'(ℝ⁴)` |
 
 In this repository, `SchwartzNuclearInclusion` is discharged in the spacetime Hermite model; see
 [`OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean`](OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean).

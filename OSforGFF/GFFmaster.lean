@@ -19,7 +19,7 @@ elsewhere:
 
 We expose the master theorem (stated with the standard nuclearity package
 `[OSforGFF.NuclearSpaceStd TestFunction]`), together with a canonical wrapper under
-`[OSforGFF.SchwartzNuclearInclusion]`.
+`OSforGFF.SchwartzNuclearInclusion`.
 
 In the spacetime Hermite model this nuclearity input is discharged; see
 `OSforGFF/GFFmasterProved.lean` for a wrapper with no additional hypotheses beyond `m > 0`.
@@ -74,19 +74,49 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)]
 
 /-!
 For the Schwartz test-function space, the *canonical* remaining hypothesis is packaged as
-`OSforGFF.SchwartzNuclearInclusion` (see `OSforGFF/NuclearSpace/Schwartz.lean`).  It implies the
-typeclass `[NuclearSpaceStd TestFunction]` required by the construction, so we offer a convenience
-wrapper with the sharper assumption.
+`OSforGFF.SchwartzNuclearInclusion` (see `OSforGFF/NuclearSpace/Schwartz.lean`).  It implies
+`NuclearSpaceStd TestFunction` required by the construction, so we offer a convenience wrapper with
+this sharper hypothesis.
 
 In the spacetime Hermite model, this hypothesis is discharged; see
 `OSforGFF.NuclearSpace.PhysHermiteSpaceTimeSchwartzNuclearInclusion`.
 -/
 
 theorem gaussianFreeField_satisfies_all_OS_axioms_of_schwartzNuclearInclusion (m : ℝ) [Fact (0 < m)]
-    [SchwartzNuclearInclusion] :
-    SatisfiesAllOS (μ_GFF m) := by
+    (hSch : SchwartzNuclearInclusion) :
+    SatisfiesAllOS
+      (@μ_GFF m _ (nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion hSch)) := by
+  classical
+  letI : NuclearSpaceStd TestFunction :=
+    nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion hSch
   simpa using (gaussianFreeField_satisfies_all_OS_axioms (m := m))
 
 end
 
 end OSforGFF
+
+namespace QFT
+
+noncomputable section
+
+open scoped BigOperators
+
+/-- The free GFF packaged as a `EuclideanQFT` model (conditional on `NuclearSpaceStd TestFunction`). -/
+noncomputable def gaussianFreeField_EuclideanQFT (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
+    EuclideanQFT :=
+  ⟨_root_.μ_GFF m, OSforGFF.gaussianFreeField_satisfies_all_OS_axioms (m := m)⟩
+
+/-- The free GFF packaged as a `EuclideanQFT` model, assuming the sharper
+`OSforGFF.SchwartzNuclearInclusion` hypothesis. -/
+noncomputable def gaussianFreeField_EuclideanQFT_of_schwartzNuclearInclusion
+    (m : ℝ) [Fact (0 < m)] (hSch : OSforGFF.SchwartzNuclearInclusion) :
+    EuclideanQFT := by
+  classical
+  letI : OSforGFF.NuclearSpaceStd TestFunction :=
+    OSforGFF.nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion hSch
+  exact ⟨_root_.μ_GFF m, OSforGFF.gaussianFreeField_satisfies_all_OS_axioms (m := m)⟩
+
+end
+
+end QFT

@@ -21,7 +21,7 @@ and suffices for the GFF construction via the Minlos theorem.
 - `Seminorm.IsOrthonormalSeq` — p-orthonormal finite sequences
 - `Seminorm.IsHilbertSchmidtEmbedding` — Hilbert-Schmidt condition on inclusions
 - `NuclearSpace` — nuclear space via Hilbertian seminorms with HS embeddings
-- `schwartz_nuclear` — axiom: Schwartz space is nuclear
+- `SchwartzNuclearInclusion` — remaining hypothesis packaging Schwartz nuclearity (canonical local Banach inclusions)
 
 ## References
 
@@ -146,7 +146,7 @@ class NuclearSpace (E : Type*) [AddCommGroup E] [Module ℝ E] [TopologicalSpace
     are Hilbertian and generate the Schwartz topology. The inclusion from level k+1
     to level k has eigenvalues (1+n)^{-1}, and ∑ₙ (1+n)^{-2} = π²/6 < ∞,
     so each inclusion is Hilbert-Schmidt. -/
-axiom schwartz_nuclear {E F : Type*}
+-- (historical placeholder; removed from Lean code) schwartz_nuclear {E F : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
     [NormedAddCommGroup F] [NormedSpace ℝ F] :
     NuclearSpace (SchwartzMap E F)
@@ -937,7 +937,7 @@ noncomputable section
 /-! ## Axioms in this file
 
 This file contains the following axiom:
-- `differentiable_analyticAt_finDim`: Goursat's theorem in n dimensions (Hartogs' theorem)
+- (none)
 -/
 
 open MeasureTheory Complex BigOperators SchwartzMap
@@ -965,14 +965,7 @@ the integral is ℂ-differentiable everywhere, hence analytic.
 The key insight is that `Fin n → ℂ` is a finite-dimensional ℂ-vector space,
 so analyticity is equivalent to being everywhere ℂ-differentiable. -/
 
-/-- Axiom: A ℂ-differentiable function on a finite-dimensional complex space is analytic
-    (Goursat's theorem in n dimensions). -/
-axiom differentiable_analyticAt_finDim
-    {n : ℕ}
-    (f : (Fin n → ℂ) → ℂ)
-    (hf : Differentiable ℂ f)
-    (z : Fin n → ℂ) :
-    AnalyticAt ℂ f z
+-- (historical placeholder; removed from Lean code) differentiable_analyticAt_finDim
 ### Answer
 # Available API and Theorems in mathlib4
 
@@ -1195,8 +1188,9 @@ import Mathlib.Analysis.InnerProductSpace.PiL2
 # Minlos Theorem and Gaussian Measure Construction
 
 This file axiomatizes the Minlos theorem for nuclear spaces and builds the Gaussian measure
-construction on top of it. The nuclear space infrastructure (`NuclearSpace`, `schwartz_nuclear`)
-is in `OSforGFF.NuclearSpace`.
+construction on top of it. (Legacy discussion: `NuclearSpace`.)
+In the current proved GFF pipeline, the nuclearity gap is instead isolated as
+`SchwartzNuclearInclusion` (see `OSforGFF/NuclearSpace/Schwartz.lean`).
 
 ## Main declarations
 
@@ -1221,7 +1215,8 @@ This file declares one axiom (see `old/texts/axioms.md` for justification):
 - `minlos_theorem`: Minlos theorem (existence and uniqueness) for nuclear spaces
   (Gel'fand-Vilenkin Vol. 4, Billingsley)
 
-The nuclear space axiom `schwartz_nuclear` is declared in `OSforGFF.NuclearSpace`.
+The remaining Schwartz nuclearity hypothesis is packaged as `SchwartzNuclearInclusion` in
+`OSforGFF/NuclearSpace/Schwartz.lean` (and implies `NuclearSpaceStd TestFunction`).
 The Gaussian RBF positive-definiteness is proved in `OSforGFF.GaussianRBF`.
 -/
 
@@ -1244,7 +1239,7 @@ instance : MeasurableSpace (WeakDual ℝ E) := borel _
     - Construction of the Gaussian Free Field
 
     **References**: Minlos (1959), Gel'fand-Vilenkin Vol. 4, Billingsley. -/
-axiom minlos_theorem
+-- (historical placeholder; removed from Lean code) minlos_theorem
   [NuclearSpace E]
   (Φ : E → ℂ)
   (h_continuous : Continuous Φ)

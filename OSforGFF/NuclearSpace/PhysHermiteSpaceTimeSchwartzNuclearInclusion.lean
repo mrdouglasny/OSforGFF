@@ -8,7 +8,7 @@ This module discharges the remaining `OSforGFF.SchwartzNuclearInclusion` hypothe
 
 We make a canonical choice `ξ = 1` (any `ξ ≠ 0` would work) and register:
 
-* an instance `[OSforGFF.SchwartzNuclearInclusion]`;
+* a proof `OSforGFF.SchwartzNuclearInclusion`;
 * hence an instance `[OSforGFF.NuclearSpaceStd TestFunction]` (via `OSforGFF.NuclearSpace.Schwartz`).
 -/
 
@@ -18,13 +18,13 @@ noncomputable section
 
 open scoped BigOperators
 
-noncomputable instance : SchwartzNuclearInclusion := by
+theorem schwartzNuclearInclusion : SchwartzNuclearInclusion := by
   simpa using
     (PhysLean.SpaceTimeHermite.schwartzNuclearInclusion_of_coeffSeminormSeq (ξ := (1 : ℝ))
       (hξ := by simp))
 
 noncomputable instance : NuclearSpaceStd TestFunction := by
-  infer_instance
+  exact nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion schwartzNuclearInclusion
 
 end
 

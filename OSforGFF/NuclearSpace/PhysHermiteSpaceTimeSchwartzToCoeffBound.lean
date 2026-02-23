@@ -2973,9 +2973,9 @@ theorem schwartzNuclearInclusion_of_coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0)
 theorem nuclearSpaceStd_TestFunction_of_coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) :
     OSforGFF.NuclearSpaceStd TestFunction := by
   classical
-  letI : OSforGFF.SchwartzNuclearInclusion :=
-    schwartzNuclearInclusion_of_coeffSeminormSeq (ξ := ξ) (hξ := hξ)
-  exact OSforGFF.nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion
+  exact
+    OSforGFF.nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion
+      (schwartzNuclearInclusion_of_coeffSeminormSeq (ξ := ξ) (hξ := hξ))
 
 end SpaceTimeHermite
 
