@@ -60,6 +60,10 @@ noncomputable section
 
 namespace QFT
 
+-- The Kolmogorov+nuclear construction of the free GFF requires the standard nuclearity package on
+-- `TestFunction`.  We keep it as an explicit typeclass parameter throughout this file.
+variable [OSforGFF.NuclearSpaceStd TestFunction]
+
 /-! ## Gaussian Generating Functional Factorization -/
 
 /-- Bilinearity expansion of the Schwinger 2-point function for sums.
@@ -125,6 +129,7 @@ lemma gff_generating_sum_factorization (m : ℝ) [Fact (0 < m)] (f g : TestFunct
 
 /-! ## Translation as Euclidean Action -/
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- The inverse of the identity linear isometry is itself. -/
 lemma LinearIsometry_inv_one : LinearIsometry.inv (1 : O4) = 1 := by
   -- Use comp_inv: R.comp (inv R) = 1
@@ -135,6 +140,7 @@ lemma LinearIsometry_inv_one : LinearIsometry.inv (1 : O4) = 1 := by
 
 /-! ## Translation Invariance from OS2 -/
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- For OS2-invariant measures, Z[euclidean_action g f] = Z[f] for any g ∈ E. -/
 lemma generating_euclidean_invariant
     (dμ_config : ProbabilityMeasure FieldConfiguration)
@@ -280,7 +286,7 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
       rw [distributionPairingℂ_real_toComplex, distributionPairingℂ_real_toComplex, Complex.ofReal_mul]
     rw [h_fun_eq]
     -- Now the goal is: ∫ ↑(f(ω) * g(ω)) dμ = ↑(∫ f(ω) * g(ω) dμ)
-    -- Need integrability for integral_ofReal_eq
+    -- Need integrability to justify the real/complex integral comparison.
     have h_int : MeasureTheory.Integrable
         (fun ω => distributionPairing ω f * distributionPairing ω (g.translate a))
         (gaussianFreeField_free m).toMeasure := by
@@ -290,7 +296,12 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
       have hg : MemLp (fun ω => distributionPairing ω (g.translate a)) 2 (gaussianFreeField_free m).toMeasure :=
         gaussianFreeField_pairing_memLp m (g.translate a) 2 (by simp)
       exact hf.integrable_mul hg
-    exact integral_ofReal_eq (gaussianFreeField_free m).toMeasure _ h_int
+    -- Cast the real integral to `ℂ`.
+    simpa using
+      (integral_ofReal (𝕜 := ℂ)
+        (μ := (gaussianFreeField_free m).toMeasure)
+        (f := fun ω =>
+          distributionPairing ω f * distributionPairing ω (g.translate a)))
 
   have h_S2_norm : ‖S₂ fC T_a_gC‖ = |SchwingerFunction₂ (gaussianFreeField_free m) f (g.translate a)| := by
     rw [h_S2_eq, Complex.norm_real, Real.norm_eq_abs]
@@ -551,6 +562,7 @@ def timeVector (s : ℝ) : SpaceTime :=
   EuclideanSpace.equiv (Fin STDimension) ℝ |>.symm
     (fun i => if i = 0 then s else 0)
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Time duality for distribution pairing: ⟨T_s ω, g⟩ = ⟨ω, T_{-s} g⟩.
     This is the fundamental identity connecting time translation of distributions
     to time translation of test functions.
@@ -569,6 +581,7 @@ lemma time_translation_pairing_duality (s : ℝ) (ω : FieldConfiguration) (g : 
 
 /-! ### Key Lemmas for Connecting Bilinear Decay to Schwinger Function -/
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- The time shift constant vector (s, 0, 0, 0) has norm |s|. -/
 lemma timeShiftConst_norm (s : ℝ) : ‖TimeTranslation.timeShiftConst s‖ = |s| := by
   simp only [TimeTranslation.timeShiftConst, EuclideanSpace.norm_eq, STDimension, Fin.sum_univ_four,
@@ -576,16 +589,19 @@ lemma timeShiftConst_norm (s : ℝ) : ‖TimeTranslation.timeShiftConst s‖ = |
     (by decide : (2 : Fin 4).val ≠ 0), (by decide : (3 : Fin 4).val ≠ 0), ↓reduceIte,
     Real.norm_eq_abs, sq_abs, zero_pow (by norm_num : 2 ≠ 0), add_zero, Real.sqrt_sq_eq_abs]
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Time translation of Schwartz function at a point equals function evaluated at shifted point. -/
 lemma timeTranslationSchwartzℂ_at_point (s : ℝ) (g : TestFunctionℂ) (y : SpaceTime) :
     TimeTranslation.timeTranslationSchwartzℂ s g y = g (TimeTranslation.timeShift s y) := by
   rfl
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Time shift by s equals adding the time shift constant. -/
 lemma timeShift_eq_add (s : ℝ) (y : SpaceTime) :
     TimeTranslation.timeShift s y = y + TimeTranslation.timeShiftConst s := by
   exact TimeTranslation.timeShift_eq_add_const s y
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Time translation by -s gives g(y - timeShiftConst(s)). -/
 lemma timeTranslationSchwartzℂ_neg_eq_sub (s : ℝ) (g : TestFunctionℂ) (y : SpaceTime) :
     TimeTranslation.timeTranslationSchwartzℂ (-s) g y = g (y - TimeTranslation.timeShiftConst s) := by
@@ -597,6 +613,7 @@ lemma timeTranslationSchwartzℂ_neg_eq_sub (s : ℝ) (g : TestFunctionℂ) (y :
   simp only [PiLp.add_apply, PiLp.sub_apply]
   split_ifs <;> ring
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- freeCovariance is translation-invariant: C(x,y) = C(0, x-y) = freeCovarianceKernel(x-y). -/
 lemma freeCovariance_eq_kernel (m : ℝ) (x y : SpaceTime) :
     freeCovariance m x y = freeCovarianceKernel m (x - y) := by

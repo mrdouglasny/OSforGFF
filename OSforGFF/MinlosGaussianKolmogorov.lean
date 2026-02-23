@@ -103,7 +103,7 @@ theorem integral_exp_eval_eq (T : E →ₗ[ℝ] H) (f : E) :
           (hφ := hφ) (hfm := hfm))
     rw [MeasureTheory.charFun_apply, hmap]
     simp [μ, t0, φ, J, j0, EuclideanSpace.inner_single_right, Finset.restrict_def,
-      mul_assoc, mul_comm, mul_left_comm, mul_right_comm]
+      mul_comm]
   let Sigma : Matrix J J ℝ := GaussianProcessKolmogorov.covMatrix (ι := E) (kernel T) J
   have hSigma : Sigma.PosSemidef := covMatrix_kernel_posSemidef (T := T) J
   let μEuc : Measure (EuclideanSpace ℝ J) := gaussianOfPosSemidef (n := J) Sigma hSigma
@@ -172,7 +172,7 @@ theorem integral_exp_eval_eq (T : E →ₗ[ℝ] H) (f : E) :
               (EuclideanSpace.single j0 (1 : ℝ))⟫_ℝ =
           ‖T f‖ ^ 2 := by
       have hSigma00 : Sigma j0 j0 = ‖T f‖ ^ 2 := by
-        simp [Sigma, GaussianProcessKolmogorov.covMatrix, kernel, j0, inner_self_eq_norm_sq]
+        simp [Sigma, GaussianProcessKolmogorov.covMatrix, kernel, j0]
       have hcoord :
           ((Matrix.toEuclideanCLM (n := J) (𝕜 := ℝ) Sigma) (EuclideanSpace.single j0 (1 : ℝ))) j0
             = Sigma j0 j0 := by
@@ -285,7 +285,7 @@ theorem ae_eval_add (f g : E) :
   let Leuc : EuclideanSpace ℝ J →L[ℝ] ℝ := (innerSL ℝ v)
   have hLeuc (x : EuclideanSpace ℝ J) : Lfun (ofLp x) = Leuc x := by
     have hL : Lfun (ofLp x) = x jFG - x jF - x jG := by
-      simpa [hLfun_apply, Finset.restrict_def, jF, jG, jFG] using (hLfun_apply (ofLp x))
+      simp [hLfun_apply, jF, jG, jFG]
     have hE : Leuc x = x jFG - x jF - x jG := by
       have : Leuc x = ⟪x, v⟫_ℝ := by simp [Leuc, real_inner_comm]
       calc
@@ -293,9 +293,9 @@ theorem ae_eval_add (f g : E) :
         _ = ⟪x, EuclideanSpace.single jFG (1 : ℝ)⟫_ℝ
               - ⟪x, EuclideanSpace.single jF (1 : ℝ)⟫_ℝ
               - ⟪x, EuclideanSpace.single jG (1 : ℝ)⟫_ℝ := by
-              simp [v, inner_sub_right, sub_eq_add_neg, inner_add_right]
+              simp [v, sub_eq_add_neg, inner_add_right]
         _ = x jFG - x jF - x jG := by
-              simp [EuclideanSpace.inner_single_right, sub_eq_add_neg, add_assoc, add_comm, add_left_comm]
+              simp [EuclideanSpace.inner_single_right, sub_eq_add_neg, add_comm, add_left_comm]
     simpa [hE] using hL
   let A : EuclideanSpace ℝ J →L[ℝ] EuclideanSpace ℝ J :=
     Matrix.toEuclideanCLM (n := J) (𝕜 := ℝ) Sigma
@@ -304,16 +304,16 @@ theorem ae_eval_add (f g : E) :
     have hv_ofLp :
         ofLp v =
           (Pi.single jFG (1 : ℝ) - Pi.single jF (1 : ℝ) - Pi.single jG (1 : ℝ)) := by
-      simp [v, sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+      simp [v, sub_eq_add_neg, add_assoc]
     have hcoord :
         (Sigma *ᵥ ofLp v) j =
           kernel T j.1 (f + g) - kernel T j.1 f - kernel T j.1 g := by
-      simp [hv_ofLp, Sigma, GaussianProcessKolmogorov.covMatrix, Matrix.mulVec_sub,
-        Matrix.mulVec_add, Matrix.mulVec_neg, Matrix.mulVec_single_one, kernel, jF, jG, jFG,
-        sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+      simp [hv_ofLp, Sigma, GaussianProcessKolmogorov.covMatrix,
+        Matrix.mulVec_add, Matrix.mulVec_neg, kernel, jF, jG, jFG,
+        sub_eq_add_neg, add_assoc]
     have hadd : kernel T j.1 (f + g) = kernel T j.1 f + kernel T j.1 g := by
       simp [kernel, LinearMap.map_add, inner_add_right]
-    simp [hcoord, hadd, sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+    simp [hcoord, hadd, sub_eq_add_neg, add_left_comm, add_comm]
   have hAv : A v = 0 := by
     have hinj : Function.Injective (ofLp : EuclideanSpace ℝ J → J → ℝ) := by
       intro x y hxy
@@ -342,7 +342,7 @@ theorem ae_eval_add (f g : E) :
                   ((Lfun : (J → ℝ) → ℝ) ∘ (ofLp : EuclideanSpace ℝ J → J → ℝ)) =
                     (fun x => Leuc x) := by
                 funext x; simpa [Function.comp] using (hLeuc x)
-              simpa [hcomp']
+              simp [hcomp']
         _ = μEuc.map Leuc := by rfl
     have hchar :
         MeasureTheory.charFun (μEuc.map Leuc) = MeasureTheory.charFun (Measure.dirac (0 : ℝ)) := by
@@ -353,7 +353,7 @@ theorem ae_eval_add (f g : E) :
         simpa [Leuc] using congrArg (fun L => L t)
           (ContinuousLinearMap.adjoint_innerSL_apply (𝕜 := ℝ) (x := v))
       have hAt : A (t • v) = 0 := by
-        simpa [map_smul, hAv] using (A.map_smul t v)
+        simp [map_smul, hAv]
       have hcf1 : MeasureTheory.charFun μEuc (t • v) = 1 := by
         have hsmulAv : t • A v = 0 := by
           simpa [hAt] using (A.map_smul t v).symm
@@ -366,8 +366,8 @@ theorem ae_eval_add (f g : E) :
         simpa [hinner0'] using hcf
       calc
         MeasureTheory.charFun (μEuc.map Leuc) t
-            = MeasureTheory.charFun μEuc (Leuc.adjoint t) := by simpa [hmap_char]
-        _ = MeasureTheory.charFun μEuc (t • v) := by simpa [hadj]
+            = MeasureTheory.charFun μEuc (Leuc.adjoint t) := by simp [hmap_char]
+        _ = MeasureTheory.charFun μEuc (t • v) := by simp [hadj]
         _ = 1 := hcf1
         _ = MeasureTheory.charFun (Measure.dirac (0 : ℝ)) t := by
               simp [MeasureTheory.charFun_dirac]
@@ -380,7 +380,7 @@ theorem ae_eval_add (f g : E) :
           (GaussianProcessKolmogorov.gaussianFiniteLaw (ι := E) (kernel T) J
             (covMatrix_kernel_posSemidef (T := T) J)).map Lfun := hmapD
       _ = (GaussianProcessKolmogorov.gaussianFiniteLaw (ι := E) (kernel T) J hSigma).map Lfun := by
-            simp [hSigma]
+            simp
       _ = Measure.dirac 0 := hpush_dirac
   have hD_meas : Measurable D := by
     have hf : Measurable (fun ω : E → ℝ => ω f) := by simpa using (measurable_pi_apply f)
@@ -421,7 +421,7 @@ theorem ae_eval_smul (c : ℝ) (f : E) :
     (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : J => ℝ) jCF)
       - c • (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : J => ℝ) jF)
   have hLfun_apply (x : J → ℝ) : Lfun x = x jCF - c • x jF := by
-    simp [Lfun, sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+    simp [Lfun, sub_eq_add_neg]
   let D : (E → ℝ) → ℝ := fun ω => ω (c • f) - c • ω f
   have hD : D = fun ω => Lfun (J.restrict ω) := by
     funext ω
@@ -466,7 +466,7 @@ theorem ae_eval_smul (c : ℝ) (f : E) :
 
   have hLeuc (x : EuclideanSpace ℝ J) : Lfun (ofLp x) = Leuc x := by
     have hL : Lfun (ofLp x) = x jCF - c • x jF := by
-      simp [hLfun_apply, Finset.restrict_def, jF, jCF]
+      simp [hLfun_apply, jF, jCF]
     have hE : Leuc x = x jCF - c • x jF := by
       have : Leuc x = ⟪x, v⟫_ℝ := by simp [Leuc, real_inner_comm]
       calc
@@ -481,14 +481,14 @@ theorem ae_eval_smul (c : ℝ) (f : E) :
   have hmulVec_v : Sigma *ᵥ (ofLp v) = 0 := by
     ext j
     have hv_ofLp : ofLp v = (Pi.single jCF (1 : ℝ) - Pi.single jF c) := by
-      simp [v, sub_eq_add_neg, add_comm, add_left_comm, add_assoc]
+      simp [v, sub_eq_add_neg]
     have hcoord :
         (Sigma *ᵥ ofLp v) j = kernel T j.1 (c • f) - c * kernel T j.1 f := by
-      simp [hv_ofLp, Sigma, GaussianProcessKolmogorov.covMatrix, Matrix.mulVec_sub, Matrix.mulVec_add,
-        Matrix.mulVec_neg, Matrix.mulVec_single, kernel, jF, jCF, sub_eq_add_neg, add_assoc, add_comm,
-        add_left_comm, mul_assoc]
+      simp [hv_ofLp, Sigma, GaussianProcessKolmogorov.covMatrix,
+        Matrix.mulVec_add, Matrix.mulVec_neg, Matrix.mulVec_single, kernel, jF, jCF,
+        sub_eq_add_neg]
     have hsmul : kernel T j.1 (c • f) = c * kernel T j.1 f := by
-      simp [kernel, LinearMap.map_smul, inner_smul_right, mul_comm]
+      simp [kernel, inner_smul_right]
     simp [hcoord, hsmul]
   have hAv : A v = 0 := by
     have hinj : Function.Injective (ofLp : EuclideanSpace ℝ J → J → ℝ) := by
@@ -547,7 +547,7 @@ theorem ae_eval_smul (c : ℝ) (f : E) :
           (GaussianProcessKolmogorov.gaussianFiniteLaw (ι := E) (kernel T) J
             (covMatrix_kernel_posSemidef (T := T) J)).map Lfun := hmapD
       _ = (GaussianProcessKolmogorov.gaussianFiniteLaw (ι := E) (kernel T) J hSigma).map Lfun := by
-            simp [hSigma]
+            simp
       _ = Measure.dirac 0 := hpush_dirac
   have hD_meas : Measurable D := by
     have hf : Measurable (fun ω : E → ℝ => ω f) := by simpa using (measurable_pi_apply f)
@@ -651,7 +651,7 @@ theorem map_eval_eq_gaussianReal (T : E →ₗ[ℝ] H) (f : E) :
         calc
           Complex.exp (t * (evalF ω) * I)
               = Complex.exp (I * ((t * ω f : ℝ) : ℂ)) := by
-                  simp [evalF, mul_assoc, mul_comm, mul_left_comm, Complex.ofReal_mul]
+                  simp [evalF, mul_comm, Complex.ofReal_mul]
           _ = Complex.exp (I * ((ω (t • f) : ℝ) : ℂ)) := by simp [ht]
       have hint :
           (∫ ω, Complex.exp (t * (evalF ω) * I) ∂μ) =
@@ -666,7 +666,7 @@ theorem map_eval_eq_gaussianReal (T : E →ₗ[ℝ] H) (f : E) :
           (‖T (t • f)‖ ^ 2 : ℝ) = (t ^ 2) * (‖T f‖ ^ 2) := by
         calc
           (‖T (t • f)‖ ^ 2 : ℝ) = (‖(t : ℝ) • T f‖ ^ 2 : ℝ) := by
-            simp [LinearMap.map_smul]
+            simp
           _ = ((‖(t : ℝ)‖ * ‖T f‖) ^ 2 : ℝ) := by simp [norm_smul]
           _ = ((|t| * ‖T f‖) ^ 2 : ℝ) := by simp [Real.norm_eq_abs]
           _ = (t ^ 2) * (‖T f‖ ^ 2) := by
@@ -707,7 +707,7 @@ theorem map_eval_eq_gaussianReal (T : E →ₗ[ℝ] H) (f : E) :
         have : ((Real.toNNReal (‖T f‖ ^ 2) : ℝ≥0) : ℝ) = (‖T f‖ ^ 2 : ℝ) := hv
         exact_mod_cast this
       rw [h0]
-      simp [hcoeff, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm]
+      simp [div_eq_mul_inv, mul_comm]
     simp [hcharL, hcharR]
 
   exact MeasureTheory.Measure.ext_of_charFun

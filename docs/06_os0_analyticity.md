@@ -16,9 +16,19 @@ is analytic on $\mathbb{C}^n$.
 
 For the GFF, $\mu = \mu_{\mathrm{GFF}}$ is the Gaussian measure with covariance $C = (-\Delta + m^2)^{-1}$, and the generating functional has the closed form $Z[f] = \exp(-\tfrac{1}{2}\langle f, Cf \rangle)$.
 
+**Lean formalization note.** In the Lean development, `OS0_Analyticity` is stated as **complex Fréchet differentiability** (`Differentiable ℂ`) in finite-dimensional complex directions (see `OSforGFF/OS_Axioms.lean`). Classically, for finite-dimensional complex vector spaces, holomorphy implies analyticity, so this formulation is faithful while avoiding any missing multi-variable SCV “holomorphic ⇒ analytic” library.
+
 ## Proof Strategy
 
-The proof applies a **holomorphic integral theorem**: if the integrand $f(z, \omega) = \exp(i\sum_i z_i \langle\omega, J_i\rangle)$ satisfies appropriate measurability, analyticity, integrability, and derivative bound conditions in $z$ and $\omega$, then the integral $F(z) = \int f(z, \omega)\  d\mu(\omega)$ is holomorphic. Goursat's theorem in n dimensions then converts holomorphy to analyticity.
+The proof applies a **holomorphic (differentiability) under the integral sign theorem**: if the integrand
+
+$$f(z, \omega) = \exp(i\sum_i z_i \langle\omega, J_i\rangle)$$
+
+satisfies appropriate measurability, pointwise analyticity, integrability, and local integrable derivative bounds, then the parametric integral
+
+$$F(z) = \int f(z,\omega)\ d\mu(\omega)$$
+
+is complex Fréchet differentiable on $\mathbb{C}^n$ (in Lean: `Differentiable ℂ F`). This is exactly the OS0 predicate used by the project.
 
 The five hypotheses verified are:
 1. Measurability of $\omega \mapsto f(z, \omega)$ for each $z$
@@ -34,7 +44,7 @@ The five hypotheses verified are:
 | Declaration | Description |
 |-------------|-------------|
 | [`gaussianFreeField_satisfies_OS0`](../OSforGFF/OS0_GFF.lean#L1120) | Main theorem: the GFF satisfies OS0 analyticity |
-| [`holomorphic_integral_of_locally_L1_bound`](../OSforGFF/OS0_GFF.lean#L105) | Analytic integrand + local $L^1$ bounds $\Rightarrow$ analytic integral |
+| [`differentiable_integral_of_locally_L1_bound`](../OSforGFF/OS0_GFF.lean#L98) | Analytic integrand + local $L^1$ bounds on the Fréchet derivative $\Rightarrow$ differentiable parametric integral |
 | [`gff_integrand_measurable`](../OSforGFF/OS0_GFF.lean#L167) | $\omega \mapsto \exp(i\langle\omega, \sum z_i J_i\rangle)$ is measurable |
 | [`gff_integrand_analytic`](../OSforGFF/OS0_GFF.lean#L195) | $z \mapsto \exp(i\langle\omega, \sum z_i J_i\rangle)$ is analytic for fixed $\omega$ |
 | [`gff_integrand_integrable`](../OSforGFF/OS0_GFF.lean#L536) | $\exp(i\langle\omega, \sum z_i J_i\rangle) \in L^1(\mu_{\mathrm{GFF}})$ |
@@ -46,7 +56,6 @@ The five hypotheses verified are:
 | [`gff_exp_abs_sum_memLp`](../OSforGFF/OS0_GFF.lean#L469) | $\exp(\sum_i |\omega(g_i)|) \in L^2(\mu_{\mathrm{GFF}})$ |
 | [`gff_integrand_norm_integrable`](../OSforGFF/OS0_GFF.lean#L522) | $\lvert\exp(i\langle\omega,f\rangle)\rvert \in L^1(\mu_{\mathrm{GFF}})$ |
 | [`distributionPairingℂ_real_continuous`](../OSforGFF/OS0_GFF.lean#L152) | $\omega \mapsto \langle\omega, f\rangle$ is continuous |
-| [`differentiable_analyticAt_finDim`](../OSforGFF/OS0_GFF.lean#L86) | Goursat's theorem in $n$ dimensions: $\mathbb{C}$-differentiable $\Rightarrow$ analytic |
 
 ## Detailed Proof Outline
 
@@ -108,19 +117,14 @@ Integrability of this bound uses:
 
 ### Step 6: Assembly
 
-With all five hypotheses verified, `holomorphic_integral_of_locally_L1_bound` establishes that $z \mapsto \int \exp(i\langle\omega, \sum_i z_i J_i\rangle)\  d\mu(\omega)$ is analytic on $\mathbb{C}^n$. The intermediate step uses the axiom `differentiable_analyticAt_finDim` (Goursat's theorem in $n$ dimensions) to convert holomorphy (complex differentiability) to analyticity (convergent power series representation) in finite dimensions.
+With all hypotheses verified, `differentiable_integral_of_locally_L1_bound` establishes that
+$z \mapsto \int \exp(i\langle\omega, \sum_i z_i J_i\rangle)\  d\mu(\omega)$ is complex Fréchet differentiable on $\mathbb{C}^n$, i.e. satisfies `OS0_Analyticity` as defined in `OSforGFF/OS_Axioms.lean`.
 
 **Lean theorem**: `gaussianFreeField_satisfies_OS0`
 
 ### Axioms Used
 
-The proof requires 1 project-specific axiom:
-
-| Axiom | Mathematical content |
-|-------|---------------------|
-| [`differentiable_analyticAt_finDim`](../OSforGFF/OS0_GFF.lean#L86) | Goursat's theorem in $n$ dimensions: holomorphic $\Rightarrow$ analytic in $\mathbb{C}^n$ |
-
-This is a standard result in several complex variables. It is not yet available in Mathlib because the full SCV machinery (polydisk Cauchy integral formula, etc.) has not been formalized.
+None (0 `axiom`s, 0 `sorry`s).
 
 ## References
 

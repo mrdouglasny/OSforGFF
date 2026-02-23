@@ -36,7 +36,8 @@ open TopologicalSpace MeasureTheory Complex Filter
 /-! ## Contents
 
 This file provides infrastructure for Gaussian measures via Minlos.
-This file contains no axioms (axioms are only in `Minlos.lean`, `NuclearSpace.lean`, `OS0_GFF.lean`).
+This file contains no axioms; when uniqueness of the characteristic functional is needed we assume
+`[MinlosTheorem TestFunction]` from `OSforGFF.MinlosAxiomatic`.
 -/
 
 noncomputable section
@@ -73,7 +74,7 @@ lemma negMap_measurable : Measurable negMap := by
 /-- Symmetry under global sign flip induced by the real Gaussian CF.
     Note: Requires NuclearSpace instance for Minlos uniqueness theorem. -/
 lemma integral_neg_invariance
-  [NuclearSpace TestFunction]
+  [MinlosTheorem TestFunction]
   (C : CovarianceForm) (μ : ProbabilityMeasure FieldConfiguration)
   (h_realCF : ∀ f : TestFunction,
      ∫ ω, Complex.exp (Complex.I * (ω f)) ∂μ.toMeasure
@@ -194,7 +195,7 @@ lemma integral_neg_invariance
 
 /-- Zero mean from the real Gaussian characteristic functional, via symmetry and L¹. -/
 lemma moment_zero_from_realCF
-  [NuclearSpace TestFunction]
+  [MinlosTheorem TestFunction]
   (C : CovarianceForm) (μ : ProbabilityMeasure FieldConfiguration)
   (h_realCF : ∀ f : TestFunction,
      ∫ ω, Complex.exp (Complex.I * (ω f)) ∂μ.toMeasure

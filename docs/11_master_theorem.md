@@ -20,7 +20,8 @@ For any mass parameter $m > 0$, the GFF probability measure $\mu_{\mathrm{GFF}}(
 | Declaration | File | Description |
 |-------------|------|-------------|
 | [`gaussianFreeField_satisfies_all_OS_axioms`](../OSforGFF/GFFmaster.lean#L48) | `GFFmaster.lean` | **Master theorem**: conjunction of all OS axioms |
-| [`QFT.gaussianFreeField_satisfies_OS0`](../OSforGFF/OS0_GFF.lean#L1120) | `OS0_GFF.lean` | OS0: $z \mapsto Z[\sum z_i J_i]$ analytic |
+| [`gaussianFreeField_satisfies_all_OS_axioms_proved`](../OSforGFF/GFFmasterProved.lean#L19) | `GFFmasterProved.lean` | Master theorem for the spacetime Hermite model (Schwartz nuclearity instance provided) |
+| [`QFT.gaussianFreeField_satisfies_OS0`](../OSforGFF/OS0_GFF.lean#L1120) | `OS0_GFF.lean` | OS0 (Lean): $z \mapsto Z[\sum z_i J_i]$ is ℂ-Fréchet differentiable (holomorphic) |
 | [`gaussianFreeField_satisfies_OS1_revised`](../OSforGFF/OS1_GFF.lean#L528) | `OS1_GFF.lean` | OS1: $\lvert Z[f]\rvert \le e^{c\lVert f\rVert_2^2}$ |
 | [`gaussian_satisfies_OS2`](../OSforGFF/GaussianFreeField.lean#L219) | `GaussianFreeField.lean` | OS2: $Z[g\cdot f] = Z[f]$ for $g \in E(4)$ |
 | [`QFT.gaussianFreeField_OS3_real`](../OSforGFF/OS3_GFF.lean#L509) | `OS3_GFF.lean` | OS3: $\sum c_ic_j\ \mathrm{Re}\left(Z[f_i-\Theta f_j]\right) \ge 0$ |
@@ -67,15 +68,20 @@ GFFmaster.lean
 
 ## Assumed Axioms
 
-The master theorem depends on 3 axioms declared with the `axiom` keyword in Lean. These are standard mathematical results whose full Lean formalization was deferred.
+This development has **0 `axiom`s** and **0 `sorry`s** in the Lean codebase.
 
-| Axiom | File | Mathematical Content |
-|-------|------|---------------------|
-| [`minlos_theorem`](../OSforGFF/Minlos.lean#L77) | `Minlos.lean` | Continuous positive-definite normalized functional on nuclear space $\implies$ characteristic functional of a unique probability measure ($\exists!$) |
-| [`differentiable_analyticAt_finDim`](../OSforGFF/OS0_GFF.lean#L86) | `OS0_GFF.lean` | Hartogs' theorem: $f : \mathbb{C}^n \supset U \to \mathbb{C}$ differentiable $\implies$ $f$ analytic |
-| [`schwartz_nuclear`](../OSforGFF/NuclearSpace.lean#L145) | `NuclearSpace.lean` | $\mathcal{S}(\mathbb{R}^n, F)$ is a nuclear TVS |
+The master theorem is stated with a single substantial mathematical hypothesis:
 
-All three axioms are well-established theorems in functional analysis. The Minlos theorem (existence and uniqueness of measures from characteristic functionals on nuclear spaces) is foundational for infinite-dimensional measure theory. Hartogs' theorem is a standard result in several complex variables. Nuclearity of Schwartz space is proved in standard references on topological vector spaces.
+- `NuclearSpaceStd TestFunction` (see `OSforGFF/NuclearSpace/Std.lean`): the Schwartz test-function space carries the standard “countable seminorm family + nuclear inclusions” structure needed to descend the Kolmogorov Gaussian process measure to a measure on the weak dual (`S'(ℝ⁴)`).
+
+  More canonically, `OSforGFF/NuclearSpace/Schwartz.lean` defines a specific monotone Schwartz seminorm
+  sequence `schwartzSeminormSeq` and packages the remaining gap as `SchwartzNuclearInclusion`, which
+  implies `NuclearSpaceStd TestFunction`.
+
+In this repository, `SchwartzNuclearInclusion` is discharged via spacetime Hermite coefficients; see
+[`OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean`](../OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean).
+
+The repository still contains an **optional hypothesis package** `OSforGFF/MinlosAxiomatic.lean` that assumes the full Minlos theorem as a typeclass `MinlosTheorem`; the proved GFF pipeline does **not** rely on it.
 
 ## References
 

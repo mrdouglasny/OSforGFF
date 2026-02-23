@@ -309,7 +309,7 @@ lemma gaussianOfPosSemidef_map_restrictEuclidean {I J : Finset ι} (hJI : J ⊆ 
         Complex.exp (-(1 / 2 : ℂ) *
           ⟪t, (Matrix.toEuclideanCLM (n := J) (𝕜 := ℝ) (covMatrix K J)) t⟫_ℝ) := by
     simpa using (charFun_gaussianOfPosSemidef (n := J) (covMatrix K J) (hK J) (t := t))
-  simpa [hIchar, hJchar, hinner]
+  simp [hIchar, hJchar, hinner]
 
 -- Projectivity for the transported measures on the plain Π-type `J → ℝ`.
 lemma gaussianFamily_isProjective :
@@ -347,14 +347,14 @@ lemma gaussianFamily_isProjective :
                   hJI).symm
     _ = Measure.map ((ofLp : EuclideanSpace ℝ J → J → ℝ) ∘
             (restrictEuclidean (I := I) (J := J) hJI)) μI := by
-          simpa [Measure.map_map hmeas_ofLpJ hmeas_restrictEuclidean, μI]
+          simp [Measure.map_map hmeas_ofLpJ hmeas_restrictEuclidean, μI]
     _ = Measure.map ((Finset.restrict₂ (π := fun _ : ι => ℝ) hJI) ∘
             (ofLp : EuclideanSpace ℝ I → I → ℝ)) μI := by
-          simpa [hcomp]
+          simp [hcomp]
     _ = (Measure.map (Finset.restrict₂ (π := fun _ : ι => ℝ) hJI)
             (Measure.map (ofLp : EuclideanSpace ℝ I → I → ℝ) μI)) := by
           symm
-          simpa [Measure.map_map hmeas_restrict₂ hmeas_ofLpI, μI]
+          simp [Measure.map_map hmeas_restrict₂ hmeas_ofLpI, μI]
 
 end Projective
 

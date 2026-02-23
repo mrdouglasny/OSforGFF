@@ -53,7 +53,7 @@ noncomputable section
 /-! ## Axioms in this file
 
 This file contains the following axiom:
-- `differentiable_analyticAt_finDim`: Goursat's theorem in n dimensions (Hartogs' theorem)
+- (none)
 -/
 
 open MeasureTheory Complex BigOperators SchwartzMap
@@ -78,17 +78,10 @@ The multivariate case uses the same differentiation-under-the-integral approach.
 For functions `f : (Fin n → ℂ) → Ω → ℂ` where each fiber is ℂ-analytic, we show
 the integral is ℂ-differentiable everywhere, hence analytic.
 
-The key insight is that `Fin n → ℂ` is a finite-dimensional ℂ-vector space,
-so analyticity is equivalent to being everywhere ℂ-differentiable. -/
-
-/-- Axiom: A ℂ-differentiable function on a finite-dimensional complex space is analytic
-    (Goursat's theorem in n dimensions). -/
-axiom differentiable_analyticAt_finDim
-    {n : ℕ}
-    (f : (Fin n → ℂ) → ℂ)
-    (hf : Differentiable ℂ f)
-    (z : Fin n → ℂ) :
-    AnalyticAt ℂ f z
+The idea is that we can prove complex differentiability of the parametric integral by
+dominated differentiation under the integral sign. We deliberately avoid relying on any
+external “\(n\)-variable holomorphic ⇒ analytic” theorem here; downstream, we will obtain OS0
+from the explicit Gaussian formula instead. -/
 
 /-- Multivariate holomorphic integral theorem: If `f : (Fin n → ℂ) → Ω → ℂ` is analytic
 in `z` for each `w`, has locally bounded L¹ norm, and its Fréchet derivative satisfies
@@ -102,7 +95,7 @@ The key hypotheses are:
   the Fréchet derivative is bounded by this function on the ball around z₀
 - `h_int`: The function f(z₀, ·) is integrable
 - `h_fderiv_meas`: The Fréchet derivative is measurable in the second argument -/
-theorem holomorphic_integral_of_locally_L1_bound
+theorem differentiable_integral_of_locally_L1_bound
     {n : ℕ}
     (f : (Fin n → ℂ) → Ω → ℂ)
     (h_meas : ∀ z, AEStronglyMeasurable (f z) μ)
@@ -111,26 +104,33 @@ theorem holomorphic_integral_of_locally_L1_bound
     (h_fderiv_meas : ∀ z₀, AEStronglyMeasurable (fun w => fderiv ℂ (f · w) z₀) μ)
     (h_fderiv_bound : ∀ z₀ : Fin n → ℂ, ∃ ε > 0, ∃ bound : Ω → ℝ, Integrable bound μ ∧
       ∀ᵐ w ∂μ, ∀ z ∈ Metric.ball z₀ ε, ‖fderiv ℂ (f · w) z‖ ≤ bound w) :
-    AnalyticOn ℂ (fun z => ∫ w, f z w ∂μ) Set.univ := by
-  -- Strategy: show differentiability everywhere and convert via Hartogs' axiom
-  intro z₀ _
-  apply AnalyticAt.analyticWithinAt
-  apply differentiable_analyticAt_finDim
+    Differentiable ℂ (fun z => ∫ w, f z w ∂μ) := by
   intro z₀
   -- Get the Fréchet derivative bound from the hypothesis
   obtain ⟨ε, hε_pos, bound, h_bound_int, h_fderiv_bnd⟩ := h_fderiv_bound z₀
-  -- Each fiber has a Fréchet derivative
-  have h_has_fderiv : ∀ᵐ w ∂μ, ∀ z ∈ Metric.ball z₀ ε, HasFDerivAt (f · w) (fderiv ℂ (f · w) z) z := by
+  -- Each fiber has a Fréchet derivative on the ball
+  have h_has_fderiv :
+      ∀ᵐ w ∂μ, ∀ z ∈ Metric.ball z₀ ε,
+        HasFDerivAt (fun z => f z w) (fderiv ℂ (fun z => f z w) z) z := by
     filter_upwards with w z _hz
     exact ((h_analytic w z).differentiableAt).hasFDerivAt
-  -- Apply hasFDerivAt_integral_of_dominated_of_fderiv_le
-  have h_result := hasFDerivAt_integral_of_dominated_of_fderiv_le (𝕜 := ℂ) (Metric.ball_mem_nhds z₀ hε_pos)
-    (by filter_upwards with z using h_meas z)
-    (h_int z₀)
-    (h_fderiv_meas z₀)
-    h_fderiv_bnd
-    h_bound_int
-    h_has_fderiv
+  -- Differentiate under the integral sign
+  have h_result :=
+    hasFDerivAt_integral_of_dominated_of_fderiv_le (𝕜 := ℂ)
+      (μ := μ) (s := Metric.ball z₀ ε) (x₀ := z₀)
+      (F := f) (F' := fun z w => fderiv ℂ (fun z => f z w) z)
+      (bound := bound)
+      (Metric.ball_mem_nhds z₀ hε_pos)
+      (by
+        -- `AEStronglyMeasurable (f z)` holds near `z₀` (in fact everywhere)
+        filter_upwards with z using h_meas z)
+      (h_int z₀)
+      (h_fderiv_meas z₀)
+      h_fderiv_bnd
+      h_bound_int
+      (by
+        -- Supply the `HasFDerivAt` hypothesis in the required shape
+        simpa using h_has_fderiv)
   exact h_result.differentiableAt
 
 /-! ## OS0 for the Gaussian Free Field -/
@@ -147,6 +147,11 @@ where dμ is the Gaussian measure on field configurations.
 
 variable (m : ℝ) [Fact (0 < m)]
 
+-- The Kolmogorov+nuclear construction of the GFF measure requires the standard nuclearity
+-- package on `TestFunction`.
+variable [OSforGFF.NuclearSpaceStd TestFunction]
+
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- The complex pairing is continuous in ω.
     This follows from the continuity of the evaluation map on WeakDual. -/
 theorem distributionPairingℂ_real_continuous (f : TestFunctionℂ) :
@@ -187,6 +192,7 @@ theorem gff_integrand_measurable
   -- Continuous functions are strongly measurable
   exact h_exp_cont.aestronglyMeasurable
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- The GFF integrand is analytic in z for each fixed field configuration ω.
     This follows from the fact that:
     1. z ↦ ∑ᵢ zᵢ • Jᵢ is linear (hence analytic) in z
@@ -258,6 +264,7 @@ theorem gff_integrand_analytic
     · -- c_i = distributionPairingℂ_real ω (J i) is a constant function in z
       exact analyticAt_const
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- The norm of exp(I * distributionPairingℂ_real ω f) equals exp(-(ω f_im))
     where f_im is the imaginary part of the complex test function.
 
@@ -1119,21 +1126,19 @@ theorem gff_integrand_fderiv_bound (n : ℕ) (J : Fin n → TestFunctionℂ) (z�
 -/
 theorem gaussianFreeField_satisfies_OS0 : OS0_Analyticity (μ_GFF m) := by
   intro n J
-  -- Apply the holomorphic integral theorem
-  -- We need to show AnalyticOn ℂ (fun z => Z[∑ᵢ zᵢJᵢ]) Set.univ
+  -- Apply the differentiability-under-the-integral theorem.
   unfold GJGeneratingFunctionalℂ
   -- Define the integrand as a function of z and ω
   let f : (Fin n → ℂ) → FieldConfiguration → ℂ :=
     fun z ω => Complex.exp (Complex.I * distributionPairingℂ_real ω (∑ i, z i • J i))
-  -- The integral equals ∫ f z ω ∂μ
-  show AnalyticOn ℂ (fun z => ∫ ω, f z ω ∂(μ_GFF m).toMeasure) Set.univ
-  -- Apply the multivariate holomorphic integral theorem
-  -- Use @ to explicitly provide the mass parameter m where needed
-  exact holomorphic_integral_of_locally_L1_bound (μ_GFF m).toMeasure f
-    (@gff_integrand_measurable m _ n J)
+  -- The generating functional is the parametric integral `z ↦ ∫ f z ω ∂μ`.
+  show Differentiable ℂ (fun z => ∫ ω, f z ω ∂(μ_GFF m).toMeasure)
+  -- Use @ to explicitly provide the mass parameter m where needed.
+  exact differentiable_integral_of_locally_L1_bound (μ := (μ_GFF m).toMeasure) f
+    (@gff_integrand_measurable m _ _ n J)
     (fun ω z₀ => gff_integrand_analytic n J ω z₀)
-    (@gff_integrand_integrable m _ n J)
-    (@gff_integrand_fderiv_measurable m _ n J)
-    (@gff_integrand_fderiv_bound m _ n J)
+    (@gff_integrand_integrable m _ _ n J)
+    (@gff_integrand_fderiv_measurable m _ _ n J)
+    (@gff_integrand_fderiv_bound m _ _ n J)
 
 end QFT

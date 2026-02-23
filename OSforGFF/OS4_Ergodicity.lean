@@ -65,6 +65,10 @@ namespace OS4_Ergodicity
 
 open OS4infra
 
+-- The Kolmogorov+nuclear construction of the free GFF requires the standard nuclearity package on
+-- `TestFunction`. We keep it as an explicit typeclass parameter throughout this file.
+variable [OSforGFF.NuclearSpaceStd TestFunction]
+
 -- Re-export names that external files reference with OS4_Ergodicity. prefix
 export OS4infra (
   timeTranslationDistribution_pairingℂ
@@ -175,6 +179,7 @@ lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : 
 
 /-! ## GFF Time Translation Invariance -/
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Time translation commutes with pointwise conjugation. -/
 lemma timeTranslationSchwartzℂ_conj_comm (t : ℝ) (f : TestFunctionℂ) :
     timeTranslationSchwartzℂ t (conjSchwartz f) = conjSchwartz (timeTranslationSchwartzℂ t f) := by
@@ -357,6 +362,7 @@ lemma gff_err_sq_integrable (m : ℝ) [Fact (0 < m)] (T : ℝ) (hT : T > 0) (f :
 
 /-! ## Decay Integral Bounds -/
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Double integral bound: ∫∫_{[0,T]²} (1+|s-u|)^{-3} ≤ 2T·C for some constant C. -/
 lemma double_integral_decay_bound :
     ∃ C : ℝ, C > 0 ∧ ∀ T : ℝ, T > 0 →
@@ -1050,6 +1056,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] (f : TestFunction�
 
 /-! ## Main Theorem Chain -/
 
+omit [OSforGFF.NuclearSpaceStd TestFunction] in
 /-- Bound for norm squared of weighted sum using Cauchy-Schwarz. -/
 lemma norm_sq_weighted_sum_le {n : ℕ} (w : Fin n → ℂ) (a : Fin n → ℂ) :
     ‖∑ j, w j * a j‖^2 ≤ (∑ j, ‖w j‖^2) * (∑ j, ‖a j‖^2) := by

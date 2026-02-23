@@ -11,24 +11,27 @@ Point of View* (Springer, 1987).
 ## Master Theorem
 
 ```lean
-theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
-  OS0_Analyticity (μ_GFF m) ∧
-  OS1_Regularity (μ_GFF m) ∧
-  OS2_EuclideanInvariance (μ_GFF m) ∧
-  OS3_ReflectionPositivity (μ_GFF m) ∧
-  OS4_Clustering (μ_GFF m) ∧
-  OS4_Ergodicity (μ_GFF m)
+theorem gaussianFreeField_satisfies_all_OS_axioms_proved (m : ℝ) [Fact (0 < m)] :
+  SatisfiesAllOS (μ_GFF m)
 ```
 
-**Status:** Version 1.0, February 2026. 0 sorries, 3 assumed axioms (see below), ~32,000 lines of Lean across 47 files.
+**Status:** Version 1.0, February 2026. 0 sorries, 0 `axiom`s, ~32,000 lines of Lean across 47 files.
 
-### Assumed Axioms
+### Assumptions / hypotheses
 
-| Axiom | File | Mathematical content |
-|-------|------|---------------------|
-| [`schwartz_nuclear`](OSforGFF/NuclearSpace.lean#L145) | [NuclearSpace](OSforGFF/NuclearSpace.lean) | Schwartz space is nuclear (Treves, Ch. 51) |
-| [`minlos_theorem`](OSforGFF/Minlos.lean#L85) | [Minlos](OSforGFF/Minlos.lean) | Minlos theorem: nuclear char. functional → unique measure (Gel'fand-Vilenkin IV) |
-| [`differentiable_analyticAt_finDim`](OSforGFF/OS0_GFF.lean#L86) | [OS0_GFF](OSforGFF/OS0_GFF.lean) | Goursat's theorem in n dimensions: ℂ-differentiable implies analytic |
+The development packages the Schwartz nuclearity input as a typeclass (`SchwartzNuclearInclusion`,
+implying `NuclearSpaceStd TestFunction`). In this repository it is discharged (via spacetime Hermite
+coefficients), so the wrapper theorem `gaussianFreeField_satisfies_all_OS_axioms_proved` has no
+additional hypotheses beyond `m > 0`.
+
+| Hypothesis | Where used | Mathematical content |
+|-----------|------------|---------------------|
+| `[OSforGFF.SchwartzNuclearInclusion]` | `OSforGFF/GFFmaster.lean` (via `gaussianFreeField_satisfies_all_OS_axioms_of_schwartzNuclearInclusion`) | Nuclearity of the canonical Schwartz local Banach inclusions; this implies `NuclearSpaceStd TestFunction` and is used to descend the Kolmogorov Gaussian process to a probability measure on `S'(ℝ⁴)` |
+
+In this repository, `SchwartzNuclearInclusion` is discharged in the spacetime Hermite model; see
+[`OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean`](OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean).
+
+The repository also contains an **optional hypothesis package** `OSforGFF/MinlosAxiomatic.lean` assuming the full Minlos theorem as a typeclass `MinlosTheorem`, but the proved GFF pipeline does **not** rely on it.
 
 ## Project Structure
 
@@ -125,17 +128,26 @@ and its properties.
 ### 4. [Gaussian Measure Construction](docs/04_gaussian_measure.md)
 
 Construction of the GFF probability measure on tempered distributions
-via the Minlos theorem (Bochner → finite-dimensional → nuclear limit).
+via a proved **Kolmogorov + nuclear support** pipeline (finite-dimensional Gaussians
+→ Kolmogorov extension on `TestFunction → ℝ` → a.s. support on `WeakDual` → pushforward).
 
 | File | Contents |
 |------|----------|
-| [NuclearSpace](OSforGFF/NuclearSpace.lean) | Nuclear space definition (Hilbert-Schmidt embedding characterization) |
-| [Minlos](OSforGFF/Minlos.lean) | Bochner's theorem, Minlos theorem (axiom), measure existence |
-| [MinlosAnalytic](OSforGFF/MinlosAnalytic.lean) | Symmetry and moments for Gaussian measures (sign-flip invariance, zero mean) |
-| [GFFMconstruct](OSforGFF/GFFMconstruct.lean) | GFF measure construction: covariance → characteristic functional → μ |
+| [NuclearSpace/Std](OSforGFF/NuclearSpace/Std.lean) | Countable-seminorm nuclearity package (`NuclearSpaceStd`) |
+| [NuclearSpace/Schwartz](OSforGFF/NuclearSpace/Schwartz.lean) | Canonical Schwartz seminorm sequence + gap packaged as `SchwartzNuclearInclusion` |
+| [NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion](OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean) | Discharges `SchwartzNuclearInclusion` (hence `NuclearSpaceStd TestFunction`) via spacetime Hermite coefficients |
+| [GaussianProcessKolmogorov](OSforGFF/GaussianProcessKolmogorov.lean) | Kolmogorov Gaussian process measure on `E → ℝ` |
+| [MinlosGaussianSupportNuclearL2](OSforGFF/MinlosGaussianSupportNuclearL2.lean) | Nuclear `L²` support theorem + measurable modification into `WeakDual` |
+| [MinlosGaussianProved](OSforGFF/MinlosGaussianProved.lean) | Pushforward to `WeakDual` + characteristic functional identity |
+| [GFFMconstructProved](OSforGFF/GFFMconstructProved.lean) | Free GFF measure `gaussianFreeField_free_proved` via the proved pipeline |
+| [GFFMconstruct](OSforGFF/GFFMconstruct.lean) | Front-facing wrapper: `μ_GFF` / integrability lemmas built on the proved construction |
 | [GaussianMoments](OSforGFF/GaussianMoments.lean) | Gaussian moments: all n-point functions are integrable |
 | [GFFIsGaussian](OSforGFF/GFFIsGaussian.lean) | Verification that GFF satisfies Gaussian moment conditions (see note below) |
 | [GaussianFreeField](OSforGFF/GaussianFreeField.lean) | Main GFF assembly: μ_GFF m as a ProbabilityMeasure |
+
+The repository also contains an **optional hypothesis package**
+`OSforGFF/MinlosAxiomatic.lean` (Minlos theorem as a typeclass `MinlosTheorem`), but the proved GFF
+pipeline does **not** rely on it.
 
 **Note:** `GFFIsGaussian` imports `OS0` because it uses the proved analyticity of
 Z[z₀f + z₁g] in ℂ² to identify the two-point function S₂(f,g) = C(f,g) via the

@@ -31,10 +31,9 @@ import Mathlib.MeasureTheory.Measure.CharacteristicFunction
 
 import OSforGFF.Basic
 import OSforGFF.Schwinger
-import OSforGFF.MinlosAxiomatic
 import OSforGFF.Covariance
 import OSforGFF.CovarianceR
-import OSforGFF.MinlosAnalytic
+import OSforGFF.GFFMconstructProved
 import OSforGFF.ComplexTestFunction
 
 /-!
@@ -112,7 +111,14 @@ This file contains no axioms. All previously assumed axioms have been proved:
 - `gaussianFreeField_free_centered`: proved via `moment_zero_from_realCF`
 - `gaussianFreeField_pairing_memLp`: proved via `gff_pairing_is_gaussian` (characteristic function bridge)
 
-Axioms used transitively (via imports): `schwartz_nuclear`, `minlos_theorem`, `minlos_uniqueness`.
+This file now constructs the free GFF measure via the Kolmogorov Gaussian process and the
+nuclear `L²` support theorem (`OSforGFF.GFFMconstructProved`). The only remaining hypothesis for
+this construction is the (deep) Schwartz nuclearity input.  In code we assume
+`[OSforGFF.NuclearSpaceStd TestFunction]`; see `OSforGFF/NuclearSpace/Schwartz.lean` for a
+canonical seminorm sequence on `TestFunction` and the sharper predicate
+`OSforGFF.SchwartzNuclearInclusion` that implies `NuclearSpaceStd TestFunction`. This hypothesis is
+discharged in the spacetime Hermite model; see
+`OSforGFF.NuclearSpace.PhysHermiteSpaceTimeSchwartzNuclearInclusion`.
 -/
 
 noncomputable section
@@ -141,78 +147,30 @@ def isGaussianGJ (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
     GJGeneratingFunctionalℂ dμ_config J =
     Complex.exp (-(1/2 : ℂ) * SchwingerFunctionℂ₂ dμ_config J J)
 
-/-! ## Construction via Minlos Theorem -/
+/-! ## Construction via Kolmogorov + nuclear support -/
 
-/-- Nuclear space structure for real test functions.
-    This is derived from the general `schwartz_nuclear` axiom in Minlos.lean
-    applied to `TestFunction = SchwartzMap SpaceTime ℝ`. -/
-instance instNuclear_TestFunction : NuclearSpace TestFunction := schwartz_nuclear
-
-/-- Specialized Minlos construction for the free field using the square-root propagator embedding. -/
-noncomputable def constructGaussianMeasureMinlos_free (m : ℝ) [Fact (0 < m)] :
-  ProbabilityMeasure FieldConfiguration := by
-  classical
-  -- Build the embedding T with ‖T f‖² = freeCovarianceFormR m f f
-  have ex1 := sqrtPropagatorEmbedding m
-  let H : Type := Classical.choose ex1
-  have ex2 := Classical.choose_spec ex1
-  letI hNorm : NormedAddCommGroup H := Classical.choose ex2
-  have ex3 := Classical.choose_spec ex2
-  letI hInner : InnerProductSpace ℝ H := Classical.choose ex3
-  have ex4 := Classical.choose_spec ex3
-  let T : TestFunction →ₗ[ℝ] H := Classical.choose ex4
-  have h_eq : ∀ f : TestFunction, freeCovarianceFormR m f f = ‖T f‖^2 := Classical.choose_spec ex4
-  -- Continuity and normalization
-  have h_cont := freeCovarianceFormR_continuous m
-  have h_zero : freeCovarianceFormR m (0) (0) = 0 := by simp [freeCovarianceFormR]
-  -- Use Minlos: directly obtain a ProbabilityMeasure with the Gaussian characteristic functional
-  have h_minlos :=
-    gaussian_measure_characteristic_functional
-      (E := TestFunction) (H := H) T (freeCovarianceFormR m)
-      (by intro f; simpa using h_eq f)
-      h_zero h_cont
-  exact Classical.choose h_minlos
-
-/-- The Gaussian Free Field with mass m > 0, constructed via specialized Minlos -/
-noncomputable def gaussianFreeField_free (m : ℝ) [Fact (0 < m)] : ProbabilityMeasure FieldConfiguration :=
-  constructGaussianMeasureMinlos_free m
+/-- The Gaussian Free Field with mass `m > 0`, constructed via the Kolmogorov Gaussian process and
+the nuclear `L²` support theorem. -/
+noncomputable def gaussianFreeField_free (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
+    ProbabilityMeasure FieldConfiguration :=
+  QFT.GFFMconstructProved.gaussianFreeField_free_proved (m := m)
 
 /-- Shorthand for the free GFF probability measure used throughout. -/
-@[simp] abbrev μ_GFF (m : ℝ) [Fact (0 < m)] := gaussianFreeField_free m
+@[simp] abbrev μ_GFF (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :=
+  gaussianFreeField_free m
 
 /-- Real characteristic functional of the free GFF: for real test functions f, the generating
     functional equals the Gaussian form with the real covariance. -/
-theorem gff_real_characteristic (m : ℝ) [Fact (0 < m)] :
+theorem gff_real_characteristic (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
   ∀ f : TestFunction,
     GJGeneratingFunctional (gaussianFreeField_free m) f =
       Complex.exp (-(1/2 : ℂ) * (freeCovarianceFormR m f f : ℝ)) := by
-  classical
-  -- Rebuild the same Minlos construction to access its specification
-  have ex1 := sqrtPropagatorEmbedding m
-  let H : Type := Classical.choose ex1
-  have ex2 := Classical.choose_spec ex1
-  letI hNorm : NormedAddCommGroup H := Classical.choose ex2
-  have ex3 := Classical.choose_spec ex2
-  letI hInner : InnerProductSpace ℝ H := Classical.choose ex3
-  have ex4 := Classical.choose_spec ex3
-  let T : TestFunction →ₗ[ℝ] H := Classical.choose ex4
-  have h_eq : ∀ f : TestFunction, freeCovarianceFormR m f f = ‖T f‖^2 := Classical.choose_spec ex4
-  have h_cont := freeCovarianceFormR_continuous m
-  have h_zero : freeCovarianceFormR m (0) (0) = 0 := by simp [freeCovarianceFormR]
-  have h_minlos :=
-    gaussian_measure_characteristic_functional
-      (E := TestFunction) (H := H) T (freeCovarianceFormR m)
-      (by intro f; simpa using h_eq f)
-      h_zero h_cont
-  -- Unfold the definition of our chosen ProbabilityMeasure to reuse the spec
-  have hchar := (Classical.choose_spec h_minlos)
-  intro f
-  -- By definition, gaussianFreeField_free chooses the same ProbabilityMeasure
-  -- returned by gaussian_measure_characteristic_functional
-  simpa [gaussianFreeField_free, constructGaussianMeasureMinlos_free,
-        GJGeneratingFunctional, gaussian_characteristic_functional,
-        distributionPairing]
-    using (hchar f)
+  -- Reduce to the proved Kolmogorov+nuclear support construction.
+  simpa [gaussianFreeField_free] using
+    (QFT.GFFMconstructProved.gff_real_characteristic_proved (m := m))
 
 /-! ### Characteristic Function Bridge
 
@@ -254,7 +212,8 @@ private lemma charFun_eq_GJGeneratingFunctional
 /-- For the GFF measure, the pushforward by `distributionPairingCLM φ` has
     the characteristic function of a centered Gaussian with variance `freeCovarianceFormR m φ φ`. -/
 private lemma gff_pushforward_charFun
-  (m : ℝ) [Fact (0 < m)] (φ : TestFunction) (t : ℝ) :
+  (m : ℝ) [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction]
+  (φ : TestFunction) (t : ℝ) :
   charFun ((gaussianFreeField_free m).toMeasure.map (distributionPairingCLM φ)) t =
     Complex.exp (-(1/2 : ℂ) * t^2 * (freeCovarianceFormR m φ φ : ℝ)) := by
   haveI : IsProbabilityMeasure ((gaussianFreeField_free m).toMeasure.map (distributionPairingCLM φ)) :=
@@ -270,7 +229,8 @@ private lemma gff_pushforward_charFun
 /-- The pushforward of the GFF measure by pairing with a test function is a 1D Gaussian.
     Proven via characteristic functions and Lévy's uniqueness theorem. -/
 theorem gff_pairing_is_gaussian
-  (m : ℝ) [Fact (0 < m)] (φ : TestFunction) :
+  (m : ℝ) [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction]
+  (φ : TestFunction) :
   (gaussianFreeField_free m).toMeasure.map (distributionPairingCLM φ)
     = gaussianReal 0 (freeCovarianceFormR m φ φ).toNNReal := by
   haveI : IsProbabilityMeasure ((gaussianFreeField_free m).toMeasure.map (distributionPairingCLM φ)) :=
@@ -293,7 +253,8 @@ theorem gff_pairing_is_gaussian
 
     This theorem was formerly an axiom, now proven via the characteristic function bridge. -/
 theorem gaussianFreeField_pairing_memLp
-  (m : ℝ) [Fact (0 < m)] (φ : TestFunction) (p : ENNReal) (hp : p ≠ ⊤) :
+  (m : ℝ) [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction]
+  (φ : TestFunction) (p : ENNReal) (hp : p ≠ ⊤) :
   MemLp (distributionPairingCLM φ) p (gaussianFreeField_free m).toMeasure := by
   -- The pushforward measure is a 1D Gaussian
   have h_gauss := gff_pairing_is_gaussian m φ
@@ -309,7 +270,8 @@ theorem gaussianFreeField_pairing_memLp
     This follows from the fact that the pushforward is a Gaussian measure,
     and Gaussian measures have finite moments of all orders. -/
 lemma gff_pairing_square_integrable
-  (m : ℝ) [Fact (0 < m)] (φ : TestFunction) :
+  (m : ℝ) [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction]
+  (φ : TestFunction) :
   Integrable (fun ω => (distributionPairingCLM φ ω)^2) (gaussianFreeField_free m).toMeasure := by
   -- The pushforward measure is Gaussian
   have h_gauss := gff_pairing_is_gaussian m φ
@@ -327,7 +289,8 @@ lemma gff_pairing_square_integrable
     This follows from the fact that the pushforward is a Gaussian with variance
     equal to the covariance form, and for centered Gaussians, variance = second moment. -/
 lemma gff_second_moment_eq_covariance
-  (m : ℝ) [Fact (0 < m)] (φ : TestFunction) :
+  (m : ℝ) [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction]
+  (φ : TestFunction) :
   ∫ ω, (distributionPairingCLM φ ω)^2 ∂(gaussianFreeField_free m).toMeasure =
     freeCovarianceFormR m φ φ := by
   -- The pushforward is a Gaussian measure
@@ -350,71 +313,17 @@ lemma gff_second_moment_eq_covariance
     _ = freeCovarianceFormR m φ φ := by
       simp [Real.coe_toNNReal', freeCovarianceFormR_pos]
 
-/-- The Gaussian CF with the free covariance is positive definite,
-    via the square-root propagator embedding into a Hilbert space. -/
-lemma freeCovarianceFormR_gaussian_cf_pd (m : ℝ) [Fact (0 < m)] :
-    IsPositiveDefinite
-      (fun f : TestFunction => Complex.exp (-(1/2 : ℂ) * (freeCovarianceFormR m f f : ℂ))) := by
-  have ex1 := sqrtPropagatorEmbedding m
-  let H : Type := Classical.choose ex1
-  have ex2 := Classical.choose_spec ex1
-  letI hNorm : NormedAddCommGroup H := Classical.choose ex2
-  have ex3 := Classical.choose_spec ex2
-  letI hInner : InnerProductSpace ℝ H := Classical.choose ex3
-  have ex4 := Classical.choose_spec ex3
-  let T : TestFunction →ₗ[ℝ] H := Classical.choose ex4
-  have h_eq : ∀ f : TestFunction, freeCovarianceFormR m f f = ‖T f‖^2 := Classical.choose_spec ex4
-  exact gaussian_positive_definite_via_embedding T (freeCovarianceFormR m) h_eq
-
-/-- The free covariance form as a MinlosAnalytic.CovarianceForm structure. -/
-def freeCovarianceForm (m : ℝ) [Fact (0 < m)] : MinlosAnalytic.CovarianceForm :=
-  { Q := freeCovarianceFormR m
-    symm := freeCovarianceFormR_symm m
-    psd := freeCovarianceFormR_pos m
-    cont_diag := freeCovarianceFormR_continuous m
-    add_left := freeCovarianceFormR_add_left m
-    smul_left := freeCovarianceFormR_smul_left m
-    gaussian_cf_pd := freeCovarianceFormR_gaussian_cf_pd m }
-
 /-- The GFF has zero mean: the measure is centered.
 
-    Proof: The characteristic functional `gff_real_characteristic` shows that
-    Z[f] = exp(-½⟨f,Cf⟩) depends only on the quadratic form freeCovarianceFormR m f f,
-    which is symmetric under f ↦ -f. By `integral_neg_invariance`, the measure is
-    invariant under ω ↦ -ω. From this negation invariance:
-      GJMean μ φ = ∫ ⟨ω,φ⟩ dμ = ∫ ⟨-ω,φ⟩ dμ = -∫ ⟨ω,φ⟩ dμ
-    implying GJMean μ φ = 0. -/
-theorem gaussianFreeField_free_centered (m : ℝ) [Fact (0 < m)] :
+    Proof: this is proved in `OSforGFF.GFFMconstructProved` by identifying the 1D pushforward of
+    the field by pairing with `φ` as a centered Gaussian measure, hence with mean `0`. -/
+theorem gaussianFreeField_free_centered (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
     isCenteredGJ (gaussianFreeField_free m) := by
   intro φ
-  unfold GJMean
-  -- Step 1: Get the real CF hypothesis from gff_real_characteristic
-  have h_realCF : ∀ f : TestFunction,
-      ∫ ω, Complex.exp (Complex.I * (ω f)) ∂(gaussianFreeField_free m).toMeasure
-        = Complex.exp (-(1/2 : ℂ) * ((freeCovarianceForm m).Q f f)) := by
-    intro f
-    have h := gff_real_characteristic m f
-    simp only [GJGeneratingFunctional, distributionPairing] at h
-    exact h
-  -- Step 2: Get integrability from gaussianFreeField_pairing_memLp
-  have hInt : Integrable (fun ω => (ω φ : ℂ)) (gaussianFreeField_free m).toMeasure := by
-    have h_memLp := gaussianFreeField_pairing_memLp m φ 1 (by norm_num : (1 : ENNReal) ≠ ⊤)
-    -- MemLp f 1 μ implies Integrable f μ
-    have h_int_real : Integrable (distributionPairingCLM φ) (gaussianFreeField_free m).toMeasure :=
-      h_memLp.integrable (by norm_num : (1 : ENNReal) ≤ 1)
-    -- The complex version follows since ofReal is continuous
-    exact h_int_real.ofReal
-  -- Step 3: Apply moment_zero_from_realCF to get ∫ (ω φ : ℂ) = 0
-  have h_complex_zero : ∫ ω, (ω φ : ℂ) ∂(gaussianFreeField_free m).toMeasure = 0 :=
-    MinlosAnalytic.moment_zero_from_realCF (freeCovarianceForm m) (gaussianFreeField_free m) h_realCF φ hInt
-  -- Step 4: Convert from complex to real integral
-  -- The integral ∫ (ω φ : ℂ) = ofReal(∫ ω φ) by integral_ofReal
-  -- So if ∫ (ω φ : ℂ) = 0, then ∫ ω φ = 0
-  have h_ofReal : ∫ ω, (ω φ : ℂ) ∂(gaussianFreeField_free m).toMeasure =
-                  Complex.ofReal (∫ ω, ω φ ∂(gaussianFreeField_free m).toMeasure) := by
-    exact integral_ofReal
-  rw [h_ofReal] at h_complex_zero
-  exact Complex.ofReal_eq_zero.mp h_complex_zero
+  -- This is proved in `OSforGFF.GFFMconstructProved` using the 1D Gaussian pushforward.
+  simpa [gaussianFreeField_free] using
+    (QFT.GFFMconstructProved.gff_mean_eq_zero_proved (m := m) φ)
 
 /-- **Fernique's Theorem for GFF (exponential form)**: For every real test function `φ`,
 there exists `α > 0` such that `exp(α * ⟨ω, φ⟩²)` is integrable under the free GFF measure.
@@ -424,7 +333,8 @@ combined with Mathlib's `IsGaussian.exists_integrable_exp_sq` (Fernique's theore
 
 Proven 2025-12-16, replacing the previous axiom. -/
 theorem gaussianFreeField_pairing_expSq_integrable
-  (m : ℝ) [Fact (0 < m)] (φ : TestFunction) :
+  (m : ℝ) [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction]
+  (φ : TestFunction) :
   ∃ α : ℝ, 0 < α ∧
     Integrable
       (fun ω =>
@@ -452,7 +362,8 @@ theorem gaussianFreeField_pairing_expSq_integrable
     free Gaussian Free Field measure. This is the diagonal (f = g) case needed for
     establishing two-point integrability. -/
 lemma gaussian_pairing_square_integrable_real
-    (m : ℝ) [Fact (0 < m)] (φ : TestFunction) :
+    (m : ℝ) [Fact (0 < m)] [OSforGFF.NuclearSpaceStd TestFunction]
+    (φ : TestFunction) :
   Integrable (fun ω => (distributionPairing ω φ) ^ 2)
     (gaussianFreeField_free m).toMeasure := by
   -- Option B: invoke the Fernique-type axiom giving Lᵖ moments for the pairing

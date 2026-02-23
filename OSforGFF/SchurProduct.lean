@@ -404,7 +404,7 @@ lemma kronLike_posDef
     -- Use the spectral theorem approach, but simplified
     -- Key insight: use kronLike_quadratic_sum to express quadratic form in terms of A-quadratic forms
 
-    -- Since we have kronLike_quadratic_sum available (even if it has sorry), use it conceptually
+    -- Use `kronLike_quadratic_sum` to rewrite the quadratic form.
     have hquad_form : y ⬝ᵥ (kronLike (ι:=ι) A B).mulVec y =
         ∑ j, ∑ l, (∑ i, (colSlice (ι:=ι) y j) i * (A.mulVec (colSlice (ι:=ι) y l)) i) * B j l := by
       classical

@@ -25,7 +25,7 @@ the induced norm, then take the completion to obtain a Banach space; this is the
 Banach space" construction used in nuclearity theory.
 -/
 
-open scoped BigOperators
+open scoped BigOperators NNReal
 
 namespace OSforGFF
 
@@ -525,6 +525,17 @@ lemma seminormKer_mono_of_le (hpq : q ≤ p) :
   have hge : 0 ≤ q x := by simp
   exact le_antisymm hle hge
 
+/-- If `q ≤ C • p`, then `ker p ≤ ker q`. -/
+lemma seminormKer_mono_of_le_smul {C : ℝ≥0} (hpq : q ≤ C • p) :
+    seminormKer (E := E) p ≤ seminormKer (E := E) q := by
+  intro x hx
+  have hx0 : p x = 0 := hx
+  have hle : q x ≤ 0 := by
+    have : q x ≤ (C • p) x := hpq x
+    simpa [Seminorm.smul_apply, hx0] using this
+  have hge : 0 ≤ q x := by simp
+  exact le_antisymm hle hge
+
 /-- The induced linear map `E ⧸ ker p →ₗ[𝕜] E ⧸ ker q` when `q ≤ p`. -/
 noncomputable def inclₗ (hpq : q ≤ p) :
     QuotBySeminorm (E := E) p →ₗ[𝕜] QuotBySeminorm (E := E) q :=
@@ -536,6 +547,18 @@ noncomputable def inclₗ (hpq : q ≤ p) :
         (Submodule.Quotient.mk (p := seminormKer (E := E) p) x) =
       Submodule.Quotient.mk (p := seminormKer (E := E) q) x := by
   simp [inclₗ]
+
+/-- The induced linear map `E ⧸ ker p →ₗ[𝕜] E ⧸ ker q` when `q ≤ C • p`. -/
+noncomputable def inclₗ_of_le_smul {C : ℝ≥0} (hpq : q ≤ C • p) :
+    QuotBySeminorm (E := E) p →ₗ[𝕜] QuotBySeminorm (E := E) q :=
+  (seminormKer (E := E) p).mapQ (seminormKer (E := E) q) (LinearMap.id) (by
+    simpa using seminormKer_mono_of_le_smul (E := E) (p := p) (q := q) hpq)
+
+@[simp] lemma inclₗ_of_le_smul_mk {C : ℝ≥0} (hpq : q ≤ C • p) (x : E) :
+    inclₗ_of_le_smul (E := E) (p := p) (q := q) hpq
+        (Submodule.Quotient.mk (p := seminormKer (E := E) p) x) =
+      Submodule.Quotient.mk (p := seminormKer (E := E) q) x := by
+  simp [inclₗ_of_le_smul]
 
 /-- The induced continuous linear map on quotients when `q ≤ p`. -/
 noncomputable def inclCLM (hpq : q ≤ p) :
@@ -554,6 +577,30 @@ noncomputable def inclCLM (hpq : q ≤ p) :
     QuotBySeminorm.norm_mk (E := E) (p := q),
     QuotBySeminorm.norm_mk (E := E) (p := p), hpq y]
 
+@[simp] lemma inclCLM_mk (hpq : q ≤ p) (x : E) :
+    inclCLM (E := E) (p := p) (q := q) hpq
+        (Submodule.Quotient.mk (p := seminormKer (E := E) p) x) =
+      Submodule.Quotient.mk (p := seminormKer (E := E) q) x := by
+  simp [inclCLM, inclₗ_mk]
+
+/-- The induced continuous linear map on quotients when `q ≤ C • p`. -/
+noncomputable def inclCLM_of_le_smul {C : ℝ≥0} (hpq : q ≤ C • p) :
+    QuotBySeminorm (E := E) p →L[𝕜] QuotBySeminorm (E := E) q := by
+  refine (inclₗ_of_le_smul (E := E) (p := p) (q := q) hpq).mkContinuous (C : ℝ) ?_
+  intro x
+  refine Quotient.inductionOn x ?_
+  intro y
+  change
+      QuotBySeminorm.norm (E := E) q
+          (inclₗ_of_le_smul (E := E) (p := p) (q := q) hpq
+            (Submodule.Quotient.mk (p := seminormKer (E := E) p) y))
+        ≤ (C : ℝ) *
+          QuotBySeminorm.norm (E := E) p (Submodule.Quotient.mk (p := seminormKer (E := E) p) y)
+  simpa [inclₗ_of_le_smul_mk (E := E) (p := p) (q := q) hpq,
+    QuotBySeminorm.norm_mk (E := E) (p := q),
+    QuotBySeminorm.norm_mk (E := E) (p := p),
+    Seminorm.smul_apply] using (hpq y)
+
 end QuotBySeminorm
 
 namespace BanachOfSeminorm
@@ -567,6 +614,17 @@ noncomputable def inclCLM (hpq : q ≤ p) :
     BanachOfSeminorm.coeCLM (E := E) p
   let f0 : QuotBySeminorm (E := E) p →L[𝕜] BanachOfSeminorm (E := E) q :=
     (BanachOfSeminorm.coeCLM (E := E) q).comp (QuotBySeminorm.inclCLM (E := E) (p := p) (q := q) hpq)
+  f0.extend e
+
+/-- A more flexible inclusion: if `q ≤ C • p`, we get a continuous linear map
+`BanachOfSeminorm p →L BanachOfSeminorm q`. -/
+noncomputable def inclCLM_of_le_smul {C : ℝ≥0} (hpq : q ≤ C • p) :
+    BanachOfSeminorm (E := E) p →L[𝕜] BanachOfSeminorm (E := E) q :=
+  let e : QuotBySeminorm (E := E) p →L[𝕜] BanachOfSeminorm (E := E) p :=
+    BanachOfSeminorm.coeCLM (E := E) p
+  let f0 : QuotBySeminorm (E := E) p →L[𝕜] BanachOfSeminorm (E := E) q :=
+    (BanachOfSeminorm.coeCLM (E := E) q).comp
+      (QuotBySeminorm.inclCLM_of_le_smul (E := E) (p := p) (q := q) hpq)
   f0.extend e
 
 @[simp]
@@ -583,6 +641,30 @@ lemma inclCLM_coe (hpq : q ≤ p) (x : QuotBySeminorm (E := E) p) :
       (h_e := BanachOfSeminorm.isUniformInducing_coeCLM (E := E) (p := p))
       x)
 
+@[simp] lemma inclCLM_coeCLM (hpq : q ≤ p) (x : QuotBySeminorm (E := E) p) :
+    inclCLM (E := E) (p := p) (q := q) hpq (coeCLM (E := E) p x) =
+      coeCLM (E := E) q (QuotBySeminorm.inclCLM (E := E) (p := p) (q := q) hpq x) := by
+  have hx : coeCLM (E := E) p x = (x : BanachOfSeminorm (E := E) p) := rfl
+  have hx' :
+      (QuotBySeminorm.inclCLM (E := E) (p := p) (q := q) hpq x :
+          BanachOfSeminorm (E := E) q) =
+        coeCLM (E := E) q (QuotBySeminorm.inclCLM (E := E) (p := p) (q := q) hpq x) := rfl
+  simp [hx, hx', inclCLM_coe (E := E) (p := p) (q := q) hpq x]
+
+@[simp]
+lemma inclCLM_of_le_smul_coe {C : ℝ≥0} (hpq : q ≤ C • p) (x : QuotBySeminorm (E := E) p) :
+    inclCLM_of_le_smul (E := E) (p := p) (q := q) hpq (x : BanachOfSeminorm (E := E) p) =
+      (QuotBySeminorm.inclCLM_of_le_smul (E := E) (p := p) (q := q) hpq x :
+        BanachOfSeminorm (E := E) q) := by
+  simpa [inclCLM_of_le_smul] using
+    (ContinuousLinearMap.extend_eq
+      (f := (BanachOfSeminorm.coeCLM (E := E) q).comp
+        (QuotBySeminorm.inclCLM_of_le_smul (E := E) (p := p) (q := q) hpq))
+      (e := BanachOfSeminorm.coeCLM (E := E) p)
+      (h_dense := BanachOfSeminorm.denseRange_coeCLM (E := E) (p := p))
+      (h_e := BanachOfSeminorm.isUniformInducing_coeCLM (E := E) (p := p))
+      x)
+
 lemma denseRange_inclCLM (hpq : q ≤ p) :
     DenseRange (inclCLM (E := E) (p := p) (q := q) hpq) := by
   refine (BanachOfSeminorm.denseRange_coeCLM (E := E) (p := q)).mono ?_
@@ -592,6 +674,16 @@ lemma denseRange_inclCLM (hpq : q ≤ p) :
   refine ⟨(Submodule.Quotient.mk (p := seminormKer (E := E) p) x :
       QuotBySeminorm (E := E) p), ?_⟩
   simp [BanachOfSeminorm.coeCLM, QuotBySeminorm.inclCLM, QuotBySeminorm.inclₗ_mk]
+
+lemma denseRange_inclCLM_of_le_smul {C : ℝ≥0} (hpq : q ≤ C • p) :
+    DenseRange (inclCLM_of_le_smul (E := E) (p := p) (q := q) hpq) := by
+  refine (BanachOfSeminorm.denseRange_coeCLM (E := E) (p := q)).mono ?_
+  rintro y ⟨xq, rfl⟩
+  refine Submodule.Quotient.induction_on (p := seminormKer (E := E) q) xq ?_
+  intro x
+  refine ⟨(Submodule.Quotient.mk (p := seminormKer (E := E) p) x :
+      QuotBySeminorm (E := E) p), ?_⟩
+  simp [BanachOfSeminorm.coeCLM, QuotBySeminorm.inclCLM_of_le_smul, QuotBySeminorm.inclₗ_of_le_smul]
 
 end BanachOfSeminorm
 

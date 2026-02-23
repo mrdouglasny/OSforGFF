@@ -10,17 +10,17 @@ import Mathlib.Analysis.LocallyConvex.Basic
 import Mathlib.Topology.Algebra.Module.WeakDual
 
 import OSforGFF.Minlos
-import OSforGFF.NuclearSpace
+import OSforGFF.NuclearSpaceStd
 
 /-!
-# Minlos theorem (axiomatic) and Gaussian measure construction
+# Minlos theorem (hypothesis) and Gaussian measure construction
 
-This module contains the *axiomatic* Minlos theorem used by the current GFF construction.
+This module contains a **hypothesis** packaging Minlos' theorem (existence + uniqueness).
 The non-axiomatic core lemmas (Gaussian characteristic functional and positive-definiteness
 infrastructure) are in `OSforGFF/Minlos.lean`.
 
-**Axiom contained here:**
-`minlos_theorem`.
+Nothing in the GFF development should rely on this hypothesis: the Gaussian uses are handled
+by the proved pipeline in `OSforGFF/MinlosGaussianProved.lean`.
 -/
 
 open Complex MeasureTheory
@@ -33,22 +33,37 @@ variable {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
 -- We need a measurable space structure on the weak dual
 instance : MeasurableSpace (WeakDual ℝ E) := borel _
 
+/-- A bundled assumption asserting Minlos' theorem on `E`. -/
+class MinlosTheorem (E : Type*) [AddCommGroup E] [Module ℝ E] [TopologicalSpace E] : Prop extends
+    OSforGFF.NuclearSpaceStd E where
+  /-- **Minlos Theorem** (existence and uniqueness): On a nuclear locally convex space `E`,
+  a continuous, positive definite, normalized functional `Φ : E → ℂ` is the characteristic
+  functional of a unique probability measure `μ` on `WeakDual ℝ E`. -/
+  minlos_theorem
+    (Φ : E → ℂ)
+    (h_continuous : Continuous Φ)
+    (h_positive_definite : IsPositiveDefinite Φ)
+    (h_normalized : Φ 0 = 1) :
+    ∃! μ : ProbabilityMeasure (WeakDual ℝ E),
+      ∀ f : E, Φ f = ∫ ω, Complex.exp (I * (ω f)) ∂μ.toMeasure
+
 /-- **Minlos Theorem** (existence and uniqueness): On a nuclear locally convex space `E`,
     a continuous, positive definite, normalized functional `Φ : E → ℂ` is the characteristic
     functional of a unique probability measure `μ` on `WeakDual ℝ E`. -/
-axiom minlos_theorem
-  [NuclearSpace E]
+theorem minlos_theorem
+  [MinlosTheorem E]
   (Φ : E → ℂ)
   (h_continuous : Continuous Φ)
   (h_positive_definite : IsPositiveDefinite Φ)
   (h_normalized : Φ 0 = 1) :
   ∃! μ : ProbabilityMeasure (WeakDual ℝ E),
-    ∀ f : E, Φ f = ∫ ω, Complex.exp (I * (ω f)) ∂μ.toMeasure
+    ∀ f : E, Φ f = ∫ ω, Complex.exp (I * (ω f)) ∂μ.toMeasure :=
+  MinlosTheorem.minlos_theorem (E := E) Φ h_continuous h_positive_definite h_normalized
 
 /-- Derived uniqueness: two probability measures whose characteristic functionals both
     equal a continuous, positive definite, normalized `Φ` must be equal. -/
 theorem minlos_uniqueness
-  [NuclearSpace E]
+  [MinlosTheorem E]
   {Φ : E → ℂ} (hΦ_cont : Continuous Φ)
   (hΦ_pd : IsPositiveDefinite Φ) (hΦ_norm : Φ 0 = 1)
   {μ₁ μ₂ : ProbabilityMeasure (WeakDual ℝ E)}
@@ -66,7 +81,7 @@ If the covariance form can be realized as a squared norm via a linear embedding 
 a real inner product space `H`, then the Gaussian characteristic functional
 `Φ(f) = exp(-½⟨f, Cf⟩)` satisfies the Minlos hypotheses. -/
 theorem minlos_gaussian_construction
-  [NuclearSpace E]
+  [MinlosTheorem E]
   {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
   (T : E →ₗ[ℝ] H)
   (covariance_form : E → E → ℝ)
@@ -90,7 +105,7 @@ theorem minlos_gaussian_construction
 
 /-- Convenience variant returning the characteristic identity with the integral on the left. -/
 theorem gaussian_measure_characteristic_functional
-  [NuclearSpace E]
+  [MinlosTheorem E]
   {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
   (T : E →ₗ[ℝ] H)
   (covariance_form : E → E → ℝ)
@@ -106,7 +121,7 @@ theorem gaussian_measure_characteristic_functional
 /-- Corollary for Gaussian measures: if the covariance form is invariant under `g`,
     then the Gaussian measure is invariant under the induced dual action (via uniqueness). -/
 theorem gaussian_measure_symmetry
-  [NuclearSpace E]
+  [MinlosTheorem E]
   (covariance_form : E → E → ℝ)
   (h_cf_cont : Continuous (gaussian_characteristic_functional covariance_form))
   (h_cf_pd : IsPositiveDefinite (gaussian_characteristic_functional covariance_form))

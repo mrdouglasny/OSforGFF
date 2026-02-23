@@ -35,7 +35,7 @@ import OSforGFF.OS_Axioms
 
 This file contains proved infrastructure lemmas used by both OS4_Clustering and
 OS4_Ergodicity, extracted to avoid circular imports and eliminate dependency on
-sorry-containing files.
+heavy upstream modules.
 
 ## Main Results
 
@@ -173,7 +173,8 @@ lemma freeCovarianceℂ_bilinear_timeTranslation_invariant (m : ℝ) [Fact (0 < 
 
 /-- MGF formula for GFF: ∫ exp(⟨ω,J⟩) dμ = exp(+(1/2) * C(J,J)).
     This follows from the characteristic function formula via substitution J → (-I)•J. -/
-lemma gff_mgf_formula (m : ℝ) [Fact (0 < m)] (J : TestFunctionℂ) :
+lemma gff_mgf_formula (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (J : TestFunctionℂ) :
     (∫ ω, Complex.exp (distributionPairingℂ_real ω J) ∂(gaussianFreeField_free m).toMeasure) =
     Complex.exp ((1/2 : ℂ) * freeCovarianceℂ_bilinear m J J) := by
   let negI : ℂ := -Complex.I
@@ -204,7 +205,8 @@ lemma gff_mgf_formula (m : ℝ) [Fact (0 < m)] (J : TestFunctionℂ) :
   ring_nf
 
 /-- The GFF generating function is invariant under time translation. -/
-lemma gff_generating_time_invariant (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : TestFunctionℂ) :
+lemma gff_generating_time_invariant (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (s : ℝ) (f : TestFunctionℂ) :
     ∫ ω, Complex.exp (distributionPairingℂ_real ω (timeTranslationSchwartzℂ s f))
       ∂(gaussianFreeField_free m).toMeasure =
     ∫ ω, Complex.exp (distributionPairingℂ_real ω f)
@@ -217,7 +219,8 @@ lemma gff_generating_time_invariant (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : Test
 /-- Joint MGF factorization for GFF.
     E[e^{⟨ω,f⟩+⟨ω,g⟩}] = E[e^{⟨ω,f⟩}] E[e^{⟨ω,g⟩}] e^{C(f,g)}
     This follows from the GFF being Gaussian. -/
-lemma gff_joint_mgf_factorization (m : ℝ) [Fact (0 < m)] (f g : TestFunctionℂ) :
+lemma gff_joint_mgf_factorization (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (f g : TestFunctionℂ) :
     (∫ ω, Complex.exp (distributionPairingℂ_real ω f + distributionPairingℂ_real ω g)
       ∂(gaussianFreeField_free m).toMeasure) =
     (∫ ω, Complex.exp (distributionPairingℂ_real ω f) ∂(gaussianFreeField_free m).toMeasure) *

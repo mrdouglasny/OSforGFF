@@ -10,7 +10,15 @@ $$\int e^{i\langle\omega,f\rangle}\ d\mu(\omega) = e^{-\frac{1}{2}C(f,f)}$$
 
 where $C(f, g) = \iint f(x)\ C(x-y)\ g(y)\ dx\ dy$ is the free covariance bilinear form with kernel $C(x-y) = \frac{m}{4\pi^2\|x\|}K_1(m\|x\|)$.
 
-The construction uses the **Minlos theorem**: a continuous, positive-definite functional on a nuclear space is the characteristic functional of a unique probability measure on the dual space.
+Classically one constructs the free GFF measure via the **Bochner–Minlos theorem** on the nuclear
+Schwartz space. In this repository we avoid assuming Minlos as an axiom: the free GFF measure is
+constructed via a proved **Kolmogorov + nuclear support** pipeline:
+
+- build the Kolmogorov Gaussian process measure on `TestFunction → ℝ` from its finite-dimensional
+  Gaussian marginals;
+- prove (using Schwartz nuclearity) that this measure is a.s. supported on continuous linear
+  functionals, i.e. on the image of `WeakDual ℝ TestFunction`;
+- push forward along a measurable modification to obtain a `ProbabilityMeasure FieldConfiguration`.
 
 Key properties to verify:
 - **Existence:** The characteristic functional $e^{-\frac{1}{2}C(f,f)}$ is positive-definite and continuous.
@@ -20,19 +28,23 @@ Key properties to verify:
 
 ## Proof Strategy
 
-### Step 1: Verify Minlos Hypotheses
+### Step 1: Kolmogorov Gaussian process
 
-The Minlos theorem requires three inputs:
+From a continuous linear map `T : TestFunction →ₗ[ℝ] H` into a real Hilbert space, we build the
+Gaussian process measure on the function space `TestFunction → ℝ` whose finite-dimensional
+marginals are centered Gaussians with covariance \(\langle Tf, Tg\rangle\). This uses a Kolmogorov
+extension theorem (no nuclearity yet).
 
-1. **Positive definiteness of $e^{-\frac{1}{2}C(f,f)}$:** This follows from the Hilbert space embedding $C(f,f) = \|Tf\|^2$, combined with the abstract result that $e^{-\frac{1}{2}\|h\|^2}$ is positive-definite on any inner product space (proved via the Schur product theorem and Hadamard exponential).
+### Step 2: Descend to `WeakDual` using nuclear support
 
-2. **Nuclearity of Schwartz space:** Assumed as an axiom (`schwartz_nuclear`). This is a standard result whose proof requires the Hilbert-Schmidt theory of Schwartz seminorms.
-
-3. **Continuity of $f \mapsto C(f,f)$:** Proved via the continuity of the embedding map $T$ and the fact that $L^2$ norm is continuous.
-
-### Step 2: Construct the Measure
-
-Apply the Minlos theorem to obtain a probability measure $\mu$ on $\text{FieldConfiguration} = \text{WeakDual}\ \mathbb{R}\ \text{TestFunction}$ satisfying the characteristic function identity.
+Using the standard Schwartz nuclearity input (in Lean: `NuclearSpaceStd TestFunction`, and more
+canonically `SchwartzNuclearInclusion`), we prove that the Kolmogorov measure is almost surely
+supported on continuous linear functionals. (This nuclearity hypothesis is proved in this
+repository via spacetime Hermite coefficients; see
+[`OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean`](../OSforGFF/NuclearSpace/PhysHermiteSpaceTimeSchwartzNuclearInclusion.lean).)
+This yields a measurable modification
+`omegaModWeakDual : (TestFunction → ℝ) → WeakDual ℝ TestFunction`, and we define the free GFF
+measure as its pushforward.
 
 ### Step 3: Prove Gaussianity
 
@@ -52,19 +64,16 @@ From the complex Gaussian identity $Z[J] = e^{-\frac{1}{2}S_2(J,J)}$:
 
 ## Key Declarations
 
-### Minlos Theorem (`Minlos.lean`)
+### Nuclearity + support (proved Gaussian Minlos pipeline)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`NuclearSpace`](../OSforGFF/NuclearSpace.lean#L126) | Nuclear space via Hilbert-Schmidt embedding characterization |
-| [`schwartz_nuclear`](../OSforGFF/NuclearSpace.lean#L145) | Schwartz space is nuclear (axiom) |
-| [`minlos_uniqueness`](../OSforGFF/Minlos.lean#L89) | Derived: two measures with same CF on nuclear space are equal |
-| [`gaussian_characteristic_functional`](../OSforGFF/Minlos.lean#L104) | $f \mapsto e^{-\frac{1}{2}C(f,f)}$ |
-| [`gaussian_rbf_pd_innerProduct`](../OSforGFF/Minlos.lean#L129) | $e^{-\lVert h\rVert^2/2}$ is positive-definite |
-| [`gaussian_positive_definite_via_embedding`](../OSforGFF/Minlos.lean#L141) | $e^{-\frac{1}{2}C(f,f)}$ is positive-definite when $C(f,f) = \lVert Tf\rVert^2$ |
-| [`minlos_gaussian_construction`](../OSforGFF/Minlos.lean#L186) | $\exists\ \mu$ with $\int e^{i\langle\omega,f\rangle}\ d\mu = e^{-\frac{1}{2}C(f,f)}$ |
-| [`gaussian_measure_characteristic_functional`](../OSforGFF/Minlos.lean#L221) | Same, returning `ProbabilityMeasure` |
-| [`gaussian_measure_symmetry`](../OSforGFF/Minlos.lean#L254) | If $g$ preserves $C$, then $g_*\mu = \mu$ |
+| [`OSforGFF.NuclearSpaceStd`](../OSforGFF/NuclearSpace/Std.lean) | Countable-seminorm nuclearity package used by the support theorem |
+| [`OSforGFF.schwartzSeminormSeq`](../OSforGFF/NuclearSpace/Schwartz.lean) | Canonical monotone Schwartz seminorm sequence on `TestFunction` |
+| [`OSforGFF.SchwartzNuclearInclusion`](../OSforGFF/NuclearSpace/Schwartz.lean) | Canonical Schwartz nuclearity hypothesis (proved via spacetime Hermite coefficients) |
+| [`MinlosGaussianKolmogorov.gaussianProcess`](../OSforGFF/GaussianProcessKolmogorov.lean) | Kolmogorov Gaussian process measure on `E → ℝ` |
+| [`MinlosGaussianSupport.omegaModWeakDual`](../OSforGFF/MinlosGaussianSupportNuclearL2.lean) | Measurable modification into `WeakDual` (built from nuclear decomposition) |
+| [`MinlosGaussianProved.gaussianProcessWeakDual_of_nuclear`](../OSforGFF/MinlosGaussianProved.lean) | Pushforward measure on `WeakDual` (proved construction) |
 
 ### Analytic Properties (`MinlosAnalytic.lean`)
 

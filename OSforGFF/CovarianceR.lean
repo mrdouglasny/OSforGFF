@@ -619,18 +619,9 @@ lemma freeCovarianceFormR_reflection_invariant
     ext x
     simp [toComplex_apply, QFT.compTimeReflectionReal, QFT.compTimeReflection,
       QFT.timeReflectionCLM]
-  have h_integrable :
-      Integrable
-        (fun p : SpaceTime × SpaceTime =>
-          (QFT.compTimeReflection fc) p.1
-            * (freeCovariance m p.1 p.2 : ℂ)
-            * (QFT.compTimeReflection gc) p.2)
-        (volume.prod volume) :=
-    freeCovarianceℂ_bilinear_integrable (m := m)
-      (f := QFT.compTimeReflection fc) (g := QFT.compTimeReflection gc)
   have h_double :=
     double_integral_timeReflection_covariance (m := m)
-      (f := fc) (g := QFT.compTimeReflection gc) h_integrable
+      (f := fc) (g := QFT.compTimeReflection gc)
   have h_complex :
       freeCovarianceℂ_bilinear m (QFT.compTimeReflection fc) (QFT.compTimeReflection gc)
         = freeCovarianceℂ_bilinear m fc gc := by

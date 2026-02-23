@@ -385,8 +385,6 @@ section FastApproximation
 
 open OSforGFF.NuclearSpaceStd
 
-variable [NuclearSpaceStd E]
-
 /-- The canonical map `E → BanachOfSeminorm (seminormFamily n)`. -/
 def toBanachOfSeminorm_seminormFamily (n : ℕ) :
     E → BanachOfSeminorm (E := E) (seminormFamily (E := E) n) := fun x =>
@@ -861,6 +859,29 @@ theorem exists_ae_cauchySeq_eval_of_le_pow_four
       simpa [Real.dist_eq, abs_sub_comm] using habs
     simpa [hdiff] using hsumω
   exact cauchySeq_of_summable_dist (f := fun k : ℕ => (ω (w k) : ℝ)) hdist
+
+/-- **Convergence criterion for evaluations along fast Cauchy sequences in `E`.**
+
+In the complete space `ℝ`, a Cauchy evaluation sequence actually converges. -/
+theorem exists_ae_tendsto_eval_of_le_pow_four
+    (T : E →ₗ[ℝ] H)
+    (h_sq : Continuous fun f : E => (‖T f‖ ^ 2 : ℝ)) :
+    ∃ n : ℕ, ∃ C : ℝ≥0, C ≠ 0 ∧
+      ∀ w : ℕ → E,
+        (∀ k : ℕ, seminormFamily (E := E) n (w (k + 1) - w k) ≤ (1 / ((k + 1 : ℕ) : ℝ) ^ 4)) →
+          (∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+            ∃ l : ℝ, Tendsto (fun k : ℕ => (ω (w k) : ℝ)) atTop (nhds l)) := by
+  rcases exists_ae_cauchySeq_eval_of_le_pow_four (E := E) (H := H) (T := T) h_sq with ⟨n, C, hC0, hAE⟩
+  refine ⟨n, C, hC0, ?_⟩
+  intro w hw
+  have hCauchy :
+      ∀ᵐ ω ∂(gaussianProcess (E := E) (H := H) T),
+        CauchySeq (fun k : ℕ => (ω (w k) : ℝ)) :=
+    hAE w hw
+  filter_upwards [hCauchy] with ω hω
+  -- `ℝ` is complete.
+  rcases (cauchySeq_tendsto_of_complete (α := ℝ) hω) with ⟨l, hl⟩
+  exact ⟨l, hl⟩
 
 end VarianceBounds
 
