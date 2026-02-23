@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Matteo Cipollina. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Matteo Cipollina
+-/
+
 import OSforGFF.MinlosGaussianSupport
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Function.LpSpace.Complete

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Matteo Cipollina. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Matteo Cipollina
+-/
+
 import OSforGFF.NuclearSpace.PhysHermiteSpaceTimeCoeffL2Bounds
 import OSforGFF.NuclearSpace.PhysHermiteSpaceTimeCoeffSeminorm
 
@@ -2452,4 +2458,3 @@ end SpaceTimeHermite
 end
 
 end PhysLean
-

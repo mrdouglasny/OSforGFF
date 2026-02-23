@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Matteo Cipollina. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Matteo Cipollina
+-/
+
 import Mathlib.Analysis.Distribution.SchwartzSpace.Basic
 import Mathlib.Analysis.LocallyConvex.WithSeminorms
 
@@ -176,4 +182,3 @@ theorem nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion
 
 end
 end OSforGFF
-

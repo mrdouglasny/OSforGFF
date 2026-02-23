@@ -17,9 +17,6 @@ lean_lib KolmogorovExtension4 where
 lean_lib BrownianMotion where
   srcDir := "."
 
-lean_lib Ray where
-  srcDir := "."
-
 @[default_target]
 lean_lib «OSforGFF» where
   -- add any library configuration options here

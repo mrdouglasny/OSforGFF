@@ -3,7 +3,7 @@ Copyright (c) 2025 Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim. All r
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
--- This module serves as the root of the `Aqft2` library.
+-- This module serves as the root of the `OSforGFF` library.
 -- Import modules here that should be built as part of the library.
 
 -- Core infrastructure
@@ -21,6 +21,7 @@ import «OSforGFF».DiscreteSymmetry
 -- Fourier analysis
 import «OSforGFF».FourierTransforms
 import «OSforGFF».Parseval
+import «OSforGFF».Analysis.Distribution.FourierMultiplier
 import «OSforGFF».BesselFunction
 import «OSforGFF».LaplaceIntegral
 
@@ -41,14 +42,66 @@ import «OSforGFF».HadamardExp
 import «OSforGFF».Schwinger
 import «OSforGFF».SchwingerTwoPointFunction
 
+-- Kolmogorov extension + finite-dimensional Gaussian infrastructure
+import «OSforGFF».KolmogorovExtension
+import «OSforGFF».FiniteDimGaussian
+import «OSforGFF».FiniteDimGaussianIsGaussian
+import «OSforGFF».BochnerFinite
+import «OSforGFF».GaussianProcessKolmogorov
+import «OSforGFF».GaussianProcessKolmogorovIsGaussian
+
 -- Measure construction (Minlos)
 import «OSforGFF».Minlos
+import «OSforGFF».MinlosAxiomatic
 import «OSforGFF».MinlosAnalytic
+import «OSforGFF».WeakDualMeasurability
+import «OSforGFF».MinlosGaussianKolmogorov
+import «OSforGFF».MinlosGaussianKolmogorovMoments
+import «OSforGFF».MinlosGaussianSeminormBounds
+import «OSforGFF».MinlosGaussianSeminormBoundsStd
+import «OSforGFF».MinlosGaussianSupport
+import «OSforGFF».MinlosGaussianSupportExtension
+import «OSforGFF».MinlosGaussianSupportL2
+import «OSforGFF».MinlosGaussianSupportNuclearL2
+import «OSforGFF».MinlosGaussianToWeakDual
+import «OSforGFF».MinlosGaussianProved
+import «OSforGFF».NuclearSpace
+import «OSforGFF».NuclearSpaceStd
+import «OSforGFF».NuclearSpace.Defs
+import «OSforGFF».NuclearSpace.Std
+import «OSforGFF».NuclearSpace.Transport
+import «OSforGFF».NuclearSpace.RapidDecaySeq
+import «OSforGFF».NuclearSpace.RapidDecaySeqBase
+import «OSforGFF».NuclearSpace.RapidDecaySeqMulti
+import «OSforGFF».NuclearSpace.HermiteSchwartz
+import «OSforGFF».NuclearSpace.PhysHermite
+import «OSforGFF».NuclearSpace.PhysHermiteGaussL2Basis
+import «OSforGFF».NuclearSpace.PhysHermiteSchwartz
+import «OSforGFF».NuclearSpace.PhysHermiteSchwartzLadder
+import «OSforGFF».NuclearSpace.PhysHermiteL2Basis
+import «OSforGFF».NuclearSpace.SchwartzComplexify
 import «OSforGFF».NuclearSpace.Schwartz
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTime
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeL2Basis
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimePiCompleteness
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffs
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeHilbertBasis
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeLadder
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffDerivLadder
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffLadder
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffWeightOps
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffRapidDecay
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffSeminorm
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffNuclearity
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffToSchwartzBound
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffL2Bounds
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeCoeffOpBounds
+import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeSchwartzToCoeffBound
 import «OSforGFF».NuclearSpace.PhysHermiteSpaceTimeSchwartzNuclearInclusion
 
 -- GFF construction
 import «OSforGFF».GFFMconstruct
+import «OSforGFF».GFFMconstructProved
 import «OSforGFF».GaussianMoments
 import «OSforGFF».GFFIsGaussian
 import «OSforGFF».GaussianFreeField

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Matteo Cipollina. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Matteo Cipollina
+-/
+
 import OSforGFF.GaussianProcessKolmogorov
 import OSforGFF.FiniteDimGaussianIsGaussian
 import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Def
@@ -43,15 +49,12 @@ lemma hasGaussianLaw_restrict_gaussianProcessOfKernel (I : Finset ι) :
     ProbabilityTheory.HasGaussianLaw
       (fun ω : ι → ℝ => I.restrict ω)
       (gaussianProcessOfKernel (ι := ι) K hK) := by
-  classical
   refine ⟨?_⟩
-  have hmap :
-      (gaussianProcessOfKernel (ι := ι) K hK).map (fun ω : ι → ℝ => I.restrict ω) =
-        gaussianFiniteLaw (ι := ι) K I (hK I) := by
+  have hmap : (gaussianProcessOfKernel (ι := ι) K hK).map (fun ω : ι → ℝ => I.restrict ω) =
+      gaussianFiniteLaw (ι := ι) K I (hK I) := by
     simpa [gaussianFamily] using (isProjectiveLimit_gaussianProcessOfKernel (ι := ι) K hK I)
   simpa [hmap] using (by
-    infer_instance :
-      ProbabilityTheory.IsGaussian (gaussianFiniteLaw (ι := ι) K I (hK I)))
+    infer_instance : ProbabilityTheory.IsGaussian (gaussianFiniteLaw (ι := ι) K I (hK I)))
 
 /-- Under `gaussianProcessOfKernel`, the coordinate evaluation process is a Gaussian process. -/
 theorem isGaussianProcess_eval_gaussianProcessOfKernel :

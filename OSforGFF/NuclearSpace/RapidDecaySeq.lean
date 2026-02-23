@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 Matteo Cipollina. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Matteo Cipollina
+-/
+
 import Mathlib.Analysis.InnerProductSpace.l2Space
 import Mathlib.Analysis.PSeries
 
@@ -436,7 +442,7 @@ lemma norm_coe_banachOfSeminorm
 
 noncomputable def banachEquivL2 (k : ℕ) :
     BanachOfSeminorm (E := RapidDecaySeq) (seminorm k) ≃ₗᵢ[ℝ] H := by
-  -- Ww work with `E = QuotBySeminorm (seminorm k)` and its linear map into `ℓ²`.
+  -- We work with `E = QuotBySeminorm (seminorm k)` and its linear map into `ℓ²`.
   let E : Type := QuotBySeminorm (E := RapidDecaySeq) (seminorm k)
   let T : E →ₗ[ℝ] H := toL2Quotₗ k
   let F : Submodule ℝ H := LinearMap.range T

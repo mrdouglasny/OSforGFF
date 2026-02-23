@@ -86,7 +86,6 @@ theorem gaussianFreeField_satisfies_all_OS_axioms_of_schwartzNuclearInclusion (m
     (hSch : SchwartzNuclearInclusion) :
     SatisfiesAllOS
       (@μ_GFF m _ (nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion hSch)) := by
-  classical
   letI : NuclearSpaceStd TestFunction :=
     nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion hSch
   simpa using (gaussianFreeField_satisfies_all_OS_axioms (m := m))
@@ -112,7 +111,6 @@ noncomputable def gaussianFreeField_EuclideanQFT (m : ℝ) [Fact (0 < m)]
 noncomputable def gaussianFreeField_EuclideanQFT_of_schwartzNuclearInclusion
     (m : ℝ) [Fact (0 < m)] (hSch : OSforGFF.SchwartzNuclearInclusion) :
     EuclideanQFT := by
-  classical
   letI : OSforGFF.NuclearSpaceStd TestFunction :=
     OSforGFF.nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion hSch
   exact ⟨_root_.μ_GFF m, OSforGFF.gaussianFreeField_satisfies_all_OS_axioms (m := m)⟩
