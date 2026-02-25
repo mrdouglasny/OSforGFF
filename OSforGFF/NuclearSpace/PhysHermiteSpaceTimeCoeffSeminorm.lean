@@ -34,17 +34,20 @@ weighted `ℓ²` seminorms on `RapidDecaySeqBase.space base₄` along
 noncomputable def coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) : Seminorm ℝ TestFunction :=
   (OSforGFF.RapidDecaySeqBase.Space.seminorm (base := base₄) k).comp (normalizedCoeffRapidDecayₗ ξ hξ)
 
-@[simp] lemma coeffSeminormSeq_apply (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
+@[simp]
+lemma coeffSeminormSeq_apply (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k f =
       OSforGFF.RapidDecaySeqBase.Space.seminorm (base := base₄) k (normalizedCoeffRapidDecay ξ hξ f) := by
   rfl
 
-@[simp] lemma coeffSeminormSeq_apply_eq_norm (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
+@[simp]
+lemma coeffSeminormSeq_apply_eq_norm (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k f =
       ‖OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k (normalizedCoeffRapidDecay ξ hξ f)‖ := by
   rfl
 
-@[simp] lemma coeffSeminormSeq_toL2_apply (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) (n : ℕ) :
+@[simp]
+lemma coeffSeminormSeq_toL2_apply (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) (n : ℕ) :
     (OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k (normalizedCoeffRapidDecay ξ hξ f) : ℕ → ℝ) n =
       (base₄ n) ^ k * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   simp [OSforGFF.RapidDecaySeqBase.Space.toL2ₗ_apply, normalizedCoeffRapidDecay_apply,
@@ -55,7 +58,6 @@ noncomputable def coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) : Semin
 theorem coeffSeminormSeq_mono (ξ : ℝ) (hξ : ξ ≠ 0) :
     Monotone (coeffSeminormSeq ξ hξ) := by
   intro a b hab f
-  -- monotonicity is inherited from the rapid-decay model seminorms
   have hmono :
       Monotone (fun k : ℕ => OSforGFF.RapidDecaySeqBase.Space.seminorm (base := base₄) k) :=
     OSforGFF.RapidDecaySeqBase.Space.seminorm_mono (base := base₄) OSforGFF.RapidDecaySeqMulti.one_le_base₄

@@ -68,11 +68,30 @@ def idx (n : ℕ) : Fin STDimension → ℕ
 @[simp] lemma idx_two (n : ℕ) : idx n 2 = unpair₄₃ n := by rfl
 @[simp] lemma idx_three (n : ℕ) : idx n 3 = unpair₄₄ n := by rfl
 
+/-- `idx` is surjective: every `Fin 4 → ℕ` multi-index is encoded by some `n : ℕ`. -/
+lemma idx_surjective : Function.Surjective (idx : ℕ → Fin STDimension → ℕ) := by
+  intro k
+  let kk : (ℕ × ℕ) × (ℕ × ℕ) := ((k 0, k 1), (k 2, k 3))
+  refine ⟨OSforGFF.RapidDecaySeqMulti.pairEquiv₄ kk, ?_⟩
+  funext i
+  fin_cases i
+  · simp [idx, unpair₄, kk, unpair₄₁]
+  · simp [idx, unpair₄, kk, unpair₄₂]
+  · simp [idx, unpair₄, kk, unpair₄₃]
+    have h2 : (2 : Fin STDimension) = ⟨2, by decide⟩ := by decide
+    simp [h2]
+  · simp [idx, unpair₄, kk, unpair₄₄]
+    have h3 : (3 : Fin STDimension) = ⟨3, by decide⟩ := by decide
+    simp [h3]
+
+/-- Existential form of `idx_surjective`. -/
+lemma exists_idx_eq (k : Fin STDimension → ℕ) : ∃ n : ℕ, idx n = k :=
+  idx_surjective k
+
 lemma base₄_eq_unpair₄ (n : ℕ) :
     OSforGFF.RapidDecaySeqMulti.base₄ n =
       (((unpair₄₁ n + 1 : ℕ) : ℝ) * ((unpair₄₂ n + 1 : ℕ) : ℝ)) *
         (((unpair₄₃ n + 1 : ℕ) : ℝ) * ((unpair₄₄ n + 1 : ℕ) : ℝ)) := by
-  -- this is just unpacking `RapidDecaySeqMulti.base₄` along our `unpair₄` notation
   simp [OSforGFF.RapidDecaySeqMulti.base₄, unpair₄, unpair₄₁, unpair₄₂, unpair₄₃, unpair₄₄]
 
 /-! ## The 4D eigenfunctions (as plain functions) -/
@@ -83,7 +102,6 @@ abbrev coordCLM (i : Fin STDimension) : SpaceTime →L[ℝ] ℝ :=
 
 @[simp] lemma coordCLM_apply (i : Fin STDimension) (x : SpaceTime) :
     coordCLM i x = x i := by
-  -- `EuclideanSpace.proj` is the coordinate projection.
   simp [coordCLM]
 
 @[simp] lemma coordCLM_toLp (i : Fin STDimension) (v : Fin STDimension → ℝ) :
@@ -101,13 +119,10 @@ def eigenfunctionRealSpaceTime (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (x : SpaceT
 lemma eigenfunctionRealSpaceTime_eq_prod (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (x : SpaceTime) :
     eigenfunctionRealSpaceTime ξ hξ n x =
       ∏ i : Fin STDimension, eigenfunctionRealSchwartz ξ hξ (idx n i) (coordCLM i x) := by
-  classical
-  -- `STDimension = 4`, so this is just a finite product over `{0,1,2,3}`.
   simp [eigenfunctionRealSpaceTime, idx, Fin.prod_univ_four]
 
 lemma eigenfunctionRealSpaceTime_hasTemperateGrowth (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) :
     Function.HasTemperateGrowth (eigenfunctionRealSpaceTime ξ hξ n) := by
-  classical
   have ht :
       Function.HasTemperateGrowth (fun x : SpaceTime ↦
         (eigenfunctionRealSchwartz ξ hξ (unpair₄₁ n) (coordCLM 0 x))
@@ -153,16 +168,11 @@ lemma coeffCLM_SpaceTime_pi_apply' (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) :
 lemma integral_eigenfunctionRealSpaceTime_mul_eq_prod (ξ : ℝ) (hξ : ξ ≠ 0) (n m : ℕ) :
     ∫ x : SpaceTime, eigenfunctionRealSpaceTime ξ hξ n x * eigenfunctionRealSpaceTime ξ hξ m x =
       ∏ i : Fin STDimension, ∫ t : ℝ, eigenfunctionReal ξ (idx n i) t * eigenfunctionReal ξ (idx m i) t := by
-  classical
-  -- Change variables along the measure-preserving identification `toLp : (Fin 4 → ℝ) → SpaceTime`.
   have hmp : MeasurePreserving (WithLp.toLp (2 : ℝ≥0∞) : (Fin STDimension → ℝ) → SpaceTime) :=
     PiLp.volume_preserving_toLp (Fin STDimension)
-  -- Use the `MeasurePreserving.integral_comp` lemma in the direction `SpaceTime → (Fin 4 → ℝ)`.
   rw [← hmp.integral_comp (MeasurableEquiv.toLp (2 : ℝ≥0∞) (Fin STDimension → ℝ)).measurableEmbedding
     (g := fun x : SpaceTime ↦
       eigenfunctionRealSpaceTime ξ hξ n x * eigenfunctionRealSpaceTime ξ hξ m x)]
-  -- Now apply Fubini on the finite product.
-  -- The integrand factors as a product of 1D terms along coordinates.
   have hfac :
       (fun v : Fin STDimension → ℝ ↦
         eigenfunctionRealSpaceTime ξ hξ n (WithLp.toLp (2 : ℝ≥0∞) v) *
@@ -171,27 +181,21 @@ lemma integral_eigenfunctionRealSpaceTime_mul_eq_prod (ξ : ℝ) (hξ : ξ ≠ 0
       (fun v : Fin STDimension → ℝ ↦
         ∏ i : Fin STDimension, (eigenfunctionReal ξ (idx n i) (v i) * eigenfunctionReal ξ (idx m i) (v i))) := by
     funext v
-    -- Expand both sides via the `Fin`-product expression of `eigenfunctionRealSpaceTime`.
     have hn :
         eigenfunctionRealSpaceTime ξ hξ n (WithLp.toLp (2 : ℝ≥0∞) v) =
           ∏ i : Fin STDimension, eigenfunctionReal ξ (idx n i) (v i) := by
-      -- use `eigenfunctionRealSpaceTime_eq_prod` and simplify coordinates
       simp [eigenfunctionRealSpaceTime_eq_prod, eigenfunctionRealSchwartz_apply]
     have hm :
         eigenfunctionRealSpaceTime ξ hξ m (WithLp.toLp (2 : ℝ≥0∞) v) =
           ∏ i : Fin STDimension, eigenfunctionReal ξ (idx m i) (v i) := by
       simp [eigenfunctionRealSpaceTime_eq_prod, eigenfunctionRealSchwartz_apply]
-    -- Combine and use `Finset.prod_mul_distrib` to regroup.
     simp [hn, hm, Finset.prod_mul_distrib, mul_assoc]
-  -- Substitute the factored integrand and compute the integral as a product of 1D integrals.
   rw [hfac]
-  -- Fubini for a finite product of Lebesgue measures
   simpa using (MeasureTheory.integral_fintype_prod_volume_eq_prod
     (ι := Fin STDimension) (f := fun i (t : ℝ) ↦ eigenfunctionReal ξ (idx n i) t * eigenfunctionReal ξ (idx m i) t))
 
 private lemma exists_idx_ne_of_ne {n m : ℕ} (hnm : n ≠ m) :
     ∃ i : Fin STDimension, idx n i ≠ idx m i := by
-  classical
   by_contra h
   push_neg at h
   have h0 : unpair₄₁ n = unpair₄₁ m := by simpa using h 0
@@ -204,25 +208,18 @@ private lemma exists_idx_ne_of_ne {n m : ℕ} (hnm : n ≠ m) :
     · simpa [unpair₄₂] using h1
     · simpa [unpair₄₃] using h2
     · simpa [unpair₄₄] using h3
-  -- `unpair₄` is the inverse of an equivalence, hence injective.
   exact hnm <| by
-    -- apply the equivalence `pairEquiv₄` to both sides
     simpa [unpair₄] using congrArg OSforGFF.RapidDecaySeqMulti.pairEquiv₄ hunpair
 
 lemma integral_eigenfunctionRealSpaceTime_orthogonal (ξ : ℝ) (hξ : ξ ≠ 0) {n m : ℕ} (hnm : n ≠ m) :
     ∫ x : SpaceTime, eigenfunctionRealSpaceTime ξ hξ n x * eigenfunctionRealSpaceTime ξ hξ m x = 0 := by
-  classical
-  -- Factor as a product of 1D integrals and use 1D orthogonality.
   rw [integral_eigenfunctionRealSpaceTime_mul_eq_prod (ξ := ξ) (hξ := hξ) (n := n) (m := m)]
   rcases exists_idx_ne_of_ne (n := n) (m := m) hnm with ⟨i, hi⟩
   have hfactor :
       (∫ t : ℝ, eigenfunctionReal ξ (idx n i) t * eigenfunctionReal ξ (idx m i) t) = 0 := by
     simpa [mul_assoc] using (eigenfunctionReal_orthogonal (ξ := ξ) (n := idx n i) (m := idx m i) hi)
-  -- One factor is zero, hence the finite product is zero.
   have : (∏ j : Fin STDimension,
       ∫ t : ℝ, eigenfunctionReal ξ (idx n j) t * eigenfunctionReal ξ (idx m j) t) = 0 := by
-    -- rewrite the `Fintype` product as a `Finset` product and apply `Finset.prod_eq_zero`.
-    classical
     simpa using
       (Finset.prod_eq_zero (s := (Finset.univ : Finset (Fin STDimension)))
         (f := fun j : Fin STDimension ↦
@@ -233,12 +230,9 @@ lemma integral_eigenfunctionRealSpaceTime_orthogonal (ξ : ℝ) (hξ : ξ ≠ 0)
 lemma integral_eigenfunctionRealSpaceTime_self (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) :
     ∫ x : SpaceTime, eigenfunctionRealSpaceTime ξ hξ n x * eigenfunctionRealSpaceTime ξ hξ n x =
       ∏ i : Fin STDimension, (|ξ| * (↑(idx n i).factorial * 2 ^ (idx n i) * √Real.pi)) := by
-  -- factor the 4D integral into a product of 1D integrals, then use the 1D norm formula
   rw [integral_eigenfunctionRealSpaceTime_mul_eq_prod (ξ := ξ) (hξ := hξ) (n := n) (m := n)]
-  -- simplify each factor using `eigenfunctionReal_norm`
   refine Finset.prod_congr rfl ?_
   intro i hi
-  -- turn scalar multiplication into multiplication in `ℝ`
   simpa [smul_eq_mul] using (eigenfunctionReal_norm (ξ := ξ) (n := idx n i))
 
 /-! ## Normalization in `L²` and Bessel bounds on coefficients -/
@@ -252,8 +246,6 @@ noncomputable def normConstSpaceTime (ξ : ℝ) (n : ℕ) : ℝ :=
       ∏ i : Fin STDimension, (|ξ| * (↑(idx n i).factorial * 2 ^ (idx n i) * √Real.pi)) := rfl
 
 lemma normConstSpaceTime_pos (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) : 0 < normConstSpaceTime ξ n := by
-  classical
-  -- each factor is positive
   have hξ' : 0 < |ξ| := abs_pos.2 hξ
   have hpi : 0 < (√Real.pi : ℝ) := by
     simpa using Real.sqrt_pos.2 Real.pi_pos
@@ -263,7 +255,6 @@ lemma normConstSpaceTime_pos (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) : 0 < normCon
     exact_mod_cast Nat.factorial_pos (idx n i)
   have hpow : 0 < (2 : ℝ) ^ (idx n i) := by
     exact pow_pos (by norm_num : (0 : ℝ) < 2) (idx n i)
-  -- combine
   have hmul : 0 < (↑(idx n i).factorial * 2 ^ (idx n i) : ℝ) :=
     mul_pos hfac hpow
   have hmul' : 0 < (↑(idx n i).factorial * 2 ^ (idx n i) * √Real.pi : ℝ) :=
@@ -279,7 +270,6 @@ lemma integrable_eigenfunctionRealSpaceTime_mul_self (ξ : ℝ) (hξ : ξ ≠ 0)
     Integrable
       (fun x : SpaceTime ↦ eigenfunctionRealSpaceTime ξ hξ n x * eigenfunctionRealSpaceTime ξ hξ n x)
       (volume : Measure SpaceTime) := by
-  -- if not integrable, the integral is `0`, contradicting the explicit positive value
   by_contra h
   have h0 :
       (∫ x : SpaceTime,
@@ -287,14 +277,12 @@ lemma integrable_eigenfunctionRealSpaceTime_mul_self (ξ : ℝ) (hξ : ξ ≠ 0)
     simp [MeasureTheory.integral_undef h]
   have hpos : 0 < (∫ x : SpaceTime,
           eigenfunctionRealSpaceTime ξ hξ n x * eigenfunctionRealSpaceTime ξ hξ n x) := by
-    -- rewrite using the closed form
     rw [integral_eigenfunctionRealSpaceTime_self_eq_normConstSpaceTime (ξ := ξ) (hξ := hξ) (n := n)]
     exact normConstSpaceTime_pos (ξ := ξ) hξ n
   exact (ne_of_gt hpos) h0
 
 lemma continuous_eigenfunctionRealSpaceTime (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) :
     Continuous (eigenfunctionRealSpaceTime ξ hξ n) := by
-  -- `HasTemperateGrowth` gives `C^∞`, hence continuity.
   have ht : Function.HasTemperateGrowth (eigenfunctionRealSpaceTime ξ hξ n) :=
     eigenfunctionRealSpaceTime_hasTemperateGrowth (ξ := ξ) (hξ := hξ) n
   have hcd : ContDiff ℝ (⊤ : ℕ∞) (eigenfunctionRealSpaceTime ξ hξ n) :=
@@ -313,7 +301,6 @@ lemma memLp_eigenfunctionRealSpaceTime (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) :
   have hint :
       Integrable (fun x : SpaceTime ↦ (eigenfunctionRealSpaceTime ξ hξ n x) ^ 2)
         (volume : Measure SpaceTime) := by
-    -- `x ↦ f x ^ 2 = f x * f x`
     simpa [pow_two] using
       (integrable_eigenfunctionRealSpaceTime_mul_self (ξ := ξ) (hξ := hξ) (n := n))
   exact (MeasureTheory.memLp_two_iff_integrable_sq (μ := (volume : Measure SpaceTime)) hmeas).2 hint
@@ -326,10 +313,7 @@ noncomputable def eigenfunctionRealSpaceTimeL2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
 lemma inner_eigenfunctionRealSpaceTimeL2_eq_integral (ξ : ℝ) (hξ : ξ ≠ 0) (n m : ℕ) :
     ⟪eigenfunctionRealSpaceTimeL2 (ξ := ξ) hξ n, eigenfunctionRealSpaceTimeL2 (ξ := ξ) hξ m⟫ =
       ∫ x : SpaceTime, eigenfunctionRealSpaceTime ξ hξ n x * eigenfunctionRealSpaceTime ξ hξ m x := by
-  -- unfold the `L²` inner product and rewrite using the `toLp` representatives
-  classical
   simp only [eigenfunctionRealSpaceTimeL2, MeasureTheory.L2.inner_def]
-  -- replace the `toLp` representatives by the original functions
   refine integral_congr_ae ?_
   have hn_ae :
       (memLp_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) n).toLp
@@ -351,44 +335,32 @@ noncomputable def normalizedEigenfunctionSpaceTimeL2 (ξ : ℝ) (hξ : ξ ≠ 0)
 
 lemma orthonormal_normalizedEigenfunctionSpaceTimeL2 (ξ : ℝ) (hξ : ξ ≠ 0) :
     Orthonormal ℝ (normalizedEigenfunctionSpaceTimeL2 (ξ := ξ) hξ) := by
-  classical
-  -- use the Kronecker-delta characterization
   refine (orthonormal_iff_ite (𝕜 := ℝ) (v := normalizedEigenfunctionSpaceTimeL2 (ξ := ξ) hξ)).2 ?_
   intro n m
   by_cases hnm : n = m
   · subst hnm
-    -- diagonal: compute the inner product and cancel the normalization
     have hpos : 0 < normConstSpaceTime ξ n := normConstSpaceTime_pos (ξ := ξ) hξ n
     have hsqrt : (Real.sqrt (normConstSpaceTime ξ n)) ≠ 0 := (Real.sqrt_ne_zero').2 hpos
     have hinner :
         ⟪eigenfunctionRealSpaceTimeL2 (ξ := ξ) hξ n, eigenfunctionRealSpaceTimeL2 (ξ := ξ) hξ n⟫ =
           normConstSpaceTime ξ n := by
-      -- rewrite the `L²` inner product as an explicit integral, then use the closed form
       have hN :
           (∫ x : SpaceTime,
               eigenfunctionRealSpaceTime ξ hξ n x * eigenfunctionRealSpaceTime ξ hξ n x) =
             normConstSpaceTime ξ n := by
         simpa using
           (integral_eigenfunctionRealSpaceTime_self_eq_normConstSpaceTime (ξ := ξ) (hξ := hξ) (n := n))
-      -- combine (use `rw`, not `simp`, to avoid rewriting `⟪x,x⟫` into `‖x‖^2`)
       rw [inner_eigenfunctionRealSpaceTimeL2_eq_integral (ξ := ξ) (hξ := hξ) (n := n) (m := n)]
       exact hN
-    -- reduce the RHS `if` and unfold the normalization scalar
     rw [if_pos rfl]
     dsimp [normalizedEigenfunctionSpaceTimeL2]
-    -- pull out the scalar normalization factors
     rw [inner_smul_left, inner_smul_right]
-    -- use the closed form for the unnormalized inner product before simplification
     rw [hinner]
-    -- `ℝ` has trivial conjugation
     simp
-    -- clear denominators and simplify `√N * √N = N`
     field_simp [hsqrt]
-    -- normalize the products inside the square roots (commutativity/associativity)
     have hprod :
         (∏ i : Fin STDimension, |ξ| * √Real.pi * (↑(idx n i).factorial) * 2 ^ idx n i) =
           ∏ i : Fin STDimension, |ξ| * (↑(idx n i).factorial) * 2 ^ idx n i * √Real.pi := by
-      classical
       refine Finset.prod_congr rfl ?_
       intro i hi
       simp [mul_assoc, mul_left_comm, mul_comm]
@@ -399,8 +371,7 @@ lemma orthonormal_normalizedEigenfunctionSpaceTimeL2 (ξ : ℝ) (hξ : ξ ≠ 0)
       simpa [normConstSpaceTime, mul_assoc, mul_left_comm, mul_comm] using this
     symm
     simpa using (Real.mul_self_sqrt hnonneg)
-  · -- off-diagonal: orthogonality survives normalization
-    have hnm' : n ≠ m := hnm
+  · have hnm' : n ≠ m := hnm
     rw [if_neg hnm']
     dsimp [normalizedEigenfunctionSpaceTimeL2]
     rw [inner_smul_left, inner_smul_right]
@@ -416,8 +387,6 @@ lemma inner_eigenfunctionRealSpaceTimeL2_toLp_eq_coeffCLM_SpaceTime (ξ : ℝ) (
     (n : ℕ) (f : TestFunction) :
     ⟪eigenfunctionRealSpaceTimeL2 (ξ := ξ) hξ n, f.toLp 2 (volume : Measure SpaceTime)⟫ =
       coeffCLM_SpaceTime ξ hξ n f := by
-  -- unfold the `L²` inner product and replace representatives by the original functions
-  classical
   simp only [eigenfunctionRealSpaceTimeL2, MeasureTheory.L2.inner_def]
   have hn_ae :
       (memLp_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) n).toLp
@@ -434,9 +403,7 @@ lemma inner_eigenfunctionRealSpaceTimeL2_toLp_eq_coeffCLM_SpaceTime (ξ : ℝ) (
             f.toLp 2 (volume : Measure SpaceTime) x⟫) =ᵐ[(volume : Measure SpaceTime)]
         (fun x : SpaceTime ↦ eigenfunctionRealSpaceTime ξ hξ n x * f x) := by
     filter_upwards [hn_ae, hf_ae] with x hx hf
-    -- inner product on `ℝ` is multiplication (up to commutativity)
     simp [hx, hf, mul_comm]
-  -- rewrite the integral using a.e. equality, then unfold the coefficient functional
   have hint :
       (∫ x : SpaceTime,
           ⟪(memLp_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) n).toLp
@@ -444,13 +411,11 @@ lemma inner_eigenfunctionRealSpaceTimeL2_toLp_eq_coeffCLM_SpaceTime (ξ : ℝ) (
             f.toLp 2 (volume : Measure SpaceTime) x⟫) =
         ∫ x : SpaceTime, eigenfunctionRealSpaceTime ξ hξ n x * f x := by
     simpa using (MeasureTheory.integral_congr_ae (μ := (volume : Measure SpaceTime)) hcongr)
-  -- the right-hand side is the defining integral for the coefficient functional
   simpa [coeffCLM_SpaceTime_apply] using hint
 
 lemma inner_normalizedEigenfunctionSpaceTimeL2_toLp (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
     ⟪normalizedEigenfunctionSpaceTimeL2 (ξ := ξ) hξ n, f.toLp 2 (volume : Measure SpaceTime)⟫ =
       (Real.sqrt (normConstSpaceTime ξ n))⁻¹ * coeffCLM_SpaceTime ξ hξ n f := by
-  -- expand the inner product and use the coefficient-inner identification
   simp [normalizedEigenfunctionSpaceTimeL2, inner_smul_left,
     inner_eigenfunctionRealSpaceTimeL2_toLp_eq_coeffCLM_SpaceTime (ξ := ξ) (hξ := hξ) (n := n) (f := f),
     mul_assoc]
@@ -458,7 +423,6 @@ lemma inner_normalizedEigenfunctionSpaceTimeL2_toLp (ξ : ℝ) (hξ : ξ ≠ 0) 
 lemma summable_sq_inner_normalizedEigenfunctionSpaceTimeL2 (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
     Summable (fun n : ℕ =>
       ‖⟪normalizedEigenfunctionSpaceTimeL2 (ξ := ξ) hξ n, f.toLp 2 (volume : Measure SpaceTime)⟫‖ ^ 2) := by
-  -- Bessel inequality for an orthonormal family in a Hilbert space
   simpa using
     (Orthonormal.inner_products_summable (𝕜 := ℝ)
       (v := normalizedEigenfunctionSpaceTimeL2 (ξ := ξ) hξ)

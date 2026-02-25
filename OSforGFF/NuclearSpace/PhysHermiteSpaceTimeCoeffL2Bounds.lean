@@ -34,7 +34,6 @@ local notation "SpaceTimeL2" => (SpaceTime →₂[(volume : Measure SpaceTime)] 
 private lemma normConstSpaceTime_raise₀ (ξ : ℝ) (n : ℕ) :
     normConstSpaceTime ξ (raise₀ n) =
       ((2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ)) * normConstSpaceTime ξ n := by
-  -- Only the first coordinate changes under `raise₀`.
   simp [normConstSpaceTime, Fin.prod_univ_four, pow_succ, Nat.factorial_succ]
   ring
 
@@ -62,7 +61,6 @@ private lemma coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffC
     (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
     coeffCLM_SpaceTime ξ hξ n f =
       Real.sqrt (normConstSpaceTime ξ n) * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
-  -- Unfold the normalized coefficient and cancel the inverse square root.
   have hsqrt_ne :
       Real.sqrt (normConstSpaceTime ξ n) ≠ 0 := by
     have hpos : 0 < normConstSpaceTime ξ n := normConstSpaceTime_pos (ξ := ξ) hξ n
@@ -80,7 +78,6 @@ private lemma sqrt_normConstSpaceTime_raise₀ (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
     Real.sqrt (normConstSpaceTime ξ (raise₀ n)) =
       Real.sqrt (((2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ))) * Real.sqrt (normConstSpaceTime ξ n) := by
   have hA : 0 ≤ ((2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ)) := by positivity
-  -- rewrite and use `Real.sqrt_mul`
   rw [normConstSpaceTime_raise₀ (ξ := ξ) (n := n)]
   simpa [mul_assoc] using (Real.sqrt_mul hA (normConstSpaceTime ξ n))
 
@@ -110,14 +107,11 @@ lemma normalizedCoeffCLM_SpaceTime_lowerOpCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
     normalizedCoeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (0 : Fin STDimension) f) =
       Real.sqrt (((2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ))) *
         normalizedCoeffCLM_SpaceTime ξ hξ (raise₀ n) f := by
-  -- Expand the normalized coefficient, rewrite the unnormalized coefficient, then normalize.
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -lowerOpCLM_apply,
     -normConstSpaceTime_def]
   rw [coeffCLM_SpaceTime_lowerOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
-  -- Rewrite the target coefficient in normalized form.
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
     (ξ := ξ) (hξ := hξ) (n := raise₀ n) (f := f)]
-  -- Replace `sqrt(normConst (raise₀ n))` using the raising formula, then cancel.
   rw [sqrt_normConstSpaceTime_raise₀ (ξ := ξ) (hξ := hξ) (n := n)]
   have hsqrt_ne :
       Real.sqrt (normConstSpaceTime ξ n) ≠ 0 := by
@@ -126,7 +120,6 @@ lemma normalizedCoeffCLM_SpaceTime_lowerOpCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
   have hsqrt_unpair_ne : Real.sqrt ((↑(unpair₄₁ n) : ℝ) + 1) ≠ 0 := by
     have : 0 < (↑(unpair₄₁ n) : ℝ) + 1 := by positivity
     exact (Real.sqrt_ne_zero').2 this
-  -- cancel the `sqrt(normConstSpaceTime ξ n)` factor
   simp [mul_assoc, mul_left_comm, mul_comm, hsqrt_ne, hsqrt_unpair_ne,
     -normConstSpaceTime_def, -coeffCLM_SpaceTime_apply, -normalizedCoeffCLM_SpaceTime_apply]
 
@@ -198,19 +191,14 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM0_raise₀ (ξ : ℝ) (hξ : ξ ≠
     normalizedCoeffCLM_SpaceTime ξ hξ (raise₀ n) (raiseOpCLM ξ (0 : Fin STDimension) f) =
       Real.sqrt (((2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ))) *
         normalizedCoeffCLM_SpaceTime ξ hξ n f := by
-  -- Expand normalized coefficients and use the coefficient ladder at the raised index.
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply,
     -normConstSpaceTime_def]
   rw [coeffCLM_SpaceTime_raiseOpCLM0 (ξ := ξ) (hξ := hξ) (n := raise₀ n) (f := f)]
-  -- Simplify the shifted index.
   simp [unpair₄₁_raise₀, lower₀_raise₀, -coeffCLM_SpaceTime_apply, -normConstSpaceTime_def,
     mul_assoc, mul_left_comm, mul_comm]
-  -- Put the remaining coefficient into normalized form.
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
     (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
-  -- Replace `sqrt(normConst (raise₀ n))` using the raising formula.
   rw [sqrt_normConstSpaceTime_raise₀ (ξ := ξ) (hξ := hξ) (n := n)]
-  -- Finish by commutativity/associativity and cancellation.
   have hsqrt_ne :
       Real.sqrt (normConstSpaceTime ξ n) ≠ 0 := by
     have hpos : 0 < normConstSpaceTime ξ n := normConstSpaceTime_pos (ξ := ξ) hξ n
@@ -220,7 +208,6 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM0_raise₀ (ξ : ℝ) (hξ : ξ ≠
     (Real.sqrt_ne_zero').2 htpos
   simp [mul_assoc, mul_left_comm, mul_comm, hsqrt_ne, hsqrt_t_ne,
     -normConstSpaceTime_def, -coeffCLM_SpaceTime_apply, -normalizedCoeffCLM_SpaceTime_apply]
-  -- Reduce to the same scalar identity as in the `raise₃` case.
   set a : ℝ := (↑(unpair₄₁ n) + 1)
   set c : ℝ := (normalizedCoeffCLM_SpaceTime ξ hξ n) f
   have ha_pos : 0 < a := by positivity
@@ -255,28 +242,21 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM1_raise₁ (ξ : ℝ) (hξ : ξ ≠
     normalizedCoeffCLM_SpaceTime ξ hξ (raise₁ n) (raiseOpCLM ξ (1 : Fin STDimension) f) =
       Real.sqrt (((2 : ℝ) * ((unpair₄₂ n + 1 : ℕ) : ℝ))) *
         normalizedCoeffCLM_SpaceTime ξ hξ n f := by
-  -- Expand normalized coefficients and use the coefficient ladder at the raised index.
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply,
     -normConstSpaceTime_def]
   rw [coeffCLM_SpaceTime_raiseOpCLM1 (ξ := ξ) (hξ := hξ) (n := raise₁ n) (f := f)]
-  -- Simplify the shifted index.
   simp [unpair₄₂_raise₁, lower₁_raise₁, -coeffCLM_SpaceTime_apply, -normConstSpaceTime_def,
     mul_assoc, mul_left_comm, mul_comm]
-  -- Put the remaining coefficient into normalized form.
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
     (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
-  -- Replace `sqrt(normConst (raise₁ n))` using the raising formula.
   rw [sqrt_normConstSpaceTime_raise₁ (ξ := ξ) (hξ := hξ) (n := n)]
-  -- Cancel `sqrt(normConstSpaceTime ξ n)`.
   have hsqrt_ne :
       Real.sqrt (normConstSpaceTime ξ n) ≠ 0 := by
     have hpos : 0 < normConstSpaceTime ξ n := normConstSpaceTime_pos (ξ := ξ) hξ n
     exact (Real.sqrt_ne_zero').2 hpos
-  -- Reduce to the scalar identity `(√t)⁻¹ * t = √t` with `t > 0`.
   have htpos : 0 < ((2 : ℝ) * ((unpair₄₂ n + 1 : ℕ) : ℝ)) := by positivity
   have hsqrt_t_ne : Real.sqrt (((2 : ℝ) * ((unpair₄₂ n + 1 : ℕ) : ℝ))) ≠ 0 :=
     (Real.sqrt_ne_zero').2 htpos
-  -- Finish by commutativity/associativity and cancellation.
   simp [mul_assoc, mul_left_comm, mul_comm, hsqrt_ne, hsqrt_t_ne,
     -normConstSpaceTime_def, -coeffCLM_SpaceTime_apply, -normalizedCoeffCLM_SpaceTime_apply]
   set a : ℝ := (↑(unpair₄₂ n) + 1)
@@ -379,13 +359,11 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM3_raise₃ (ξ : ℝ) (hξ : ξ ≠
   have htpos : 0 < ((2 : ℝ) * ((unpair₄₄ n + 1 : ℕ) : ℝ)) := by positivity
   have hsqrt_t_ne : Real.sqrt (((2 : ℝ) * ((unpair₄₄ n + 1 : ℕ) : ℝ))) ≠ 0 :=
     (Real.sqrt_ne_zero').2 htpos
-  -- Reduce to a purely scalar identity in `ℝ`.
   simp [mul_assoc, mul_left_comm, mul_comm, hsqrt_ne, hsqrt_t_ne,
     -normConstSpaceTime_def, -coeffCLM_SpaceTime_apply, -normalizedCoeffCLM_SpaceTime_apply]
   set a : ℝ := (↑(unpair₄₄ n) + 1)
   set c : ℝ := (normalizedCoeffCLM_SpaceTime ξ hξ n) f
   have ha_pos : 0 < a := by
-    -- `a = (unpair₄₄ n : ℝ) + 1` is strictly positive.
     positivity
   have hsqrt_a_ne : Real.sqrt a ≠ 0 := (Real.sqrt_ne_zero').2 ha_pos
   have hsqrt2_ne : Real.sqrt (2 : ℝ) ≠ 0 := by

@@ -42,15 +42,12 @@ lemma norm_normalizedCoeffL2_le_norm_toLp (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestF
 lemma coeffToL2ₗ_eq_normalizedCoeffL2_numAllPowCLM (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffToL2ₗ (ξ := ξ) hξ k f = normalizedCoeffL2 ξ hξ (numAllPowCLM ξ k f) := by
   ext n
-  -- Both sides are the weighted normalized coefficient at `n`.
   simp only [coeffToL2ₗ_apply, normalizedCoeffL2_apply, normalizedCoeffCLM_SpaceTime_pi_apply,
     normalizedCoeffCLM_SpaceTime_numAllPowCLM]
 
 lemma coeffSeminormSeq_eq_norm_normalizedCoeffL2_numAllPowCLM (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k f = ‖normalizedCoeffL2 ξ hξ (numAllPowCLM ξ k f)‖ := by
-  -- Avoid unfolding to integrals: rewrite through the `ℓ²` map `coeffToL2ₗ`.
   rw [coeffSeminormSeq_eq_norm_comp]
-  -- Now rewrite the coefficient `ℓ²` element itself.
   simp [coeffToL2ₗ_eq_normalizedCoeffL2_numAllPowCLM (ξ := ξ) (hξ := hξ) (k := k) (f := f)]
 
 lemma coeffSeminormSeq_eq_norm_toLp_numAllPowCLM (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
@@ -61,48 +58,37 @@ lemma coeffSeminormSeq_eq_norm_toLp_numAllPowCLM (ξ : ℝ) (hξ : ξ ≠ 0) (k 
 
 lemma coeffSeminormSeq_le_norm_toLp_numAllPowCLM (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k f ≤ ‖(numAllPowCLM ξ k f).toLp 2 (volume : Measure SpaceTime)‖ := by
-  -- Bessel inequality for the orthonormal family of eigenfunctions.
   rw [coeffSeminormSeq_eq_norm_normalizedCoeffL2_numAllPowCLM (ξ := ξ) (hξ := hξ) (k := k) (f := f)]
   exact norm_normalizedCoeffL2_le_norm_toLp (ξ := ξ) (hξ := hξ) (f := numAllPowCLM ξ k f)
 
 /-! ## `coeffSeminormSeq` is bounded by the canonical Schwartz seminorm sequence -/
 
-theorem isBounded_schwartzSeminormSeq_coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) :
-    Seminorm.IsBounded OSforGFF.schwartzSeminormSeq (coeffSeminormSeq ξ hξ)
-      (LinearMap.id : TestFunction →ₗ[ℝ] TestFunction) := by
-  classical
-  -- First, bound `‖g.toLp 2‖` by a fixed Schwartz seminorm `schwartzSeminormSeq K`.
-  rcases
-      (SchwartzMap.norm_toLp_le_seminorm (𝕜 := ℝ) (F := ℝ) (E := SpaceTime)
-        (p := (2 : ℝ≥0∞)) (μ := (volume : Measure SpaceTime)))
-    with ⟨K, C, hC0, hC⟩
-  let Cnn : ℝ≥0 := ⟨C, hC0⟩
-  have htoLp (g : TestFunction) :
-      ‖g.toLp 2 (volume : Measure SpaceTime)‖ ≤ (Cnn : ℝ) * OSforGFF.schwartzSeminormSeq K g := by
-    -- `hC` bounds by a smaller finite sup; enlarge to the defining sup of `schwartzSeminormSeq K`.
-    have hsubset : Finset.Iic (K, 0) ⊆ Finset.Iic (K, K) := by
-      intro i hi
-      have hi' : i ≤ (K, 0) := Finset.mem_Iic.mp hi
-      have hKK : (K, 0) ≤ (K, K) := Prod.mk_le_mk.2 ⟨le_rfl, Nat.zero_le _⟩
-      exact Finset.mem_Iic.mpr (le_trans hi' hKK)
-    have hsup :
-        (Finset.Iic (K, 0)).sup (OSforGFF.schwartzSeminormFamily_TestFunction) g
-          ≤ OSforGFF.schwartzSeminormSeq K g := by
-      have hsup' :
-          (Finset.Iic (K, 0)).sup (OSforGFF.schwartzSeminormFamily_TestFunction) ≤
-            (Finset.Iic (K, K)).sup (OSforGFF.schwartzSeminormFamily_TestFunction) :=
-        Finset.sup_mono hsubset
-      simpa [OSforGFF.schwartzSeminormSeq] using (hsup' g)
-    have := hC g
-    -- rewrite `C` as `Cnn` (to match later scalar bookkeeping)
-    simpa [Cnn, mul_assoc] using this.trans (mul_le_mul_of_nonneg_left hsup hC0)
-  intro k
-  -- Control `schwartzSeminormSeq K (numAllPowCLM ξ k f)` by finitely many Schwartz seminorms of `f`.
+private theorem exists_norm_toLp_le_schwartzSeminormSeq :
+    ∃ K : ℕ, ∃ C : ℝ≥0, ∀ g : TestFunction,
+      ‖g.toLp 2 (volume : Measure SpaceTime)‖ ≤ (C : ℝ) * OSforGFF.schwartzSeminormSeq K g := by
+  rcases (SchwartzMap.norm_toLp_le_seminorm (𝕜 := ℝ) (F := ℝ) (E := SpaceTime)
+      (p := (2 : ℝ≥0∞)) (μ := (volume : Measure SpaceTime))) with ⟨K, C, hC0, hC⟩
+  refine ⟨K, ⟨⟨C, hC0⟩, ?_⟩⟩
+  intro g
+  have hsubset : Finset.Iic (K, 0) ⊆ Finset.Iic (K, K) := by
+    intro i hi
+    exact
+      Finset.mem_Iic.mpr <|
+        le_trans (Finset.mem_Iic.mp hi) (Prod.mk_le_mk.2 ⟨le_rfl, Nat.zero_le _⟩)
+  have hsup :
+      (Finset.Iic (K, 0)).sup (OSforGFF.schwartzSeminormFamily_TestFunction) g ≤
+        OSforGFF.schwartzSeminormSeq K g := by
+    simpa [OSforGFF.schwartzSeminormSeq] using
+      (Finset.sup_mono (f := OSforGFF.schwartzSeminormFamily_TestFunction) hsubset g)
+  exact (hC g).trans (mul_le_mul_of_nonneg_left hsup hC0)
+
+private theorem exists_bound_schwartzSeminormSeq_numAllPowCLM (ξ : ℝ) (K k : ℕ) :
+    ∃ s : Finset ℕ, ∃ C : ℝ≥0, ∀ f : TestFunction,
+      OSforGFF.schwartzSeminormSeq K (numAllPowCLM ξ k f) ≤ (C : ℝ) * (s.sup OSforGFF.schwartzSeminormSeq) f := by
   have hcont :
       Continuous
         ((OSforGFF.schwartzSeminormSeq K).comp
           ((numAllPowCLM ξ k : TestFunction →L[ℝ] TestFunction) : TestFunction →ₗ[ℝ] TestFunction)) := by
-    -- Continuity of a generating seminorm, composed with a continuous linear map.
     exact (OSforGFF.schwartzSeminormSeq_withSeminorms.continuous_seminorm K).comp
       (numAllPowCLM ξ k).continuous
   rcases
@@ -110,31 +96,29 @@ theorem isBounded_schwartzSeminormSeq_coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 
         OSforGFF.schwartzSeminormSeq_withSeminorms
         ((OSforGFF.schwartzSeminormSeq K).comp
           ((numAllPowCLM ξ k : TestFunction →L[ℝ] TestFunction) : TestFunction →ₗ[ℝ] TestFunction)) hcont)
-    with ⟨s, C₁, _hC₁ne, hle⟩
-  refine ⟨s, Cnn * C₁, ?_⟩
-  -- Now show the coefficient seminorm is bounded by the resulting finite sup.
+    with ⟨s, C, _hCne, hle⟩
+  refine ⟨s, C, ?_⟩
   intro f
-  have h₁ :
-      coeffSeminormSeq ξ hξ k f ≤ ‖(numAllPowCLM ξ k f).toLp 2 (volume : Measure SpaceTime)‖ :=
+  simpa [Seminorm.comp_apply, Seminorm.smul_apply, NNReal.smul_def, smul_eq_mul, mul_assoc] using (hle f)
+
+theorem isBounded_schwartzSeminormSeq_coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) :
+    Seminorm.IsBounded OSforGFF.schwartzSeminormSeq (coeffSeminormSeq ξ hξ)
+      (LinearMap.id : TestFunction →ₗ[ℝ] TestFunction) := by
+  rcases exists_norm_toLp_le_schwartzSeminormSeq with ⟨K, CtoLp, htoLp⟩
+  intro k
+  rcases exists_bound_schwartzSeminormSeq_numAllPowCLM (ξ := ξ) (K := K) (k := k) with ⟨s, C₁, hle⟩
+  refine ⟨s, CtoLp * C₁, ?_⟩
+  intro f
+  have h₁ :=
     coeffSeminormSeq_le_norm_toLp_numAllPowCLM (ξ := ξ) (hξ := hξ) (k := k) (f := f)
-  have h₂ :
+  have htoLp' :
       ‖(numAllPowCLM ξ k f).toLp 2 (volume : Measure SpaceTime)‖ ≤
-        (Cnn : ℝ) * OSforGFF.schwartzSeminormSeq K (numAllPowCLM ξ k f) := by
-    simpa using (htoLp (g := numAllPowCLM ξ k f))
-  have h₃ :
-      OSforGFF.schwartzSeminormSeq K (numAllPowCLM ξ k f) ≤
-        (C₁ : ℝ) * (s.sup OSforGFF.schwartzSeminormSeq) f := by
-    -- Evaluate the seminorm inequality `hle` at `f`.
-    simpa [Seminorm.comp_apply, Seminorm.smul_apply, NNReal.smul_def, smul_eq_mul, mul_assoc] using
-      (hle f)
-  -- Chain the inequalities and fold scalars back into `•`.
-  have hcoeff :
-      coeffSeminormSeq ξ hξ k f ≤ (Cnn : ℝ) * ((C₁ : ℝ) * (s.sup OSforGFF.schwartzSeminormSeq) f) := by
-    have h23 :
-        (Cnn : ℝ) * OSforGFF.schwartzSeminormSeq K (numAllPowCLM ξ k f) ≤
-          (Cnn : ℝ) * ((C₁ : ℝ) * (s.sup OSforGFF.schwartzSeminormSeq) f) :=
-      mul_le_mul_of_nonneg_left h₃ (by exact_mod_cast (zero_le Cnn))
-    exact (h₁.trans h₂).trans h23
+        (CtoLp : ℝ) * ((C₁ : ℝ) * (s.sup OSforGFF.schwartzSeminormSeq) f) := by
+    have h :=
+      (htoLp (g := numAllPowCLM ξ k f)).trans
+        (mul_le_mul_of_nonneg_left (hle f) (by exact_mod_cast (zero_le CtoLp)))
+    simpa [mul_assoc] using h
+  have hcoeff := h₁.trans htoLp'
   simpa [Seminorm.smul_apply, NNReal.smul_def, smul_eq_mul, mul_assoc, mul_left_comm, mul_comm] using hcoeff
 
 /-! Once we also know the **reverse** boundedness `schwartzSeminormSeq ≲ coeffSeminormSeq`,
@@ -152,7 +136,6 @@ theorem schwartzNuclearInclusion_of_equiv_coeffSeminormSeq
       Seminorm.IsBounded (coeffSeminormSeq ξ hξ) OSforGFF.schwartzSeminormSeq
         (LinearMap.id : TestFunction →ₗ[ℝ] TestFunction)) :
     OSforGFF.SchwartzNuclearInclusion := by
-  classical
   refine
     OSforGFF.schwartzNuclearInclusion_of_equivFamily
       (q := coeffSeminormSeq ξ hξ)

@@ -209,28 +209,23 @@ lemma coord0_mul_eigenfunctionRealSpaceTime (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ
   set d : ℝ := eigenfunctionRealSchwartz ξ hξ (unpair₄₄ n) (coordCLM 3 x)
   have habcd : eigenfunctionRealSpaceTime ξ hξ n x = a * b * c * d := by
     simp [eigenfunctionRealSpaceTime, a, b, c, d, mul_assoc]
-  -- the 1D multiplication identity evaluated at the first coordinate
   have h1 :
       (coordCLM 0 x) * a =
         (ξ / 2) * eigenfunctionRealSchwartz ξ hξ (unpair₄₁ n + 1) (coordCLM 0 x)
           + (unpair₄₁ n * ξ) * eigenfunctionRealSchwartz ξ hξ (unpair₄₁ n - 1) (coordCLM 0 x) := by
-    -- reduce to the function-level identity using `eigenfunctionRealSchwartz_apply`
     simpa [a, eigenfunctionRealSchwartz_apply, mul_assoc, mul_left_comm, mul_comm] using
       (PhysLean.x_mul_eigenfunctionReal (ξ := ξ) hξ (n := unpair₄₁ n) (x := coordCLM 0 x))
-  -- name the shifted first-coordinate factors
   set aP : ℝ := eigenfunctionRealSchwartz ξ hξ (unpair₄₁ n + 1) (coordCLM 0 x)
   set aM : ℝ := eigenfunctionRealSchwartz ξ hξ (unpair₄₁ n - 1) (coordCLM 0 x)
   have habcdRaise : eigenfunctionRealSpaceTime ξ hξ (raise₀ n) x = aP * b * c * d := by
     simp [eigenfunctionRealSpaceTime, aP, b, c, d, mul_assoc]
   have habcdLower : eigenfunctionRealSpaceTime ξ hξ (lower₀ n) x = aM * b * c * d := by
     simp [eigenfunctionRealSpaceTime, aM, b, c, d, mul_assoc]
-  -- now expand and distribute using the 1D identity `h1`
   calc
     (coordCLM 0 x) * eigenfunctionRealSpaceTime ξ hξ n x
         = (coordCLM 0 x) * (a * b * c * d) := by simp [habcd]
     _ = ((coordCLM 0 x) * a) * b * c * d := by ring
     _ = (((ξ / 2) * aP + (unpair₄₁ n * ξ) * aM) * b * c * d) := by
-          -- rewrite the first factor using `h1`
           rw [h1]
     _ = (ξ / 2) * (aP * b * c * d) + (unpair₄₁ n * ξ) * (aM * b * c * d) := by ring
     _ = (ξ / 2) * eigenfunctionRealSpaceTime ξ hξ (raise₀ n) x
@@ -248,7 +243,6 @@ lemma coord1_mul_eigenfunctionRealSpaceTime (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ
   set d : ℝ := eigenfunctionRealSchwartz ξ hξ (unpair₄₄ n) (coordCLM 3 x)
   have habcd : eigenfunctionRealSpaceTime ξ hξ n x = a * b * c * d := by
     simp [eigenfunctionRealSpaceTime, a, b, c, d, mul_assoc]
-  -- the 1D multiplication identity evaluated at the second coordinate
   have h1 :
       (coordCLM 1 x) * b =
         (ξ / 2) * eigenfunctionRealSchwartz ξ hξ (unpair₄₂ n + 1) (coordCLM 1 x)

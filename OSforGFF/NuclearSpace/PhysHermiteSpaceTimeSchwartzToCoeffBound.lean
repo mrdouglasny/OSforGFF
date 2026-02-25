@@ -65,25 +65,32 @@ private lemma sum_ofLp_smul_unitVec (x : SpaceTime) :
     _ = x.ofLp j := by simp
     _ = x j := by simp
 
-private lemma norm_le_sum_abs_ofLp (x : SpaceTime) :
-    ‖x‖ ≤ ∑ i : Fin STDimension, |x.ofLp i| := by
+private lemma sqrt_sum_norm_sq_le_sum_norm (x : SpaceTime) :
+    √(∑ i : Fin STDimension, ‖x i‖ ^ 2) ≤ ∑ i : Fin STDimension, ‖x i‖ := by
   have hsq :
       (∑ i : Fin STDimension, ‖x i‖ ^ 2) ≤ (∑ i : Fin STDimension, ‖x i‖) ^ 2 := by
     simpa [pow_two] using
       (Finset.sum_sq_le_sq_sum_of_nonneg (s := (Finset.univ : Finset (Fin STDimension)))
         (f := fun i : Fin STDimension => ‖x i‖) (by intro i hi; exact norm_nonneg _))
-  have hx :
-      √(∑ i : Fin STDimension, ‖x i‖ ^ 2) ≤ ∑ i : Fin STDimension, ‖x i‖ := by
-    have hnonneg : 0 ≤ ∑ i : Fin STDimension, ‖x i‖ :=
-      Finset.sum_nonneg fun _ _ => norm_nonneg _
-    have h' : √(∑ i : Fin STDimension, ‖x i‖ ^ 2) ≤ |∑ i : Fin STDimension, ‖x i‖| := by
-      simpa only [Real.sqrt_sq_eq_abs] using (Real.sqrt_le_sqrt hsq)
-    simpa only [abs_of_nonneg hnonneg] using h'
-  have hn : ‖x‖ = √(∑ i : Fin STDimension, ‖x i‖ ^ 2) := by
-    simpa using (EuclideanSpace.norm_eq (x := x))
+  have hnonneg : 0 ≤ ∑ i : Fin STDimension, ‖x i‖ :=
+    Finset.sum_nonneg fun _ _ => norm_nonneg _
+  have h := Real.sqrt_le_sqrt hsq
+  -- `simp` tends to rewrite `‖x i‖` into `|x.ofLp i|`, so we remove the absolute value in a
+  -- separate step where the nonnegativity hypothesis matches the syntactic expression.
+  have hnonneg' : 0 ≤ ∑ i : Fin STDimension, |x.ofLp i| := by
+    simpa [Real.norm_eq_abs] using hnonneg
   calc
-    ‖x‖ = √(∑ i : Fin STDimension, ‖x i‖ ^ 2) := hn
-    _ ≤ ∑ i : Fin STDimension, ‖x i‖ := hx
+    √(∑ i : Fin STDimension, ‖x i‖ ^ 2) ≤ √((∑ i : Fin STDimension, ‖x i‖) ^ 2) := h
+    _ = |∑ i : Fin STDimension, ‖x i‖| := by simp [Real.sqrt_sq_eq_abs]
+    _ = ∑ i : Fin STDimension, |x.ofLp i| := by
+          simpa [Real.norm_eq_abs] using (abs_of_nonneg hnonneg')
+
+private lemma norm_le_sum_abs_ofLp (x : SpaceTime) :
+    ‖x‖ ≤ ∑ i : Fin STDimension, |x.ofLp i| := by
+  calc
+    ‖x‖ = √(∑ i : Fin STDimension, ‖x i‖ ^ 2) := by
+          simpa using (EuclideanSpace.norm_eq (x := x))
+    _ ≤ ∑ i : Fin STDimension, ‖x i‖ := sqrt_sum_norm_sq_le_sum_norm x
     _ = ∑ i : Fin STDimension, |x.ofLp i| := by simp [Real.norm_eq_abs]
 
 private lemma norm_pow_succ_le_card_pow_mul_sum_abs_pow (x : SpaceTime) (k : ℕ) :
@@ -131,17 +138,12 @@ private lemma sum_le_card_mul_of_pointwise_le {α : Type*} [Fintype α]
 
 private lemma sum_sum_le_card_mul_of_pointwise_le {α β : Type*} [Fintype α] [Fintype β]
     {f : α → β → ℝ} {C : ℝ} (hf : ∀ a : α, ∀ b : β, f a b ≤ C) :
-    (∑ a : α, ∑ b : β, f a b) ≤ (Fintype.card α : ℝ) * (Fintype.card β : ℝ) * C := by
-  have hβ (a : α) : (∑ b : β, f a b) ≤ (Fintype.card β : ℝ) * C := by
-    simpa using sum_le_card_mul_of_pointwise_le (f := fun b : β => f a b) (C := C) (hf a)
-  have hα :
-      (∑ a : α, ∑ b : β, f a b) ≤
-        (Fintype.card α : ℝ) * ((Fintype.card β : ℝ) * C) := by
-    refine sum_le_card_mul_of_pointwise_le (f := fun a : α => ∑ b : β, f a b)
-      (C := (Fintype.card β : ℝ) * C) ?_
+    (∑ a : α, ∑ b : β, f a b) ≤ (Fintype.card α : ℝ) * ((Fintype.card β : ℝ) * C) := by
+  have hβ : ∀ a : α, (∑ b : β, f a b) ≤ (Fintype.card β : ℝ) * C := by
     intro a
-    exact hβ a
-  simpa [mul_assoc] using hα
+    exact sum_le_card_mul_of_pointwise_le (f := fun b : β => f a b) (C := C) (hf a)
+  exact sum_le_card_mul_of_pointwise_le
+    (f := fun a : α => ∑ b : β, f a b) (C := (Fintype.card β : ℝ) * C) hβ
 
 private lemma sum_abs_ofLp_le_card_mul_norm (x : SpaceTime) :
     (∑ i : Fin STDimension, |x.ofLp i|) ≤ (Fintype.card (Fin STDimension) : ℝ) * ‖x‖ := by
@@ -172,24 +174,19 @@ private lemma ContinuousMultilinearMap.norm_apply_le_sum_norm_ofLp_smul_unitVec
 private lemma ContinuousMultilinearMap.norm_prod_ofLp_le_prod_sum_abs_ofLp
     {n : ℕ} (m : Fin n → SpaceTime) (r : Fin n → Fin STDimension) :
     ‖(∏ j : Fin n, (m j).ofLp (r j))‖ ≤ ∏ j : Fin n, ∑ i : Fin STDimension, |(m j).ofLp i| := by
-  have hfac :
-      ∀ j : Fin n, ‖(m j).ofLp (r j)‖ ≤ ∑ i : Fin STDimension, |(m j).ofLp i| := by
+  have hfac : ∀ j : Fin n, ‖(m j).ofLp (r j)‖ ≤ ∑ i : Fin STDimension, |(m j).ofLp i| := by
     intro j
-    have hnonneg :
-        ∀ i : Fin STDimension, i ∈ (Finset.univ : Finset (Fin STDimension)) → 0 ≤ |(m j).ofLp i| := by
-      intro i hi
-      exact abs_nonneg _
     have : |(m j).ofLp (r j)| ≤ ∑ i : Fin STDimension, |(m j).ofLp i| := by
       simpa using
         (Finset.single_le_sum (s := (Finset.univ : Finset (Fin STDimension)))
-          (f := fun i : Fin STDimension => |(m j).ofLp i|) hnonneg
+          (f := fun i : Fin STDimension => |(m j).ofLp i|)
+          (by intro i hi; exact abs_nonneg _)
           (by simp : r j ∈ (Finset.univ : Finset (Fin STDimension))))
     simpa [Real.norm_eq_abs] using this
-  have :=
-    Finset.prod_le_prod (s := (Finset.univ : Finset (Fin n)))
+  simpa using
+    (Finset.prod_le_prod (s := (Finset.univ : Finset (Fin n)))
       (fun j hj => by positivity)
-      (fun j hj => hfac j)
-  simpa using this
+      (fun j hj => hfac j))
 
 private lemma ContinuousMultilinearMap.norm_apply_ofLp_smul_unitVec_le_prod_sum_abs_ofLp_mul_norm_apply_unitVec
     {n : ℕ} (T : ContinuousMultilinearMap ℝ (fun _ : Fin n => SpaceTime) ℝ)
@@ -437,20 +434,39 @@ private lemma schwartz_seminorm_succ_le_card_pow_mul_sum_seminorm0
 
 /-! ## Iterated coordinate operations and coefficient seminorm bounds -/
 
+private def coeffMulConst (ξ : ℝ) : ℕ → ℝ := fun k =>
+  ‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k + 1)
+
+private def coeffMulProd (ξ : ℝ) (k₀ k : ℕ) : ℝ :=
+  ∏ j ∈ Finset.range k, coeffMulConst ξ (k₀ + j)
+
+private def coeffDerivConst (ξ : ℝ) : ℕ → ℝ := fun k =>
+  ‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k + 1)
+
+private def coeffDerivProd (ξ : ℝ) (k₀ n : ℕ) : ℝ :=
+  ∏ j ∈ Finset.range n, coeffDerivConst ξ (k₀ + j)
+
 private lemma coeffSeminormSeq_mulCoordCLM_iter_le
     (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension) (k₀ k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k₀ (((mulCoordCLM i)^[k]) f) ≤
-      (∏ j ∈ Finset.range k, (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + j) + 1))) *
+      coeffMulProd ξ k₀ k *
         coeffSeminormSeq ξ hξ (k₀ + k) f := by
   induction k generalizing k₀ f with
-  | zero => simp
+  | zero => simp [coeffMulProd]
   | succ k ih =>
     have hrec := ih (k₀ := k₀) (f := mulCoordCLM i f)
     have hstep := coeffSeminormSeq_mulCoordCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k₀ + k) (f := f)
-    have hmul := mul_le_mul_of_nonneg_left hstep (by positivity :
-      0 ≤ ∏ j ∈ Finset.range k, (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + j) + 1)))
+    have hprod_nonneg : 0 ≤ coeffMulProd ξ k₀ k := by
+      classical
+      unfold coeffMulProd
+      refine Finset.prod_nonneg ?_
+      intro j hj
+      dsimp [coeffMulConst]
+      positivity
+    have hmul := mul_le_mul_of_nonneg_left hstep hprod_nonneg
     have := le_trans (by simpa [Function.iterate_succ_apply] using hrec) hmul
-    simpa [mul_assoc, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm, Finset.prod_range_succ] using this
+    simpa [coeffMulProd, coeffMulConst, mul_assoc, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm,
+      Finset.prod_range_succ] using this
 
 
 /-! ## Complexification and derivatives -/
@@ -657,24 +673,33 @@ private lemma integral_norm_rpow_two_rpow_inv_eq_norm_toLp_real (h : TestFunctio
 private lemma norm_toLp_ofRealSchwartz_eq (f : TestFunction) :
     ‖(OSforGFF.ofRealSchwartz f).toLp 2 (volume : Measure SpaceTime)‖ =
       ‖f.toLp 2 (volume : Measure SpaceTime)‖ := by
-  have hint :
-      (∫ ξ : SpaceTime, ‖(OSforGFF.ofRealSchwartz f) ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime))
-        =
-        ∫ ξ : SpaceTime, ‖f ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime) := by
+  let μ : Measure SpaceTime := (volume : Measure SpaceTime)
+  have hint : (∫ ξ : SpaceTime, ‖(OSforGFF.ofRealSchwartz f) ξ‖ ^ (2 : ℝ) ∂μ)
+      = ∫ ξ : SpaceTime, ‖f ξ‖ ^ (2 : ℝ) ∂μ := by
     refine MeasureTheory.integral_congr_ae ?_
     filter_upwards with ξ
     simp
   calc
-    ‖(OSforGFF.ofRealSchwartz f).toLp 2 (volume : Measure SpaceTime)‖
-        =
-        (∫ ξ : SpaceTime, ‖(OSforGFF.ofRealSchwartz f) ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^
-          (1 / (2 : ℝ)) := by
-          simpa using (integral_norm_rpow_two_rpow_inv_eq_norm_toLp (h := OSforGFF.ofRealSchwartz f)).symm
-    _ =
-        (∫ ξ : SpaceTime, ‖f ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^ (1 / (2 : ℝ)) := by
-          rw [hint]
-    _ = ‖f.toLp 2 (volume : Measure SpaceTime)‖ := by
-          simpa using (integral_norm_rpow_two_rpow_inv_eq_norm_toLp_real (h := f))
+    ‖(OSforGFF.ofRealSchwartz f).toLp 2 μ‖
+        = (∫ ξ : SpaceTime, ‖(OSforGFF.ofRealSchwartz f) ξ‖ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) := by
+            simpa using (integral_norm_rpow_two_rpow_inv_eq_norm_toLp (h := OSforGFF.ofRealSchwartz f)).symm
+    _ = (∫ ξ : SpaceTime, ‖f ξ‖ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) := by simp
+    _ = ‖f.toLp 2 μ‖ := by simpa using (integral_norm_rpow_two_rpow_inv_eq_norm_toLp_real (h := f))
+
+private lemma norm_toLp_laplacian_ofRealSchwartz_eq (f : TestFunction) :
+    ‖(Δ (OSforGFF.ofRealSchwartz f)).toLp 2 (volume : Measure SpaceTime)‖ =
+      ‖(Δ f).toLp 2 (volume : Measure SpaceTime)‖ := by
+  have h := norm_toLp_ofRealSchwartz_eq (f := Δ f)
+  simpa [← laplacian_ofReal_eq (f := f)] using h
+
+private lemma norm_toLp_laplacian_laplacian_ofRealSchwartz_eq (f : TestFunction) :
+    ‖(Δ (Δ (OSforGFF.ofRealSchwartz f))).toLp 2 (volume : Measure SpaceTime)‖ =
+      ‖(Δ (Δ f)).toLp 2 (volume : Measure SpaceTime)‖ := by
+  have h := norm_toLp_ofRealSchwartz_eq (f := Δ (Δ f))
+  have h' := h
+  rw [← laplacian_ofReal_eq (f := Δ f)] at h'
+  rw [← laplacian_ofReal_eq (f := f)] at h'
+  exact h'
 
 private lemma memLp_fourierWeightInv_smul_fourier (g : TestFunctionℂ) :
     MemLp (fun ξ : SpaceTime ↦ fourierWeightInv ξ • (𝓕 g) ξ)
@@ -721,13 +746,13 @@ private lemma norm_fourierWeight_mul_norm_fourierWeightInv (ξ : SpaceTime) :
     _ = 1 := hmul
 
 private lemma fourierWeight_factor (g : TestFunctionℂ) :
-    (fun ξ : SpaceTime ↦ ‖fourierWeight ξ‖ * ‖fourierWeightInv ξ • (𝓕 g) ξ‖) =
+    (fun ξ : SpaceTime ↦ ‖fourierWeight ξ‖ * (‖fourierWeightInv ξ‖ * ‖(𝓕 g) ξ‖)) =
       (fun ξ : SpaceTime ↦ ‖(𝓕 g) ξ‖) := by
   funext ξ
   calc
-    ‖fourierWeight ξ‖ * ‖fourierWeightInv ξ • (𝓕 g) ξ‖
+    ‖fourierWeight ξ‖ * (‖fourierWeightInv ξ‖ * ‖(𝓕 g) ξ‖)
         = (‖fourierWeight ξ‖ * ‖fourierWeightInv ξ‖) * ‖(𝓕 g) ξ‖ := by
-            simp [mul_assoc,]
+            simp [mul_assoc]
     _ = ‖(𝓕 g) ξ‖ := by
           simp [norm_fourierWeight_mul_norm_fourierWeightInv]
 
@@ -746,22 +771,7 @@ private lemma integral_norm_fourier_le_weighted_L2' (g : TestFunctionℂ) :
       ((∫ ξ : SpaceTime, ‖fourierWeight ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^ (1 / (2 : ℝ))) *
         ((∫ ξ : SpaceTime, ‖fourierWeightInv ξ • (𝓕 g) ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^
           (1 / (2 : ℝ))) := by
-  have hH := holder_fourierWeight (g := g)
-  have hAE :
-      (fun ξ : SpaceTime ↦ ‖fourierWeight ξ‖ * ‖fourierWeightInv ξ • (𝓕 g) ξ‖)
-        =ᶠ[ae (volume : Measure SpaceTime)] fun ξ : SpaceTime ↦ ‖(𝓕 g) ξ‖ :=
-    Filter.EventuallyEq.of_eq (fourierWeight_factor (g := g))
-  have hIntEq :
-      (∫ ξ : SpaceTime, ‖fourierWeight ξ‖ * ‖fourierWeightInv ξ • (𝓕 g) ξ‖
-          ∂(volume : Measure SpaceTime)) =
-        ∫ ξ : SpaceTime, ‖(𝓕 g) ξ‖ ∂(volume : Measure SpaceTime) :=
-    MeasureTheory.integral_congr_ae hAE
-  calc
-    (∫ ξ : SpaceTime, ‖(𝓕 g) ξ‖ ∂(volume : Measure SpaceTime)) =
-        ∫ ξ : SpaceTime, ‖fourierWeight ξ‖ * ‖fourierWeightInv ξ • (𝓕 g) ξ‖
-          ∂(volume : Measure SpaceTime) := by
-            simpa using hIntEq.symm
-    _ ≤ _ := hH
+  simpa [fourierWeight_factor (g := g)] using (holder_fourierWeight (g := g))
 
 private lemma integral_norm_fourier_le_weighted_L2 (g : TestFunctionℂ) :
     (∫ ξ : SpaceTime, ‖(𝓕 g) ξ‖ ∂(volume : Measure SpaceTime)) ≤
@@ -772,6 +782,31 @@ private lemma integral_norm_fourier_le_weighted_L2 (g : TestFunctionℂ) :
             ∂(volume : Measure SpaceTime)) ^ (1 / (2 : ℝ))) := by
   simpa [fourierWeight, fourierWeightInv] using (integral_norm_fourier_le_weighted_L2' (g := g))
 
+private lemma integral_norm_fourierWeightInv_smul_fourier_rpow_two_rpow_inv_eq_norm_toLp (g : TestFunctionℂ) :
+    ((∫ ξ : SpaceTime, (‖fourierWeightInv ξ‖ * ‖(𝓕 g) ξ‖) ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^
+        (1 / (2 : ℝ))) =
+      ‖(SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ fourierWeightInv ξ) (𝓕 g)).toLp 2
+        (volume : Measure SpaceTime)‖ := by
+  have hgrowth : (fun ξ : SpaceTime ↦ fourierWeightInv ξ).HasTemperateGrowth := by
+    simpa [fourierWeightInv] using (by
+      fun_prop : (fun ξ : SpaceTime ↦ (((((1 : ℝ) + ‖ξ‖ ^ 2) ^ (2 : ℝ)) : ℝ) : ℂ)).HasTemperateGrowth)
+  set hW : TestFunctionℂ :=
+    SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ fourierWeightInv ξ) (𝓕 g) with hW_def
+  have hint : (fun ξ : SpaceTime ↦ ‖hW ξ‖ ^ (2 : ℝ))
+      = fun ξ : SpaceTime ↦ (‖fourierWeightInv ξ‖ * ‖(𝓕 g) ξ‖) ^ (2 : ℝ) := by
+    funext ξ
+    have := SchwartzMap.smulLeftCLM_apply_apply (F := ℂ)
+      (g := fun ξ : SpaceTime ↦ fourierWeightInv ξ) (hg := hgrowth) (𝓕 g) ξ
+    simpa [hW_def, norm_smul, mul_assoc] using congrArg (fun z : ℂ => ‖z‖ ^ (2 : ℝ)) this
+  have hintInt :
+      (∫ ξ : SpaceTime, ‖hW ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) =
+        ∫ ξ : SpaceTime, (‖fourierWeightInv ξ‖ * ‖(𝓕 g) ξ‖) ^ (2 : ℝ)
+          ∂(volume : Measure SpaceTime) := by
+    aesop
+  have hL2 := (integral_norm_rpow_two_rpow_inv_eq_norm_toLp (h := hW))
+  rw [hintInt] at hL2
+  exact hL2
+
 private lemma norm_le_fourierWeightL2_mul_norm_toLp_fourierWeightInv_smul_fourier
     (g : TestFunctionℂ) (x : SpaceTime) :
     ‖g x‖ ≤
@@ -781,63 +816,65 @@ private lemma norm_le_fourierWeightL2_mul_norm_toLp_fourierWeightInv_smul_fourie
   have hx1 : ‖g x‖ ≤ ∫ ξ : SpaceTime, ‖(𝓕 g) ξ‖ ∂(volume : Measure SpaceTime) :=
     norm_le_integral_norm_fourier g x
   have hx2 := integral_norm_fourier_le_weighted_L2' (g := g)
-  -- rewrite the second Hölder factor as an `L²` norm
-  let hW : TestFunctionℂ :=
+  -- rewrite the `L²` factor as a `toLp` norm of the weighted Fourier transform
+  set hW : TestFunctionℂ :=
     SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ fourierWeightInv ξ) (𝓕 g)
   have hW_eq :
-      ((∫ ξ : SpaceTime, ‖fourierWeightInv ξ • (𝓕 g) ξ‖ ^ (2 : ℝ)
-            ∂(volume : Measure SpaceTime)) ^ (1 / (2 : ℝ)))
+      (∫ ξ : SpaceTime, ‖fourierWeightInv ξ • (𝓕 g) ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^
+            (1 / (2 : ℝ))
         = ‖hW.toLp 2 (volume : Measure SpaceTime)‖ := by
-    have hint :
-        (∫ ξ : SpaceTime, ‖fourierWeightInv ξ • (𝓕 g) ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) =
-          ∫ ξ : SpaceTime, ‖hW ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime) := by
-      refine MeasureTheory.integral_congr_ae ?_
-      filter_upwards with ξ'
-      have hgrowth : (fun ξ : SpaceTime ↦ fourierWeightInv ξ).HasTemperateGrowth := by
-        simpa [fourierWeightInv] using (by
-          fun_prop :
-            (fun ξ : SpaceTime ↦ (((((1 : ℝ) + ‖ξ‖ ^ 2) ^ (2 : ℝ)) : ℝ) : ℂ)).HasTemperateGrowth)
-      have happly :
-          hW ξ' = fourierWeightInv ξ' • (𝓕 g) ξ' := by
-        simpa [hW] using
-          (SchwartzMap.smulLeftCLM_apply_apply (F := ℂ)
-            (g := fun ξ : SpaceTime ↦ fourierWeightInv ξ) (hg := hgrowth) (𝓕 g) ξ')
-      -- rewrite the integrand using `happly`
-      simp [happly]
-    have hLp : (∫ ξ : SpaceTime, ‖hW ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^ (1 / (2 : ℝ))
-        = ‖hW.toLp 2 (volume : Measure SpaceTime)‖ :=
-      integral_norm_rpow_two_rpow_inv_eq_norm_toLp (h := hW)
-    -- rewrite by `hint` then apply `hLp`
-    rw [hint]
-    exact hLp
+    calc
+      (∫ ξ : SpaceTime, ‖fourierWeightInv ξ • (𝓕 g) ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^
+            (1 / (2 : ℝ))
+          = ((∫ ξ : SpaceTime, (‖fourierWeightInv ξ‖ * ‖(𝓕 g) ξ‖) ^ (2 : ℝ)
+              ∂(volume : Measure SpaceTime)) ^ (1 / (2 : ℝ))) := by
+                simp
+      _ = ‖hW.toLp 2 (volume : Measure SpaceTime)‖ := by
+            simpa [hW] using
+              (integral_norm_fourierWeightInv_smul_fourier_rpow_two_rpow_inv_eq_norm_toLp (g := g))
   have hx2' :
       (∫ ξ : SpaceTime, ‖(𝓕 g) ξ‖ ∂(volume : Measure SpaceTime)) ≤
         ((∫ ξ : SpaceTime, ‖fourierWeight ξ‖ ^ (2 : ℝ) ∂(volume : Measure SpaceTime)) ^ (1 / (2 : ℝ))) *
           ‖hW.toLp 2 (volume : Measure SpaceTime)‖ := by
-    -- `hx2` is stated with `fourierWeightInv` explicitly
-    have hx2' := hx2
-    rw [hW_eq] at hx2'
-    exact hx2'
-  -- combine the pointwise bound with the weighted Hölder bound
-  have := le_trans hx1 hx2'
-  simpa [hW] using this
+    rw [hW_eq] at hx2
+    exact hx2
+  exact (le_trans hx1 (by simpa [hW] using hx2'))
 
 /-! ## Laplacian bounds in coefficient seminorms -/
 
-private def coeffDerivConst (ξ : ℝ) : ℕ → ℝ := fun k =>
-  ‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k + 1)
+/-- Constant controlling one Laplacian application in coefficient seminorms. -/
+private def coeffLaplacianConst (ξ : ℝ) (k : ℕ) : ℝ :=
+  (Fintype.card (Fin STDimension) : ℝ) * coeffDerivConst ξ k * coeffDerivConst ξ (k + 1)
+
+/-- Constant controlling two Laplacian applications in coefficient seminorms. -/
+private def coeffLaplacianLaplacianConst (ξ : ℝ) : ℝ :=
+  coeffLaplacianConst ξ 0 * coeffLaplacianConst ξ 2
 
 /-- Dimension-dependent constant controlling the Sobolev weight `sobolevWeight` by
 `‖·‖₂`, `‖Δ·‖₂`, `‖Δ²·‖₂`, then by `coeffSeminormSeq .. 4`. -/
 private def sobolevConst (ξ : ℝ) : ℝ :=
-  let d : ℕ → ℝ := coeffDerivConst ξ
-  let CΔ : ℝ := (Fintype.card (Fin STDimension) : ℝ) * (d 0) * (d 1)
-  let CΔΔ : ℝ := (Fintype.card (Fin STDimension) : ℝ) ^ 2 * (d 0) * (d 1) * (d 2) * (d 3)
-  (1 : ℝ) + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * CΔ + ((2 * Real.pi) ^ 4)⁻¹ * CΔΔ
+  (1 : ℝ)
+    + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * coeffLaplacianConst ξ 0
+    + ((2 * Real.pi) ^ 4)⁻¹ * coeffLaplacianLaplacianConst ξ
 
 private lemma sobolevConst_nonneg (ξ : ℝ) : 0 ≤ sobolevConst ξ := by
-  dsimp [sobolevConst, coeffDerivConst]
-  positivity
+  dsimp [sobolevConst]
+  have hpi : 0 < (2 * Real.pi : ℝ) := by positivity
+  have hden2 : 0 ≤ ((2 * Real.pi) ^ 2 : ℝ) := le_of_lt (pow_pos hpi 2)
+  have hden4 : 0 ≤ ((2 * Real.pi) ^ 4 : ℝ) := le_of_lt (pow_pos hpi 4)
+  have hcoeff0 : 0 ≤ coeffLaplacianConst ξ 0 := by
+    dsimp [coeffLaplacianConst, coeffDerivConst]
+    positivity
+  have hcoeffLL : 0 ≤ coeffLaplacianLaplacianConst ξ := by
+    dsimp [coeffLaplacianLaplacianConst, coeffLaplacianConst, coeffDerivConst]
+    positivity
+  have hterm1 :
+      0 ≤ ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * coeffLaplacianConst ξ 0 := by
+    exact mul_nonneg (div_nonneg (by positivity) hden2) hcoeff0
+  have hterm2 :
+      0 ≤ ((2 * Real.pi) ^ 4)⁻¹ * coeffLaplacianLaplacianConst ξ := by
+    exact mul_nonneg (inv_nonneg.mpr hden4) hcoeffLL
+  exact add_nonneg (add_nonneg (by positivity) hterm1) hterm2
 
 private lemma seminorm_finset_sum_le {α : Type*}
     {𝕜 E : Type*} [SeminormedRing 𝕜] [AddCommGroup E] [SMul 𝕜 E]
@@ -879,6 +916,21 @@ private lemma coeffDerivConst_nonneg (ξ : ℝ) (k : ℕ) : 0 ≤ coeffDerivCons
   dsimp [coeffDerivConst]
   positivity
 
+private lemma coeffMulProd_nonneg (ξ : ℝ) (k n : ℕ) : 0 ≤ coeffMulProd ξ k n := by
+  classical
+  dsimp [coeffMulProd]
+  refine Finset.prod_nonneg ?_
+  intro j hj
+  dsimp [coeffMulConst]
+  positivity
+
+private lemma coeffDerivProd_nonneg (ξ : ℝ) (k n : ℕ) : 0 ≤ coeffDerivProd ξ k n := by
+  classical
+  dsimp [coeffDerivProd]
+  refine Finset.prod_nonneg ?_
+  intro j hj
+  exact coeffDerivConst_nonneg (ξ := ξ) (k := k + j)
+
 private lemma coeffSeminormSeq_laplacian_le_sum (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (Δ f) ≤
       ∑ i : Fin STDimension, coeffSeminormSeq ξ hξ k (derivCoordCLM i (derivCoordCLM i f)) := by
@@ -886,47 +938,45 @@ private lemma coeffSeminormSeq_laplacian_le_sum (ξ : ℝ) (hξ : ξ ≠ 0) (k :
     (seminorm_fintype_sum_le (p := (coeffSeminormSeq ξ hξ k))
       (f := fun i : Fin STDimension => derivCoordCLM i (derivCoordCLM i f)))
 
+private lemma coeffSeminormSeq_derivCoordCLM_le'
+    (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (i : Fin STDimension) (f : TestFunction) :
+    coeffSeminormSeq ξ hξ k (derivCoordCLM i f) ≤ (coeffDerivConst ξ k) * coeffSeminormSeq ξ hξ (k + 1) f := by
+  simpa [coeffDerivConst, Nat.add_assoc] using
+    (coeffSeminormSeq_derivCoordCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f))
+
 private lemma coeffSeminormSeq_derivCoordCLM_derivCoordCLM_le
     (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (i : Fin STDimension) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (derivCoordCLM i (derivCoordCLM i f)) ≤
       (coeffDerivConst ξ k) * (coeffDerivConst ξ (k + 1)) * coeffSeminormSeq ξ hξ (k + 2) f := by
-  have h2 :
-      coeffSeminormSeq ξ hξ (k + 1) (derivCoordCLM i f) ≤
-        (coeffDerivConst ξ (k + 1)) * coeffSeminormSeq ξ hξ (k + 2) f := by
-    simpa [coeffDerivConst, Nat.add_assoc] using
-      (coeffSeminormSeq_derivCoordCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k + 1) (f := f))
   have hk : 0 ≤ coeffDerivConst ξ k := coeffDerivConst_nonneg (ξ := ξ) (k := k)
   calc
     coeffSeminormSeq ξ hξ k (derivCoordCLM i (derivCoordCLM i f)) ≤
         (coeffDerivConst ξ k) * coeffSeminormSeq ξ hξ (k + 1) (derivCoordCLM i f) := by
-          simpa [coeffDerivConst] using
-            (coeffSeminormSeq_derivCoordCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k)
-              (f := derivCoordCLM i f))
+          simpa using (coeffSeminormSeq_derivCoordCLM_le' (ξ := ξ) (hξ := hξ) (k := k) (i := i)
+            (f := derivCoordCLM i f))
     _ ≤ (coeffDerivConst ξ k) * ((coeffDerivConst ξ (k + 1)) * coeffSeminormSeq ξ hξ (k + 2) f) := by
-          exact mul_le_mul_of_nonneg_left h2 hk
+          exact mul_le_mul_of_nonneg_left
+            (by
+              simpa [Nat.add_assoc] using
+                (coeffSeminormSeq_derivCoordCLM_le' (ξ := ξ) (hξ := hξ) (k := k + 1) (i := i) (f := f)))
+            hk
     _ = (coeffDerivConst ξ k) * (coeffDerivConst ξ (k + 1)) * coeffSeminormSeq ξ hξ (k + 2) f := by
           ring
 
 private lemma coeffSeminormSeq_laplacian_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (Δ f) ≤
-      (Fintype.card (Fin STDimension) : ℝ) *
-        (coeffDerivConst ξ k) * (coeffDerivConst ξ (k + 1)) *
-          coeffSeminormSeq ξ hξ (k + 2) f := by
+      coeffLaplacianConst ξ k * coeffSeminormSeq ξ hξ (k + 2) f := by
   have hsum := coeffSeminormSeq_laplacian_le_sum (ξ := ξ) (hξ := hξ) (k := k) (f := f)
-  have hterm : ∀ i : Fin STDimension,
-      coeffSeminormSeq ξ hξ k (derivCoordCLM i (derivCoordCLM i f)) ≤
-        (coeffDerivConst ξ k) * (coeffDerivConst ξ (k + 1)) * coeffSeminormSeq ξ hξ (k + 2) f := by
-    intro i; simpa [mul_assoc] using (coeffSeminormSeq_derivCoordCLM_derivCoordCLM_le (ξ := ξ) (hξ := hξ) (k := k) (i := i) (f := f))
-  have hsum' :
-      (∑ i : Fin STDimension, coeffSeminormSeq ξ hξ k (derivCoordCLM i (derivCoordCLM i f))) ≤
-        (Fintype.card (Fin STDimension) : ℝ) *
-          ((coeffDerivConst ξ k) * (coeffDerivConst ξ (k + 1)) * coeffSeminormSeq ξ hξ (k + 2) f) := by
-    simpa [mul_assoc, mul_left_comm, mul_comm] using
-      (sum_le_card_mul_of_pointwise_le
-        (f := fun i : Fin STDimension => coeffSeminormSeq ξ hξ k (derivCoordCLM i (derivCoordCLM i f)))
-        (C := (coeffDerivConst ξ k) * (coeffDerivConst ξ (k + 1)) * coeffSeminormSeq ξ hξ (k + 2) f) hterm)
-  have h := le_trans hsum hsum'
-  simpa [mul_assoc, mul_left_comm, mul_comm] using h
+  set C : ℝ := (coeffDerivConst ξ k) * (coeffDerivConst ξ (k + 1)) * coeffSeminormSeq ξ hξ (k + 2) f
+  have hterm : ∀ i : Fin STDimension, coeffSeminormSeq ξ hξ k (derivCoordCLM i (derivCoordCLM i f)) ≤ C := by
+    intro i
+    simpa [C, mul_assoc] using
+      (coeffSeminormSeq_derivCoordCLM_derivCoordCLM_le (ξ := ξ) (hξ := hξ) (k := k) (i := i) (f := f))
+  refine (hsum.trans ?_)
+  simpa [coeffLaplacianConst, C, mul_assoc, mul_left_comm, mul_comm] using
+    (sum_le_card_mul_of_pointwise_le
+      (f := fun i : Fin STDimension => coeffSeminormSeq ξ hξ k (derivCoordCLM i (derivCoordCLM i f)))
+      (C := C) hterm)
 
 private lemma coeffSeminormSeq_zero_eq_norm_toLp (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
     coeffSeminormSeq ξ hξ 0 f = ‖f.toLp 2 (volume : Measure SpaceTime)‖ := by
@@ -946,77 +996,47 @@ private lemma norm_toLp_le_coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ
     ‖f.toLp 2 (volume : Measure SpaceTime)‖ = coeffSeminormSeq ξ hξ 0 f := hf0
     _ ≤ coeffSeminormSeq ξ hξ k f := hmono (Nat.zero_le k) f
 
-private lemma norm_toLp_laplacian_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
-    ‖(Δ f).toLp 2 (volume : Measure SpaceTime)‖ ≤
-      ((Fintype.card (Fin STDimension) : ℝ) * coeffDerivConst ξ 0 * coeffDerivConst ξ 1) *
-        coeffSeminormSeq ξ hξ 4 f := by
+private lemma coeffSeminormSeq_zero_laplacian_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
+    coeffSeminormSeq ξ hξ 0 (Δ f) ≤ coeffLaplacianConst ξ 0 * coeffSeminormSeq ξ hξ 4 f := by
   have hmono : Monotone (coeffSeminormSeq ξ hξ) := coeffSeminormSeq_mono ξ hξ
   have h24 : coeffSeminormSeq ξ hξ 2 f ≤ coeffSeminormSeq ξ hξ 4 f := hmono (by decide) f
-  set c : ℝ := (Fintype.card (Fin STDimension) : ℝ) * coeffDerivConst ξ 0 * coeffDerivConst ξ 1
-  have hc : 0 ≤ c := by
-    dsimp [c]
-    exact mul_nonneg
-      (mul_nonneg (by positivity) (coeffDerivConst_nonneg (ξ := ξ) (k := 0)))
-      (coeffDerivConst_nonneg (ξ := ξ) (k := 1))
-  have hΔ :
-      coeffSeminormSeq ξ hξ 0 (Δ f) ≤ c * coeffSeminormSeq ξ hξ 2 f := by
-    have h := coeffSeminormSeq_laplacian_le (ξ := ξ) (hξ := hξ) (k := 0) (f := f)
-    simpa [c, Nat.zero_add, mul_assoc] using h
-  have hΔ' : c * coeffSeminormSeq ξ hξ 2 f ≤ c * coeffSeminormSeq ξ hξ 4 f :=
-    mul_le_mul_of_nonneg_left h24 hc
-  have hcoeff : coeffSeminormSeq ξ hξ 0 (Δ f) ≤ c * coeffSeminormSeq ξ hξ 4 f :=
-    le_trans hΔ hΔ'
-  calc
-    ‖(Δ f).toLp 2 (volume : Measure SpaceTime)‖ = coeffSeminormSeq ξ hξ 0 (Δ f) := by
-      simpa using
-        (coeffSeminormSeq_zero_eq_norm_toLp (ξ := ξ) (hξ := hξ) (f := Δ f)).symm
-    _ ≤ c * coeffSeminormSeq ξ hξ 4 f := hcoeff
+  have hc : 0 ≤ coeffLaplacianConst ξ 0 := by
+    dsimp [coeffLaplacianConst]
+    positivity [coeffDerivConst_nonneg (ξ := ξ) (k := 0), coeffDerivConst_nonneg (ξ := ξ) (k := 1)]
+  have hΔ : coeffSeminormSeq ξ hξ 0 (Δ f) ≤ coeffLaplacianConst ξ 0 * coeffSeminormSeq ξ hξ 2 f := by
+    simpa [Nat.zero_add, mul_assoc] using
+      (coeffSeminormSeq_laplacian_le (ξ := ξ) (hξ := hξ) (k := 0) (f := f))
+  exact le_trans hΔ (mul_le_mul_of_nonneg_left h24 hc)
+
+private lemma norm_toLp_laplacian_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
+    ‖(Δ f).toLp 2 (volume : Measure SpaceTime)‖ ≤
+      coeffLaplacianConst ξ 0 * coeffSeminormSeq ξ hξ 4 f := by
+  have hcoeff := coeffSeminormSeq_zero_laplacian_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f)
+  simpa [coeffSeminormSeq_zero_eq_norm_toLp (ξ := ξ) (hξ := hξ) (f := Δ f)] using hcoeff
+
+private lemma coeffSeminormSeq_zero_laplacian_laplacian_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0)
+    (f : TestFunction) :
+    coeffSeminormSeq ξ hξ 0 (Δ (Δ f)) ≤
+      coeffLaplacianLaplacianConst ξ * coeffSeminormSeq ξ hξ 4 f := by
+  have hc0 : 0 ≤ coeffLaplacianConst ξ 0 := by
+    dsimp [coeffLaplacianConst]
+    positivity [coeffDerivConst_nonneg (ξ := ξ) (k := 0), coeffDerivConst_nonneg (ξ := ξ) (k := 1)]
+  have h0 : coeffSeminormSeq ξ hξ 0 (Δ (Δ f)) ≤ coeffLaplacianConst ξ 0 * coeffSeminormSeq ξ hξ 2 (Δ f) := by
+    simpa [Nat.zero_add, mul_assoc] using
+      (coeffSeminormSeq_laplacian_le (ξ := ξ) (hξ := hξ) (k := 0) (f := Δ f))
+  have h2 : coeffSeminormSeq ξ hξ 2 (Δ f) ≤ coeffLaplacianConst ξ 2 * coeffSeminormSeq ξ hξ 4 f := by
+    simpa [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm, mul_assoc] using
+      (coeffSeminormSeq_laplacian_le (ξ := ξ) (hξ := hξ) (k := 2) (f := f))
+  have h := h0.trans <| mul_le_mul_of_nonneg_left h2 hc0
+  simpa [coeffLaplacianLaplacianConst, mul_assoc] using h
 
 private lemma norm_toLp_laplacian_laplacian_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0)
     (f : TestFunction) :
     ‖(Δ (Δ f)).toLp 2 (volume : Measure SpaceTime)‖ ≤
-      ((Fintype.card (Fin STDimension) : ℝ) ^ 2 * coeffDerivConst ξ 0 * coeffDerivConst ξ 1 *
-            coeffDerivConst ξ 2 * coeffDerivConst ξ 3) *
-        coeffSeminormSeq ξ hξ 4 f := by
-  have hmono : Monotone (coeffSeminormSeq ξ hξ) := coeffSeminormSeq_mono ξ hξ
-  set c0 : ℝ := (Fintype.card (Fin STDimension) : ℝ) * coeffDerivConst ξ 0 * coeffDerivConst ξ 1
-  set c2 : ℝ := (Fintype.card (Fin STDimension) : ℝ) * coeffDerivConst ξ 2 * coeffDerivConst ξ 3
-  have hc0 : 0 ≤ c0 := by
-    dsimp [c0]
-    exact mul_nonneg
-      (mul_nonneg (by positivity) (coeffDerivConst_nonneg (ξ := ξ) (k := 0)))
-      (coeffDerivConst_nonneg (ξ := ξ) (k := 1))
-  have hc2 : 0 ≤ c2 := by
-    dsimp [c2]
-    exact mul_nonneg
-      (mul_nonneg (by positivity) (coeffDerivConst_nonneg (ξ := ξ) (k := 2)))
-      (coeffDerivConst_nonneg (ξ := ξ) (k := 3))
-  have h0 :
-      coeffSeminormSeq ξ hξ 0 (Δ (Δ f)) ≤ c0 * coeffSeminormSeq ξ hξ 2 (Δ f) := by
-    have h := coeffSeminormSeq_laplacian_le (ξ := ξ) (hξ := hξ) (k := 0) (f := Δ f)
-    simpa [c0, Nat.zero_add, mul_assoc] using h
-  have h2 :
-      coeffSeminormSeq ξ hξ 2 (Δ f) ≤ c2 * coeffSeminormSeq ξ hξ 4 f := by
-    have h := coeffSeminormSeq_laplacian_le (ξ := ξ) (hξ := hξ) (k := 2) (f := f)
-    simpa [c2, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm, mul_assoc] using h
-  have hmul : c0 * coeffSeminormSeq ξ hξ 2 (Δ f) ≤ c0 * (c2 * coeffSeminormSeq ξ hξ 4 f) :=
-    mul_le_mul_of_nonneg_left h2 hc0
-  have hcoeff :
-      coeffSeminormSeq ξ hξ 0 (Δ (Δ f)) ≤ c0 * (c2 * coeffSeminormSeq ξ hξ 4 f) :=
-    le_trans h0 hmul
-  have hscal :
-      c0 * (c2 * coeffSeminormSeq ξ hξ 4 f) =
-        ((Fintype.card (Fin STDimension) : ℝ) ^ 2 * coeffDerivConst ξ 0 * coeffDerivConst ξ 1 *
-              coeffDerivConst ξ 2 * coeffDerivConst ξ 3) *
-          coeffSeminormSeq ξ hξ 4 f := by
-    dsimp [c0, c2]
-    ring
-  calc
-    ‖(Δ (Δ f)).toLp 2 (volume : Measure SpaceTime)‖ = coeffSeminormSeq ξ hξ 0 (Δ (Δ f)) := by
-      simpa using
-        (coeffSeminormSeq_zero_eq_norm_toLp (ξ := ξ) (hξ := hξ) (f := Δ (Δ f))).symm
-    _ ≤ c0 * (c2 * coeffSeminormSeq ξ hξ 4 f) := hcoeff
-    _ = _ := hscal
+      coeffLaplacianLaplacianConst ξ * coeffSeminormSeq ξ hξ 4 f := by
+  have hcoeff :=
+    coeffSeminormSeq_zero_laplacian_laplacian_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f)
+  simpa [coeffSeminormSeq_zero_eq_norm_toLp (ξ := ξ) (hξ := hξ) (f := Δ (Δ f))] using hcoeff
 
 /-! ## A Sobolev bound for the Fourier weight `(1 + ‖ξ‖^2)^2` -/
 
@@ -1040,6 +1060,28 @@ private lemma quadWeight_sq_hasTemperateGrowth :
   simpa [quadWeight] using (by
     fun_prop : (fun ξ : SpaceTime ↦ (‖ξ‖ ^ 2) * (‖ξ‖ ^ 2)).HasTemperateGrowth)
 
+private lemma sobolevWeight_hasTemperateGrowth : (sobolevWeight : SpaceTime → ℝ).HasTemperateGrowth := by
+  simpa [sobolevWeight] using (by
+    fun_prop : (fun ξ : SpaceTime ↦ (1 + ‖ξ‖ ^ 2) ^ 2).HasTemperateGrowth)
+
+private lemma two_mul_quadWeight_hasTemperateGrowth :
+    (fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ).HasTemperateGrowth := by
+  simpa [quadWeight] using (by
+    fun_prop : (fun ξ : SpaceTime ↦ (2 : ℝ) * ‖ξ‖ ^ 2).HasTemperateGrowth)
+
+private lemma one_add_two_mul_quadWeight_hasTemperateGrowth :
+    (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ).HasTemperateGrowth := by
+  simpa [quadWeight] using (by
+    fun_prop : (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * ‖ξ‖ ^ 2).HasTemperateGrowth)
+
+private lemma fourierMultiplierCLM_add_apply {g₁ g₂ : SpaceTime → ℝ} (hg₁ : g₁.HasTemperateGrowth)
+    (hg₂ : g₂.HasTemperateGrowth) (f : TestFunctionℂ) :
+    SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (g₁ + g₂) f =
+      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) g₁ f +
+        SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) g₂ f := by
+  simpa using
+    congrArg (fun T => T f) (SchwartzMap.fourierMultiplierCLM_add (F := (ℂ)) hg₁ hg₂)
+
 private lemma neg_two_mul_pi_sq_ne_zero : (-((2 * Real.pi) ^ 2 : ℝ)) ≠ 0 := by
   have hpos : 0 < ((2 * Real.pi) ^ 2 : ℝ) := by
     have : (0 : ℝ) < 2 * Real.pi := by positivity
@@ -1049,12 +1091,29 @@ private lemma neg_two_mul_pi_sq_ne_zero : (-((2 * Real.pi) ^ 2 : ℝ)) ≠ 0 := 
 private lemma norm_inv_neg_two_mul_pi_sq :
     ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ = (1 : ℝ) / (2 * Real.pi) ^ 2 := by
   have hnonneg : 0 ≤ ((2 * Real.pi) ^ 2 : ℝ) := by positivity
+  simp [Real.norm_of_nonneg hnonneg]
+
+private lemma norm_two_mul_inv_neg_two_mul_pi_sq :
+    ‖(2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ = (2 : ℝ) / (2 * Real.pi) ^ 2 := by
   calc
-    ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ = ‖(-((2 * Real.pi) ^ 2 : ℝ))‖⁻¹ := by
+    ‖(2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ = ‖(2 : ℝ)‖ * ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ := by
       simp
-    _ = ‖((2 * Real.pi) ^ 2 : ℝ)‖⁻¹ := by simp
-    _ = ((2 * Real.pi) ^ 2 : ℝ)⁻¹ := by simp [Real.norm_of_nonneg hnonneg]
-    _ = (1 : ℝ) / (2 * Real.pi) ^ 2 := by simp [one_div]
+    _ = (2 : ℝ) * ((1 : ℝ) / (2 * Real.pi) ^ 2) := by
+      rw [Real.norm_of_nonneg (show (0 : ℝ) ≤ (2 : ℝ) by norm_num), norm_inv_neg_two_mul_pi_sq]
+    _ = (2 : ℝ) / (2 * Real.pi) ^ 2 := by simp [div_eq_mul_inv]
+
+private lemma norm_inv_neg_two_mul_pi_sq_sq :
+    ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹ * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ = (1 : ℝ) / (2 * Real.pi) ^ 4 := by
+  have h0 : (2 * Real.pi : ℝ) ≠ 0 := by
+    have : (0 : ℝ) < 2 * Real.pi := by positivity
+    exact ne_of_gt this
+  calc
+    ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹ * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖
+        = ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ * ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ := by simp
+    _ = ((1 : ℝ) / (2 * Real.pi) ^ 2) * ((1 : ℝ) / (2 * Real.pi) ^ 2) := by
+          simp_rw [norm_inv_neg_two_mul_pi_sq]
+    _ = (1 : ℝ) / (2 * Real.pi) ^ 4 := by
+          field_simp [h0]
 
 private lemma fourierMultiplierCLM_quadWeight_eq (g : TestFunctionℂ) :
     SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g =
@@ -1071,142 +1130,97 @@ private lemma fourierMultiplierCLM_quadWeight_eq (g : TestFunctionℂ) :
 private lemma fourierMultiplierCLM_quadWeight_sq_eq (g : TestFunctionℂ) :
     SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g =
       (-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • ((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • Δ (Δ g)) := by
-  have hg : quadWeight.HasTemperateGrowth := quadWeight_hasTemperateGrowth
-  have hcomp :=
-    (SchwartzMap.fourierMultiplierCLM_fourierMultiplierCLM_apply (F := (ℂ))
-      (g₁ := quadWeight) (g₂ := quadWeight) hg hg g)
-  have hcomp' :
-      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g =
-        SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight
-          (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g) := by
-    simpa [Pi.mul_def] using hcomp.symm
-  have hq := fourierMultiplierCLM_quadWeight_eq (g := g)
-  have hqΔ := fourierMultiplierCLM_quadWeight_eq (g := Δ g)
   calc
     SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g
         =
         SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight
-          (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g) := hcomp'
-    _ =
-        SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight ((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • Δ g) := by
-          rw [hq]
+          (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g) := by
+          simpa [Pi.mul_def] using
+            (SchwartzMap.fourierMultiplierCLM_fourierMultiplierCLM_apply (F := (ℂ))
+              (g₁ := quadWeight) (g₂ := quadWeight) quadWeight_hasTemperateGrowth
+              quadWeight_hasTemperateGrowth g).symm
     _ = (-((2 * Real.pi) ^ 2 : ℝ))⁻¹ •
           SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight (Δ g) := by
-          simp
+          simp [fourierMultiplierCLM_quadWeight_eq (g := g)]
     _ = (-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • ((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • Δ (Δ g)) := by
-          rw [hqΔ]
+          simp [fourierMultiplierCLM_quadWeight_eq (g := Δ g)]
+
+private lemma fourierMultiplierCLM_two_mul_quadWeight_eq (g : TestFunctionℂ) :
+    SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ) g =
+      (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g := by
+  simpa [smul_eq_mul] using
+    (SchwartzMap.fourierMultiplierCLM_smul_apply (F := (ℂ)) (hg := quadWeight_hasTemperateGrowth)
+      (c := (2 : ℝ)) (f := g))
+
+private lemma fourierMultiplierCLM_sobolevWeight_eq_add (g : TestFunctionℂ) :
+    SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g =
+      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
+          (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ) g
+        + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
+          (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g := by
+  have hs :
+      (sobolevWeight : SpaceTime → ℝ) =
+        (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ)
+          + (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) := by
+    funext ξ
+    simp [sobolevWeight_poly, add_assoc]
+  simpa [hs] using
+    (fourierMultiplierCLM_add_apply one_add_two_mul_quadWeight_hasTemperateGrowth
+      quadWeight_sq_hasTemperateGrowth g)
+
+private lemma fourierMultiplierCLM_one_add_two_mul_quadWeight_eq_add (g : TestFunctionℂ) :
+    SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
+          (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ) g =
+      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun _ : SpaceTime ↦ (1 : ℝ)) g +
+        SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
+          (fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ) g := by
+  simpa using
+    (fourierMultiplierCLM_add_apply (g₁ := fun _ : SpaceTime ↦ (1 : ℝ))
+      (g₂ := fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ) (by fun_prop)
+      two_mul_quadWeight_hasTemperateGrowth g)
+
+private lemma fourierMultiplierCLM_sobolevWeight_eq_sum (g : TestFunctionℂ) :
+    SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g =
+      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun _ : SpaceTime ↦ (1 : ℝ)) g
+        + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ) g
+        + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g := by
+  simpa [fourierMultiplierCLM_one_add_two_mul_quadWeight_eq_add, add_assoc] using
+    (fourierMultiplierCLM_sobolevWeight_eq_add (g := g))
 
 private lemma fourierMultiplierCLM_sobolevWeight_decomp (g : TestFunctionℂ) :
     SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g =
       g
         + (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g
         + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g := by
-  have h1 :
-      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g =
-        SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun _ : SpaceTime ↦ (1 : ℝ)) g
-          + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ) g
-          + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g := by
-    have hsum :
-        (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ + quadWeight ξ * quadWeight ξ)
-          =
-          (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ) +
-            (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) := by
-      funext ξ; simp [add_assoc]
-    have hadd1 :=
-      SchwartzMap.fourierMultiplierCLM_add (F := (ℂ))
-        (g₁ := fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ)
-        (g₂ := fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ)
-        (by
-          -- `fun_prop` doesn't unfold `quadWeight`, so we do it explicitly.
-          simpa [quadWeight] using (by
-            fun_prop : (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * ‖ξ‖ ^ 2).HasTemperateGrowth))
-        quadWeight_sq_hasTemperateGrowth
-    have hadd2 :=
-      SchwartzMap.fourierMultiplierCLM_add (F := (ℂ))
-        (g₁ := fun _ : SpaceTime ↦ (1 : ℝ))
-        (g₂ := fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ)
-        (by fun_prop)
-        (by
-          simpa [quadWeight] using (by
-            fun_prop : (fun ξ : SpaceTime ↦ (2 : ℝ) * ‖ξ‖ ^ 2).HasTemperateGrowth))
-    have hA :
-        SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ) g
-          =
-          SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun _ : SpaceTime ↦ (1 : ℝ)) g
-            + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ) g := by
-      simpa using congrArg (fun T => T g) hadd2
-    have hB :
-        SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-              (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ) g
-            + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g
-          =
-          SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g := by
-      have this := congrArg (fun T => T g) hadd1
-      have hsym :
-          (fun ξ : SpaceTime ↦ (1 : ℝ) + (2 : ℝ) * quadWeight ξ) +
-              (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) =
-            sobolevWeight := by
-        funext ξ
-        simp [sobolevWeight, quadWeight, pow_two]
-        ring
-      simpa [hsym] using this.symm
-    rw [← hB]
-    simp [hA, add_assoc]
-  have hconst :
-      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun _ : SpaceTime ↦ (1 : ℝ)) g = g := by
-    simp
-  have hsmul :
-      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (fun ξ : SpaceTime ↦ (2 : ℝ) * quadWeight ξ) g =
-        (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g := by
-    simpa [smul_eq_mul] using
-      (SchwartzMap.fourierMultiplierCLM_smul_apply (F := (ℂ)) (hg := quadWeight_hasTemperateGrowth)
-        (c := (2 : ℝ)) (f := g))
-  simpa [hconst, hsmul, add_assoc] using h1
+  have hs := fourierMultiplierCLM_sobolevWeight_eq_sum (g := g)
+  simpa [fourierMultiplierCLM_two_mul_quadWeight_eq, add_assoc] using hs
 
 private lemma norm_toLp_two_smul_fourierMultiplierCLM_quadWeight_eq (g : TestFunctionℂ) :
     ‖((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
           (volume : Measure SpaceTime)‖
       = ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖ := by
-  have hq := fourierMultiplierCLM_quadWeight_eq (g := g)
+  let c : ℝ := (2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹
+  have toLp_smul (a : ℝ) (f : TestFunctionℂ) :
+      (a • f).toLp 2 (volume : Measure SpaceTime) = a • f.toLp 2 (volume : Measure SpaceTime) := by
+    rfl
+  have hsmul :
+      (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g = c • Δ g := by
+    simp [c, fourierMultiplierCLM_quadWeight_eq (g := g), smul_smul]
   calc
     ‖((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
           (volume : Measure SpaceTime)‖
-        = ‖((2 : ℝ) • ((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • Δ g)).toLp 2
-              (volume : Measure SpaceTime)‖ := by
-            exact
-              congrArg
-                (fun t : TestFunctionℂ =>
-                  ‖((2 : ℝ) • t).toLp 2 (volume : Measure SpaceTime)‖) hq
-    _ = ‖((2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹) • (Δ g).toLp 2 (volume : Measure SpaceTime)‖ := by
-          have htoLp :
-              ((2 : ℝ) • ((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • Δ g)).toLp 2
-                  (volume : Measure SpaceTime)
-                =
-              ((2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹) • (Δ g).toLp 2
-                  (volume : Measure SpaceTime) := by
-            change (2 : ℝ) • (((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • Δ g).toLp 2
-              (volume : Measure SpaceTime)) = _
-            change (2 : ℝ) • ((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • (Δ g).toLp 2
-              (volume : Measure SpaceTime)) = _
-            simp only [smul_smul, mul_assoc]
-          exact congrArg (fun z => ‖z‖) htoLp
-    _ = ‖(2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ * ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖ := by
-          exact norm_smul ((2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹)
-            ((Δ g).toLp 2 (volume : Measure SpaceTime))
+        = ‖(c • Δ g).toLp 2 (volume : Measure SpaceTime)‖ := by
+            simpa using
+              congrArg (fun t : TestFunctionℂ => ‖t.toLp 2 (volume : Measure SpaceTime)‖) hsmul
+    _ = ‖c • (Δ g).toLp 2 (volume : Measure SpaceTime)‖ := by
+          simp [toLp_smul]
+    _ = ‖c‖ * ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖ := by
+          exact norm_smul _ _
     _ = ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖ := by
-          have hscal :
-              ‖(2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ = (2 : ℝ) / (2 * Real.pi) ^ 2 := by
-            calc
-              ‖(2 : ℝ) * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖
-                  = ‖(2 : ℝ)‖ * ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ := by
-                      simpa using (norm_mul (2 : ℝ) (-((2 * Real.pi) ^ 2 : ℝ))⁻¹)
-              _ = (2 : ℝ) * ((1 : ℝ) / (2 * Real.pi) ^ 2) := by
-                    rw [Real.norm_of_nonneg (show (0 : ℝ) ≤ (2 : ℝ) by norm_num)]
-                    rw [norm_inv_neg_two_mul_pi_sq]
-              _ = (2 : ℝ) / (2 * Real.pi) ^ 2 := by
-                    simp [div_eq_mul_inv]
-          rw [hscal]
+          have hc : ‖c‖ = ((2 : ℝ) / ((2 * Real.pi) ^ 2)) := by
+            dsimp [c]
+            simpa using norm_two_mul_inv_neg_two_mul_pi_sq
+          rw [hc]
   aesop
 
 private lemma norm_toLp_fourierMultiplierCLM_quadWeight_sq_eq (g : TestFunctionℂ) :
@@ -1214,321 +1228,155 @@ private lemma norm_toLp_fourierMultiplierCLM_quadWeight_sq_eq (g : TestFunction�
           (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
         (volume : Measure SpaceTime)‖
       = (1 / ((2 * Real.pi) ^ 4)) * ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
-  have toLp_smul (c : ℝ) (f : TestFunctionℂ) :
-      (c • f).toLp 2 (volume : Measure SpaceTime) = c • f.toLp 2 (volume : Measure SpaceTime) := by
+  let d : ℝ := (-((2 * Real.pi) ^ 2 : ℝ))⁻¹ * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹
+  have toLp_smul (a : ℝ) (f : TestFunctionℂ) :
+      (a • f).toLp 2 (volume : Measure SpaceTime) = a • f.toLp 2 (volume : Measure SpaceTime) := by
     rfl
-  have hq2 := fourierMultiplierCLM_quadWeight_sq_eq (g := g)
+  have hsmul :
+      SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
+          (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g = d • Δ (Δ g) := by
+    simp [d, fourierMultiplierCLM_quadWeight_sq_eq (g := g), smul_smul]
   calc
     ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
             (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
           (volume : Measure SpaceTime)‖
-        = ‖((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • ((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ • Δ (Δ g))).toLp 2
-              (volume : Measure SpaceTime)‖ := by
-              exact
-                congrArg
-                  (fun t : TestFunctionℂ =>
-                    ‖t.toLp 2 (volume : Measure SpaceTime)‖) hq2
-    _ = ‖((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹) •
-            (Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
-          simp only [toLp_smul, smul_smul, mul_assoc]
-    _ = ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹ * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ *
-          ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
-          exact norm_smul
-            ((-((2 * Real.pi) ^ 2 : ℝ))⁻¹ * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹)
-            ((Δ (Δ g)).toLp 2 (volume : Measure SpaceTime))
+        = ‖(d • Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
+            simpa using
+              congrArg (fun t : TestFunctionℂ => ‖t.toLp 2 (volume : Measure SpaceTime)‖) hsmul
+    _ = ‖d • (Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
+          simp [toLp_smul]
+    _ = ‖d‖ * ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
+          exact norm_smul _ _
     _ = (1 / ((2 * Real.pi) ^ 4)) * ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
-          have hscal :
-              ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹ * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ =
-                (1 : ℝ) / (2 * Real.pi) ^ 4 := by
-            calc
-              ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹ * (-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖
-                  =
-                  ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ * ‖(-((2 * Real.pi) ^ 2 : ℝ))⁻¹‖ := by
-                    exact norm_mul (-((2 * Real.pi) ^ 2 : ℝ))⁻¹ (-((2 * Real.pi) ^ 2 : ℝ))⁻¹
-              _ = ((1 : ℝ) / (2 * Real.pi) ^ 2) * ((1 : ℝ) / (2 * Real.pi) ^ 2) := by
-                    rw [norm_inv_neg_two_mul_pi_sq, ← norm_inv_neg_two_mul_pi_sq]
-              _ = (1 : ℝ) / (2 * Real.pi) ^ 4 := by
-                    have h0 : (2 * Real.pi : ℝ) ≠ 0 := by
-                      have h2 : (2 : ℝ) ≠ 0 := by norm_num
-                      exact mul_ne_zero h2 Real.pi_ne_zero
-                    field_simp [h0]
-          rw [hscal]
-  aesop
+          have hd : ‖d‖ = (1 / ((2 * Real.pi) ^ 4)) := by
+            dsimp [d]
+            simpa using norm_inv_neg_two_mul_pi_sq_sq
+          rw [hd]
+  rfl
 
-set_option maxHeartbeats 800000 in
+private lemma toLp_add_add_add_eq (μ : Measure SpaceTime) [μ.HasTemperateGrowth] (g u v : TestFunctionℂ) :
+    (g + u + v).toLp 2 μ = g.toLp 2 μ + u.toLp 2 μ + v.toLp 2 μ := by
+  let T : TestFunctionℂ →L[ℝ] ↥(Lp ℂ 2 μ) :=
+    SchwartzMap.toLpCLM (𝕜 := ℝ) (F := ℂ) (E := SpaceTime) (p := (2 : ℝ≥0∞)) (μ := μ)
+  simpa [T, SchwartzMap.toLpCLM_apply, add_assoc] using (by simp [add_assoc] : T (g + u + v) = T g + T u + T v)
+
+private lemma norm_add_add_le {α : Type*} [SeminormedAddCommGroup α] (a b c : α) :
+    ‖a + b + c‖ ≤ ‖a‖ + ‖b‖ + ‖c‖ := by
+  calc
+    ‖a + b + c‖ = ‖(a + b) + c‖ := by simp [add_assoc]
+    _ ≤ ‖a + b‖ + ‖c‖ := norm_add_le _ _
+    _ ≤ (‖a‖ + ‖b‖) + ‖c‖ := by
+          gcongr
+          exact norm_add_le _ _
+    _ = ‖a‖ + ‖b‖ + ‖c‖ := by simp [add_assoc]
+
+private lemma norm_toLp_le_of_eq_add_add_add (μ : Measure SpaceTime) [μ.HasTemperateGrowth]
+    {h g u v : TestFunctionℂ}
+    (hdecomp : h = g + u + v) :
+    ‖h.toLp 2 μ‖ ≤ ‖g.toLp 2 μ‖ + ‖u.toLp 2 μ‖ + ‖v.toLp 2 μ‖ := by
+  have htoLp : h.toLp 2 μ = g.toLp 2 μ + u.toLp 2 μ + v.toLp 2 μ := by
+    calc
+      h.toLp 2 μ = (g + u + v).toLp 2 μ := by
+            simpa using congrArg (fun f : TestFunctionℂ => f.toLp 2 μ) hdecomp
+      _ = g.toLp 2 μ + u.toLp 2 μ + v.toLp 2 μ := toLp_add_add_add_eq (μ := μ) (g := g) (u := u) (v := v)
+  rw [htoLp]
+  exact norm_add_add_le (g.toLp 2 μ) (u.toLp 2 μ) (v.toLp 2 μ)
+
 private lemma norm_toLp_fourierMultiplierCLM_sobolevWeight_le (g : TestFunctionℂ) :
     ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g).toLp 2
         (volume : Measure SpaceTime)‖ ≤
       (1 : ℝ) * ‖g.toLp 2 (volume : Measure SpaceTime)‖
         + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖
         + (1 / ((2 * Real.pi) ^ 4)) * ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
-  -- Refactored proof: decompose the multiplier into `1 + 2‖·‖² + ‖·‖⁴`
-  -- and convert the polynomial symbols into Laplacian iterates.
-  set h : TestFunctionℂ :=
-    SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g with hh
-  have hdecomp :
-      h =
-        g
-          + (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g
-          + SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-              (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g := by
-    simpa [hh] using (fourierMultiplierCLM_sobolevWeight_decomp (g := g))
-  let T :
-      TestFunctionℂ →L[ℝ] ↥(Lp ℂ 2 (volume : Measure SpaceTime)) :=
-    SchwartzMap.toLpCLM (𝕜 := ℝ) (F := ℂ) (E := SpaceTime)
-      (p := (2 : ℝ≥0∞)) (μ := (volume : Measure SpaceTime))
-  have htoLp :
-      h.toLp 2 (volume : Measure SpaceTime) =
-        g.toLp 2 (volume : Measure SpaceTime)
-          + ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-              (volume : Measure SpaceTime)
-          + (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
-              (volume : Measure SpaceTime) := by
-    have hEq := congrArg (fun u : TestFunctionℂ => T u) hdecomp
-    have :
-        T h =
-          T g
-            + T ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g)
-            + T (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                  (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g) := by
-      calc
-        T h = T (g + (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g +
-              SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g) := hEq
-        _ = T (g + (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g)
-              + T (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                    (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g) := by
-              simpa [add_assoc] using
-                (T.map_add (g + (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g)
-                  (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                    (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g))
-        _ = (T g + T ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g))
-              + T (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                    (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g) := by
-              simpa using congrArg (fun z => z + T (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g))
-                (T.map_add g ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g))
-        _ = _ := by simp [add_assoc]
-    simpa [T, SchwartzMap.toLpCLM_apply] using this
+  let μ : Measure SpaceTime := (volume : Measure SpaceTime)
+  let h : TestFunctionℂ := SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g
+  let u : TestFunctionℂ := (2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g
+  let v : TestFunctionℂ := SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
+    (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g
+  have hdecomp : h = g + u + v := by
+    simpa [h, u, v, add_assoc] using (fourierMultiplierCLM_sobolevWeight_decomp (g := g))
+  have htri : ‖h.toLp 2 μ‖ ≤ ‖g.toLp 2 μ‖ + ‖u.toLp 2 μ‖ + ‖v.toLp 2 μ‖ :=
+    norm_toLp_le_of_eq_add_add_add (μ := μ) hdecomp
+  have hu : ‖u.toLp 2 μ‖ = ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * ‖(Δ g).toLp 2 μ‖ := by
+    simpa [u, μ] using (norm_toLp_two_smul_fourierMultiplierCLM_quadWeight_eq (g := g))
+  have hv : ‖v.toLp 2 μ‖ = (1 / ((2 * Real.pi) ^ 4)) * ‖(Δ (Δ g)).toLp 2 μ‖ := by
+    simpa [v, μ] using (norm_toLp_fourierMultiplierCLM_quadWeight_sq_eq (g := g))
+  simpa [μ, h, one_mul, add_assoc, hu, hv] using htri
 
-  have htri :
-      ‖h.toLp 2 (volume : Measure SpaceTime)‖ ≤
-        ‖g.toLp 2 (volume : Measure SpaceTime)‖
-          + ‖((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-              (volume : Measure SpaceTime)‖
-          + ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
-              (volume : Measure SpaceTime)‖ := by
-    have habc :
-        ‖(g.toLp 2 (volume : Measure SpaceTime)
-            + ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-                (volume : Measure SpaceTime))
-          + (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
-              (volume : Measure SpaceTime)‖
-          ≤
-          ‖g.toLp 2 (volume : Measure SpaceTime)
-              + ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-                  (volume : Measure SpaceTime)‖
-            + ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                  (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
-                (volume : Measure SpaceTime)‖ :=
-      norm_add_le _ _
-    have hab :
-        ‖g.toLp 2 (volume : Measure SpaceTime)
-            + ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-                (volume : Measure SpaceTime)‖
-          ≤
-          ‖g.toLp 2 (volume : Measure SpaceTime)‖
-            + ‖((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-                (volume : Measure SpaceTime)‖ :=
-      norm_add_le _ _
-    have hsum :
-        ‖(g.toLp 2 (volume : Measure SpaceTime)
-            + ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-                (volume : Measure SpaceTime))
-          + (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
-              (volume : Measure SpaceTime)‖
-          ≤
-          ‖g.toLp 2 (volume : Measure SpaceTime)‖
-            + ‖((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-                (volume : Measure SpaceTime)‖
-            + ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                  (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
-                (volume : Measure SpaceTime)‖ := by
-      refine le_trans habc ?_
-      have :
-          ‖g.toLp 2 (volume : Measure SpaceTime)
-                + ((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-                    (volume : Measure SpaceTime)‖
-              + ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                    (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
-                  (volume : Measure SpaceTime)‖
-            ≤
-            (‖g.toLp 2 (volume : Measure SpaceTime)‖
-                + ‖((2 : ℝ) • SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) quadWeight g).toLp 2
-                    (volume : Measure SpaceTime)‖)
-              + ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ)
-                    (fun ξ : SpaceTime ↦ quadWeight ξ * quadWeight ξ) g).toLp 2
-                  (volume : Measure SpaceTime)‖ := by
-        -- add the third term to `hab`
-        simpa [add_assoc] using
-          (add_le_add hab le_rfl)
-      simpa [add_assoc] using this
-    simpa [htoLp, add_assoc] using hsum
+private lemma fourier_fourierMultiplierCLM_sobolevWeight_eq_smulLeftCLM (g : TestFunctionℂ) :
+    𝓕 (SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g) =
+      SchwartzMap.smulLeftCLM (F := ℂ) sobolevWeight (𝓕 g) := by
+  exact
+    SchwartzMap.fourier_fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) (g := sobolevWeight) (f := g)
 
-  have hterm2 := norm_toLp_two_smul_fourierMultiplierCLM_quadWeight_eq (g := g)
-  have hterm3 := norm_toLp_fourierMultiplierCLM_quadWeight_sq_eq (g := g)
+private lemma norm_toLp_sobolevWeight_smul_fourier_ofReal_eq (f : TestFunction) :
+    ‖(SchwartzMap.smulLeftCLM (F := ℂ) sobolevWeight (𝓕 (OSforGFF.ofRealSchwartz f))).toLp 2
+          (volume : Measure SpaceTime)‖ =
+      ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight
+            (OSforGFF.ofRealSchwartz f)).toLp 2 (volume : Measure SpaceTime)‖ := by
+  let h : TestFunctionℂ :=
+    SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight (OSforGFF.ofRealSchwartz f)
+  have hL2 := (SchwartzMap.norm_fourier_toL2_eq (f := h))
+  simpa [h, fourier_fourierMultiplierCLM_sobolevWeight_eq_smulLeftCLM] using hL2
 
-  have htri' := htri
-  rw [hterm2, hterm3] at htri'
-  -- close the goal by rewriting `h` back into the original LHS
-  simpa [hh, h, one_mul, add_assoc] using htri'
+private lemma norm_toLp_ofRealSchwartz_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
+    ‖(OSforGFF.ofRealSchwartz f).toLp 2 (volume : Measure SpaceTime)‖ ≤ coeffSeminormSeq ξ hξ 4 f := by
+  calc
+    ‖(OSforGFF.ofRealSchwartz f).toLp 2 (volume : Measure SpaceTime)‖ = ‖f.toLp 2 (volume : Measure SpaceTime)‖ :=
+      norm_toLp_ofRealSchwartz_eq (f := f)
+    _ ≤ coeffSeminormSeq ξ hξ 4 f :=
+      norm_toLp_le_coeffSeminormSeq (ξ := ξ) (hξ := hξ) (k := 4) (f := f)
 
-set_option maxHeartbeats 800000 in
+private lemma norm_toLp_laplacian_ofRealSchwartz_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0)
+    (f : TestFunction) :
+    ‖(Δ (OSforGFF.ofRealSchwartz f)).toLp 2 (volume : Measure SpaceTime)‖ ≤
+      coeffLaplacianConst ξ 0 * coeffSeminormSeq ξ hξ 4 f := by
+  calc
+    ‖(Δ (OSforGFF.ofRealSchwartz f)).toLp 2 (volume : Measure SpaceTime)‖ = ‖(Δ f).toLp 2 (volume : Measure SpaceTime)‖ :=
+      norm_toLp_laplacian_ofRealSchwartz_eq (f := f)
+    _ ≤ coeffLaplacianConst ξ 0 * coeffSeminormSeq ξ hξ 4 f :=
+      norm_toLp_laplacian_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f)
+
+private lemma norm_toLp_laplacian_laplacian_ofRealSchwartz_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0)
+    (f : TestFunction) :
+    ‖(Δ (Δ (OSforGFF.ofRealSchwartz f))).toLp 2 (volume : Measure SpaceTime)‖ ≤
+      coeffLaplacianLaplacianConst ξ * coeffSeminormSeq ξ hξ 4 f := by
+  calc
+    ‖(Δ (Δ (OSforGFF.ofRealSchwartz f))).toLp 2 (volume : Measure SpaceTime)‖ =
+        ‖(Δ (Δ f)).toLp 2 (volume : Measure SpaceTime)‖ :=
+      norm_toLp_laplacian_laplacian_ofRealSchwartz_eq (f := f)
+    _ ≤ coeffLaplacianLaplacianConst ξ * coeffSeminormSeq ξ hξ 4 f :=
+      norm_toLp_laplacian_laplacian_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f)
+
 private lemma norm_toLp_sobolevWeight_smul_fourier_ofReal_le_coeffSeminormSeq
     (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
-    ‖(SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ (sobolevWeight ξ : ℂ))
-          (𝓕 (OSforGFF.ofRealSchwartz f))).toLp 2 (volume : Measure SpaceTime)‖ ≤
+    ‖(SchwartzMap.smulLeftCLM (F := ℂ) sobolevWeight (𝓕 (OSforGFF.ofRealSchwartz f))).toLp 2
+          (volume : Measure SpaceTime)‖ ≤
       sobolevConst ξ * coeffSeminormSeq ξ hξ 4 f := by
-  -- constants used in the `Δ`-graph norm bound
-  let d : ℕ → ℝ := coeffDerivConst ξ
-  let CΔ : ℝ := (Fintype.card (Fin STDimension) : ℝ) * (d 0) * (d 1)
-  let CΔΔ : ℝ := (Fintype.card (Fin STDimension) : ℝ) ^ 2 * (d 0) * (d 1) * (d 2) * (d 3)
-  let Csob : ℝ := sobolevConst ξ
+  rw [norm_toLp_sobolevWeight_smul_fourier_ofReal_eq (f := f)]
+  set g : TestFunctionℂ := OSforGFF.ofRealSchwartz f
+  set c : ℝ := coeffSeminormSeq ξ hξ 4 f
+  have hg : ‖g.toLp 2 (volume : Measure SpaceTime)‖ ≤ c := by
+    simpa [g, c] using norm_toLp_ofRealSchwartz_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f)
+  have hΔg : ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖ ≤ coeffLaplacianConst ξ 0 * c := by
+    simpa [g, c] using norm_toLp_laplacian_ofRealSchwartz_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f)
+  have hΔΔg : ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ ≤ coeffLaplacianLaplacianConst ξ * c := by
+    simpa [g, c] using norm_toLp_laplacian_laplacian_ofRealSchwartz_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f)
+  have h2 : ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g).toLp 2 (volume : Measure SpaceTime)‖ ≤
+      (1 : ℝ) * c + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * (coeffLaplacianConst ξ 0 * c)
+        + (1 / ((2 * Real.pi) ^ 4)) * (coeffLaplacianLaplacianConst ξ * c) :=
+    le_trans (norm_toLp_fourierMultiplierCLM_sobolevWeight_le (g := g)) (add_le_add (add_le_add
+      (mul_le_mul_of_nonneg_left hg (by positivity)) (mul_le_mul_of_nonneg_left hΔg (by positivity)))
+      (mul_le_mul_of_nonneg_left hΔΔg (by positivity)))
+  have hEq : (1 : ℝ) * c + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * (coeffLaplacianConst ξ 0 * c)
+        + (1 / ((2 * Real.pi) ^ 4)) * (coeffLaplacianLaplacianConst ξ * c) = sobolevConst ξ * c := by
+    dsimp [sobolevConst]; ring
+  have h2' :
+      ‖(SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) sobolevWeight g).toLp 2
+            (volume : Measure SpaceTime)‖ ≤ sobolevConst ξ * c := by
+    exact le_trans h2 (le_of_eq hEq)
+  simpa [g, c] using h2'
 
-  -- abbreviations
-  let g : TestFunctionℂ := OSforGFF.ofRealSchwartz f
-  let hW : TestFunctionℂ :=
-    SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ (sobolevWeight ξ : ℂ)) (𝓕 g)
-
-  -- Reduce to the physical-space Fourier multiplier via Plancherel.
-  let w : SpaceTime → ℝ := sobolevWeight
-  let h : TestFunctionℂ := SchwartzMap.fourierMultiplierCLM (𝕜 := ℝ) (F := ℂ) w g
-  have hFourier : 𝓕 h = hW := by
-    have hfour :
-        𝓕 h = (SchwartzMap.smulLeftCLM (F := ℂ) w) (𝓕 g) := by
-      dsimp [h]
-      exact (SchwartzMap.fourier_fourierMultiplierCLM (𝕜 := ℝ) (F := (ℂ)) (g := w) (f := g))
-    have hw' :
-        (SchwartzMap.smulLeftCLM (F := ℂ) w) (𝓕 g) = hW := by
-      have hwg : Function.HasTemperateGrowth w := by
-        dsimp [w]
-        simpa [sobolevWeight] using
-          (by
-            fun_prop : Function.HasTemperateGrowth (fun ξ : SpaceTime ↦ (1 + ‖ξ‖ ^ 2) ^ 2))
-      simpa [hW, w, sobolevWeight] using
-        (SchwartzMap.smulLeftCLM_ofReal (𝕜' := ℂ) (F := (ℂ)) (g := w) (hg := hwg)
-          (f := (𝓕 g))).symm
-    exact hfour.trans hw'
-  have hPlanch :
-      ‖hW.toLp 2 (volume : Measure SpaceTime)‖ = ‖h.toLp 2 (volume : Measure SpaceTime)‖ := by
-    have := (SchwartzMap.norm_fourier_toL2_eq (f := h))
-    simpa [hFourier] using this
-  -- It suffices to bound the `L²` norm of `h`.
-  rw [hPlanch]
-
-  have hL2_le_coeff4 :
-      ‖f.toLp 2 (volume : Measure SpaceTime)‖ ≤ coeffSeminormSeq ξ hξ 4 f :=
-    norm_toLp_le_coeffSeminormSeq (ξ := ξ) (hξ := hξ) (k := 4) (f := f)
-  have hL2Δ_le :
-      ‖(Δ f).toLp 2 (volume : Measure SpaceTime)‖ ≤ CΔ * coeffSeminormSeq ξ hξ 4 f := by
-    simpa [CΔ, d] using
-      (norm_toLp_laplacian_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f))
-  have hL2ΔΔ_le :
-      ‖(Δ (Δ f)).toLp 2 (volume : Measure SpaceTime)‖ ≤ CΔΔ * coeffSeminormSeq ξ hξ 4 f := by
-    simpa [CΔΔ, d] using
-      (norm_toLp_laplacian_laplacian_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) (f := f))
-
-  have hbound_h :
-      ‖h.toLp 2 (volume : Measure SpaceTime)‖ ≤
-        (1 : ℝ) * ‖g.toLp 2 (volume : Measure SpaceTime)‖
-          + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖
-          + (1 / ((2 * Real.pi) ^ 4)) * ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ := by
-    have h' := (norm_toLp_fourierMultiplierCLM_sobolevWeight_le (g := g))
-    simpa [h, w] using h'
-
-  have hgL2 : ‖g.toLp 2 (volume : Measure SpaceTime)‖ ≤ coeffSeminormSeq ξ hξ 4 f := by
-    simpa [g] using (le_trans (by
-      simpa [g] using (norm_toLp_ofRealSchwartz_eq (f := f)).le) hL2_le_coeff4)
-  have hΔg :
-      ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖ ≤ CΔ * coeffSeminormSeq ξ hξ 4 f := by
-    have : Δ g = OSforGFF.ofRealSchwartz (Δ f) := by
-      simpa [g] using (laplacian_ofReal_eq (f := f))
-    have hnorm :
-        ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖ = ‖(Δ f).toLp 2 (volume : Measure SpaceTime)‖ := by
-      simpa [this] using (norm_toLp_ofRealSchwartz_eq (f := Δ f))
-    simpa [hnorm] using hL2Δ_le
-  have hΔΔg :
-      ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ ≤ CΔΔ * coeffSeminormSeq ξ hξ 4 f := by
-    have hΔg' : Δ g = OSforGFF.ofRealSchwartz (Δ f) := by
-      simpa [g] using (laplacian_ofReal_eq (f := f))
-    have : Δ (Δ g) = OSforGFF.ofRealSchwartz (Δ (Δ f)) := by
-      simpa [hΔg'] using (laplacian_ofReal_eq (f := Δ f))
-    have hnorm :
-        ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ =
-          ‖(Δ (Δ f)).toLp 2 (volume : Measure SpaceTime)‖ := by
-      simpa [this] using (norm_toLp_ofRealSchwartz_eq (f := Δ (Δ f)))
-    simpa [hnorm] using hL2ΔΔ_le
-
-  have : ‖h.toLp 2 (volume : Measure SpaceTime)‖ ≤ Csob * coeffSeminormSeq ξ hξ 4 f := by
-    have hA :
-        (1 : ℝ) * ‖g.toLp 2 (volume : Measure SpaceTime)‖ ≤
-          (1 : ℝ) * coeffSeminormSeq ξ hξ 4 f := by
-      simpa [one_mul] using hgL2
-    have hB :
-        ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖ ≤
-          ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * (CΔ * coeffSeminormSeq ξ hξ 4 f) := by
-      exact mul_le_mul_of_nonneg_left hΔg (by positivity)
-    have hC :
-        ((2 * Real.pi) ^ 4)⁻¹ * ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖ ≤
-          ((2 * Real.pi) ^ 4)⁻¹ * (CΔΔ * coeffSeminormSeq ξ hξ 4 f) := by
-      exact mul_le_mul_of_nonneg_left hΔΔg (by positivity)
-    have hsum :
-        (1 : ℝ) * ‖g.toLp 2 (volume : Measure SpaceTime)‖
-            + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * ‖(Δ g).toLp 2 (volume : Measure SpaceTime)‖
-            + ((2 * Real.pi) ^ 4)⁻¹ * ‖(Δ (Δ g)).toLp 2 (volume : Measure SpaceTime)‖
-          ≤
-          (1 : ℝ) * coeffSeminormSeq ξ hξ 4 f
-            + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * (CΔ * coeffSeminormSeq ξ hξ 4 f)
-            + ((2 * Real.pi) ^ 4)⁻¹ * (CΔΔ * coeffSeminormSeq ξ hξ 4 f) :=
-      add_le_add (add_le_add hA hB) hC
-    have h2 :
-        ‖h.toLp 2 (volume : Measure SpaceTime)‖ ≤
-          (1 : ℝ) * coeffSeminormSeq ξ hξ 4 f
-            + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * (CΔ * coeffSeminormSeq ξ hξ 4 f)
-            + ((2 * Real.pi) ^ 4)⁻¹ * (CΔΔ * coeffSeminormSeq ξ hξ 4 f) :=
-      le_trans (by simpa [one_div] using hbound_h) hsum
-    set c : ℝ := coeffSeminormSeq ξ hξ 4 f
-    have hEq :
-        c
-            + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * (CΔ * c)
-            + ((2 * Real.pi) ^ 4)⁻¹ * (CΔΔ * c)
-          =
-          ((1 : ℝ)
-              + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * CΔ
-              + ((2 * Real.pi) ^ 4)⁻¹ * CΔΔ) * c := by
-      ring
-    have h2' :
-        ‖h.toLp 2 (volume : Measure SpaceTime)‖ ≤
-          c
-            + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * (CΔ * c)
-            + ((2 * Real.pi) ^ 4)⁻¹ * (CΔΔ * c) := by
-      simpa [c, mul_assoc] using h2
-    have : ‖h.toLp 2 (volume : Measure SpaceTime)‖ ≤
-        ((1 : ℝ)
-            + ((2 : ℝ) / ((2 * Real.pi) ^ 2)) * CΔ
-            + ((2 * Real.pi) ^ 4)⁻¹ * CΔΔ) * c := by
-      simpa [hEq] using h2'
-    -- match the definition of `Csob = sobolevConst ξ`
-    dsimp [Csob, sobolevConst] at this
-    simpa [c] using this
-  simpa [Csob] using this
-
-
-set_option maxHeartbeats 800000 in
 theorem schwartz_seminorm0_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0) :
     ∃ C : ℝ≥0, ∀ f : TestFunction,
       SchwartzMap.seminorm ℝ 0 0 f ≤ ((C : ℝ≥0) • (coeffSeminormSeq ξ hξ 4)) f := by
@@ -1544,60 +1392,74 @@ theorem schwartz_seminorm0_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0) 
       positivity
     dsimp [A]
     exact Real.rpow_nonneg hInt _
-
   -- Sobolev constant for the Fourier-weight `((1 + ‖·‖^2)^2)`.
   let Csob : ℝ := sobolevConst ξ
   have hCsob0 : 0 ≤ Csob := by
     simpa [Csob] using sobolevConst_nonneg ξ
-
   refine ⟨⟨Csob * A, mul_nonneg hCsob0 hA0⟩, ?_⟩
   intro f
-  -- Reduce to a pointwise bound.
   have hbound :
       ∀ x : SpaceTime, ‖x‖ ^ (0 : ℕ) * ‖iteratedFDeriv ℝ (0 : ℕ) f x‖ ≤
         (A * Csob) * coeffSeminormSeq ξ hξ 4 f := by
-    -- Work with the complexification `g` and the weighted Fourier transform `hW`.
     let g : TestFunctionℂ := OSforGFF.ofRealSchwartz f
     let hW : TestFunctionℂ :=
-      SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ (sobolevWeight ξ : ℂ)) (𝓕 g)
+      SchwartzMap.smulLeftCLM (F := ℂ) sobolevWeight (𝓕 g)
     have hW_le : ‖hW.toLp 2 (volume : Measure SpaceTime)‖ ≤ Csob * coeffSeminormSeq ξ hξ 4 f := by
       have h' :=
         norm_toLp_sobolevWeight_smul_fourier_ofReal_le_coeffSeminormSeq
           (ξ := ξ) (hξ := hξ) (f := f)
       simpa [g, hW, Csob] using h'
-
     intro x
     simp only [pow_zero, one_mul, norm_iteratedFDeriv_zero]
     have hx0 : ‖f x‖ = ‖g x‖ := by
-      simp [g, OSforGFF.ofRealSchwartz_apply]
+      simp [g]
     have hx4 : ‖g x‖ ≤ A * ‖hW.toLp 2 (volume : Measure SpaceTime)‖ := by
       have hx :=
         norm_le_fourierWeightL2_mul_norm_toLp_fourierWeightInv_smul_fourier (g := g) (x := x)
-      -- unfold `A` and `hW` into the packaged statement
-      simpa [A, wInv, hW, fourierWeight, fourierWeightInv, sobolevWeight] using hx
-
+      have hW' :
+          SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ fourierWeightInv ξ) (𝓕 g) =
+            SchwartzMap.smulLeftCLM (F := ℂ) sobolevWeight (𝓕 g) := by
+        have hgrowthInv : (fun ξ : SpaceTime ↦ fourierWeightInv ξ).HasTemperateGrowth := by
+          simpa [fourierWeightInv] using (by
+            fun_prop : (fun ξ : SpaceTime ↦ (((((1 : ℝ) + ‖ξ‖ ^ 2) ^ (2 : ℝ)) : ℝ) : ℂ)).HasTemperateGrowth)
+        ext ξ
+        rw [SchwartzMap.smulLeftCLM_apply_apply (F := ℂ)
+          (g := fun ξ : SpaceTime ↦ fourierWeightInv ξ) (hg := hgrowthInv) (𝓕 g) ξ]
+        rw [SchwartzMap.smulLeftCLM_apply_apply (F := ℂ)
+          (g := sobolevWeight) (hg := sobolevWeight_hasTemperateGrowth) (𝓕 g) ξ]
+        simp [fourierWeightInv, sobolevWeight]
+      have hx' : ‖g x‖ ≤
+          A * ‖(SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ fourierWeightInv ξ) (𝓕 g)).toLp 2
+                (volume : Measure SpaceTime)‖ := by
+        simpa [A, wInv, fourierWeight, fourierWeightInv, Real.rpow_two] using hx
+      have hW_toLp_eq :
+          ‖(SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ fourierWeightInv ξ) (𝓕 g)).toLp 2
+                (volume : Measure SpaceTime)‖
+            = ‖hW.toLp 2 (volume : Measure SpaceTime)‖ := by
+        simpa [hW] using congrArg
+          (fun t : TestFunctionℂ => ‖t.toLp 2 (volume : Measure SpaceTime)‖) hW'
+      calc
+        ‖g x‖ ≤
+            A * ‖(SchwartzMap.smulLeftCLM (F := ℂ) (fun ξ : SpaceTime ↦ fourierWeightInv ξ) (𝓕 g)).toLp 2
+                  (volume : Measure SpaceTime)‖ := hx'
+        _ = A * ‖hW.toLp 2 (volume : Measure SpaceTime)‖ := by rw [hW_toLp_eq]
     have hx5 : ‖f x‖ ≤ (A * Csob) * coeffSeminormSeq ξ hξ 4 f := by
       have hfx : ‖f x‖ ≤ A * ‖hW.toLp 2 (volume : Measure SpaceTime)‖ := by
         simpa [hx0] using hx4
-      -- combine the pointwise bound with the `L²` bound on `hW`
       have hmul :
           A * ‖hW.toLp 2 (volume : Measure SpaceTime)‖ ≤
             A * (Csob * coeffSeminormSeq ξ hξ 4 f) :=
         mul_le_mul_of_nonneg_left hW_le hA0
-      -- reassociate scalars
       calc
         ‖f x‖ ≤ A * ‖hW.toLp 2 (volume : Measure SpaceTime)‖ := hfx
         _ ≤ A * (Csob * coeffSeminormSeq ξ hξ 4 f) := hmul
         _ = (A * Csob) * coeffSeminormSeq ξ hξ 4 f := by ring_nf
-
     exact hx5
-
   have hMp : 0 ≤ (A * Csob) * coeffSeminormSeq ξ hξ 4 f := by
     positivity
   have hsem := SchwartzMap.seminorm_le_bound (𝕜 := ℝ) (k := 0) (n := 0) f hMp hbound
   have hsem' : SchwartzMap.seminorm ℝ 0 0 f ≤ (Csob * A) * coeffSeminormSeq ξ hξ 4 f := by
     simpa [mul_assoc, mul_comm, mul_left_comm] using hsem
-  -- finish by rewriting the RHS as evaluation of the scaled seminorm
   simpa [Seminorm.smul_apply, NNReal.smul_def, mul_assoc, mul_comm, mul_left_comm] using hsem'
 
 /-! ## Iterated coordinate-derivative bounds for `coeffSeminormSeq` -/
@@ -1605,88 +1467,23 @@ theorem schwartz_seminorm0_le_coeffSeminormSeq_four (ξ : ℝ) (hξ : ξ ≠ 0) 
 private lemma coeffSeminormSeq_iteratedLineDerivOp_unitVec_le (ξ : ℝ) (hξ : ξ ≠ 0)
     {n : ℕ} (r : Fin n → Fin STDimension) (k₀ : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k₀ (∂^{fun j : Fin n ↦ unitVec (r j)} f) ≤
-      (∏ j ∈ Finset.range n,
-          (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + j) + 1))) *
-        coeffSeminormSeq ξ hξ (k₀ + n) f := by
+      coeffDerivProd ξ k₀ n * coeffSeminormSeq ξ hξ (k₀ + n) f := by
+  classical
   induction n generalizing k₀ with
   | zero =>
-    simp
+    simp [coeffDerivProd]
   | succ n ih =>
-    -- one-step bound at index `k₀`, then induct on the tail at index `k₀+1`
     have hstep :
         coeffSeminormSeq ξ hξ k₀ (∂^{fun j : Fin (n + 1) ↦ unitVec (r j)} f) ≤
-          (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k₀ + 1)) *
+          coeffDerivConst ξ k₀ *
             coeffSeminormSeq ξ hξ (k₀ + 1) (∂^{fun j : Fin n ↦ unitVec (r j.succ)} f) := by
-      -- `∂^{m} = ∂_{m 0} (∂^{tail m})` and `∂_{unitVec i} = derivCoordCLM i`
-      simpa [LineDeriv.iteratedLineDerivOp_succ_left, Fin.tail_def] using
+      simpa [coeffDerivConst, LineDeriv.iteratedLineDerivOp_succ_left, Fin.tail_def] using
         (coeffSeminormSeq_derivCoordCLM_le (ξ := ξ) (hξ := hξ) (i := r 0) (k := k₀)
-          (f := (∂^{fun j : Fin n ↦ unitVec (r j.succ)} f)))
-    have hrec :
-        coeffSeminormSeq ξ hξ (k₀ + 1) (∂^{fun j : Fin n ↦ unitVec (r j.succ)} f) ≤
-          (∏ j ∈ Finset.range n,
-              (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + 1 + j) + 1))) *
-            coeffSeminormSeq ξ hξ (k₀ + 1 + n) f := by
-      simpa [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
-        (ih (r := fun j : Fin n ↦ r j.succ) (k₀ := k₀ + 1))
-    -- rewrite the product as `j=0` term times the shifted tail-product
-    have hmul :
-        (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k₀ + 1)) *
-              (∏ j ∈ Finset.range n,
-                (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + 1 + j) + 1)))
-          =
-          ∏ j ∈ Finset.range (n + 1),
-            (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + j) + 1)) := by
-      simpa [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm, mul_comm, mul_left_comm, mul_assoc] using
-        (Finset.prod_range_succ' (fun j : ℕ ↦
-          (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + j) + 1))) n).symm
-    -- finish by chaining `hstep` and the inductive bound
-    have :
-        coeffSeminormSeq ξ hξ k₀ (∂^{fun j : Fin (n + 1) ↦ unitVec (r j)} f) ≤
-          (∏ j ∈ Finset.range (n + 1),
-              (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + j) + 1))) *
-            coeffSeminormSeq ξ hξ (k₀ + (n + 1)) f := by
-      -- multiply the inductive estimate by the leading scalar and reassociate
-      have this :=
-        mul_le_mul_of_nonneg_left hrec
-          (by positivity : 0 ≤ (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k₀ + 1)))
-      have this' :
-          (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k₀ + 1)) *
-              coeffSeminormSeq ξ hξ (k₀ + 1) (∂^{fun j : Fin n ↦ unitVec (r j.succ)} f)
-            ≤
-            ((‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k₀ + 1)) *
-                (∏ j ∈ Finset.range n,
-                  (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + 1 + j) + 1)))) *
-              coeffSeminormSeq ξ hξ (k₀ + 1 + n) f := by
-        simpa [mul_assoc] using this
-      -- chain with the one-step bound and rewrite indices/products
-      refine le_trans hstep ?_
-      have : (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k₀ + 1)) *
-            coeffSeminormSeq ξ hξ (k₀ + 1) (∂^{fun j : Fin n ↦ unitVec (r j.succ)} f)
-          ≤
-          (∏ j ∈ Finset.range (n + 1),
-              (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + j) + 1))) *
-            coeffSeminormSeq ξ hξ (k₀ + (n + 1)) f := by
-        -- rewrite the scalar-product on the RHS using `hmul`
-        have hmul' :
-            ((‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k₀ + 1)) *
-                  (∏ j ∈ Finset.range n,
-                    (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + 1 + j) + 1)))) *
-                coeffSeminormSeq ξ hξ (k₀ + 1 + n) f
-              =
-              (∏ j ∈ Finset.range (n + 1),
-                  (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (k₀ + j) + 1))) *
-                coeffSeminormSeq ξ hξ (k₀ + 1 + n) f := by
-          -- apply `hmul` and then multiply on the right by the remaining factor
-          exact congrArg (fun t : ℝ ↦ t * coeffSeminormSeq ξ hξ (k₀ + 1 + n) f) hmul
-        -- avoid `simp` normalizing the scalar `‖1/(2*ξ)‖`; rewrite the goal and close by `this'`
-        have hidx : k₀ + (n + 1) = k₀ + 1 + n := by
-          simp [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm]
-        rw [hidx]
-        -- rewrite the RHS into the form appearing in `this'`
-        rw [← hmul']
-        exact this'
-      exact this
-    exact this
+          (∂^{fun j : Fin n ↦ unitVec (r j.succ)} f))
+    have hrec := ih (fun j : Fin n ↦ r j.succ) (k₀ + 1)
+    have hmul := mul_le_mul_of_nonneg_left hrec (coeffDerivConst_nonneg (ξ := ξ) (k := k₀))
+    simpa [coeffDerivProd, Finset.prod_range_succ', Nat.add_assoc, Nat.add_left_comm, Nat.add_comm,
+      mul_assoc, mul_left_comm, mul_comm] using (le_trans hstep hmul)
 
 /-! ## Bounding general Schwartz seminorms by `coeffSeminormSeq` -/
 
@@ -1698,82 +1495,125 @@ private lemma schwartz_seminorm00_le_mul_coeffSeminormSeq
     SchwartzMap.seminorm ℝ 0 0 f ≤ (C00 : ℝ) * coeffSeminormSeq ξ hξ 4 f := by
   simpa [Seminorm.smul_apply, NNReal.smul_def, mul_assoc] using hC00 f
 
-set_option maxHeartbeats 800000 in
+private lemma schwartz_seminorm00_iteratedLineDerivOp_unitVec_le
+    (ξ : ℝ) (hξ : ξ ≠ 0) (C00 : ℝ≥0)
+    (hC00 : ∀ f : TestFunction,
+      SchwartzMap.seminorm ℝ 0 0 f ≤ ((C00 : ℝ≥0) • coeffSeminormSeq ξ hξ 4) f)
+    {n : ℕ} (r : Fin n → Fin STDimension) (f : TestFunction) :
+    SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f) ≤
+      (C00 : ℝ) * coeffDerivProd ξ 4 n * coeffSeminormSeq ξ hξ (4 + n) f := by
+  have h00 :=
+    schwartz_seminorm00_le_mul_coeffSeminormSeq (ξ := ξ) (hξ := hξ) (C00 := C00) (hC00 := hC00)
+      (∂^{fun j : Fin n ↦ unitVec (r j)} f)
+  have hder :
+      coeffSeminormSeq ξ hξ 4 (∂^{fun j : Fin n ↦ unitVec (r j)} f) ≤
+        coeffDerivProd ξ 4 n * coeffSeminormSeq ξ hξ (4 + n) f := by
+    simpa [coeffDerivProd, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
+      (coeffSeminormSeq_iteratedLineDerivOp_unitVec_le (ξ := ξ) (hξ := hξ) (r := r) (k₀ := 4) (f := f))
+  have hmul := mul_le_mul_of_nonneg_left hder (by positivity : 0 ≤ (C00 : ℝ))
+  have h := le_trans h00 (by simpa [mul_assoc] using hmul)
+  simpa [Seminorm.smul_apply, NNReal.smul_def, smul_eq_mul, mul_assoc, mul_left_comm, mul_comm] using h
+
 private lemma schwartz_seminorm00_mulCoordCLM_iter_iteratedLineDerivOp_unitVec_le
     (ξ : ℝ) (hξ : ξ ≠ 0) (C00 : ℝ≥0)
     (hC00 : ∀ f : TestFunction,
       SchwartzMap.seminorm ℝ 0 0 f ≤ ((C00 : ℝ≥0) • coeffSeminormSeq ξ hξ 4) f)
-    (k n : ℕ) (i : Fin STDimension) (r : Fin n → Fin STDimension) (f : TestFunction) :
+    (k : ℕ) {n : ℕ} (i : Fin STDimension) (r : Fin n → Fin STDimension) (f : TestFunction) :
     SchwartzMap.seminorm ℝ 0 0
         (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-      ≤ (C00 : ℝ) *
-          (∏ j ∈ Finset.range (k + 1),
-              (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + j) + 1))) *
-            (∏ j ∈ Finset.range n,
-                (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + (k + 1) + j) + 1))) *
-              coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f := by
-  have hC00' (g : TestFunction) :
-      SchwartzMap.seminorm ℝ 0 0 g ≤ (C00 : ℝ) * coeffSeminormSeq ξ hξ 4 g := by
-    simpa using
-      schwartz_seminorm00_le_mul_coeffSeminormSeq (ξ := ξ) (hξ := hξ) (C00 := C00) (hC00 := hC00) g
-  -- apply `hC00` at the transformed function
-  have h00 :
-      SchwartzMap.seminorm ℝ 0 0
-          (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-        ≤ (C00 : ℝ) * coeffSeminormSeq ξ hξ 4
-            (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f)) := by
-    simpa using hC00' (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-  -- bound multiplication iterates in `coeffSeminormSeq`
-  have hmul :
-      coeffSeminormSeq ξ hξ 4
-          (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-        ≤ (∏ j ∈ Finset.range (k + 1),
-              (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + j) + 1))) *
-            coeffSeminormSeq ξ hξ (4 + (k + 1)) (∂^{fun j : Fin n ↦ unitVec (r j)} f) := by
-    simpa [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
-      (coeffSeminormSeq_mulCoordCLM_iter_le (ξ := ξ) (hξ := hξ) (i := i)
-        (k₀ := 4) (k := k + 1) (f := (∂^{fun j : Fin n ↦ unitVec (r j)} f)))
-  -- bound iterated derivatives in `coeffSeminormSeq`
-  have hder :
-      coeffSeminormSeq ξ hξ (4 + (k + 1)) (∂^{fun j : Fin n ↦ unitVec (r j)} f) ≤
-        (∏ j ∈ Finset.range n,
-            (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + (k + 1) + j) + 1))) *
+      ≤ (C00 : ℝ) * coeffMulProd ξ 4 (k + 1) * coeffDerivProd ξ (4 + (k + 1)) n *
           coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f := by
-    simpa [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
-      (coeffSeminormSeq_iteratedLineDerivOp_unitVec_le (ξ := ξ) (hξ := hξ)
-        (r := r) (k₀ := 4 + (k + 1)) (f := f))
-  -- chain all bounds
-  calc
-    SchwartzMap.seminorm ℝ 0 0
-        (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-        ≤ (C00 : ℝ) * coeffSeminormSeq ξ hξ 4
-              (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f)) := h00
-    _ ≤ (C00 : ℝ) *
-          ((∏ j ∈ Finset.range (k + 1),
-                (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + j) + 1))) *
-              coeffSeminormSeq ξ hξ (4 + (k + 1)) (∂^{fun j : Fin n ↦ unitVec (r j)} f)) := by
-          exact mul_le_mul_of_nonneg_left hmul (by positivity)
-    _ ≤ (C00 : ℝ) *
-          ((∏ j ∈ Finset.range (k + 1),
-                (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + j) + 1))) *
-            ((∏ j ∈ Finset.range n,
-                  (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + (k + 1) + j) + 1))) *
-                coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f)) := by
-          have hnonneg :
-              0 ≤ (C00 : ℝ) *
-                (∏ j ∈ Finset.range (k + 1),
-                    (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + j) + 1))) := by
-            positivity
-          have hmul' := mul_le_mul_of_nonneg_left hder hnonneg
-          simpa [mul_assoc] using hmul'
-    _ = (C00 : ℝ) *
-          (∏ j ∈ Finset.range (k + 1),
-              (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + j) + 1))) *
-            (∏ j ∈ Finset.range n,
-                (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + (k + 1) + j) + 1))) *
-              coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f := by ring
+  set g : TestFunction := ∂^{fun j : Fin n ↦ unitVec (r j)} f
+  have h00 := schwartz_seminorm00_le_mul_coeffSeminormSeq (ξ := ξ) (hξ := hξ)
+    (C00 := C00) (hC00 := hC00) (((mulCoordCLM i)^[k + 1]) g)
+  have hmul := coeffSeminormSeq_mulCoordCLM_iter_le (ξ := ξ) (hξ := hξ) i 4 (k + 1) g
+  have hder :=
+    coeffSeminormSeq_iteratedLineDerivOp_unitVec_le (ξ := ξ) (hξ := hξ)
+      (r := r) (k₀ := 4 + (k + 1)) f
+  have hmul' :
+      (C00 : ℝ) * coeffSeminormSeq ξ hξ 4 (((mulCoordCLM i)^[k + 1]) g) ≤
+        (C00 : ℝ) * (coeffMulProd ξ 4 (k + 1) * coeffSeminormSeq ξ hξ (4 + (k + 1)) g) := by
+    exact mul_le_mul_of_nonneg_left hmul (by exact_mod_cast C00.2)
+  have hder' :
+      (C00 : ℝ) * (coeffMulProd ξ 4 (k + 1) * coeffSeminormSeq ξ hξ (4 + (k + 1)) g) ≤
+        (C00 : ℝ) *
+          (coeffMulProd ξ 4 (k + 1) *
+            (coeffDerivProd ξ (4 + (k + 1)) n * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f)) := by
+    -- apply the derivative bound to `g = ∂^{unitVec∘r} f`
+    have hder_g :
+        coeffSeminormSeq ξ hξ (4 + (k + 1)) g ≤
+          coeffDerivProd ξ (4 + (k + 1)) n * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f := by
+      simpa [g] using hder
+    have hmul2 :
+        coeffMulProd ξ 4 (k + 1) * coeffSeminormSeq ξ hξ (4 + (k + 1)) g ≤
+          coeffMulProd ξ 4 (k + 1) *
+            (coeffDerivProd ξ (4 + (k + 1)) n * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f) := by
+      have hCmul : 0 ≤ coeffMulProd ξ 4 (k + 1) :=
+        coeffMulProd_nonneg (ξ := ξ) (k := 4) (n := k + 1)
+      exact mul_le_mul_of_nonneg_left hder_g hCmul
+    exact mul_le_mul_of_nonneg_left hmul2 (by exact_mod_cast C00.2)
+  have h := le_trans h00 (le_trans hmul' hder')
+  simpa [g, mul_assoc, mul_left_comm, mul_comm] using h
 
-set_option maxHeartbeats 800000 in
+private lemma schwartz_seminorm_zero_le_mul_coeffSeminormSeq_of_seminorm0
+    (ξ : ℝ) (hξ : ξ ≠ 0) (C00 : ℝ≥0)
+    (hC00 : ∀ f : TestFunction,
+      SchwartzMap.seminorm ℝ 0 0 f ≤ ((C00 : ℝ≥0) • coeffSeminormSeq ξ hξ 4) f)
+    (n : ℕ) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ f : TestFunction,
+      SchwartzMap.seminorm ℝ 0 n f ≤ C * coeffSeminormSeq ξ hξ (4 + n) f := by
+  classical
+  let d : ℝ := (Fintype.card (Fin STDimension) : ℝ)
+  let cardR : ℝ := (Fintype.card (Fin n → Fin STDimension) : ℝ)
+  let C : ℝ := (d ^ n) * cardR * (C00 : ℝ) * coeffDerivProd ξ 4 n
+  refine ⟨C, ?_, ?_⟩
+  · have hd : 0 ≤ d := by
+      dsimp [d]
+      exact Nat.cast_nonneg _
+    have hcardR : 0 ≤ cardR := by
+      dsimp [cardR]
+      exact Nat.cast_nonneg _
+    have hdn : 0 ≤ d ^ n := pow_nonneg hd _
+    have hC00' : 0 ≤ (C00 : ℝ) := by
+      exact (show (0 : ℝ) ≤ (C00 : ℝ≥0) from C00.2)
+    have hder : 0 ≤ coeffDerivProd ξ 4 n :=
+      coeffDerivProd_nonneg (ξ := ξ) (k := 4) (n := n)
+    dsimp [C]
+    have h1 : 0 ≤ (d ^ n) * cardR := mul_nonneg hdn hcardR
+    have h2 : 0 ≤ (d ^ n) * cardR * (C00 : ℝ) := mul_nonneg h1 hC00'
+    exact mul_nonneg h2 hder
+  · intro f
+    have h0 := schwartz_seminorm0_le_card_pow_mul_sum_seminorm0 (n := n) (f := f)
+    have hsum :
+        (∑ r : (Fin n → Fin STDimension),
+            SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
+          ≤ cardR * ((C00 : ℝ) * coeffDerivProd ξ 4 n * coeffSeminormSeq ξ hξ (4 + n) f) := by
+      have :
+          (∑ r : (Fin n → Fin STDimension),
+              SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
+            ≤ (Fintype.card (Fin n → Fin STDimension) : ℝ) *
+                ((C00 : ℝ) * coeffDerivProd ξ 4 n * coeffSeminormSeq ξ hξ (4 + n) f) := by
+        refine sum_le_card_mul_of_pointwise_le
+          (f := fun r : (Fin n → Fin STDimension) =>
+            SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
+          (C := (C00 : ℝ) * coeffDerivProd ξ 4 n * coeffSeminormSeq ξ hξ (4 + n) f) ?_
+        intro r
+        simpa [mul_assoc] using
+          schwartz_seminorm00_iteratedLineDerivOp_unitVec_le
+            (ξ := ξ) (hξ := hξ) (C00 := C00) (hC00 := hC00) (r := r) (f := f)
+      simpa [cardR] using this
+    have hmul :
+        ((Fintype.card (Fin STDimension) : ℝ) ^ n) *
+            (∑ r : (Fin n → Fin STDimension),
+              SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
+          ≤ ((Fintype.card (Fin STDimension) : ℝ) ^ n) *
+              (cardR * ((C00 : ℝ) * coeffDerivProd ξ 4 n * coeffSeminormSeq ξ hξ (4 + n) f)) := by
+      refine mul_le_mul_of_nonneg_left hsum ?_
+      have hd : 0 ≤ (Fintype.card (Fin STDimension) : ℝ) := Nat.cast_nonneg _
+      exact pow_nonneg hd _
+    have h1 := le_trans h0 hmul
+    simpa [C, d, cardR, mul_assoc, mul_left_comm, mul_comm] using h1
+
 private lemma schwartz_seminorm_zero_le_coeffSeminormSeq_of_seminorm0
     (ξ : ℝ) (hξ : ξ ≠ 0) (C00 : ℝ≥0)
     (hC00 : ∀ f : TestFunction,
@@ -1781,78 +1621,12 @@ private lemma schwartz_seminorm_zero_le_coeffSeminormSeq_of_seminorm0
     (n : ℕ) :
     ∃ C : ℝ≥0, ∀ f : TestFunction,
       SchwartzMap.seminorm ℝ 0 n f ≤ ((C : ℝ≥0) • coeffSeminormSeq ξ hξ (4 + n)) f := by
-  -- dimension constant
-  let d : ℝ := (Fintype.card (Fin STDimension) : ℝ)
-  -- size of the `r : Fin n → Fin STDimension` index set
-  let cardR : ℝ := (Fintype.card (Fin n → Fin STDimension) : ℝ)
-  have hC00' (f : TestFunction) :
-      SchwartzMap.seminorm ℝ 0 0 f ≤ (C00 : ℝ) * coeffSeminormSeq ξ hξ 4 f := by
-    simpa using
-      schwartz_seminorm00_le_mul_coeffSeminormSeq (ξ := ξ) (hξ := hξ) (C00 := C00) (hC00 := hC00) f
-  let Cder : ℝ :=
-    ∏ j ∈ Finset.range n,
-      (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + j) + 1))
-  let C : ℝ := (d ^ n) * cardR * (C00 : ℝ) * Cder
-  refine ⟨⟨C, by
-    dsimp [C]; positivity⟩, ?_⟩
+  rcases schwartz_seminorm_zero_le_mul_coeffSeminormSeq_of_seminorm0
+    (ξ := ξ) (hξ := hξ) (C00 := C00) (hC00 := hC00) n with ⟨C, hC0, hC⟩
+  refine ⟨⟨C, hC0⟩, ?_⟩
   intro f
-  let M : ℝ :=
-    (d ^ n) *
-      (∑ r : (Fin n → Fin STDimension),
-        SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-  have hsem : SchwartzMap.seminorm ℝ 0 n f ≤ M := by
-    simpa [M, d] using (schwartz_seminorm0_le_card_pow_mul_sum_seminorm0 (n := n) (f := f))
-  have hM : M ≤ C * coeffSeminormSeq ξ hξ (4 + n) f := by
-    have hterm :
-        ∀ r : (Fin n → Fin STDimension),
-          SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f)
-            ≤ (C00 : ℝ) * Cder * coeffSeminormSeq ξ hξ (4 + n) f := by
-      intro r
-      have h00 :
-          SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f) ≤
-            (C00 : ℝ) * coeffSeminormSeq ξ hξ 4 (∂^{fun j : Fin n ↦ unitVec (r j)} f) := by
-        simpa using hC00' (∂^{fun j : Fin n ↦ unitVec (r j)} f)
-      have hder :
-          coeffSeminormSeq ξ hξ 4 (∂^{fun j : Fin n ↦ unitVec (r j)} f) ≤
-            Cder * coeffSeminormSeq ξ hξ (4 + n) f := by
-        simpa [Cder, Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using
-          (coeffSeminormSeq_iteratedLineDerivOp_unitVec_le (ξ := ξ) (hξ := hξ)
-            (r := r) (k₀ := 4) (f := f))
-      calc
-        SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f)
-            ≤ (C00 : ℝ) * coeffSeminormSeq ξ hξ 4 (∂^{fun j : Fin n ↦ unitVec (r j)} f) := h00
-        _ ≤ (C00 : ℝ) * (Cder * coeffSeminormSeq ξ hξ (4 + n) f) := by
-              exact mul_le_mul_of_nonneg_left hder (by positivity)
-        _ = (C00 : ℝ) * Cder * coeffSeminormSeq ξ hξ (4 + n) f := by ring
-    have hsum :
-        (∑ r : (Fin n → Fin STDimension),
-            SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-          ≤ cardR * ((C00 : ℝ) * Cder * coeffSeminormSeq ξ hξ (4 + n) f) := by
-      have :
-          (∑ r : (Fin n → Fin STDimension),
-              SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-            ≤ (Fintype.card (Fin n → Fin STDimension) : ℝ) *
-                ((C00 : ℝ) * Cder * coeffSeminormSeq ξ hξ (4 + n) f) := by
-        refine sum_le_card_mul_of_pointwise_le (f := fun r : (Fin n → Fin STDimension) =>
-          SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-          (C := (C00 : ℝ) * Cder * coeffSeminormSeq ξ hξ (4 + n) f) ?_
-        intro r
-        simpa [mul_assoc] using (hterm r)
-      simpa [cardR] using this
-    have hsum' :
-        d ^ n *
-            (∑ r : (Fin n → Fin STDimension),
-              SchwartzMap.seminorm ℝ 0 0 (∂^{fun j : Fin n ↦ unitVec (r j)} f))
-          ≤
-          d ^ n * (cardR * ((C00 : ℝ) * Cder * coeffSeminormSeq ξ hξ (4 + n) f)) :=
-      mul_le_mul_of_nonneg_left hsum (by positivity)
-    simpa [M, C, mul_assoc, mul_left_comm, mul_comm] using hsum'
-  have : SchwartzMap.seminorm ℝ 0 n f ≤ C * coeffSeminormSeq ξ hξ (4 + n) f :=
-    le_trans hsem hM
-  change SchwartzMap.seminorm ℝ 0 n f ≤ C * coeffSeminormSeq ξ hξ (4 + n) f
-  exact this
+  simpa [Seminorm.smul_apply, NNReal.smul_def, smul_eq_mul, mul_assoc] using hC f
 
-set_option maxHeartbeats 800000 in
 private lemma schwartz_seminorm_succ_le_coeffSeminormSeq_of_seminorm0
     (ξ : ℝ) (hξ : ξ ≠ 0) (C00 : ℝ≥0)
     (hC00 : ∀ f : TestFunction,
@@ -1865,20 +1639,33 @@ private lemma schwartz_seminorm_succ_le_coeffSeminormSeq_of_seminorm0
   let d : ℝ := (Fintype.card (Fin STDimension) : ℝ)
   -- size of the `r : Fin n → Fin STDimension` index set
   let cardR : ℝ := (Fintype.card (Fin n → Fin STDimension) : ℝ)
-  have hC00' (f : TestFunction) :
-      SchwartzMap.seminorm ℝ 0 0 f ≤ (C00 : ℝ) * coeffSeminormSeq ξ hξ 4 f := by
-    simpa using
-      schwartz_seminorm00_le_mul_coeffSeminormSeq (ξ := ξ) (hξ := hξ) (C00 := C00) (hC00 := hC00) f
   -- include coordinate weights (use a crude bound via a sum of coordinate monomials)
-  let Cmul : ℝ :=
-    ∏ j ∈ Finset.range (k + 1),
-      (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + j) + 1))
-  let Cder : ℝ :=
-    ∏ j ∈ Finset.range n,
-      (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ (4 + (k + 1) + j) + 1))
+  let Cmul : ℝ := coeffMulProd ξ 4 (k + 1)
+  let Cder : ℝ := coeffDerivProd ξ (4 + (k + 1)) n
   let C : ℝ := (d ^ k) * (d ^ n) * d * cardR * (C00 : ℝ) * Cmul * Cder
   refine ⟨⟨C, by
-    dsimp [C]; positivity⟩, ?_⟩
+    have hCmul : 0 ≤ Cmul := by
+      simpa [Cmul] using coeffMulProd_nonneg (ξ := ξ) (k := 4) (n := k + 1)
+    have hCder : 0 ≤ Cder := by
+      simpa [Cder] using coeffDerivProd_nonneg (ξ := ξ) (k := 4 + (k + 1)) (n := n)
+    dsimp [C]
+    have hd : 0 ≤ d := by
+      dsimp [d]
+      exact Nat.cast_nonneg _
+    have hcardR : 0 ≤ cardR := by
+      dsimp [cardR]
+      exact Nat.cast_nonneg _
+    have hdkn : 0 ≤ d ^ k := by exact pow_nonneg hd _
+    have hdn : 0 ≤ d ^ n := by exact pow_nonneg hd _
+    have hC00' : 0 ≤ (C00 : ℝ) := by exact (show (0 : ℝ) ≤ (C00 : ℝ≥0) from C00.2)
+    -- close the goal by chaining `mul_nonneg`
+    have h1 : 0 ≤ (d ^ k) * (d ^ n) := mul_nonneg hdkn hdn
+    have h2 : 0 ≤ (d ^ k) * (d ^ n) * d := mul_nonneg h1 hd
+    have h3 : 0 ≤ (d ^ k) * (d ^ n) * d * cardR := mul_nonneg h2 hcardR
+    have h4 : 0 ≤ (d ^ k) * (d ^ n) * d * cardR * (C00 : ℝ) := mul_nonneg h3 hC00'
+    have h5 : 0 ≤ (d ^ k) * (d ^ n) * d * cardR * (C00 : ℝ) * Cmul := mul_nonneg h4 hCmul
+    have h6 : 0 ≤ (d ^ k) * (d ^ n) * d * cardR * (C00 : ℝ) * Cmul * Cder := mul_nonneg h5 hCder
+    exact h6⟩, ?_⟩
   intro f
   -- Step 1: bound `SchwartzMap.seminorm (k+1) n` by a finite sum of `SchwartzMap.seminorm 0 0` of
   -- `(mulCoordCLM i)^[k+1] (∂^{unitVec∘r} f)`.
@@ -1902,59 +1689,32 @@ private lemma schwartz_seminorm_succ_le_coeffSeminormSeq_of_seminorm0
     have hterm (i : Fin STDimension) (r : Fin n → Fin STDimension) :
         SchwartzMap.seminorm ℝ 0 0 (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f))
           ≤ (C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f := by
-      dsimp [Cmul, Cder]
-      exact
+      have h :=
         schwartz_seminorm00_mulCoordCLM_iter_iteratedLineDerivOp_unitVec_le
-          (ξ := ξ) (hξ := hξ) (C00 := C00) (hC00 := hC00) (k := k) (n := n)
-          (i := i) (r := r) (f := f)
+          (ξ := ξ) (hξ := hξ) (C00 := C00) (hC00 := hC00) (k := k) (i := i) (r := r) (f := f)
+      simpa [Cmul, Cder, mul_assoc, mul_left_comm, mul_comm] using h
     have hsum :
         (∑ i : Fin STDimension, ∑ r : (Fin n → Fin STDimension),
             SchwartzMap.seminorm ℝ 0 0
               (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f)))
           ≤ (d * cardR) *
               ((C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f) := by
-      -- two-step `Fintype.card` estimate: first in `r`, then in `i`
-      have hsum_r :
-          ∀ i : Fin STDimension,
-            (∑ r : (Fin n → Fin STDimension),
-                SchwartzMap.seminorm ℝ 0 0
-                  (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f)))
-              ≤ cardR * ((C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f) := by
-        intro i
-        have :
-            (∑ r : (Fin n → Fin STDimension),
-                SchwartzMap.seminorm ℝ 0 0
-                  (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f)))
-              ≤ (Fintype.card (Fin n → Fin STDimension) : ℝ) *
-                  ((C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f) := by
-          refine sum_le_card_mul_of_pointwise_le
-            (f := fun r : (Fin n → Fin STDimension) =>
+      have hsum' :
+          (∑ i : Fin STDimension, ∑ r : (Fin n → Fin STDimension),
               SchwartzMap.seminorm ℝ 0 0
                 (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f)))
-            (C := (C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f) ?_
-          intro r
-          exact hterm i r
-        dsimp [cardR]
-        exact this
-      have hsum_i :
-          (∑ i : Fin STDimension,
-              (∑ r : (Fin n → Fin STDimension),
-                  SchwartzMap.seminorm ℝ 0 0
-                    (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f))))
             ≤ (Fintype.card (Fin STDimension) : ℝ) *
-                (cardR * ((C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f)) := by
-        refine sum_le_card_mul_of_pointwise_le
-          (f := fun i : Fin STDimension =>
-            (∑ r : (Fin n → Fin STDimension),
-              SchwartzMap.seminorm ℝ 0 0
-                (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f))))
-          (C := cardR * ((C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f)) ?_
-        intro i
-        exact hsum_r i
-      have hsum_i' := hsum_i
-      rw [← mul_assoc] at hsum_i'
-      dsimp [d]
-      exact hsum_i'
+                ((Fintype.card (Fin n → Fin STDimension) : ℝ) *
+                  ((C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f)) := by
+        exact
+          sum_sum_le_card_mul_of_pointwise_le
+            (f := fun i : Fin STDimension =>
+              fun r : (Fin n → Fin STDimension) =>
+                SchwartzMap.seminorm ℝ 0 0
+                  (((mulCoordCLM i)^[k + 1]) (∂^{fun j : Fin n ↦ unitVec (r j)} f)))
+            (C := (C00 : ℝ) * Cmul * Cder * coeffSeminormSeq ξ hξ (4 + (k + 1) + n) f)
+            hterm
+      simpa [d, cardR, mul_assoc, mul_left_comm, mul_comm] using hsum'
     have hsum' :
         (d ^ k) * (d ^ n) *
             (∑ i : Fin STDimension, ∑ r : (Fin n → Fin STDimension),
@@ -1980,7 +1740,6 @@ private lemma schwartz_seminorm_succ_le_coeffSeminormSeq_of_seminorm0
   rw [Seminorm.smul_apply, NNReal.smul_def, smul_eq_mul]
   exact this
 
-set_option maxHeartbeats 800000 in
 private lemma schwartz_seminorm_le_coeffSeminormSeq_of_seminorm0
     (ξ : ℝ) (hξ : ξ ≠ 0) (C00 : ℝ≥0)
     (hC00 : ∀ f : TestFunction,
@@ -2002,9 +1761,7 @@ private lemma schwartz_seminorm_le_coeffSeminormSeq_of_seminorm0
 
 theorem isBounded_coeffSeminormSeq_schwartzSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) :
     Seminorm.IsBounded (coeffSeminormSeq ξ hξ) OSforGFF.schwartzSeminormSeq (LinearMap.id) := by
-  -- first get the Sobolev estimate for the `0,0` seminorm
   rcases schwartz_seminorm0_le_coeffSeminormSeq_four (ξ := ξ) (hξ := hξ) with ⟨C00, hC00⟩
-  -- bound the full Schwartz seminorm family `SchwartzMap.seminorm k n` by `coeffSeminormSeq`
   have hfamily :
       Seminorm.IsBounded (coeffSeminormSeq ξ hξ) OSforGFF.schwartzSeminormFamily_TestFunction
         (LinearMap.id) := by
@@ -2013,18 +1770,13 @@ theorem isBounded_coeffSeminormSeq_schwartzSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 
     rcases schwartz_seminorm_le_coeffSeminormSeq_of_seminorm0 (ξ := ξ) (hξ := hξ) (C00 := C00)
       (hC00 := hC00) k n with ⟨C, hC⟩
     refine ⟨{4 + k + n}, C, ?_⟩
-    -- show the seminorm inequality pointwise
     intro f
-    -- `comp id` is trivial and the singleton sup is the underlying seminorm
     simpa [Seminorm.comp_apply] using (hC f)
-  -- finally, take the finite supremum defining `schwartzSeminormSeq n`
   intro n
-  -- `Seminorm.isBounded_sup` packages boundedness of a family into boundedness of its finite sup
   rcases (Seminorm.isBounded_sup (p := coeffSeminormSeq ξ hξ)
       (q := OSforGFF.schwartzSeminormFamily_TestFunction) (f := LinearMap.id) hfamily
       (s' := Finset.Iic (n, n))) with ⟨C, s, hs⟩
   refine ⟨s, C, ?_⟩
-  -- unfold `schwartzSeminormSeq`
   simpa [OSforGFF.schwartzSeminormSeq] using hs
 
 theorem schwartzNuclearInclusion_of_coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) :

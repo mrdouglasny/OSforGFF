@@ -119,22 +119,18 @@ lemma normalizedCoeffCLM_SpaceTime_numAllPowCLM (ξ : ℝ) (hξ : ξ ≠ 0) (k n
   | zero =>
       simp [numAllPowCLM]
   | succ k ih =>
-      -- one more application multiplies coefficients by `base₄ n`
       have hstep :
           normalizedCoeffCLM_SpaceTime ξ hξ n (numAllPowCLM ξ (k + 1) f)
             = base₄ n * normalizedCoeffCLM_SpaceTime ξ hξ n (numAllPowCLM ξ k f) := by
-        -- rewrite the iterate once, then apply the diagonal action lemma
         rw [numAllPowCLM_succ_apply (ξ := ξ) (k := k) (f := f)]
         exact (normalizedCoeffCLM_SpaceTime_numAllCLM (ξ := ξ) (hξ := hξ) (n := n)
           (f := numAllPowCLM ξ k f))
-      -- now finish by induction and rearranging `pow_succ`
       calc
         normalizedCoeffCLM_SpaceTime ξ hξ n (numAllPowCLM ξ (k + 1) f)
             = base₄ n * normalizedCoeffCLM_SpaceTime ξ hξ n (numAllPowCLM ξ k f) := hstep
         _ = base₄ n * ((base₄ n) ^ k * normalizedCoeffCLM_SpaceTime ξ hξ n f) := by
               simp [ih]
         _ = (base₄ n) ^ (k + 1) * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
-              -- commute the new factor into the `pow_succ` shape
               simp [pow_succ, mul_assoc, mul_comm]
 
 /-! ## Coefficients as an element of the rapid-decay sequence space -/
@@ -145,11 +141,9 @@ noncomputable def normalizedCoeffRapidDecay (ξ : ℝ) (hξ : ξ ≠ 0) (f : Tes
     OSforGFF.RapidDecaySeqBase.space base₄ :=
   ⟨normalizedCoeffCLM_SpaceTime_pi ξ hξ f, by
     intro k
-    -- `ℓ²` membership of coefficients after applying `numAllPowCLM ξ k`
     have hk' :
         Memℓp (normalizedCoeffCLM_SpaceTime_pi ξ hξ (numAllPowCLM ξ k f)) (2 : ℝ≥0∞) :=
       (normalizedCoeffL2 ξ hξ (numAllPowCLM ξ k f)).2
-    -- identify the weighted sequence with those coefficients, pointwise
     have hfun :
         OSforGFF.RapidDecaySeqBase.weightFun base₄ k (normalizedCoeffCLM_SpaceTime_pi ξ hξ f)
           = normalizedCoeffCLM_SpaceTime_pi ξ hξ (numAllPowCLM ξ k f) := by
@@ -160,10 +154,12 @@ noncomputable def normalizedCoeffRapidDecay (ξ : ℝ) (hξ : ξ ≠ 0) (f : Tes
         mul_comm]
     simpa [hfun] using hk'⟩
 
-@[simp] lemma normalizedCoeffRapidDecay_coe (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
+@[simp]
+lemma normalizedCoeffRapidDecay_coe (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
     (normalizedCoeffRapidDecay ξ hξ f : ℕ → ℝ) = normalizedCoeffCLM_SpaceTime_pi ξ hξ f := rfl
 
-@[simp] lemma normalizedCoeffRapidDecay_apply (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) (n : ℕ) :
+@[simp]
+lemma normalizedCoeffRapidDecay_apply (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) (n : ℕ) :
     (normalizedCoeffRapidDecay ξ hξ f : ℕ → ℝ) n = normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   rfl
 
@@ -178,10 +174,12 @@ noncomputable def normalizedCoeffRapidDecayₗ (ξ : ℝ) (hξ : ξ ≠ 0) :
     ext n
     simp [normalizedCoeffRapidDecay]
 
-@[simp] lemma normalizedCoeffRapidDecayₗ_apply (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
+@[simp]
+lemma normalizedCoeffRapidDecayₗ_apply (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) :
     normalizedCoeffRapidDecayₗ ξ hξ f = normalizedCoeffRapidDecay ξ hξ f := rfl
 
-@[simp] lemma normalizedCoeffRapidDecayₗ_apply_apply (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) (n : ℕ) :
+@[simp]
+lemma normalizedCoeffRapidDecayₗ_apply_apply (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) (n : ℕ) :
     (normalizedCoeffRapidDecayₗ ξ hξ f : ℕ → ℝ) n = normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   rfl
 

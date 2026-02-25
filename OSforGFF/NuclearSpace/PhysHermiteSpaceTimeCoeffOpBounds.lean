@@ -79,28 +79,18 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
     normalizedCoeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (0 : Fin STDimension) f) =
       Real.sqrt ((2 : ℝ) * (unpair₄₁ n : ℝ)) *
         normalizedCoeffCLM_SpaceTime ξ hξ (lower₀ n) f := by
-  -- If the first component is `0`, this is immediate from the unnormalized coefficient ladder.
-  classical
   by_cases h0 : unpair₄₁ n = 0
-  · -- `coeffCLM ... = 0` since it has a factor `unpair₄₁ n`.
-    have hcoeff0 :
+  · have hcoeff0 :
         coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (0 : Fin STDimension) f) = 0 := by
-      -- rewrite using the coefficient ladder, then use `h0`
       rw [coeffCLM_SpaceTime_raiseOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
       simp [h0]
-    -- unfold normalized coefficients and simplify
-    -- keep `raiseOpCLM` opaque so we can use `hcoeff0`
     simp [normalizedCoeffCLM_SpaceTime_apply, hcoeff0, h0, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply]
   · have hpos : 0 < unpair₄₁ n := Nat.pos_of_ne_zero h0
-    -- rewrite the target index as `raise₀ (lower₀ n)` and use the existing raised-index lemma
     have hn : raise₀ (lower₀ n) = n := raise₀_lower₀_of_pos (n := n) hpos
     have hidxNat : unpair₄₁ (lower₀ n) + 1 = unpair₄₁ n := by
-      -- `unpair₄₁ (lower₀ n) = unpair₄₁ n - 1`, and `a - 1 + 1 = a` since `0 < a`.
-      simpa [Nat.sub_add_cancel (Nat.succ_le_of_lt hpos)]
-    -- apply the raised-index identity with `n := lower₀ n`
+      simp [Nat.sub_add_cancel (Nat.succ_le_of_lt hpos)]
     have hstep :=
       normalizedCoeffCLM_SpaceTime_raiseOpCLM0_raise₀ (ξ := ξ) (hξ := hξ) (n := lower₀ n) (f := f)
-    -- rewrite `raise₀ (lower₀ n)` to `n` and rewrite the scalar factor at the Nat level
     rw [hidxNat] at hstep
     rw [hn] at hstep
     simpa using hstep
@@ -109,7 +99,6 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
     normalizedCoeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (1 : Fin STDimension) f) =
       Real.sqrt ((2 : ℝ) * (unpair₄₂ n : ℝ)) *
         normalizedCoeffCLM_SpaceTime ξ hξ (lower₁ n) f := by
-  classical
   by_cases h0 : unpair₄₂ n = 0
   · have hcoeff0 :
         coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (1 : Fin STDimension) f) = 0 := by
@@ -119,7 +108,7 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
   · have hpos : 0 < unpair₄₂ n := Nat.pos_of_ne_zero h0
     have hn : raise₁ (lower₁ n) = n := raise₁_lower₁_of_pos (n := n) hpos
     have hidxNat : unpair₄₂ (lower₁ n) + 1 = unpair₄₂ n := by
-      simpa [Nat.sub_add_cancel (Nat.succ_le_of_lt hpos)]
+      simp [Nat.sub_add_cancel (Nat.succ_le_of_lt hpos)]
     have hstep :=
       normalizedCoeffCLM_SpaceTime_raiseOpCLM1_raise₁ (ξ := ξ) (hξ := hξ) (n := lower₁ n) (f := f)
     rw [hidxNat] at hstep
@@ -130,7 +119,6 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
     normalizedCoeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (2 : Fin STDimension) f) =
       Real.sqrt ((2 : ℝ) * (unpair₄₃ n : ℝ)) *
         normalizedCoeffCLM_SpaceTime ξ hξ (lower₂ n) f := by
-  classical
   by_cases h0 : unpair₄₃ n = 0
   · have hcoeff0 :
         coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (2 : Fin STDimension) f) = 0 := by
@@ -140,7 +128,7 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
   · have hpos : 0 < unpair₄₃ n := Nat.pos_of_ne_zero h0
     have hn : raise₂ (lower₂ n) = n := raise₂_lower₂_of_pos (n := n) hpos
     have hidxNat : unpair₄₃ (lower₂ n) + 1 = unpair₄₃ n := by
-      simpa [Nat.sub_add_cancel (Nat.succ_le_of_lt hpos)]
+      simp [Nat.sub_add_cancel (Nat.succ_le_of_lt hpos)]
     have hstep :=
       normalizedCoeffCLM_SpaceTime_raiseOpCLM2_raise₂ (ξ := ξ) (hξ := hξ) (n := lower₂ n) (f := f)
     rw [hidxNat] at hstep
@@ -151,7 +139,6 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
     normalizedCoeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (3 : Fin STDimension) f) =
       Real.sqrt ((2 : ℝ) * (unpair₄₄ n : ℝ)) *
         normalizedCoeffCLM_SpaceTime ξ hξ (lower₃ n) f := by
-  classical
   by_cases h0 : unpair₄₄ n = 0
   · have hcoeff0 :
         coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (3 : Fin STDimension) f) = 0 := by
@@ -161,7 +148,7 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
   · have hpos : 0 < unpair₄₄ n := Nat.pos_of_ne_zero h0
     have hn : raise₃ (lower₃ n) = n := raise₃_lower₃_of_pos (n := n) hpos
     have hidxNat : unpair₄₄ (lower₃ n) + 1 = unpair₄₄ n := by
-      simpa [Nat.sub_add_cancel (Nat.succ_le_of_lt hpos)]
+      simp [Nat.sub_add_cancel (Nat.succ_le_of_lt hpos)]
     have hstep :=
       normalizedCoeffCLM_SpaceTime_raiseOpCLM3_raise₃ (ξ := ξ) (hξ := hξ) (n := lower₃ n) (f := f)
     rw [hidxNat] at hstep
@@ -208,7 +195,6 @@ lemma base₄_le_base₄_raise₂ (n : ℕ) : base₄ n ≤ base₄ (raise₂ n)
   have hR :
       ((unpair₄₁ n : ℝ) + 1) * (((unpair₄₂ n : ℝ) + 1) * (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1))) ≤
         ((unpair₄₁ n : ℝ) + 1) * (((unpair₄₂ n : ℝ) + 1) * (((unpair₄₃ n : ℝ) + 1 + 1) * ((unpair₄₄ n : ℝ) + 1))) := by
-    -- multiply `hcd` on the left by the nonnegative factor `(1+u1)*(1+u2)`
     have hcd' :
         ((unpair₄₂ n : ℝ) + 1) * (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1)) ≤
           ((unpair₄₂ n : ℝ) + 1) * (((unpair₄₃ n : ℝ) + 1 + 1) * ((unpair₄₄ n : ℝ) + 1)) := by
@@ -244,14 +230,11 @@ lemma base₄_raise₀_le_two_mul_base₄ (n : ℕ) : base₄ (raise₀ n) ≤ (
     have : (1 : ℝ) ≤ (unpair₄₁ n : ℝ) + 1 := by
       have : 0 ≤ (unpair₄₁ n : ℝ) := by positivity
       linarith
-    -- `a+1 ≤ 2*a` is equivalent to `1 ≤ a`
     linarith
-  -- multiply by the remaining nonnegative factors
   have hmul :
       ((unpair₄₁ n : ℝ) + 1 + 1) * (((unpair₄₂ n : ℝ) + 1) * (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1))) ≤
         ((2 : ℝ) * ((unpair₄₁ n : ℝ) + 1)) * (((unpair₄₂ n : ℝ) + 1) * (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1))) :=
     mul_le_mul_of_nonneg_right h hr
-  -- rearrange to match `base₄_eq_unpair₄`
   simpa [base₄_eq_unpair₄, mul_assoc, mul_left_comm, mul_comm,
     unpair₄₁_raise₀, unpair₄₂_raise₀, unpair₄₃_raise₀, unpair₄₄_raise₀] using hmul
 
@@ -305,131 +288,72 @@ lemma base₄_raise₃_le_two_mul_base₄ (n : ℕ) : base₄ (raise₃ n) ≤ (
 
 /-! ## Bounding single coordinate factors by `base₄` -/
 
+private lemma one_le_natCast_add_one (m : ℕ) : (1 : ℝ) ≤ (m : ℝ) + 1 := by
+  have hm : (0 : ℝ) ≤ (m : ℝ) := by positivity
+  linarith
+
+private lemma le_mul_four_of_one_le
+    {a b c d : ℝ}
+    (ha : 0 ≤ a) (hb : 1 ≤ b) (hc : 1 ≤ c) (hd : 1 ≤ d) :
+    a ≤ (a * b) * (c * d) := by
+  have hab : a ≤ a * b := le_mul_of_one_le_right ha hb
+  have hc0 : 0 ≤ c := le_trans (by norm_num) hc
+  have hcd : (1 : ℝ) ≤ c * d := by
+    have hcd' : c ≤ c * d := le_mul_of_one_le_right hc0 hd
+    exact le_trans hc hcd'
+  have hab_nonneg : 0 ≤ a * b := mul_nonneg ha (le_trans (by norm_num) hb)
+  exact le_trans hab (le_mul_of_one_le_right hab_nonneg hcd)
+
 lemma unpair₄₁_add_one_le_base₄ (n : ℕ) : (unpair₄₁ n : ℝ) + 1 ≤ base₄ n := by
-  have h2 : (1 : ℝ) ≤ (unpair₄₂ n : ℝ) + 1 := by
-    have : 0 ≤ (unpair₄₂ n : ℝ) := by positivity
-    linarith
-  have h3 : (1 : ℝ) ≤ (unpair₄₃ n : ℝ) + 1 := by
-    have : 0 ≤ (unpair₄₃ n : ℝ) := by positivity
-    linarith
-  have h4 : (1 : ℝ) ≤ (unpair₄₄ n : ℝ) + 1 := by
-    have : 0 ≤ (unpair₄₄ n : ℝ) := by positivity
-    linarith
-  have h12 :
-      (unpair₄₁ n : ℝ) + 1 ≤ ((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1) := by
-    exact le_mul_of_one_le_right (by positivity) h2
-  have h34 :
-      (1 : ℝ) ≤ ((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1) := by
-    have : (unpair₄₃ n : ℝ) + 1 ≤ ((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1) := by
-      exact le_mul_of_one_le_right (by positivity) h4
-    exact le_trans h3 this
-  have hmul :
-      ((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1) ≤
-        (((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1)) *
-          (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1)) := by
-    exact le_mul_of_one_le_right (by positivity) h34
-  have h1234 :
-      (unpair₄₁ n : ℝ) + 1 ≤
-        (((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1)) *
-          (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1)) := by
-    exact le_trans h12 hmul
-  simpa [base₄_eq_unpair₄, mul_assoc, mul_left_comm, mul_comm] using h1234
+  have h :=
+    le_mul_four_of_one_le
+      (a := (unpair₄₁ n : ℝ) + 1)
+      (b := (unpair₄₂ n : ℝ) + 1)
+      (c := (unpair₄₃ n : ℝ) + 1)
+      (d := (unpair₄₄ n : ℝ) + 1)
+      (by positivity)
+      (one_le_natCast_add_one (unpair₄₂ n))
+      (one_le_natCast_add_one (unpair₄₃ n))
+      (one_le_natCast_add_one (unpair₄₄ n))
+  simpa [base₄_eq_unpair₄, mul_assoc, mul_left_comm, mul_comm] using h
 
 lemma unpair₄₂_add_one_le_base₄ (n : ℕ) : (unpair₄₂ n : ℝ) + 1 ≤ base₄ n := by
-  -- symmetric to the first component
-  have h1 : (1 : ℝ) ≤ (unpair₄₁ n : ℝ) + 1 := by
-    have : 0 ≤ (unpair₄₁ n : ℝ) := by positivity
-    linarith
-  have h3 : (1 : ℝ) ≤ (unpair₄₃ n : ℝ) + 1 := by
-    have : 0 ≤ (unpair₄₃ n : ℝ) := by positivity
-    linarith
-  have h4 : (1 : ℝ) ≤ (unpair₄₄ n : ℝ) + 1 := by
-    have : 0 ≤ (unpair₄₄ n : ℝ) := by positivity
-    linarith
-  have h12 :
-      (unpair₄₂ n : ℝ) + 1 ≤ ((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1) := by
-    -- multiply on the left by `(unpair₄₁ n + 1) ≥ 1`
-    exact le_mul_of_one_le_left (by positivity) h1
-  have h34 :
-      (1 : ℝ) ≤ ((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1) := by
-    have : (unpair₄₃ n : ℝ) + 1 ≤ ((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1) := by
-      exact le_mul_of_one_le_right (by positivity) h4
-    exact le_trans h3 this
-  have hmul :
-      ((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1) ≤
-        (((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1)) *
-          (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1)) := by
-    exact le_mul_of_one_le_right (by positivity) h34
-  have h1234 :
-      (unpair₄₂ n : ℝ) + 1 ≤
-        (((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1)) *
-          (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1)) := by
-    exact le_trans h12 hmul
-  simpa [base₄_eq_unpair₄, mul_assoc, mul_left_comm, mul_comm] using h1234
+  have h :=
+    le_mul_four_of_one_le
+      (a := (unpair₄₂ n : ℝ) + 1)
+      (b := (unpair₄₁ n : ℝ) + 1)
+      (c := (unpair₄₃ n : ℝ) + 1)
+      (d := (unpair₄₄ n : ℝ) + 1)
+      (by positivity)
+      (one_le_natCast_add_one (unpair₄₁ n))
+      (one_le_natCast_add_one (unpair₄₃ n))
+      (one_le_natCast_add_one (unpair₄₄ n))
+  simpa [base₄_eq_unpair₄, mul_assoc, mul_left_comm, mul_comm] using h
 
 lemma unpair₄₃_add_one_le_base₄ (n : ℕ) : (unpair₄₃ n : ℝ) + 1 ≤ base₄ n := by
-  -- reduce to the previous lemma by commutativity
-  -- the product defining `base₄` is symmetric in the last two factors
-  have h :
-      (unpair₄₃ n : ℝ) + 1 ≤
-        (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1)) *
-          (((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1)) := by
-    -- apply `unpair₄₁_add_one_le_base₄` to the swapped tuple via commutativity
-    -- (a quick, direct proof is shorter than an explicit symmetry lemma)
-    have h4 : (1 : ℝ) ≤ (unpair₄₄ n : ℝ) + 1 := by
-      have : 0 ≤ (unpair₄₄ n : ℝ) := by positivity
-      linarith
-    have h12 : (1 : ℝ) ≤ ((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1) := by
-      have h1 : (1 : ℝ) ≤ (unpair₄₁ n : ℝ) + 1 := by
-        have : 0 ≤ (unpair₄₁ n : ℝ) := by positivity
-        linarith
-      have : (unpair₄₁ n : ℝ) + 1 ≤ ((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1) := by
-        have h2 : (1 : ℝ) ≤ (unpair₄₂ n : ℝ) + 1 := by
-          have : 0 ≤ (unpair₄₂ n : ℝ) := by positivity
-          linarith
-        exact le_mul_of_one_le_right (by positivity) h2
-      exact le_trans h1 this
-    have h34 :
-        (unpair₄₃ n : ℝ) + 1 ≤ ((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1) := by
-      exact le_mul_of_one_le_right (by positivity) h4
-    have hmul :
-        ((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1) ≤
-          (((unpair₄₃ n : ℝ) + 1) * ((unpair₄₄ n : ℝ) + 1)) *
-            (((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1)) := by
-      exact le_mul_of_one_le_right (by positivity) h12
-    exact le_trans h34 hmul
-  -- rewrite `base₄` and commute factors
+  have h :=
+    le_mul_four_of_one_le
+      (a := (unpair₄₃ n : ℝ) + 1)
+      (b := (unpair₄₄ n : ℝ) + 1)
+      (c := (unpair₄₁ n : ℝ) + 1)
+      (d := (unpair₄₂ n : ℝ) + 1)
+      (by positivity)
+      (one_le_natCast_add_one (unpair₄₄ n))
+      (one_le_natCast_add_one (unpair₄₁ n))
+      (one_le_natCast_add_one (unpair₄₂ n))
   simpa [base₄_eq_unpair₄, mul_assoc, mul_left_comm, mul_comm] using h
 
 lemma unpair₄₄_add_one_le_base₄ (n : ℕ) : (unpair₄₄ n : ℝ) + 1 ≤ base₄ n := by
-  -- same as the previous lemma, swapping the last two components
-  have h :
-      (unpair₄₄ n : ℝ) + 1 ≤
-        (((unpair₄₄ n : ℝ) + 1) * ((unpair₄₃ n : ℝ) + 1)) *
-          (((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1)) := by
-    -- start with `(unpair₄₄+1) ≤ (unpair₄₄+1)*(unpair₄₃+1)` then multiply by the remaining ≥1
-    have h3 : (1 : ℝ) ≤ (unpair₄₃ n : ℝ) + 1 := by
-      have : 0 ≤ (unpair₄₃ n : ℝ) := by positivity
-      linarith
-    have h12 : (1 : ℝ) ≤ ((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1) := by
-      have h1 : (1 : ℝ) ≤ (unpair₄₁ n : ℝ) + 1 := by
-        have : 0 ≤ (unpair₄₁ n : ℝ) := by positivity
-        linarith
-      have : (unpair₄₁ n : ℝ) + 1 ≤ ((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1) := by
-        have h2 : (1 : ℝ) ≤ (unpair₄₂ n : ℝ) + 1 := by
-          have : 0 ≤ (unpair₄₂ n : ℝ) := by positivity
-          linarith
-        exact le_mul_of_one_le_right (by positivity) h2
-      exact le_trans h1 this
-    have h43 :
-        (unpair₄₄ n : ℝ) + 1 ≤ ((unpair₄₄ n : ℝ) + 1) * ((unpair₄₃ n : ℝ) + 1) := by
-      exact le_mul_of_one_le_right (by positivity) h3
-    have hmul :
-        ((unpair₄₄ n : ℝ) + 1) * ((unpair₄₃ n : ℝ) + 1) ≤
-          (((unpair₄₄ n : ℝ) + 1) * ((unpair₄₃ n : ℝ) + 1)) *
-            (((unpair₄₁ n : ℝ) + 1) * ((unpair₄₂ n : ℝ) + 1)) := by
-      exact le_mul_of_one_le_right (by positivity) h12
-    exact le_trans h43 hmul
+  have h :=
+    le_mul_four_of_one_le
+      (a := (unpair₄₄ n : ℝ) + 1)
+      (b := (unpair₄₃ n : ℝ) + 1)
+      (c := (unpair₄₁ n : ℝ) + 1)
+      (d := (unpair₄₂ n : ℝ) + 1)
+      (by positivity)
+      (one_le_natCast_add_one (unpair₄₃ n))
+      (one_le_natCast_add_one (unpair₄₁ n))
+      (one_le_natCast_add_one (unpair₄₂ n))
   simpa [base₄_eq_unpair₄, mul_assoc, mul_left_comm, mul_comm] using h
 
 /-! ## (Work in progress) Bounding ladder operators on coefficient seminorms -/
@@ -476,7 +400,6 @@ private lemma norm_mul_sqrt_mul_sq (a t c : ℝ) (ht0 : 0 ≤ t) :
     simpa [abs_of_nonneg this]
   have hsq : Real.sqrt t * Real.sqrt t = t := Real.mul_self_sqrt ht0
   have hcnorm : ‖c‖ ^ (2 : ℕ) = c * c := by
-    -- `‖c‖ = |c|` and use `hc`
     simpa [Real.norm_eq_abs, pow_two, hc, mul_assoc] using hc
   calc
     ‖a * Real.sqrt t * c‖ ^ (2 : ℕ)
@@ -495,7 +418,6 @@ private lemma norm_mul_sqrt_mul_sq (a t c : ℝ) (ht0 : 0 ≤ t) :
     _ = a ^ (2 : ℕ) * t * (c * c) := by
             simp [pow_two, mul_assoc]
     _ = a ^ (2 : ℕ) * t * ‖c‖ ^ (2 : ℕ) := by
-            -- rewrite RHS using `hcnorm`, avoid `simp` cancellation
             rw [hcnorm]
 
 private lemma norm_mul_sq (a c : ℝ) :
@@ -525,7 +447,6 @@ private lemma raise₀_injective : Function.Injective raise₀ := by
   intro n m hnm
   have h' : unpair₄ (raise₀ n) = unpair₄ (raise₀ m) := by
     simpa [hnm]
-  -- Rewrite the decoded indices explicitly (avoid `simp` rewriting the equality away).
   rw [unpair₄_raise₀ (n := n)] at h'
   rw [unpair₄_raise₀ (n := m)] at h'
   have h1 : unpair₄₁ n = unpair₄₁ m := by
@@ -540,7 +461,6 @@ private lemma raise₀_injective : Function.Injective raise₀ := by
   have h4 : unpair₄₄ n = unpair₄₄ m := by
     have := congrArg (fun p : (ℕ × ℕ) × (ℕ × ℕ) => p.2.2) h'
     simpa using this
-  -- Recover `unpair₄ n = unpair₄ m`, hence `n = m`.
   refine (OSforGFF.RapidDecaySeqMulti.pairEquiv₄.symm.injective ?_)
   calc
     unpair₄ n = ((unpair₄₁ n, unpair₄₂ n), (unpair₄₃ n, unpair₄₄ n)) := by
@@ -633,7 +553,6 @@ private lemma raise₃_injective : Function.Injective raise₃ := by
 
 private lemma sqrt_two_mul_two_pow_sq (k : ℕ) :
     (Real.sqrt 2 * (2 : ℝ) ^ k) ^ (2 : ℕ) = (2 : ℝ) ^ (2 * k + 1) := by
-  -- expand the square and collect powers of `2`
   simp [pow_two, mul_assoc, mul_left_comm, mul_comm,
     Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2), pow_add, pow_mul]
 
@@ -790,7 +709,6 @@ private lemma base₄_pow_raise₃_mul_two_unpair_le (k n : ℕ) :
 lemma coeffSeminormSeq_raiseOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (raiseOpCLM ξ (0 : Fin STDimension) f) ≤
       (Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  classical
   let A : H :=
     OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k
       (normalizedCoeffRapidDecay ξ hξ (raiseOpCLM ξ (0 : Fin STDimension) f))
@@ -833,20 +751,16 @@ lemma coeffSeminormSeq_raiseOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           rw [hAx, hcoeff]
           simp
         simp [g, hAx0]
-
       have hinj : Set.InjOn raise₀ (raise₀ ⁻¹' (↑s : Set ℕ)) :=
         Set.injOn_of_injective raise₀_injective
-
       have hsum :
           (∑ y ∈ s, g y) = ∑ n ∈ s.preimage raise₀ hinj, g (raise₀ n) := by
         simpa using
           (Finset.sum_preimage (f := raise₀) (s := s) hinj (g := g) hg0).symm
-
       have hpoint :
           ∀ n, g (raise₀ n) ≤ ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
         intro n
         set c : ℝ := normalizedCoeffCLM_SpaceTime ξ hξ n f
-
         have hAcoord :
             (A : ℕ → ℝ) (raise₀ n) =
               (base₄ (raise₀ n)) ^ k *
@@ -862,19 +776,16 @@ lemma coeffSeminormSeq_raiseOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           rw [hcoord,
             normalizedCoeffCLM_SpaceTime_raiseOpCLM0_raise₀ (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
           simp [c, mul_assoc]
-
         have ht0 : 0 ≤ (2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ) := by positivity
         have hg :
             g (raise₀ n) =
               ((base₄ (raise₀ n)) ^ k) ^ (2 : ℕ) *
                 ((2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ)) * ‖c‖ ^ (2 : ℕ) := by
           dsimp [g]
-          -- rewrite `A` at the raised index, then apply the scalar norm identity
           rw [hAcoord]
           exact
             norm_mul_sqrt_mul_sq (a := (base₄ (raise₀ n)) ^ k)
               (t := (2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ)) (c := c) ht0
-
         have hpowA :
             ((base₄ (raise₀ n)) ^ k) ^ (2 : ℕ) = (base₄ (raise₀ n)) ^ (2 * k) := by
           calc
@@ -882,16 +793,13 @@ lemma coeffSeminormSeq_raiseOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
               simp [pow_mul]
             _ = (base₄ (raise₀ n)) ^ (2 * k) := by
               simp [Nat.mul_comm]
-
         have hBcoord :
             (B : ℕ → ℝ) n = (base₄ n) ^ (k + 1) * c := by
           simpa [B, c] using
             (coeffSeminormSeq_toL2_apply (ξ := ξ) (hξ := hξ) (k := k + 1) (f := f) (n := n))
-
         have hBn :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hBcoord, mul_assoc] using (norm_mul_sq (a := (base₄ n) ^ (k + 1)) (c := c))
-
         have hpowB :
             ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) = (base₄ n) ^ (2 * k + 2) := by
           calc
@@ -905,23 +813,16 @@ lemma coeffSeminormSeq_raiseOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                   _ = 2 * k + 2 := by
                     simp [Nat.mul_comm]
               simpa [hk]
-
         have hBn2 :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = (base₄ n) ^ (2 * k + 2) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hpowB, mul_assoc] using hBn
-
         have hc2 : 0 ≤ ‖c‖ ^ (2 : ℕ) := by positivity
-
-        -- now use the explicit expression for `g (raise₀ n)`
         have hg' :
             g (raise₀ n) =
               (base₄ (raise₀ n)) ^ (2 * k) * (2 * ((unpair₄₁ n + 1 : ℕ) : ℝ)) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hg, hpowA, mul_assoc] using hg
-
-        -- Multiply the scalar weight inequality by `‖c‖^2`, then rewrite the RHS using `hBn2`.
         have hmul :=
           mul_le_mul_of_nonneg_right (base₄_pow_raise₀_mul_two_unpair_le (k := k) (n := n)) hc2
-
         have hrhs :
             (((2 : ℝ) ^ (2 * k + 1)) * (base₄ n) ^ (2 * k + 2)) * ‖c‖ ^ (2 : ℕ) =
               ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
@@ -931,13 +832,10 @@ lemma coeffSeminormSeq_raiseOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                     exact (mul_assoc ((2 : ℝ) ^ (2 * k + 1)) ((base₄ n) ^ (2 * k + 2)) (‖c‖ ^ (2 : ℕ)))
             _ = ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
                     rw [hBn2.symm]
-
         have hmul2 := hmul
         rw [hrhs] at hmul2
-
         rw [hg']
         exact hmul2
-
       calc
         ∑ i ∈ s, ‖(A : ℕ → ℝ) i‖ ^ (2 : ℕ) = ∑ i ∈ s, g i := by
           simp [g]
@@ -966,11 +864,7 @@ lemma coeffSeminormSeq_raiseOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                       simpa [hC0sq]
               _ = (C0 * ‖B‖) ^ (2 : ℕ) := by
                       simpa [mul_pow] using (mul_pow C0 ‖B‖ (2 : ℕ)).symm
-
-    -- convert back to `‖·‖ ^ (p.toReal)` with `p = 2`
     simpa using hsq
-
-  -- rewrite back to the coefficient seminorms
   simpa [coeffSeminormSeq_apply_eq_norm, A, B, C0] using hAB
 
 /-! ## Coefficient seminorm shift: `raiseOpCLM` (coordinate 1) -/
@@ -978,7 +872,6 @@ lemma coeffSeminormSeq_raiseOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
 lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (raiseOpCLM ξ (1 : Fin STDimension) f) ≤
       (Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  classical
   let A : H :=
     OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k
       (normalizedCoeffRapidDecay ξ hξ (raiseOpCLM ξ (1 : Fin STDimension) f))
@@ -995,7 +888,6 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
     have hsq :
         (∑ i ∈ s, ‖(A : ℕ → ℝ) i‖ ^ (2 : ℕ)) ≤ (C0 * ‖B‖) ^ (2 : ℕ) := by
       let g : ℕ → ℝ := fun n => ‖(A : ℕ → ℝ) n‖ ^ (2 : ℕ)
-
       have hg0 : ∀ x ∈ s, x ∉ Set.range raise₁ → g x = 0 := by
         intro x hx hxnot
         have hx0 : unpair₄₂ x = 0 := by
@@ -1020,20 +912,16 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           rw [hAx, hcoeff]
           simp
         simp [g, hAx0]
-
       have hinj : Set.InjOn raise₁ (raise₁ ⁻¹' (↑s : Set ℕ)) :=
         Set.injOn_of_injective raise₁_injective
-
       have hsum :
           (∑ y ∈ s, g y) = ∑ n ∈ s.preimage raise₁ hinj, g (raise₁ n) := by
         simpa using
           (Finset.sum_preimage (f := raise₁) (s := s) hinj (g := g) hg0).symm
-
       have hpoint :
           ∀ n, g (raise₁ n) ≤ ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
         intro n
         set c : ℝ := normalizedCoeffCLM_SpaceTime ξ hξ n f
-
         have hAcoord :
             (A : ℕ → ℝ) (raise₁ n) =
               (base₄ (raise₁ n)) ^ k *
@@ -1049,7 +937,6 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           rw [hcoord,
             normalizedCoeffCLM_SpaceTime_raiseOpCLM1_raise₁ (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
           simp [c, mul_assoc]
-
         have ht0 : 0 ≤ (2 : ℝ) * ((unpair₄₂ n + 1 : ℕ) : ℝ) := by positivity
         have hg :
             g (raise₁ n) =
@@ -1060,7 +947,6 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           exact
             norm_mul_sqrt_mul_sq (a := (base₄ (raise₁ n)) ^ k)
               (t := (2 : ℝ) * ((unpair₄₂ n + 1 : ℕ) : ℝ)) (c := c) ht0
-
         have hpowA :
             ((base₄ (raise₁ n)) ^ k) ^ (2 : ℕ) = (base₄ (raise₁ n)) ^ (2 * k) := by
           calc
@@ -1068,16 +954,13 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
               simp [pow_mul]
             _ = (base₄ (raise₁ n)) ^ (2 * k) := by
               simp [Nat.mul_comm]
-
         have hBcoord :
             (B : ℕ → ℝ) n = (base₄ n) ^ (k + 1) * c := by
           simpa [B, c] using
             (coeffSeminormSeq_toL2_apply (ξ := ξ) (hξ := hξ) (k := k + 1) (f := f) (n := n))
-
         have hBn :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hBcoord, mul_assoc] using (norm_mul_sq (a := (base₄ n) ^ (k + 1)) (c := c))
-
         have hpowB :
             ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) = (base₄ n) ^ (2 * k + 2) := by
           calc
@@ -1091,21 +974,16 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                   _ = 2 * k + 2 := by
                     simp [Nat.mul_comm]
               simpa [hk]
-
         have hBn2 :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = (base₄ n) ^ (2 * k + 2) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hpowB, mul_assoc] using hBn
-
         have hc2 : 0 ≤ ‖c‖ ^ (2 : ℕ) := by positivity
-
         have hg' :
             g (raise₁ n) =
               (base₄ (raise₁ n)) ^ (2 * k) * (2 * ((unpair₄₂ n + 1 : ℕ) : ℝ)) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hg, hpowA, mul_assoc] using hg
-
         have hmul :=
           mul_le_mul_of_nonneg_right (base₄_pow_raise₁_mul_two_unpair_le (k := k) (n := n)) hc2
-
         have hrhs :
             (((2 : ℝ) ^ (2 * k + 1)) * (base₄ n) ^ (2 * k + 2)) * ‖c‖ ^ (2 : ℕ) =
               ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
@@ -1115,13 +993,10 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                     exact (mul_assoc ((2 : ℝ) ^ (2 * k + 1)) ((base₄ n) ^ (2 * k + 2)) (‖c‖ ^ (2 : ℕ)))
             _ = ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
                     rw [hBn2.symm]
-
         have hmul2 := hmul
         rw [hrhs] at hmul2
-
         rw [hg']
         exact hmul2
-
       calc
         ∑ i ∈ s, ‖(A : ℕ → ℝ) i‖ ^ (2 : ℕ) = ∑ i ∈ s, g i := by
           simp [g]
@@ -1150,7 +1025,6 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                       simpa [hC0sq]
               _ = (C0 * ‖B‖) ^ (2 : ℕ) := by
                       simpa [mul_pow] using (mul_pow C0 ‖B‖ (2 : ℕ)).symm
-
     simpa using hsq
 
   simpa [coeffSeminormSeq_apply_eq_norm, A, B, C0] using hAB
@@ -1160,7 +1034,6 @@ lemma coeffSeminormSeq_raiseOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
 lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (raiseOpCLM ξ (2 : Fin STDimension) f) ≤
       (Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  classical
   let A : H :=
     OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k
       (normalizedCoeffRapidDecay ξ hξ (raiseOpCLM ξ (2 : Fin STDimension) f))
@@ -1177,7 +1050,6 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
     have hsq :
         (∑ i ∈ s, ‖(A : ℕ → ℝ) i‖ ^ (2 : ℕ)) ≤ (C0 * ‖B‖) ^ (2 : ℕ) := by
       let g : ℕ → ℝ := fun n => ‖(A : ℕ → ℝ) n‖ ^ (2 : ℕ)
-
       have hg0 : ∀ x ∈ s, x ∉ Set.range raise₂ → g x = 0 := by
         intro x hx hxnot
         have hx0 : unpair₄₃ x = 0 := by
@@ -1202,20 +1074,16 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           rw [hAx, hcoeff]
           simp
         simp [g, hAx0]
-
       have hinj : Set.InjOn raise₂ (raise₂ ⁻¹' (↑s : Set ℕ)) :=
         Set.injOn_of_injective raise₂_injective
-
       have hsum :
           (∑ y ∈ s, g y) = ∑ n ∈ s.preimage raise₂ hinj, g (raise₂ n) := by
         simpa using
           (Finset.sum_preimage (f := raise₂) (s := s) hinj (g := g) hg0).symm
-
       have hpoint :
           ∀ n, g (raise₂ n) ≤ ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
         intro n
         set c : ℝ := normalizedCoeffCLM_SpaceTime ξ hξ n f
-
         have hAcoord :
             (A : ℕ → ℝ) (raise₂ n) =
               (base₄ (raise₂ n)) ^ k *
@@ -1231,7 +1099,6 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           rw [hcoord,
             normalizedCoeffCLM_SpaceTime_raiseOpCLM2_raise₂ (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
           simp [c, mul_assoc]
-
         have ht0 : 0 ≤ (2 : ℝ) * ((unpair₄₃ n + 1 : ℕ) : ℝ) := by positivity
         have hg :
             g (raise₂ n) =
@@ -1242,7 +1109,6 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           exact
             norm_mul_sqrt_mul_sq (a := (base₄ (raise₂ n)) ^ k)
               (t := (2 : ℝ) * ((unpair₄₃ n + 1 : ℕ) : ℝ)) (c := c) ht0
-
         have hpowA :
             ((base₄ (raise₂ n)) ^ k) ^ (2 : ℕ) = (base₄ (raise₂ n)) ^ (2 * k) := by
           calc
@@ -1250,12 +1116,10 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
               simp [pow_mul]
             _ = (base₄ (raise₂ n)) ^ (2 * k) := by
               simp [Nat.mul_comm]
-
         have hBcoord :
             (B : ℕ → ℝ) n = (base₄ n) ^ (k + 1) * c := by
           simpa [B, c] using
             (coeffSeminormSeq_toL2_apply (ξ := ξ) (hξ := hξ) (k := k + 1) (f := f) (n := n))
-
         have hBn :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hBcoord, mul_assoc] using (norm_mul_sq (a := (base₄ n) ^ (k + 1)) (c := c))
@@ -1273,21 +1137,16 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                   _ = 2 * k + 2 := by
                     simp [Nat.mul_comm]
               simpa [hk]
-
         have hBn2 :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = (base₄ n) ^ (2 * k + 2) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hpowB, mul_assoc] using hBn
-
         have hc2 : 0 ≤ ‖c‖ ^ (2 : ℕ) := by positivity
-
         have hg' :
             g (raise₂ n) =
               (base₄ (raise₂ n)) ^ (2 * k) * (2 * ((unpair₄₃ n + 1 : ℕ) : ℝ)) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hg, hpowA, mul_assoc] using hg
-
         have hmul :=
           mul_le_mul_of_nonneg_right (base₄_pow_raise₂_mul_two_unpair_le (k := k) (n := n)) hc2
-
         have hrhs :
             (((2 : ℝ) ^ (2 * k + 1)) * (base₄ n) ^ (2 * k + 2)) * ‖c‖ ^ (2 : ℕ) =
               ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
@@ -1297,13 +1156,10 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                     exact (mul_assoc ((2 : ℝ) ^ (2 * k + 1)) ((base₄ n) ^ (2 * k + 2)) (‖c‖ ^ (2 : ℕ)))
             _ = ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
                     rw [hBn2.symm]
-
         have hmul2 := hmul
         rw [hrhs] at hmul2
-
         rw [hg']
         exact hmul2
-
       calc
         ∑ i ∈ s, ‖(A : ℕ → ℝ) i‖ ^ (2 : ℕ) = ∑ i ∈ s, g i := by
           simp [g]
@@ -1332,7 +1188,6 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                       simpa [hC0sq]
               _ = (C0 * ‖B‖) ^ (2 : ℕ) := by
                       simpa [mul_pow] using (mul_pow C0 ‖B‖ (2 : ℕ)).symm
-
     simpa using hsq
 
   simpa [coeffSeminormSeq_apply_eq_norm, A, B, C0] using hAB
@@ -1342,7 +1197,6 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
 lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (raiseOpCLM ξ (3 : Fin STDimension) f) ≤
       (Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  classical
   let A : H :=
     OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k
       (normalizedCoeffRapidDecay ξ hξ (raiseOpCLM ξ (3 : Fin STDimension) f))
@@ -1359,7 +1213,6 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
     have hsq :
         (∑ i ∈ s, ‖(A : ℕ → ℝ) i‖ ^ (2 : ℕ)) ≤ (C0 * ‖B‖) ^ (2 : ℕ) := by
       let g : ℕ → ℝ := fun n => ‖(A : ℕ → ℝ) n‖ ^ (2 : ℕ)
-
       have hg0 : ∀ x ∈ s, x ∉ Set.range raise₃ → g x = 0 := by
         intro x hx hxnot
         have hx0 : unpair₄₄ x = 0 := by
@@ -1384,15 +1237,12 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           rw [hAx, hcoeff]
           simp
         simp [g, hAx0]
-
       have hinj : Set.InjOn raise₃ (raise₃ ⁻¹' (↑s : Set ℕ)) :=
         Set.injOn_of_injective raise₃_injective
-
       have hsum :
           (∑ y ∈ s, g y) = ∑ n ∈ s.preimage raise₃ hinj, g (raise₃ n) := by
         simpa using
           (Finset.sum_preimage (f := raise₃) (s := s) hinj (g := g) hg0).symm
-
       have hpoint :
           ∀ n, g (raise₃ n) ≤ ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
         intro n
@@ -1524,7 +1374,6 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
 lemma coeffSeminormSeq_lowerOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (lowerOpCLM ξ (0 : Fin STDimension) f) ≤
       (Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  classical
   let A : H :=
     OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k
       (normalizedCoeffRapidDecay ξ hξ (lowerOpCLM ξ (0 : Fin STDimension) f))
@@ -1705,7 +1554,6 @@ lemma coeffSeminormSeq_lowerOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
 lemma coeffSeminormSeq_lowerOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (lowerOpCLM ξ (1 : Fin STDimension) f) ≤
       (Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  classical
   let A : H :=
     OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k
       (normalizedCoeffRapidDecay ξ hξ (lowerOpCLM ξ (1 : Fin STDimension) f))
@@ -1875,7 +1723,6 @@ lemma coeffSeminormSeq_lowerOpCLM1_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
 lemma coeffSeminormSeq_lowerOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (lowerOpCLM ξ (2 : Fin STDimension) f) ≤
       (Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  classical
   let A : H :=
     OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k
       (normalizedCoeffRapidDecay ξ hξ (lowerOpCLM ξ (2 : Fin STDimension) f))
@@ -2045,7 +1892,6 @@ lemma coeffSeminormSeq_lowerOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
 lemma coeffSeminormSeq_lowerOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (lowerOpCLM ξ (3 : Fin STDimension) f) ≤
       (Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  classical
   let A : H :=
     OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base₄) k
       (normalizedCoeffRapidDecay ξ hξ (lowerOpCLM ξ (3 : Fin STDimension) f))
@@ -2230,228 +2076,142 @@ lemma coeffSeminormSeq_lowerOpCLM_le (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDime
   · simpa using (coeffSeminormSeq_lowerOpCLM2_le (ξ := ξ) (hξ := hξ) (k := k) (f := f))
   · simpa using (coeffSeminormSeq_lowerOpCLM3_le (ξ := ξ) (hξ := hξ) (k := k) (f := f))
 
+private lemma raiseOpCLM_add_lowerOpCLM
+    (ξ : ℝ) (i : Fin STDimension) (f : TestFunction) :
+    raiseOpCLM ξ i f + lowerOpCLM ξ i f = (2 * ξ⁻¹) • mulCoordCLM i f := by
+  calc
+    raiseOpCLM ξ i f + lowerOpCLM ξ i f
+        = ((ξ⁻¹) • mulCoordCLM i f - ξ • derivCoordCLM i f) +
+            ((ξ⁻¹) • mulCoordCLM i f + ξ • derivCoordCLM i f) := by
+              simp [raiseOpCLM_apply, lowerOpCLM_apply]
+    _ = ((ξ⁻¹) • mulCoordCLM i f) + (ξ⁻¹) • mulCoordCLM i f := by
+          simpa [sub_eq_add_neg, add_assoc] using
+            (sub_add_add_cancel ((ξ⁻¹) • mulCoordCLM i f) (ξ • derivCoordCLM i f)
+              ((ξ⁻¹) • mulCoordCLM i f))
+    _ = (2 : ℝ) • ((ξ⁻¹) • mulCoordCLM i f) := by simpa [two_smul]
+    _ = (2 * ξ⁻¹) • mulCoordCLM i f := by simp [smul_smul, mul_assoc]
+
+private lemma lowerOpCLM_sub_raiseOpCLM
+    (ξ : ℝ) (i : Fin STDimension) (f : TestFunction) :
+    lowerOpCLM ξ i f - raiseOpCLM ξ i f = (2 * ξ) • derivCoordCLM i f := by
+  calc
+    lowerOpCLM ξ i f - raiseOpCLM ξ i f
+        = ((ξ⁻¹) • mulCoordCLM i f + ξ • derivCoordCLM i f) -
+            ((ξ⁻¹) • mulCoordCLM i f - ξ • derivCoordCLM i f) := by
+              simp [raiseOpCLM_apply, lowerOpCLM_apply]
+    _ = (ξ • derivCoordCLM i f) + (ξ • derivCoordCLM i f) := by
+          simp [sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
+    _ = (2 : ℝ) • (ξ • derivCoordCLM i f) := by simpa [two_smul]
+    _ = (2 * ξ) • derivCoordCLM i f := by simp [smul_smul, mul_assoc]
+
+private lemma mulCoordCLM_eq_smul_raise_add_lower
+    (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension) (f : TestFunction) :
+    mulCoordCLM i f = (ξ / 2) • (raiseOpCLM ξ i f + lowerOpCLM ξ i f) := by
+  have hsum := raiseOpCLM_add_lowerOpCLM (ξ := ξ) (i := i) (f := f)
+  have hscalar : (ξ / 2 : ℝ) * (2 * ξ⁻¹) = 1 := by
+    field_simp [hξ]
+  calc
+    mulCoordCLM i f = (1 : ℝ) • mulCoordCLM i f := by simp
+    _ = ((ξ / 2 : ℝ) * (2 * ξ⁻¹)) • mulCoordCLM i f := by simp [hscalar]
+    _ = (ξ / 2 : ℝ) • ((2 * ξ⁻¹) • mulCoordCLM i f) := by
+          simp [smul_smul, mul_assoc]
+    _ = (ξ / 2 : ℝ) • (raiseOpCLM ξ i f + lowerOpCLM ξ i f) := by rw [← hsum]
+
+private lemma derivCoordCLM_eq_smul_lower_sub_raise
+    (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension) (f : TestFunction) :
+    derivCoordCLM i f = (1 / (2 * ξ)) • (lowerOpCLM ξ i f - raiseOpCLM ξ i f) := by
+  have hdiff := lowerOpCLM_sub_raiseOpCLM (ξ := ξ) (i := i) (f := f)
+  have hsmul := congrArg (fun x : TestFunction => (1 / (2 * ξ)) • x) hdiff
+  have hright :
+      (1 / (2 * ξ)) • ((2 * ξ) • derivCoordCLM i f) = derivCoordCLM i f := by
+    have hscalar' : (ξ⁻¹ * 2⁻¹ * (2 * ξ) : ℝ) = 1 := by
+      field_simp [hξ]
+    calc
+      (1 / (2 * ξ)) • ((2 * ξ) • derivCoordCLM i f)
+          = ((1 / (2 * ξ) : ℝ) * (2 * ξ)) • derivCoordCLM i f := by
+              exact (smul_smul (1 / (2 * ξ)) (2 * ξ) (derivCoordCLM i f))
+      _ = derivCoordCLM i f := by
+            have : (ξ * ξ⁻¹ : ℝ) = 1 := by
+              simpa [hξ] using (mul_inv_cancel hξ)
+            simpa [hscalar', this, smul_smul, mul_assoc, mul_left_comm, mul_comm]
+  exact
+    (show (1 / (2 * ξ)) • (lowerOpCLM ξ i f - raiseOpCLM ξ i f) = derivCoordCLM i f from
+      by simpa [sub_eq_add_neg] using hsmul.trans hright).symm
+
+private lemma coeffSeminormSeq_smul_add_le
+    (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (a : ℝ) (g h : TestFunction) :
+    coeffSeminormSeq ξ hξ k (a • (g + h))
+      ≤ ‖a‖ * (coeffSeminormSeq ξ hξ k g + coeffSeminormSeq ξ hξ k h) := by
+  rw [map_smul_eq_mul (coeffSeminormSeq ξ hξ k) a (g + h)]
+  exact mul_le_mul_of_nonneg_left (map_add_le_add (coeffSeminormSeq ξ hξ k) g h) (by positivity)
+
+private lemma coeffSeminormSeq_smul_sub_le
+    (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (a : ℝ) (g h : TestFunction) :
+    coeffSeminormSeq ξ hξ k (a • (g - h))
+      ≤ ‖a‖ * (coeffSeminormSeq ξ hξ k g + coeffSeminormSeq ξ hξ k h) := by
+  rw [map_smul_eq_mul (coeffSeminormSeq ξ hξ k) a (g - h)]
+  exact mul_le_mul_of_nonneg_left (map_sub_le_add (coeffSeminormSeq ξ hξ k) g h) (by positivity)
+
+private lemma coeffSeminormSeq_raise_add_lower_le
+    (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension) (k : ℕ) (f : TestFunction) :
+    coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f + lowerOpCLM ξ i f)
+      ≤ (Real.sqrt 2 * ((2 : ℝ) ^ k + 1)) * coeffSeminormSeq ξ hξ (k + 1) f := by
+  have hra := coeffSeminormSeq_raiseOpCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f)
+  have hlo := coeffSeminormSeq_lowerOpCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f)
+  have hfac :
+      ((Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f) +
+          ((Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f)
+        = (Real.sqrt 2 * ((2 : ℝ) ^ k + 1)) * coeffSeminormSeq ξ hξ (k + 1) f := by
+    ring_nf
+  exact le_trans
+    (map_add_le_add (coeffSeminormSeq ξ hξ k) _ _)
+    (le_trans (add_le_add hra hlo) (le_of_eq hfac))
+
+private lemma coeffSeminormSeq_lower_sub_raise_le
+    (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension) (k : ℕ) (f : TestFunction) :
+    coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f - raiseOpCLM ξ i f)
+      ≤ (Real.sqrt 2 * ((2 : ℝ) ^ k + 1)) * coeffSeminormSeq ξ hξ (k + 1) f := by
+  have hlo := coeffSeminormSeq_lowerOpCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f)
+  have hra := coeffSeminormSeq_raiseOpCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f)
+  have hfac :
+      ((Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f) +
+          ((Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f)
+        = (Real.sqrt 2 * ((2 : ℝ) ^ k + 1)) * coeffSeminormSeq ξ hξ (k + 1) f := by
+    ring_nf
+  exact le_trans
+    (map_sub_le_add (coeffSeminormSeq ξ hξ k) _ _)
+    (le_trans (add_le_add hlo hra) (le_of_eq hfac))
+
 lemma coeffSeminormSeq_mulCoordCLM_le (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (mulCoordCLM i f) ≤
       (‖(ξ / 2 : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k + 1)) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  -- express `mulCoordCLM` via `raiseOpCLM` and `lowerOpCLM`
-  have hmul :
-      mulCoordCLM i f = (ξ / 2) • (raiseOpCLM ξ i f + lowerOpCLM ξ i f) := by
-    -- `raise + lower = (2 * ξ⁻¹) • mul`
-    have hsum :
-        raiseOpCLM ξ i f + lowerOpCLM ξ i f = (2 * ξ⁻¹) • mulCoordCLM i f := by
-      -- expand and cancel the derivative terms
-      calc
-        raiseOpCLM ξ i f + lowerOpCLM ξ i f
-            = ((ξ⁻¹) • mulCoordCLM i f - ξ • derivCoordCLM i f)
-                + ((ξ⁻¹) • mulCoordCLM i f + ξ • derivCoordCLM i f) := by
-                  simp [raiseOpCLM_apply, lowerOpCLM_apply]
-        _ = ((ξ⁻¹) • mulCoordCLM i f - ξ • derivCoordCLM i f)
-                + (ξ • derivCoordCLM i f + (ξ⁻¹) • mulCoordCLM i f) := by
-                  simp [add_comm, add_left_comm, add_assoc]
-        _ = ((ξ⁻¹) • mulCoordCLM i f) + (ξ⁻¹) • mulCoordCLM i f := by
-                  simpa [sub_eq_add_neg, add_assoc] using
-                    (sub_add_add_cancel ((ξ⁻¹) • mulCoordCLM i f) (ξ • derivCoordCLM i f)
-                      ((ξ⁻¹) • mulCoordCLM i f))
-        _ = (2 : ℝ) • ((ξ⁻¹) • mulCoordCLM i f) := by
-                  simpa [two_smul]
-        _ = (2 * ξ⁻¹) • mulCoordCLM i f := by
-                  simp [smul_smul, mul_assoc]
-    -- now cancel the scalar factor
-    have hscalar : (ξ / 2 : ℝ) * (2 * ξ⁻¹) = 1 := by
-      calc
-        (ξ / 2 : ℝ) * (2 * ξ⁻¹) = ((ξ / 2 : ℝ) * 2) * ξ⁻¹ := by
-          ring_nf
-        _ = ξ * ξ⁻¹ := by
-          simp [div_eq_mul_inv, mul_assoc]
-        _ = 1 := by
-          simpa [hξ] using (mul_inv_cancel hξ)
-    have hcancel :
-        (ξ / 2) • (raiseOpCLM ξ i f + lowerOpCLM ξ i f) = mulCoordCLM i f := by
-      have hsmul := congrArg (fun x : TestFunction => (ξ / 2) • x) hsum
-      -- simplify the RHS scalar product to `mulCoordCLM i f`
-      have hright :
-          (ξ / 2) • ((2 * ξ⁻¹) • mulCoordCLM i f) = mulCoordCLM i f := by
-        calc
-          (ξ / 2) • ((2 * ξ⁻¹) • mulCoordCLM i f)
-              = ((ξ / 2 : ℝ) * (2 * ξ⁻¹)) • mulCoordCLM i f := by
-                  simp [smul_smul, mul_assoc]
-          _ = (1 : ℝ) • mulCoordCLM i f := by
-                  simp [hscalar]
-          _ = mulCoordCLM i f := by simp
-      exact hsmul.trans hright
-    exact hcancel.symm
-
-  -- apply seminorm estimates
-  -- start by rewriting with `hmul`
   have hsmul :
       coeffSeminormSeq ξ hξ k (mulCoordCLM i f) =
         ‖(ξ / 2 : ℝ)‖ * coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f + lowerOpCLM ξ i f) := by
-    -- `p (a • x) = ‖a‖ * p x`, then rewrite the argument using `hmul`
-    have h :=
+    rw [mulCoordCLM_eq_smul_raise_add_lower (ξ := ξ) (hξ := hξ) (i := i) (f := f)]
+    simpa using
       (map_smul_eq_mul (coeffSeminormSeq ξ hξ k) (ξ / 2) (raiseOpCLM ξ i f + lowerOpCLM ξ i f))
-    -- avoid `simp` recursion: rewrite by `rw` only
-    calc
-      coeffSeminormSeq ξ hξ k (mulCoordCLM i f)
-          = coeffSeminormSeq ξ hξ k ((ξ / 2) • (raiseOpCLM ξ i f + lowerOpCLM ξ i f)) := by
-              rw [hmul]
-        _ = ‖(ξ / 2 : ℝ)‖ * coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f + lowerOpCLM ξ i f) := by
-              simpa using h
-  -- triangle inequality on the sum
-  have hadd :
-      coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f + lowerOpCLM ξ i f) ≤
-        coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f) +
-          coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f) :=
-    map_add_le_add (coeffSeminormSeq ξ hξ k) _ _
-  -- use raise/lower shift bounds
-  have hra :
-      coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f) ≤
-        (Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f :=
-    coeffSeminormSeq_raiseOpCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f)
-  have hlo :
-      coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f) ≤
-        (Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f :=
-    coeffSeminormSeq_lowerOpCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f)
-  -- combine everything
   rw [hsmul]
-  have hsum2 :
-      ‖(ξ / 2 : ℝ)‖ * coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f + lowerOpCLM ξ i f) ≤
-        ‖(ξ / 2 : ℝ)‖ *
-          (coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f) +
-            coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f)) :=
-    mul_le_mul_of_nonneg_left hadd (by positivity)
-  refine le_trans hsum2 ?_
-  -- substitute the individual bounds and simplify
-  have hsum3 :
-      ‖(ξ / 2 : ℝ)‖ *
-          (coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f) +
-            coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f)) ≤
-        ‖(ξ / 2 : ℝ)‖ *
-          (((Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f) +
-            ((Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f)) := by
-    gcongr
-  refine le_trans hsum3 ?_
-  -- factor the common term `coeffSeminormSeq ... (k+1) f`
-  -- and rewrite the scalar as `Real.sqrt 2 * ((2:ℝ)^k + 1)`.
-  have :
-      ((Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f) +
-          ((Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f)
-        =
-      (Real.sqrt 2 * ((2 : ℝ) ^ k + 1)) * coeffSeminormSeq ξ hξ (k + 1) f := by
-    -- purely algebraic
-    ring_nf
-  -- conclude
-  -- rewrite the RHS sum using `this`, then only reassociate scalars
-  rw [this]
-  -- now both sides are definitionally the same up to associativity/commutativity
-  simpa [mul_assoc, mul_left_comm, mul_comm]
+  have hmul := mul_le_mul_of_nonneg_left
+      (coeffSeminormSeq_raise_add_lower_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f))
+      (by positivity : 0 ≤ ‖(ξ / 2 : ℝ)‖)
+  simpa [mul_assoc, mul_left_comm, mul_comm] using hmul
 
 lemma coeffSeminormSeq_derivCoordCLM_le (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension) (k : ℕ) (f : TestFunction) :
     coeffSeminormSeq ξ hξ k (derivCoordCLM i f) ≤
       (‖(1 / (2 * ξ) : ℝ)‖ * Real.sqrt 2 * ((2 : ℝ) ^ k + 1)) * coeffSeminormSeq ξ hξ (k + 1) f := by
-  -- express `derivCoordCLM` via `raiseOpCLM` and `lowerOpCLM`
-  have hderiv :
-      derivCoordCLM i f = (1 / (2 * ξ)) • (lowerOpCLM ξ i f - raiseOpCLM ξ i f) := by
-    -- `lower - raise = (2 * ξ) • deriv`
-    have hdiff :
-        lowerOpCLM ξ i f - raiseOpCLM ξ i f = (2 * ξ) • derivCoordCLM i f := by
-      calc
-        lowerOpCLM ξ i f - raiseOpCLM ξ i f
-            = ((ξ⁻¹) • mulCoordCLM i f + ξ • derivCoordCLM i f)
-                - ((ξ⁻¹) • mulCoordCLM i f - ξ • derivCoordCLM i f) := by
-                  simp [raiseOpCLM_apply, lowerOpCLM_apply]
-        _ = ((ξ⁻¹) • mulCoordCLM i f + ξ • derivCoordCLM i f)
-                - ((ξ⁻¹) • mulCoordCLM i f + (-ξ) • derivCoordCLM i f) := by
-                  simp [sub_eq_add_neg, add_assoc]
-        _ = (ξ • derivCoordCLM i f) - ((-ξ) • derivCoordCLM i f) := by
-                  simp [add_assoc, add_left_comm, add_comm]
-        _ = (ξ • derivCoordCLM i f) + (ξ • derivCoordCLM i f) := by
-                  simp [sub_eq_add_neg, add_assoc]
-        _ = (2 : ℝ) • (ξ • derivCoordCLM i f) := by
-                  simpa [two_smul]
-        _ = (2 * ξ) • derivCoordCLM i f := by
-                  simp [smul_smul, mul_assoc]
-    -- cancel scalar
-    have hscalar : (1 / (2 * ξ) : ℝ) * (2 * ξ) = 1 := by
-      field_simp [hξ]
-    -- Multiply `hdiff` by `(1 / (2 * ξ))` and simplify.
-    have hsmul := congrArg (fun x : TestFunction => (1 / (2 * ξ)) • x) hdiff
-    -- `hsmul` has the form `a • (lower - raise) = a • ((2*ξ) • deriv)`.
-    -- Simplify the RHS to `deriv`.
-    have hright :
-        (1 / (2 * ξ)) • ((2 * ξ) • derivCoordCLM i f) = derivCoordCLM i f := by
-      -- `smul_smul` reduces to scalar multiplication by `(1 / (2 * ξ)) * (2 * ξ)`.
-      -- In this file, simp often rewrites `1 / (2 * ξ)` as `ξ⁻¹ * 2⁻¹`, so we record a
-      -- compatible scalar identity.
-      have hscalar' : (ξ⁻¹ * 2⁻¹ * (2 * ξ) : ℝ) = 1 := by
-        field_simp [hξ] <;> ring
-      calc
-        (1 / (2 * ξ)) • ((2 * ξ) • derivCoordCLM i f)
-            = ((1 / (2 * ξ) : ℝ) * (2 * ξ)) • derivCoordCLM i f := by
-                exact (smul_smul (1 / (2 * ξ)) (2 * ξ) (derivCoordCLM i f))
-        _ = derivCoordCLM i f := by
-                -- normalize the scalar to the `hscalar'` form and finish
-                -- avoid rewriting loops: just cancel `ξ` explicitly
-                have : (ξ * ξ⁻¹ : ℝ) = 1 := by
-                  simpa [hξ] using (mul_inv_cancel hξ)
-                simpa [this, smul_smul, mul_assoc, mul_left_comm, mul_comm]
-    -- Conclude, then flip the equality.
-    have hfinal :
-        (1 / (2 * ξ)) • (lowerOpCLM ξ i f - raiseOpCLM ξ i f) = derivCoordCLM i f := by
-      exact (by simpa [sub_eq_add_neg] using hsmul.trans hright)
-    exact hfinal.symm
-
-  -- apply seminorm estimates
   have hsmul :
       coeffSeminormSeq ξ hξ k (derivCoordCLM i f) =
         ‖(1 / (2 * ξ) : ℝ)‖ * coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f - raiseOpCLM ξ i f) := by
-    have h :=
+    rw [derivCoordCLM_eq_smul_lower_sub_raise (ξ := ξ) (hξ := hξ) (i := i) (f := f)]
+    simpa using
       (map_smul_eq_mul (coeffSeminormSeq ξ hξ k) (1 / (2 * ξ))
         (lowerOpCLM ξ i f - raiseOpCLM ξ i f))
-    calc
-      coeffSeminormSeq ξ hξ k (derivCoordCLM i f)
-          = coeffSeminormSeq ξ hξ k ((1 / (2 * ξ)) • (lowerOpCLM ξ i f - raiseOpCLM ξ i f)) := by
-              rw [hderiv]
-        _ = ‖(1 / (2 * ξ) : ℝ)‖ * coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f - raiseOpCLM ξ i f) := by
-              simpa using h
-  have hsub :
-      coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f - raiseOpCLM ξ i f) ≤
-        coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f) +
-          coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f) :=
-    map_sub_le_add (coeffSeminormSeq ξ hξ k) _ _
-  have hlo :
-      coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f) ≤
-        (Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f :=
-    coeffSeminormSeq_lowerOpCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f)
-  have hra :
-      coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f) ≤
-        (Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f :=
-    coeffSeminormSeq_raiseOpCLM_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f)
-  -- combine
   rw [hsmul]
-  have hmul1 :
-      ‖(1 / (2 * ξ) : ℝ)‖ * coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f - raiseOpCLM ξ i f) ≤
-        ‖(1 / (2 * ξ) : ℝ)‖ *
-          (coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f) +
-            coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f)) :=
-    mul_le_mul_of_nonneg_left hsub (by positivity)
-  refine le_trans hmul1 ?_
-  have hsum2 :
-      ‖(1 / (2 * ξ) : ℝ)‖ *
-          (coeffSeminormSeq ξ hξ k (lowerOpCLM ξ i f) +
-            coeffSeminormSeq ξ hξ k (raiseOpCLM ξ i f)) ≤
-        ‖(1 / (2 * ξ) : ℝ)‖ *
-          (((Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f) +
-            ((Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f)) := by
-    gcongr
-  refine le_trans hsum2 ?_
-  have :
-      ((Real.sqrt 2) * coeffSeminormSeq ξ hξ (k + 1) f) +
-          ((Real.sqrt 2 * (2 : ℝ) ^ k) * coeffSeminormSeq ξ hξ (k + 1) f)
-        =
-      (Real.sqrt 2 * ((2 : ℝ) ^ k + 1)) * coeffSeminormSeq ξ hξ (k + 1) f := by
-    ring_nf
-  rw [this]
-  simpa [mul_assoc, mul_left_comm, mul_comm]
+  have hmul := mul_le_mul_of_nonneg_left
+      (coeffSeminormSeq_lower_sub_raise_le (ξ := ξ) (hξ := hξ) (i := i) (k := k) (f := f))
+      (by positivity : 0 ≤ ‖(1 / (2 * ξ) : ℝ)‖)
+  simpa [mul_assoc, mul_left_comm, mul_comm] using hmul
 
 end SpaceTimeHermite
 
