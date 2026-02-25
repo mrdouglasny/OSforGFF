@@ -45,6 +45,7 @@ import OSforGFF.PositiveTimeTestFunction_real
 import OSforGFF.ComplexTestFunction
 import OSforGFF.TimeTranslation
 import OSforGFF.SchwingerTwoPointFunction
+import OSforGFF.Spacetime.TimeDirection
 
 /-!
 ## Osterwalder-Schrader Axioms
@@ -99,6 +100,24 @@ def OS2_EuclideanInvariance (dμ_config : ProbabilityMeasure FieldConfiguration)
     GJGeneratingFunctionalℂ dμ_config f =
     GJGeneratingFunctionalℂ dμ_config (QFT.euclidean_action g f)
 
+/-!
+### Coordinate-free OS variants
+
+These variants expose the same logical content while parameterizing the
+time direction/reflection data explicitly, avoiding dependence on a preferred
+coordinate index.
+-/
+
+/-- Coordinate-free OS2: invariance under a supplied Euclidean action family. -/
+def OS2_EuclideanInvarianceCF
+    (FieldCfg : Type*) [MeasurableSpace FieldCfg]
+    (Testℂ : Type*) (dμ_config : ProbabilityMeasure FieldCfg)
+    (G : Type*)
+    (gen : Testℂ → ℂ)
+    (act : G → Testℂ → Testℂ) : Prop :=
+  let _ := dμ_config
+  ∀ g : G, ∀ f : Testℂ, gen f = gen (act g f)
+
 /-- Real formulation of OS3 reflection positivity using the real-valued positive time
     subspace and the real generating functional. This version avoids explicit complex
     coefficients and conjugation, aligning more closely with the new real-valued
@@ -108,6 +127,20 @@ def OS3_ReflectionPositivity (dμ_config : ProbabilityMeasure FieldConfiguration
     let reflection_matrix := fun i j : Fin n =>
       GJGeneratingFunctional dμ_config
         ((f i).val - compTimeReflectionReal ((f j).val))
+    0 ≤ ∑ i, ∑ j, c i * c j * (reflection_matrix i j).re
+
+/-- Coordinate-free OS3 matrix positivity over an abstract positive-time subspace and reflection
+operator. -/
+def OS3_ReflectionPositivityCF
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (τ : OSforGFF.Spacetime.TimeDirection (E := E))
+    (_ops : OSforGFF.Spacetime.TimeDirectionOps (E := E) τ)
+    (dμ_config : ProbabilityMeasure FieldConfiguration)
+    (isPositiveTime : TestFunction → Prop)
+    (reflectTest : TestFunction → TestFunction) : Prop :=
+  ∀ (n : ℕ) (f : Fin n → TestFunction) (_hf : ∀ i, isPositiveTime (f i)) (c : Fin n → ℝ),
+    let reflection_matrix := fun i j : Fin n =>
+      GJGeneratingFunctional dμ_config ((f i) - reflectTest (f j))
     0 ≤ ∑ i, ∑ j, c i * c j * (reflection_matrix i j).re
 
 /-- OS4 (Clustering): Clustering via correlation decay.
@@ -131,6 +164,18 @@ def OS4_Clustering (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :
     ‖a‖ > R →
     ‖GJGeneratingFunctional dμ_config (f + g.translate a) -
      GJGeneratingFunctional dμ_config f * GJGeneratingFunctional dμ_config g‖ < ε
+
+/-- Coordinate-free OS4 clustering along the distinguished time direction. -/
+def OS4_ClusteringCF
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (τ : OSforGFF.Spacetime.TimeDirection (E := E))
+    (_ops : OSforGFF.Spacetime.TimeDirectionOps (E := E) τ)
+    (dμ_config : ProbabilityMeasure FieldConfiguration)
+    (translateTestAlongTime : ℝ → TestFunction → TestFunction) : Prop :=
+  ∀ (f g : TestFunction) (ε : ℝ), ε > 0 →
+    ∃ (R : ℝ), R > 0 ∧ ∀ (t : ℝ), |t| > R →
+      ‖GJGeneratingFunctional dμ_config (f + translateTestAlongTime t g) -
+        GJGeneratingFunctional dμ_config f * GJGeneratingFunctional dμ_config g‖ < ε
 
 /-- OS4 (Ergodicity): For generating functions A(φ) = Σⱼ zⱼ e^{⟨φ,fⱼ⟩}, the time average
     converges to the expectation in L²(μ).

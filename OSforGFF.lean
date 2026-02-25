@@ -13,6 +13,8 @@ import «OSforGFF».QuantitativeDecay
 import «OSforGFF».ComplexTestFunction
 import «OSforGFF».SpacetimeDecomp
 import «OSforGFF».TimeTranslation
+import «OSforGFF».Spacetime.Defs
+import «OSforGFF».Spacetime.TimeDirection
 
 -- Euclidean group and symmetries
 import «OSforGFF».Euclidean
@@ -53,6 +55,7 @@ import «OSforGFF».GaussianProcessKolmogorovIsGaussian
 -- Measure construction (Minlos)
 import «OSforGFF».Minlos
 --import «OSforGFF».MinlosAxiomatic
+import «OSforGFF».Minlos.GelfandTriple
 import «OSforGFF».MinlosAnalytic
 import «OSforGFF».WeakDualMeasurability
 import «OSforGFF».MinlosGaussianKolmogorov
