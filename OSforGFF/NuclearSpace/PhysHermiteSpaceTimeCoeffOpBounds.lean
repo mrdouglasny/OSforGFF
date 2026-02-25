@@ -341,7 +341,7 @@ private lemma norm_mul_sqrt_mul_sq (a t c : ℝ) (ht0 : 0 ≤ t) :
   have ha : |a| * |a| = a * a := by
     calc
       |a| * |a| = |a * a| := by
-        simpa [abs_mul] using (abs_mul a a).symm
+        simp [abs_mul]
       _ = a * a := by
         simp [abs_of_nonneg (mul_self_nonneg a)]
   have hc : |c| * |c| = c * c := by
@@ -352,16 +352,16 @@ private lemma norm_mul_sqrt_mul_sq (a t c : ℝ) (ht0 : 0 ≤ t) :
         simp [abs_of_nonneg (mul_self_nonneg c)]
   have hs : |Real.sqrt t| = Real.sqrt t := by
     have : 0 ≤ Real.sqrt t := Real.sqrt_nonneg _
-    simpa [abs_of_nonneg this]
+    simp [abs_of_nonneg this]
   have hsq : Real.sqrt t * Real.sqrt t = t := Real.mul_self_sqrt ht0
   have hcnorm : ‖c‖ ^ (2 : ℕ) = c * c := by
-    simp [Real.norm_eq_abs, pow_two, hc, mul_assoc]
+    simp [Real.norm_eq_abs, pow_two, hc]
   calc
     ‖a * Real.sqrt t * c‖ ^ (2 : ℕ)
         = |a * Real.sqrt t * c| ^ (2 : ℕ) := by
             simp [Real.norm_eq_abs]
     _ = (|a| * |Real.sqrt t| * |c|) ^ (2 : ℕ) := by
-            simp [abs_mul, mul_assoc, mul_left_comm, mul_comm]
+            simp [abs_mul, mul_left_comm, mul_comm]
     _ = (|a| * |Real.sqrt t| * |c|) * (|a| * |Real.sqrt t| * |c|) := by
             simp [pow_two]
     _ = (|a| * |a|) * (|Real.sqrt t| * |Real.sqrt t|) * (|c| * |c|) := by
@@ -396,12 +396,12 @@ private lemma norm_mul_sq (a c : ℝ) :
     _ = (a * a) * (|c| * |c|) := by
             simp [ha]
     _ = a ^ (2 : ℕ) * ‖c‖ ^ (2 : ℕ) := by
-            simp [pow_two, Real.norm_eq_abs, mul_assoc, mul_comm, mul_left_comm]
+            simp [pow_two, Real.norm_eq_abs, mul_comm, mul_left_comm]
 
 private lemma raise₀_injective : Function.Injective raise₀ := by
   intro n m hnm
   have h' : unpair₄ (raise₀ n) = unpair₄ (raise₀ m) := by
-    simpa [hnm]
+    simp [hnm]
   rw [unpair₄_raise₀ (n := n)] at h'
   rw [unpair₄_raise₀ (n := m)] at h'
   have h1 : unpair₄₁ n = unpair₄₁ m := by
@@ -473,16 +473,16 @@ private lemma raise₂_injective : Function.Injective raise₂ := by
   refine (OSforGFF.RapidDecaySeqMulti.pairEquiv₄.symm.injective ?_)
   calc
     unpair₄ n = ((unpair₄₁ n, unpair₄₂ n), (unpair₄₃ n, unpair₄₄ n)) := by
-      simpa using (unpair₄_eta (n := n)).symm
+      simp
     _ = ((unpair₄₁ m, unpair₄₂ m), (unpair₄₃ m, unpair₄₄ m)) := by
       simp [h1, h2, h3, h4]
     _ = unpair₄ m := by
-      simpa using (unpair₄_eta (n := m))
+      simp
 
 private lemma raise₃_injective : Function.Injective raise₃ := by
   intro n m hnm
   have h' : unpair₄ (raise₃ n) = unpair₄ (raise₃ m) := by
-    simpa [hnm]
+    simp [hnm]
   rw [unpair₄_raise₃ (n := n)] at h'
   rw [unpair₄_raise₃ (n := m)] at h'
   have h1 : unpair₄₁ n = unpair₄₁ m := by
@@ -508,7 +508,7 @@ private lemma raise₃_injective : Function.Injective raise₃ := by
 
 private lemma sqrt_two_mul_two_pow_sq (k : ℕ) :
     (Real.sqrt 2 * (2 : ℝ) ^ k) ^ (2 : ℕ) = (2 : ℝ) ^ (2 * k + 1) := by
-  simp [pow_two, mul_assoc, mul_left_comm, mul_comm,
+  simp [pow_two, mul_left_comm, mul_comm,
     Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2), pow_add, pow_mul]
 
 private lemma base₄_pow_raise₀_mul_two_unpair_le (k n : ℕ) :
@@ -787,7 +787,7 @@ lemma coeffSeminormSeq_raiseOpCLM_le
             (coeffSeminormSeq_toL2_apply (ξ := ξ) (hξ := hξ) (k := k + 1) (f := f) (n := n))
         have hBn :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) * ‖c‖ ^ (2 : ℕ) := by
-          simpa [hBcoord, mul_assoc] using (norm_mul_sq (a := (base₄ n) ^ (k + 1)) (c := c))
+          simpa [hBcoord] using (norm_mul_sq (a := (base₄ n) ^ (k + 1)) (c := c))
         have hpowB :
             ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) = (base₄ n) ^ (2 * k + 2) := by
           calc
@@ -1028,11 +1028,9 @@ private lemma raiseOpCLM_add_lowerOpCLM
             ((ξ⁻¹) • mulCoordCLM i f + ξ • derivCoordCLM i f) := by
               simp [raiseOpCLM_apply, lowerOpCLM_apply]
     _ = ((ξ⁻¹) • mulCoordCLM i f) + (ξ⁻¹) • mulCoordCLM i f := by
-          simpa [sub_eq_add_neg, add_assoc] using
-            (sub_add_add_cancel ((ξ⁻¹) • mulCoordCLM i f) (ξ • derivCoordCLM i f)
-              ((ξ⁻¹) • mulCoordCLM i f))
-    _ = (2 : ℝ) • ((ξ⁻¹) • mulCoordCLM i f) := by simpa [two_smul]
-    _ = (2 * ξ⁻¹) • mulCoordCLM i f := by simp [smul_smul, mul_assoc]
+          simp [sub_eq_add_neg, add_assoc]
+    _ = (2 : ℝ) • ((ξ⁻¹) • mulCoordCLM i f) := by simp [two_smul]
+    _ = (2 * ξ⁻¹) • mulCoordCLM i f := by simp [smul_smul]
 
 private lemma lowerOpCLM_sub_raiseOpCLM
     (ξ : ℝ) (i : Fin STDimension) (f : TestFunction) :
@@ -1044,8 +1042,8 @@ private lemma lowerOpCLM_sub_raiseOpCLM
               simp [raiseOpCLM_apply, lowerOpCLM_apply]
     _ = (ξ • derivCoordCLM i f) + (ξ • derivCoordCLM i f) := by
           simp [sub_eq_add_neg, add_assoc, add_left_comm, add_comm]
-    _ = (2 : ℝ) • (ξ • derivCoordCLM i f) := by simpa [two_smul]
-    _ = (2 * ξ) • derivCoordCLM i f := by simp [smul_smul, mul_assoc]
+    _ = (2 : ℝ) • (ξ • derivCoordCLM i f) := by simp [two_smul]
+    _ = (2 * ξ) • derivCoordCLM i f := by simp [smul_smul]
 
 private lemma mulCoordCLM_eq_smul_raise_add_lower
     (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension) (f : TestFunction) :
@@ -1057,7 +1055,7 @@ private lemma mulCoordCLM_eq_smul_raise_add_lower
     mulCoordCLM i f = (1 : ℝ) • mulCoordCLM i f := by simp
     _ = ((ξ / 2 : ℝ) * (2 * ξ⁻¹)) • mulCoordCLM i f := by simp [hscalar]
     _ = (ξ / 2 : ℝ) • ((2 * ξ⁻¹) • mulCoordCLM i f) := by
-          simp [smul_smul, mul_assoc]
+          simp [smul_smul]
     _ = (ξ / 2 : ℝ) • (raiseOpCLM ξ i f + lowerOpCLM ξ i f) := by rw [← hsum]
 
 private lemma derivCoordCLM_eq_smul_lower_sub_raise
@@ -1075,8 +1073,8 @@ private lemma derivCoordCLM_eq_smul_lower_sub_raise
               exact (smul_smul (1 / (2 * ξ)) (2 * ξ) (derivCoordCLM i f))
       _ = derivCoordCLM i f := by
             have : (ξ * ξ⁻¹ : ℝ) = 1 := by
-              simpa [hξ] using (mul_inv_cancel hξ)
-            simpa [hscalar', this, smul_smul, mul_assoc, mul_left_comm, mul_comm]
+              simp [hξ]
+            simp [hscalar']
   exact
     (show (1 / (2 * ξ)) • (lowerOpCLM ξ i f - raiseOpCLM ξ i f) = derivCoordCLM i f from
       by simpa [sub_eq_add_neg] using hsmul.trans hright).symm
