@@ -16,8 +16,7 @@ import Mathlib.Analysis.Analytic.Constructions
 
 import Mathlib.Topology.Algebra.Module.LinearMapPiProd
 
-import Mathlib.MeasureTheory.Function.LpSpace.Basic
-import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Function.Holder
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Measure.CharacteristicFunction
 
@@ -271,83 +270,43 @@ These theorems are used to construct specific multiplication operators
 (e.g., momentumWeightSqrt_mul_CLM) without repeating technical details.
 -/
 
-/-- Helper lemma for the norm bound of the multiplication operator. -/
-lemma linfty_mul_L2_bound_aux {μ : Measure α}
-    (g : α → ℂ) (_hg_meas : Measurable g) (C : ℝ) (_hC : 0 < C)
-    (hg_bound : ∀ᵐ x ∂μ, ‖g x‖ ≤ C)
-    (f : Lp ℂ 2 μ) :
-    eLpNorm (g * ⇑f) 2 μ ≤ ENNReal.ofReal C * eLpNorm f 2 μ := by
-  -- For ℂ, multiplication is the same as scalar multiplication
-  have h_eq : g * ⇑f = g • ⇑f := rfl
-  rw [h_eq]
-  -- Use the L∞ × Lp → Lp bound for smul
-  have h_smul_le := eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm (p := 2)
-    (Lp.memLp f).aestronglyMeasurable g
-  have h_g_norm : eLpNorm g ∞ μ ≤ ENNReal.ofReal C := by
-    rw [eLpNorm_exponent_top]
-    exact eLpNormEssSup_le_of_ae_bound hg_bound
-  calc eLpNorm (g • ⇑f) 2 μ
-      ≤ eLpNorm g ∞ μ * eLpNorm f 2 μ := h_smul_le
-    _ ≤ ENNReal.ofReal C * eLpNorm f 2 μ := by gcongr
-
 /-- Given a measurable function `g` that is essentially bounded by `C`,
     multiplication by `g` defines a bounded linear operator on `L²`. -/
 noncomputable def linfty_mul_L2_CLM {μ : Measure α}
-    (g : α → ℂ) (hg_meas : Measurable g) (C : ℝ) (hC : 0 < C)
+    (g : α → ℂ) (hg_meas : Measurable g) (C : ℝ)
     (hg_bound : ∀ᵐ x ∂μ, ‖g x‖ ≤ C) :
-    Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ := by
+    Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ :=
   have hg_mem : MemLp g ∞ μ := memLp_top_of_bound hg_meas.aestronglyMeasurable C hg_bound
-  refine LinearMap.mkContinuous
-    { toFun := fun f => (MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp f) hg_mem).toLp (g * ⇑f)
-      map_add' := fun f1 f2 => by
-        ext1
-        filter_upwards [MemLp.coeFn_toLp (MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp (f1 + f2)) hg_mem),
-                        MemLp.coeFn_toLp (MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp f1) hg_mem),
-                        MemLp.coeFn_toLp (MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp f2) hg_mem),
-                        Lp.coeFn_add f1 f2,
-                        Lp.coeFn_add ((MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp f1) hg_mem).toLp (g * ⇑f1)) ((MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp f2) hg_mem).toLp (g * ⇑f2))] with x h1 h2 h3 h4 h5
-        simp only [h1, h2, h3, h4, h5, Pi.add_apply, Pi.mul_apply, mul_add]
-      map_smul' := fun c f => by
-        ext1
-        filter_upwards [MemLp.coeFn_toLp (MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp (c • f)) hg_mem),
-                        MemLp.coeFn_toLp (MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp f) hg_mem),
-                        Lp.coeFn_smul c f,
-                        Lp.coeFn_smul c ((MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp f) hg_mem).toLp (g * ⇑f))] with x h1 h2 h3 h4
-        simp only [h1, h2, h3, h4, Pi.smul_apply, Pi.mul_apply, RingHom.id_apply, smul_eq_mul]
-        ring }
-    C
-    (fun f => by
-      simp only [LinearMap.coe_mk, AddHom.coe_mk, Lp.norm_toLp]
-      apply ENNReal.toReal_le_of_le_ofReal (by positivity)
-      refine (linfty_mul_L2_bound_aux g hg_meas C hC hg_bound f).trans ?_
-      rw [ENNReal.ofReal_mul (le_of_lt hC)]
-      gcongr
-      exact le_of_eq (ENNReal.ofReal_toReal (Lp.memLp f).eLpNorm_ne_top).symm
-    )
+  (ContinuousLinearMap.mul _ _).holderL μ ∞ 2 2 hg_mem.toLp
 
 /-- The multiplication operator acts pointwise almost everywhere on `L²`. -/
 lemma linfty_mul_L2_CLM_spec {μ : Measure α}
-    (g : α → ℂ) (hg_meas : Measurable g) (C : ℝ) (hC : 0 < C)
+    (g : α → ℂ) (hg_meas : Measurable g) (C : ℝ)
     (hg_bound : ∀ᵐ x ∂μ, ‖g x‖ ≤ C)
     (f : Lp ℂ 2 μ) :
-    (linfty_mul_L2_CLM g hg_meas C hC hg_bound f) =ᵐ[μ] fun x => g x * f x := by
-  simp [linfty_mul_L2_CLM]
-  exact MemLp.coeFn_toLp _
+    (linfty_mul_L2_CLM g hg_meas C hg_bound f) =ᵐ[μ] fun x => g x * f x := by
+  simp only [linfty_mul_L2_CLM, ContinuousLinearMap.holderL_apply_apply]
+  have hg_mem := memLp_top_of_bound hg_meas.aestronglyMeasurable C hg_bound
+  filter_upwards [hg_mem.coeFn_toLp,
+    (ContinuousLinearMap.mul ℂ ℂ).coeFn_holder (r := 2) hg_mem.toLp f] with x hg h
+  simp [h, hg]
 
 /-- The operator norm of the multiplication operator is bounded by C.
     This gives ‖Mg f‖₂ ≤ C · ‖f‖₂ for all f ∈ L². -/
 theorem linfty_mul_L2_CLM_norm_bound {μ : Measure α}
-    (g : α → ℂ) (hg_meas : Measurable g) (C : ℝ) (hC : 0 < C)
+    (g : α → ℂ) (hg_meas : Measurable g) (C : ℝ) (hC : 0 ≤ C)
     (hg_bound : ∀ᵐ x ∂μ, ‖g x‖ ≤ C)
     (f : Lp ℂ 2 μ) :
-    ‖linfty_mul_L2_CLM g hg_meas C hC hg_bound f‖ ≤ C * ‖f‖ := by
-  have eq : linfty_mul_L2_CLM g hg_meas C hC hg_bound f = (MemLp.mul (p:=∞) (q:=2) (r:=2) (Lp.memLp f) (memLp_top_of_bound hg_meas.aestronglyMeasurable C hg_bound)).toLp (g * ⇑f) := rfl
-  rw [eq, Lp.norm_toLp]
-  apply ENNReal.toReal_le_of_le_ofReal (by positivity)
-  refine (linfty_mul_L2_bound_aux g hg_meas C hC hg_bound f).trans ?_
-  rw [ENNReal.ofReal_mul (le_of_lt hC)]
-  gcongr
-  exact le_of_eq (ENNReal.ofReal_toReal (Lp.memLp f).eLpNorm_ne_top).symm
+    ‖linfty_mul_L2_CLM g hg_meas C hg_bound f‖ ≤ C * ‖f‖ := by
+  have hg_mem := memLp_top_of_bound hg_meas.aestronglyMeasurable C hg_bound
+  calc
+    _ ≤ ‖(ContinuousLinearMap.mul ℂ ℂ)‖ * ‖hg_mem.toLp‖ * ‖f‖ := by
+      apply ContinuousLinearMap.norm_holder_apply_apply_le
+    _ ≤ C * ‖f‖ := by
+      simp only [ContinuousLinearMap.opNorm_mul, Lp.norm_toLp, eLpNorm_exponent_top, one_mul]
+      gcongr
+      refine toReal_le_of_le_ofReal hC ?_
+      exact eLpNormEssSup_le_of_ae_bound hg_bound
 
 /-! ## Local Integrability of Power-Law Decay Functions
 
