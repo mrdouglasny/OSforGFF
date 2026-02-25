@@ -59,40 +59,23 @@ lemma numAllCLM_apply (ξ : ℝ) (f : TestFunction) :
             (numPlusOneCLM ξ (3 : Fin STDimension) f))) := by
   simp [numAllCLM]
 
-lemma normalizedCoeffCLM_SpaceTime_numPlusOneCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    normalizedCoeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ (0 : Fin STDimension) f)
-      = (unpair₄₁ n + 1) * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
+lemma normalizedCoeffCLM_SpaceTime_numPlusOneCLM (ξ : ℝ) (hξ : ξ ≠ 0)
+    (i : Fin STDimension) (n : ℕ) (f : TestFunction) :
+    normalizedCoeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ i f)
+      = ((((idx n i : ℕ) + 1 : ℕ) : ℝ)) * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   -- Keep `coeffCLM_SpaceTime` opaque (avoid unfolding to an integral).
   simp [normalizedCoeffCLM_SpaceTime, smul_eq_mul, -coeffCLM_SpaceTime_apply,
-    coeffCLM_SpaceTime_numPlusOneCLM0, mul_left_comm, mul_comm]
-
-lemma normalizedCoeffCLM_SpaceTime_numPlusOneCLM1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    normalizedCoeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ (1 : Fin STDimension) f)
-      = (unpair₄₂ n + 1) * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
-  simp [normalizedCoeffCLM_SpaceTime, smul_eq_mul, -coeffCLM_SpaceTime_apply,
-    coeffCLM_SpaceTime_numPlusOneCLM1, mul_left_comm, mul_comm]
-
-lemma normalizedCoeffCLM_SpaceTime_numPlusOneCLM2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    normalizedCoeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ (2 : Fin STDimension) f)
-      = (unpair₄₃ n + 1) * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
-  simp [normalizedCoeffCLM_SpaceTime, smul_eq_mul, -coeffCLM_SpaceTime_apply,
-    coeffCLM_SpaceTime_numPlusOneCLM2, mul_left_comm, mul_comm]
-
-lemma normalizedCoeffCLM_SpaceTime_numPlusOneCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    normalizedCoeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ (3 : Fin STDimension) f)
-      = (unpair₄₄ n + 1) * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
-  simp [normalizedCoeffCLM_SpaceTime, smul_eq_mul, -coeffCLM_SpaceTime_apply,
-    coeffCLM_SpaceTime_numPlusOneCLM3, mul_left_comm, mul_comm]
+    coeffCLM_SpaceTime_numPlusOneCLM, mul_left_comm, mul_comm]
 
 lemma normalizedCoeffCLM_SpaceTime_numAllCLM (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
     normalizedCoeffCLM_SpaceTime ξ hξ n (numAllCLM ξ f)
       = base₄ n * normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   -- apply the four diagonal actions, then rewrite the product as `base₄ n`
   simp [numAllCLM_apply,
-    normalizedCoeffCLM_SpaceTime_numPlusOneCLM0 (ξ := ξ) (hξ := hξ) (n := n),
-    normalizedCoeffCLM_SpaceTime_numPlusOneCLM1 (ξ := ξ) (hξ := hξ) (n := n),
-    normalizedCoeffCLM_SpaceTime_numPlusOneCLM2 (ξ := ξ) (hξ := hξ) (n := n),
-    normalizedCoeffCLM_SpaceTime_numPlusOneCLM3 (ξ := ξ) (hξ := hξ) (n := n),
+    normalizedCoeffCLM_SpaceTime_numPlusOneCLM (ξ := ξ) (hξ := hξ) (i := (0 : Fin STDimension)) (n := n),
+    normalizedCoeffCLM_SpaceTime_numPlusOneCLM (ξ := ξ) (hξ := hξ) (i := (1 : Fin STDimension)) (n := n),
+    normalizedCoeffCLM_SpaceTime_numPlusOneCLM (ξ := ξ) (hξ := hξ) (i := (2 : Fin STDimension)) (n := n),
+    normalizedCoeffCLM_SpaceTime_numPlusOneCLM (ξ := ξ) (hξ := hξ) (i := (3 : Fin STDimension)) (n := n),
     base₄_eq_unpair₄ (n := n), mul_assoc, mul_left_comm, mul_comm]
 
 /-- The `k`-fold iterate of `numAllCLM`. -/

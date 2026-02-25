@@ -106,33 +106,6 @@ lemma coeffCLM_SpaceTime_mulCoord (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimensi
   rw [hDecomp]
   simp only [map_add, ContinuousLinearMap.map_smul, smul_eq_mul, mul_assoc]
 
-lemma coeffCLM_SpaceTime_mulCoord0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (mulCoordCLM 0 f) = (ξ / 2) * coeffCLM_SpaceTime ξ hξ (raise₀ n) f
-      + (unpair₄₁ n * ξ) * coeffCLM_SpaceTime ξ hξ (lower₀ n) f := by
-  simpa [raise, lower, idx] using
-    (coeffCLM_SpaceTime_mulCoord (ξ := ξ) (hξ := hξ) (i := (0 : Fin STDimension)) (n := n) (f := f))
-
-lemma coeffCLM_SpaceTime_mulCoord1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (mulCoordCLM 1 f) =
-      (ξ / 2) * coeffCLM_SpaceTime ξ hξ (raise₁ n) f
-        + (unpair₄₂ n * ξ) * coeffCLM_SpaceTime ξ hξ (lower₁ n) f := by
-  simpa [raise, lower, idx] using
-    (coeffCLM_SpaceTime_mulCoord (ξ := ξ) (hξ := hξ) (i := (1 : Fin STDimension)) (n := n) (f := f))
-
-lemma coeffCLM_SpaceTime_mulCoord2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (mulCoordCLM 2 f) =
-      (ξ / 2) * coeffCLM_SpaceTime ξ hξ (raise₂ n) f
-        + (unpair₄₃ n * ξ) * coeffCLM_SpaceTime ξ hξ (lower₂ n) f := by
-  simpa [raise, lower, idx] using
-    (coeffCLM_SpaceTime_mulCoord (ξ := ξ) (hξ := hξ) (i := (2 : Fin STDimension)) (n := n) (f := f))
-
-lemma coeffCLM_SpaceTime_mulCoord3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (mulCoordCLM 3 f) =
-      (ξ / 2) * coeffCLM_SpaceTime ξ hξ (raise₃ n) f
-        + (unpair₄₄ n * ξ) * coeffCLM_SpaceTime ξ hξ (lower₃ n) f := by
-  simpa [raise, lower, idx] using
-    (coeffCLM_SpaceTime_mulCoord (ξ := ξ) (hξ := hξ) (i := (3 : Fin STDimension)) (n := n) (f := f))
-
 end SpaceTimeHermite
 
 end

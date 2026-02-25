@@ -10,7 +10,7 @@ import OSforGFF.NuclearSpace.PhysHermiteSpaceTimeCoeffRapidDecay
 /-!
 # `L²`-bounds for basic harmonic-oscillator operators on spacetime Schwartz functions
 
-This file develops `L²` (Hilbertian) bounds for the coordinate ladder operators
+This file develops `L²` (Hilbert) bounds for the coordinate ladder operators
 `raiseOpCLM` / `lowerOpCLM` and for coordinate multiplication/derivative operators.
 
 These are the analytic inputs needed to compare Schwartz seminorms with the
@@ -109,7 +109,12 @@ lemma normalizedCoeffCLM_SpaceTime_lowerOpCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
         normalizedCoeffCLM_SpaceTime ξ hξ (raise₀ n) f := by
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -lowerOpCLM_apply,
     -normConstSpaceTime_def]
-  rw [coeffCLM_SpaceTime_lowerOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
+  have hLower0 :
+      coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (0 : Fin STDimension) f) =
+        coeffCLM_SpaceTime ξ hξ (raise₀ n) f := by
+    simpa [raise, lower, idx] using
+      (coeffCLM_SpaceTime_lowerOpCLM (ξ := ξ) (hξ := hξ) (i := (0 : Fin STDimension)) (n := n) (f := f))
+  rw [hLower0]
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
     (ξ := ξ) (hξ := hξ) (n := raise₀ n) (f := f)]
   rw [sqrt_normConstSpaceTime_raise₀ (ξ := ξ) (hξ := hξ) (n := n)]
@@ -130,7 +135,12 @@ lemma normalizedCoeffCLM_SpaceTime_lowerOpCLM1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
         normalizedCoeffCLM_SpaceTime ξ hξ (raise₁ n) f := by
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -lowerOpCLM_apply,
     -normConstSpaceTime_def]
-  rw [coeffCLM_SpaceTime_lowerOpCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
+  have hLower1 :
+      coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (1 : Fin STDimension) f) =
+        coeffCLM_SpaceTime ξ hξ (raise₁ n) f := by
+    simpa [raise, lower, idx] using
+      (coeffCLM_SpaceTime_lowerOpCLM (ξ := ξ) (hξ := hξ) (i := (1 : Fin STDimension)) (n := n) (f := f))
+  rw [hLower1]
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
     (ξ := ξ) (hξ := hξ) (n := raise₁ n) (f := f)]
   rw [sqrt_normConstSpaceTime_raise₁ (ξ := ξ) (hξ := hξ) (n := n)]
@@ -151,7 +161,12 @@ lemma normalizedCoeffCLM_SpaceTime_lowerOpCLM2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
         normalizedCoeffCLM_SpaceTime ξ hξ (raise₂ n) f := by
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -lowerOpCLM_apply,
     -normConstSpaceTime_def]
-  rw [coeffCLM_SpaceTime_lowerOpCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
+  have hLower2 :
+      coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (2 : Fin STDimension) f) =
+        coeffCLM_SpaceTime ξ hξ (raise₂ n) f := by
+    simpa [raise, lower, idx] using
+      (coeffCLM_SpaceTime_lowerOpCLM (ξ := ξ) (hξ := hξ) (i := (2 : Fin STDimension)) (n := n) (f := f))
+  rw [hLower2]
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
     (ξ := ξ) (hξ := hξ) (n := raise₂ n) (f := f)]
   rw [sqrt_normConstSpaceTime_raise₂ (ξ := ξ) (hξ := hξ) (n := n)]
@@ -172,7 +187,12 @@ lemma normalizedCoeffCLM_SpaceTime_lowerOpCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
         normalizedCoeffCLM_SpaceTime ξ hξ (raise₃ n) f := by
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -lowerOpCLM_apply,
     -normConstSpaceTime_def]
-  rw [coeffCLM_SpaceTime_lowerOpCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
+  have hLower3 :
+      coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (3 : Fin STDimension) f) =
+        coeffCLM_SpaceTime ξ hξ (raise₃ n) f := by
+    simpa [raise, lower, idx] using
+      (coeffCLM_SpaceTime_lowerOpCLM (ξ := ξ) (hξ := hξ) (i := (3 : Fin STDimension)) (n := n) (f := f))
+  rw [hLower3]
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
     (ξ := ξ) (hξ := hξ) (n := raise₃ n) (f := f)]
   rw [sqrt_normConstSpaceTime_raise₃ (ξ := ξ) (hξ := hξ) (n := n)]
@@ -193,7 +213,8 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM0_raise₀ (ξ : ℝ) (hξ : ξ ≠
         normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply,
     -normConstSpaceTime_def]
-  rw [coeffCLM_SpaceTime_raiseOpCLM0 (ξ := ξ) (hξ := hξ) (n := raise₀ n) (f := f)]
+  rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := (0 : Fin STDimension))
+    (n := raise₀ n) (f := f)]
   simp [unpair₄₁_raise₀, lower₀_raise₀, -coeffCLM_SpaceTime_apply, -normConstSpaceTime_def,
     mul_assoc, mul_left_comm, mul_comm]
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
@@ -244,7 +265,8 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM1_raise₁ (ξ : ℝ) (hξ : ξ ≠
         normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply,
     -normConstSpaceTime_def]
-  rw [coeffCLM_SpaceTime_raiseOpCLM1 (ξ := ξ) (hξ := hξ) (n := raise₁ n) (f := f)]
+  rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := (1 : Fin STDimension))
+    (n := raise₁ n) (f := f)]
   simp [unpair₄₂_raise₁, lower₁_raise₁, -coeffCLM_SpaceTime_apply, -normConstSpaceTime_def,
     mul_assoc, mul_left_comm, mul_comm]
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
@@ -295,7 +317,8 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM2_raise₂ (ξ : ℝ) (hξ : ξ ≠
         normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply,
     -normConstSpaceTime_def]
-  rw [coeffCLM_SpaceTime_raiseOpCLM2 (ξ := ξ) (hξ := hξ) (n := raise₂ n) (f := f)]
+  rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := (2 : Fin STDimension))
+    (n := raise₂ n) (f := f)]
   simp [unpair₄₃_raise₂, lower₂_raise₂, -coeffCLM_SpaceTime_apply, -normConstSpaceTime_def,
     mul_assoc, mul_left_comm, mul_comm]
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime
@@ -346,7 +369,8 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM3_raise₃ (ξ : ℝ) (hξ : ξ ≠
         normalizedCoeffCLM_SpaceTime ξ hξ n f := by
   simp [normalizedCoeffCLM_SpaceTime_apply, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply,
     -normConstSpaceTime_def]
-  rw [coeffCLM_SpaceTime_raiseOpCLM3 (ξ := ξ) (hξ := hξ) (n := raise₃ n) (f := f)]
+  rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := (3 : Fin STDimension))
+    (n := raise₃ n) (f := f)]
   simp [unpair₄₄_raise₃, lower₃_raise₃, -coeffCLM_SpaceTime_apply, -normConstSpaceTime_def,
     mul_assoc, mul_left_comm, mul_comm]
   rw [coeffCLM_SpaceTime_eq_sqrt_normConstSpaceTime_mul_normalizedCoeffCLM_SpaceTime

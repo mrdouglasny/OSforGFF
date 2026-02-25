@@ -184,7 +184,6 @@ lemma gff_pairing_square_integrable_proved
     memLp_id_gaussianReal 2
   rw [← h_gauss] at h_memL2
   rw [memLp_map_measure_iff (by fun_prop) (by fun_prop)] at h_memL2
-  -- For real-valued functions, `MemLp 2` implies square-integrability.
   simpa [pow_two] using h_memL2.integrable_sq
 
 /-- The second moment of the pairing equals the covariance form. -/
@@ -194,7 +193,6 @@ lemma gff_second_moment_eq_covariance_proved
     ∫ ω, (distributionPairingCLM φ ω) ^ 2 ∂(gaussianFreeField_free_proved (m := m)).toMeasure =
       freeCovarianceFormR m φ φ := by
   have h_gauss := gff_pairing_is_gaussian_proved (m := m) φ
-  -- Rewrite as an integral under the pushforward measure.
   calc
     ∫ ω, (distributionPairingCLM φ ω) ^ 2 ∂(gaussianFreeField_free_proved (m := m)).toMeasure
         = ∫ x, x ^ 2 ∂((gaussianFreeField_free_proved (m := m)).toMeasure.map (distributionPairingCLM φ)) := by
@@ -202,7 +200,6 @@ lemma gff_second_moment_eq_covariance_proved
     _ = ∫ x, x ^ 2 ∂(gaussianReal 0 (freeCovarianceFormR m φ φ).toNNReal) := by
           rw [h_gauss]
     _ = (freeCovarianceFormR m φ φ).toNNReal := by
-          -- For centered Gaussian, variance equals second moment.
           have h_var_eq :
               Var[fun x => x; gaussianReal 0 (freeCovarianceFormR m φ φ).toNNReal] =
                 ∫ x, x ^ 2 ∂(gaussianReal 0 (freeCovarianceFormR m φ φ).toNNReal) := by
@@ -222,13 +219,11 @@ lemma gff_mean_eq_zero_proved
     GJMean (gaussianFreeField_free_proved (m := m)) φ = 0 := by
   have h_gauss := gff_pairing_is_gaussian_proved (m := m) φ
   unfold GJMean
-  -- First, rewrite the mean via the 1D pushforward by `distributionPairingCLM φ`.
   have h_map :
       (∫ ω, distributionPairing ω φ
           ∂(gaussianFreeField_free_proved (m := m)).toMeasure) =
         ∫ x, x ∂((gaussianFreeField_free_proved (m := m)).toMeasure.map
           (distributionPairingCLM φ)) := by
-    -- `integral_map` for `f := id` (the identity on `ℝ`).
     have h :=
       (MeasureTheory.integral_map
         (μ := (gaussianFreeField_free_proved (m := m)).toMeasure)
@@ -236,9 +231,7 @@ lemma gff_mean_eq_zero_proved
         ((distributionPairingCLM φ).continuous.measurable.aemeasurable)
         (f := fun x : ℝ => x)
         (measurable_id.aestronglyMeasurable))
-    -- `h` is the desired identity, up to unfolding.
     simpa [distributionPairingCLM_apply, distributionPairing] using h.symm
-  -- Now identify the pushforward measure as a centered Gaussian.
   calc
     (∫ ω, distributionPairing ω φ
         ∂(gaussianFreeField_free_proved (m := m)).toMeasure)
@@ -252,4 +245,3 @@ lemma gff_mean_eq_zero_proved
 end GFFMconstructProved
 
 end QFT
-

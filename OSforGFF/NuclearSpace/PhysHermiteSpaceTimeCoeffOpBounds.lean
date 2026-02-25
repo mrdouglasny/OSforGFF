@@ -82,7 +82,7 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
   by_cases h0 : unpair₄₁ n = 0
   · have hcoeff0 :
         coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (0 : Fin STDimension) f) = 0 := by
-      rw [coeffCLM_SpaceTime_raiseOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
+      rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := (0 : Fin STDimension)) (n := n) (f := f)]
       simp [h0]
     simp [normalizedCoeffCLM_SpaceTime_apply, hcoeff0, h0, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply]
   · have hpos : 0 < unpair₄₁ n := Nat.pos_of_ne_zero h0
@@ -102,7 +102,7 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
   by_cases h0 : unpair₄₂ n = 0
   · have hcoeff0 :
         coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (1 : Fin STDimension) f) = 0 := by
-      rw [coeffCLM_SpaceTime_raiseOpCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
+      rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := (1 : Fin STDimension)) (n := n) (f := f)]
       simp [h0]
     simp [normalizedCoeffCLM_SpaceTime_apply, hcoeff0, h0, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply]
   · have hpos : 0 < unpair₄₂ n := Nat.pos_of_ne_zero h0
@@ -122,7 +122,7 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
   by_cases h0 : unpair₄₃ n = 0
   · have hcoeff0 :
         coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (2 : Fin STDimension) f) = 0 := by
-      rw [coeffCLM_SpaceTime_raiseOpCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
+      rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := (2 : Fin STDimension)) (n := n) (f := f)]
       simp [h0]
     simp [normalizedCoeffCLM_SpaceTime_apply, hcoeff0, h0, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply]
   · have hpos : 0 < unpair₄₃ n := Nat.pos_of_ne_zero h0
@@ -142,7 +142,7 @@ lemma normalizedCoeffCLM_SpaceTime_raiseOpCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
   by_cases h0 : unpair₄₄ n = 0
   · have hcoeff0 :
         coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (3 : Fin STDimension) f) = 0 := by
-      rw [coeffCLM_SpaceTime_raiseOpCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
+      rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := (3 : Fin STDimension)) (n := n) (f := f)]
       simp [h0]
     simp [normalizedCoeffCLM_SpaceTime_apply, hcoeff0, h0, -coeffCLM_SpaceTime_apply, -raiseOpCLM_apply]
   · have hpos : 0 < unpair₄₄ n := Nat.pos_of_ne_zero h0
@@ -1185,9 +1185,9 @@ lemma coeffSeminormSeq_raiseOpCLM2_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
             calc
               ((2 : ℝ) ^ (2 * k + 1)) * ‖B‖ ^ (2 : ℕ)
                   = (C0 ^ (2 : ℕ)) * ‖B‖ ^ (2 : ℕ) := by
-                      simpa [hC0sq]
+                      simp [hC0sq]
               _ = (C0 * ‖B‖) ^ (2 : ℕ) := by
-                      simpa [mul_pow] using (mul_pow C0 ‖B‖ (2 : ℕ)).symm
+                      simp [mul_pow]
     simpa using hsq
 
   simpa [coeffSeminormSeq_apply_eq_norm, A, B, C0] using hAB
@@ -1247,7 +1247,6 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           ∀ n, g (raise₃ n) ≤ ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
         intro n
         set c : ℝ := normalizedCoeffCLM_SpaceTime ξ hξ n f
-
         have hAcoord :
             (A : ℕ → ℝ) (raise₃ n) =
               (base₄ (raise₃ n)) ^ k *
@@ -1263,7 +1262,6 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           rw [hcoord,
             normalizedCoeffCLM_SpaceTime_raiseOpCLM3_raise₃ (ξ := ξ) (hξ := hξ) (n := n) (f := f)]
           simp [c, mul_assoc]
-
         have ht0 : 0 ≤ (2 : ℝ) * ((unpair₄₄ n + 1 : ℕ) : ℝ) := by positivity
         have hg :
             g (raise₃ n) =
@@ -1274,7 +1272,6 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           exact
             norm_mul_sqrt_mul_sq (a := (base₄ (raise₃ n)) ^ k)
               (t := (2 : ℝ) * ((unpair₄₄ n + 1 : ℕ) : ℝ)) (c := c) ht0
-
         have hpowA :
             ((base₄ (raise₃ n)) ^ k) ^ (2 : ℕ) = (base₄ (raise₃ n)) ^ (2 * k) := by
           calc
@@ -1282,16 +1279,13 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
               simp [pow_mul]
             _ = (base₄ (raise₃ n)) ^ (2 * k) := by
               simp [Nat.mul_comm]
-
         have hBcoord :
             (B : ℕ → ℝ) n = (base₄ n) ^ (k + 1) * c := by
           simpa [B, c] using
             (coeffSeminormSeq_toL2_apply (ξ := ξ) (hξ := hξ) (k := k + 1) (f := f) (n := n))
-
         have hBn :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hBcoord, mul_assoc] using (norm_mul_sq (a := (base₄ n) ^ (k + 1)) (c := c))
-
         have hpowB :
             ((base₄ n) ^ (k + 1)) ^ (2 : ℕ) = (base₄ n) ^ (2 * k + 2) := by
           calc
@@ -1305,21 +1299,16 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                   _ = 2 * k + 2 := by
                     simp [Nat.mul_comm]
               simpa [hk]
-
         have hBn2 :
             ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) = (base₄ n) ^ (2 * k + 2) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hpowB, mul_assoc] using hBn
-
         have hc2 : 0 ≤ ‖c‖ ^ (2 : ℕ) := by positivity
-
         have hg' :
             g (raise₃ n) =
               (base₄ (raise₃ n)) ^ (2 * k) * (2 * ((unpair₄₄ n + 1 : ℕ) : ℝ)) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hg, hpowA, mul_assoc] using hg
-
         have hmul :=
           mul_le_mul_of_nonneg_right (base₄_pow_raise₃_mul_two_unpair_le (k := k) (n := n)) hc2
-
         have hrhs :
             (((2 : ℝ) ^ (2 * k + 1)) * (base₄ n) ^ (2 * k + 2)) * ‖c‖ ^ (2 : ℕ) =
               ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
@@ -1329,13 +1318,10 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                     exact (mul_assoc ((2 : ℝ) ^ (2 * k + 1)) ((base₄ n) ^ (2 * k + 2)) (‖c‖ ^ (2 : ℕ)))
             _ = ((2 : ℝ) ^ (2 * k + 1)) * ‖(B : ℕ → ℝ) n‖ ^ (2 : ℕ) := by
                     rw [hBn2.symm]
-
         have hmul2 := hmul
         rw [hrhs] at hmul2
-
         rw [hg']
         exact hmul2
-
       calc
         ∑ i ∈ s, ‖(A : ℕ → ℝ) i‖ ^ (2 : ℕ) = ∑ i ∈ s, g i := by
           simp [g]
@@ -1361,12 +1347,10 @@ lemma coeffSeminormSeq_raiseOpCLM3_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
             calc
               ((2 : ℝ) ^ (2 * k + 1)) * ‖B‖ ^ (2 : ℕ)
                   = (C0 ^ (2 : ℕ)) * ‖B‖ ^ (2 : ℕ) := by
-                      simpa [hC0sq]
+                      simp [hC0sq]
               _ = (C0 * ‖B‖) ^ (2 : ℕ) := by
-                      simpa [mul_pow] using (mul_pow C0 ‖B‖ (2 : ℕ)).symm
-
+                      simp [mul_pow]
     simpa using hsq
-
   simpa [coeffSeminormSeq_apply_eq_norm, A, B, C0] using hAB
 
 /-! ## Coefficient seminorm shift: `lowerOpCLM` (coordinate 0) -/
@@ -1418,7 +1402,6 @@ lemma coeffSeminormSeq_lowerOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
           exact
             norm_mul_sqrt_mul_sq (a := (base₄ n) ^ k)
               (t := (2 : ℝ) * ((unpair₄₁ n + 1 : ℕ) : ℝ)) (c := c) ht0
-
         have hpowA :
             ((base₄ n) ^ k) ^ (2 : ℕ) = (base₄ n) ^ (2 * k) := by
           calc
@@ -1426,19 +1409,15 @@ lemma coeffSeminormSeq_lowerOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
               simp [pow_mul]
             _ = (base₄ n) ^ (2 * k) := by
               simp [Nat.mul_comm]
-
         have hBcoord :
             (B : ℕ → ℝ) (raise₀ n) = (base₄ (raise₀ n)) ^ (k + 1) * c := by
-          -- `c` is exactly the coefficient at the raised index.
           simpa [B, c] using
             (coeffSeminormSeq_toL2_apply (ξ := ξ) (hξ := hξ) (k := k + 1) (f := f) (n := raise₀ n))
-
         have hBn :
             ‖(B : ℕ → ℝ) (raise₀ n)‖ ^ (2 : ℕ) =
               ((base₄ (raise₀ n)) ^ (k + 1)) ^ (2 : ℕ) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hBcoord, mul_assoc] using
             (norm_mul_sq (a := (base₄ (raise₀ n)) ^ (k + 1)) (c := c))
-
         have hpowB :
             ((base₄ (raise₀ n)) ^ (k + 1)) ^ (2 : ℕ) = (base₄ (raise₀ n)) ^ (2 * k + 2) := by
           calc
@@ -1452,13 +1431,10 @@ lemma coeffSeminormSeq_lowerOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                   _ = 2 * k + 2 := by
                     simp [Nat.mul_comm]
               simpa [hk]
-
         have hBn2 :
             ‖(B : ℕ → ℝ) (raise₀ n)‖ ^ (2 : ℕ) =
               (base₄ (raise₀ n)) ^ (2 * k + 2) * ‖c‖ ^ (2 : ℕ) := by
           simpa [hpowB, mul_assoc] using hBn
-
-        -- Scalar inequality: `base₄ n^(2k) * 2*(unpair+1) ≤ 2 * base₄(raise₀ n)^(2k+2)`.
         have hbase : base₄ n ≤ base₄ (raise₀ n) := base₄_le_base₄_raise₀ (n := n)
         have hbase0 : 0 ≤ base₄ n :=
           (OSforGFF.RapidDecaySeqMulti.base₄_pos (n := n)).le
@@ -1490,29 +1466,21 @@ lemma coeffSeminormSeq_lowerOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
                     have : (base₄ (raise₀ n)) ^ (2 * k + 1) ≤ (base₄ (raise₀ n)) ^ (2 * k + 2) :=
                       pow_le_pow_right₀ hone (Nat.le_succ _)
                     exact mul_le_mul_of_nonneg_left this (by positivity)
-
-        -- put everything together
         have hc2 : 0 ≤ ‖c‖ ^ (2 : ℕ) := by positivity
         have hmul := mul_le_mul_of_nonneg_right hscalar hc2
-        -- rewrite `g n` and `‖B (raise₀ n)‖^2` and conclude
         rw [hg, hpowA]
-        -- RHS of `hmul` is `2 * base^(2k+2) * ‖c‖^2`, rewrite with `hBn2`
         have hrhs :
             (2 : ℝ) * (base₄ (raise₀ n)) ^ (2 * k + 2) * ‖c‖ ^ (2 : ℕ) =
               (2 : ℝ) * ‖(B : ℕ → ℝ) (raise₀ n)‖ ^ (2 : ℕ) := by
-          -- reassociate then use `hBn2`
           calc
             (2 : ℝ) * (base₄ (raise₀ n)) ^ (2 * k + 2) * ‖c‖ ^ (2 : ℕ)
                 = (2 : ℝ) * ((base₄ (raise₀ n)) ^ (2 * k + 2) * ‖c‖ ^ (2 : ℕ)) := by
                     ring_nf
             _ = (2 : ℝ) * ‖(B : ℕ → ℝ) (raise₀ n)‖ ^ (2 : ℕ) := by
                     rw [hBn2.symm]
-        -- Now finish
         have hmul2 := hmul
-        -- rewrite the RHS into `2 * ‖B (raise₀ n)‖^2`
         rw [hrhs] at hmul2
         exact hmul2
-
       calc
         ∑ i ∈ s, ‖(A : ℕ → ℝ) i‖ ^ (2 : ℕ) = ∑ i ∈ s, g i := by
           simp [g]
@@ -1522,9 +1490,7 @@ lemma coeffSeminormSeq_lowerOpCLM0_le (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f :
             simpa using
               (Finset.mul_sum (a := (2 : ℝ)) (s := s) (f := fun i => ‖(B : ℕ → ℝ) (raise₀ i)‖ ^ (2 : ℕ))).symm
         _ = (2 : ℝ) * ∑ m ∈ s.image raise₀, ‖(B : ℕ → ℝ) m‖ ^ (2 : ℕ) := by
-            -- reindex the sum over the injective map `raise₀`
             have hinj : Set.InjOn raise₀ (↑s : Set ℕ) := Set.injOn_of_injective raise₀_injective
-            -- `Finset.sum_image` gives the reverse equality; use its symmetry.
             simpa [mul_assoc] using congrArg (fun t => (2 : ℝ) * t)
               ((Finset.sum_image (f := fun m : ℕ => ‖(B : ℕ → ℝ) m‖ ^ (2 : ℕ)) (s := s)
                 (g := raise₀) hinj).symm)

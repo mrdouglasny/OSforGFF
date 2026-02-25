@@ -515,34 +515,6 @@ lemma coeffCLM_SpaceTime_derivCoord (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimen
           - ((((idx n i : ℕ) : ℝ) / ξ) * coeffCLM_SpaceTime ξ hξ (lower i n) f) := by
           simp [coeffCLM_SpaceTime_apply, μ]
 
-lemma coeffCLM_SpaceTime_derivCoord0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (derivCoordCLM 0 f) =
-      (1 / (2 * ξ)) * coeffCLM_SpaceTime ξ hξ (raise₀ n) f
-        - (unpair₄₁ n / ξ) * coeffCLM_SpaceTime ξ hξ (lower₀ n) f := by
-  simpa [raise, lower, idx] using
-    (coeffCLM_SpaceTime_derivCoord (ξ := ξ) (hξ := hξ) (i := (0 : Fin STDimension)) (n := n) (f := f))
-
-lemma coeffCLM_SpaceTime_derivCoord1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (derivCoordCLM 1 f) =
-      (1 / (2 * ξ)) * coeffCLM_SpaceTime ξ hξ (raise₁ n) f
-        - (unpair₄₂ n / ξ) * coeffCLM_SpaceTime ξ hξ (lower₁ n) f := by
-  simpa [raise, lower, idx] using
-    (coeffCLM_SpaceTime_derivCoord (ξ := ξ) (hξ := hξ) (i := (1 : Fin STDimension)) (n := n) (f := f))
-
-lemma coeffCLM_SpaceTime_derivCoord2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (derivCoordCLM 2 f) =
-      (1 / (2 * ξ)) * coeffCLM_SpaceTime ξ hξ (raise₂ n) f
-        - (unpair₄₃ n / ξ) * coeffCLM_SpaceTime ξ hξ (lower₂ n) f := by
-  simpa [raise, lower, idx] using
-    (coeffCLM_SpaceTime_derivCoord (ξ := ξ) (hξ := hξ) (i := (2 : Fin STDimension)) (n := n) (f := f))
-
-lemma coeffCLM_SpaceTime_derivCoord3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (derivCoordCLM 3 f) =
-      (1 / (2 * ξ)) * coeffCLM_SpaceTime ξ hξ (raise₃ n) f
-        - (unpair₄₄ n / ξ) * coeffCLM_SpaceTime ξ hξ (lower₃ n) f := by
-  simpa [raise, lower, idx] using
-    (coeffCLM_SpaceTime_derivCoord (ξ := ξ) (hξ := hξ) (i := (3 : Fin STDimension)) (n := n) (f := f))
-
 end SpaceTimeHermite
 
 end

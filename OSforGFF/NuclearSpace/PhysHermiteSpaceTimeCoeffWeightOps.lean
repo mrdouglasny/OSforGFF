@@ -68,6 +68,10 @@ lemma lower₃_raise₃ (n : ℕ) : lower₃ (raise₃ n) = n := by
 lemma lower_raise (i : Fin STDimension) (n : ℕ) : lower i (raise i n) = n := by
   fin_cases i <;> simp [raise, lower]
 
+@[simp]
+lemma idx_raise_self (i : Fin STDimension) (n : ℕ) : idx (raise i n) i = idx n i + 1 := by
+  fin_cases i <;> simp [raise, idx]
+
 /-! ## Coordinatewise ladder operators on `TestFunction` -/
 
 /-- The (coordinatewise) operator `f ↦ (xᵢ/ξ) f - ξ (∂ᵢ f)` on `TestFunction`. -/
@@ -90,73 +94,21 @@ lemma lowerOpCLM_apply (ξ : ℝ) (i : Fin STDimension) (f : TestFunction) :
 
 /-! ## Coefficient action of the ladder operators -/
 
-lemma coeffCLM_SpaceTime_lowerOpCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (0 : Fin STDimension) f)
-      = coeffCLM_SpaceTime ξ hξ (raise₀ n) f := by
-  simp [lowerOpCLM, coeffCLM_SpaceTime_mulCoord0, coeffCLM_SpaceTime_derivCoord0,
+lemma coeffCLM_SpaceTime_lowerOpCLM (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension)
+    (n : ℕ) (f : TestFunction) :
+    coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ i f)
+      = coeffCLM_SpaceTime ξ hξ (raise i n) f := by
+  simp [lowerOpCLM, coeffCLM_SpaceTime_mulCoord, coeffCLM_SpaceTime_derivCoord,
     div_eq_mul_inv, mul_assoc, sub_eq_add_neg,
     -coeffCLM_SpaceTime_apply, -mulCoordCLM_apply, -derivCoordCLM_apply]
   field_simp [hξ]
   ring
 
-lemma coeffCLM_SpaceTime_lowerOpCLM1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (1 : Fin STDimension) f)
-      = coeffCLM_SpaceTime ξ hξ (raise₁ n) f := by
-  simp [lowerOpCLM, coeffCLM_SpaceTime_mulCoord1, coeffCLM_SpaceTime_derivCoord1,
-    div_eq_mul_inv, mul_assoc, sub_eq_add_neg,
-    -coeffCLM_SpaceTime_apply, -mulCoordCLM_apply, -derivCoordCLM_apply]
-  field_simp [hξ]
-  ring
-
-lemma coeffCLM_SpaceTime_lowerOpCLM2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (2 : Fin STDimension) f)
-      = coeffCLM_SpaceTime ξ hξ (raise₂ n) f := by
-  simp [lowerOpCLM, coeffCLM_SpaceTime_mulCoord2, coeffCLM_SpaceTime_derivCoord2,
-    div_eq_mul_inv, mul_assoc, sub_eq_add_neg,
-    -coeffCLM_SpaceTime_apply, -mulCoordCLM_apply, -derivCoordCLM_apply]
-  field_simp [hξ]
-  ring
-
-lemma coeffCLM_SpaceTime_lowerOpCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ (3 : Fin STDimension) f)
-      = coeffCLM_SpaceTime ξ hξ (raise₃ n) f := by
-  simp [lowerOpCLM, coeffCLM_SpaceTime_mulCoord3, coeffCLM_SpaceTime_derivCoord3,
-    div_eq_mul_inv, mul_assoc, sub_eq_add_neg,
-    -coeffCLM_SpaceTime_apply, -mulCoordCLM_apply, -derivCoordCLM_apply]
-  field_simp [hξ]
-  ring
-
-lemma coeffCLM_SpaceTime_raiseOpCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (0 : Fin STDimension) f)
-      = (2 : ℝ) * (unpair₄₁ n) * coeffCLM_SpaceTime ξ hξ (lower₀ n) f := by
-  simp [raiseOpCLM, coeffCLM_SpaceTime_mulCoord0, coeffCLM_SpaceTime_derivCoord0,
-    div_eq_mul_inv, mul_assoc, sub_eq_add_neg,
-    -coeffCLM_SpaceTime_apply, -mulCoordCLM_apply, -derivCoordCLM_apply]
-  field_simp [hξ]
-  ring
-
-lemma coeffCLM_SpaceTime_raiseOpCLM1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (1 : Fin STDimension) f)
-      = (2 : ℝ) * (unpair₄₂ n) * coeffCLM_SpaceTime ξ hξ (lower₁ n) f := by
-  simp [raiseOpCLM, coeffCLM_SpaceTime_mulCoord1, coeffCLM_SpaceTime_derivCoord1,
-    div_eq_mul_inv, mul_assoc, sub_eq_add_neg,
-    -coeffCLM_SpaceTime_apply, -mulCoordCLM_apply, -derivCoordCLM_apply]
-  field_simp [hξ]
-  ring
-
-lemma coeffCLM_SpaceTime_raiseOpCLM2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (2 : Fin STDimension) f)
-      = (2 : ℝ) * (unpair₄₃ n) * coeffCLM_SpaceTime ξ hξ (lower₂ n) f := by
-  simp [raiseOpCLM, coeffCLM_SpaceTime_mulCoord2, coeffCLM_SpaceTime_derivCoord2,
-    div_eq_mul_inv, mul_assoc, sub_eq_add_neg,
-    -coeffCLM_SpaceTime_apply, -mulCoordCLM_apply, -derivCoordCLM_apply]
-  field_simp [hξ]
-  ring
-
-lemma coeffCLM_SpaceTime_raiseOpCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ (3 : Fin STDimension) f)
-      = (2 : ℝ) * (unpair₄₄ n) * coeffCLM_SpaceTime ξ hξ (lower₃ n) f := by
-  simp [raiseOpCLM, coeffCLM_SpaceTime_mulCoord3, coeffCLM_SpaceTime_derivCoord3,
+lemma coeffCLM_SpaceTime_raiseOpCLM (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension)
+    (n : ℕ) (f : TestFunction) :
+    coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ i f)
+      = (2 : ℝ) * (((idx n i : ℕ) : ℝ)) * coeffCLM_SpaceTime ξ hξ (lower i n) f := by
+  simp [raiseOpCLM, coeffCLM_SpaceTime_mulCoord, coeffCLM_SpaceTime_derivCoord,
     div_eq_mul_inv, mul_assoc, sub_eq_add_neg,
     -coeffCLM_SpaceTime_apply, -mulCoordCLM_apply, -derivCoordCLM_apply]
   field_simp [hξ]
@@ -169,87 +121,16 @@ lemma coeffCLM_SpaceTime_raiseOpCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : 
 noncomputable def numPlusOneCLM (ξ : ℝ) (i : Fin STDimension) : TestFunction →L[ℝ] TestFunction :=
   (1 / 2 : ℝ) • (lowerOpCLM ξ i).comp (raiseOpCLM ξ i)
 
-lemma coeffCLM_SpaceTime_numPlusOneCLM0 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ (0 : Fin STDimension) f)
-      = (unpair₄₁ n + 1) * coeffCLM_SpaceTime ξ hξ n f := by
-  simp [numPlusOneCLM,
-    -lowerOpCLM_apply, -raiseOpCLM_apply, -coeffCLM_SpaceTime_apply]
-  rw [coeffCLM_SpaceTime_lowerOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := raiseOpCLM ξ 0 f)]
-  rw [coeffCLM_SpaceTime_raiseOpCLM0 (ξ := ξ) (hξ := hξ) (n := raise₀ n) (f := f)]
-  simp
-  ring
-
-lemma coeffCLM_SpaceTime_numPlusOneCLM1 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ (1 : Fin STDimension) f)
-      = (unpair₄₂ n + 1) * coeffCLM_SpaceTime ξ hξ n f := by
-  simp [numPlusOneCLM,
-    -lowerOpCLM_apply, -raiseOpCLM_apply, -coeffCLM_SpaceTime_apply]
-  rw [coeffCLM_SpaceTime_lowerOpCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := raiseOpCLM ξ 1 f)]
-  rw [coeffCLM_SpaceTime_raiseOpCLM1 (ξ := ξ) (hξ := hξ) (n := raise₁ n) (f := f)]
-  simp
-  ring
-
-lemma coeffCLM_SpaceTime_numPlusOneCLM2 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ (2 : Fin STDimension) f)
-      = (unpair₄₃ n + 1) * coeffCLM_SpaceTime ξ hξ n f := by
-  simp [numPlusOneCLM,
-    -lowerOpCLM_apply, -raiseOpCLM_apply, -coeffCLM_SpaceTime_apply]
-  rw [coeffCLM_SpaceTime_lowerOpCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := raiseOpCLM ξ 2 f)]
-  rw [coeffCLM_SpaceTime_raiseOpCLM2 (ξ := ξ) (hξ := hξ) (n := raise₂ n) (f := f)]
-  simp
-  ring
-
-lemma coeffCLM_SpaceTime_numPlusOneCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ (3 : Fin STDimension) f)
-      = (unpair₄₄ n + 1) * coeffCLM_SpaceTime ξ hξ n f := by
-  simp [numPlusOneCLM,
-    -lowerOpCLM_apply, -raiseOpCLM_apply, -coeffCLM_SpaceTime_apply]
-  rw [coeffCLM_SpaceTime_lowerOpCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := raiseOpCLM ξ 3 f)]
-  rw [coeffCLM_SpaceTime_raiseOpCLM3 (ξ := ξ) (hξ := hξ) (n := raise₃ n) (f := f)]
-  simp
-  ring
-
-lemma coeffCLM_SpaceTime_lowerOpCLM (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension)
-    (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ i f)
-      = coeffCLM_SpaceTime ξ hξ (raise i n) f := by
-  fin_cases i
-  · simpa [raise, lower] using
-      coeffCLM_SpaceTime_lowerOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower] using
-      coeffCLM_SpaceTime_lowerOpCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower] using
-      coeffCLM_SpaceTime_lowerOpCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower] using
-      coeffCLM_SpaceTime_lowerOpCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-
-lemma coeffCLM_SpaceTime_raiseOpCLM (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension)
-    (n : ℕ) (f : TestFunction) :
-    coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ i f)
-      = (2 : ℝ) * (((idx n i : ℕ) : ℝ)) * coeffCLM_SpaceTime ξ hξ (lower i n) f := by
-  fin_cases i
-  · simpa [raise, lower, idx] using
-      coeffCLM_SpaceTime_raiseOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower, idx] using
-      coeffCLM_SpaceTime_raiseOpCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower, idx] using
-      coeffCLM_SpaceTime_raiseOpCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower, idx] using
-      coeffCLM_SpaceTime_raiseOpCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-
 lemma coeffCLM_SpaceTime_numPlusOneCLM (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension)
     (n : ℕ) (f : TestFunction) :
     coeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ i f)
       = ((((idx n i : ℕ) + 1 : ℕ) : ℝ)) * coeffCLM_SpaceTime ξ hξ n f := by
-  fin_cases i
-  · simpa [raise, lower, idx] using
-      coeffCLM_SpaceTime_numPlusOneCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower, idx] using
-      coeffCLM_SpaceTime_numPlusOneCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower, idx] using
-      coeffCLM_SpaceTime_numPlusOneCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
-  · simpa [raise, lower, idx] using
-      coeffCLM_SpaceTime_numPlusOneCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  simp [numPlusOneCLM,
+    -lowerOpCLM_apply, -raiseOpCLM_apply, -coeffCLM_SpaceTime_apply]
+  rw [coeffCLM_SpaceTime_lowerOpCLM (ξ := ξ) (hξ := hξ) (i := i) (n := n) (f := raiseOpCLM ξ i f)]
+  rw [coeffCLM_SpaceTime_raiseOpCLM (ξ := ξ) (hξ := hξ) (i := i) (n := raise i n) (f := f)]
+  simp [lower_raise]
+  ring
 
 end SpaceTimeHermite
 

@@ -273,7 +273,7 @@ Requires Lean 4 and Mathlib (pinned via `lake-manifest.json`).
 
 ## Authors
 
-Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
+Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim, Matteo Cipollina
 
 ### Coding Assistance
 
