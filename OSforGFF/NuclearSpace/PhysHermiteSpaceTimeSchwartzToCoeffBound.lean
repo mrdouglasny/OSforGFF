@@ -16,6 +16,7 @@ import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
 import Mathlib.MeasureTheory.Function.L2Space
 
 import OSforGFF.Analysis.Distribution.FourierMultiplier
+import OSforGFF.Analysis.Distribution.Sobolev
 import OSforGFF.NuclearSpace.SchwartzComplexify
 
 /-!
@@ -39,7 +40,7 @@ The proof combines:
 -/
 
 open scoped BigOperators FourierTransform RealInnerProductSpace NNReal ENNReal LineDeriv
-open scoped Laplacian
+open scoped Laplacian SchwartzMap
 
 namespace PhysLean
 

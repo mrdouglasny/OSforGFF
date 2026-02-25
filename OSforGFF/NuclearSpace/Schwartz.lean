@@ -8,6 +8,7 @@ import Mathlib.Analysis.Distribution.SchwartzSpace.Basic
 import Mathlib.Analysis.LocallyConvex.WithSeminorms
 
 import OSforGFF.Basic
+import OSforGFF.Spacetime.Defs
 import OSforGFF.NuclearSpace.Defs
 import OSforGFF.NuclearSpace.Std
 import OSforGFF.NuclearSpace.Transport
@@ -45,18 +46,24 @@ noncomputable section
 
 open TopologicalSpace
 
-/-! ## A canonical monotone `ℕ`-family generating the Schwartz topology -/
+/-! ## Generic Schwartz seminorm sequence on `𝓢(E, ℝ)` -/
 
-/-- The underlying Schwartz seminorm family on `TestFunction`, indexed by `ℕ × ℕ`. -/
-abbrev schwartzSeminormFamily_TestFunction : (ℕ × ℕ) → Seminorm ℝ TestFunction :=
-  schwartzSeminormFamily ℝ SpaceTime ℝ
+namespace SchwartzSeq
 
-/-- A monotone `ℕ`-indexed seminorm family generating the Schwartz topology, obtained by taking
-finite sups over `Finset.Iic (n,n)`. -/
-noncomputable def schwartzSeminormSeq (n : ℕ) : Seminorm ℝ TestFunction :=
-  (Finset.Iic (n, n)).sup (schwartzSeminormFamily_TestFunction)
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-theorem schwartzSeminormSeq_mono : Monotone schwartzSeminormSeq := by
+/-- The underlying Schwartz seminorm family on `𝓢(E, ℝ)`, indexed by `ℕ × ℕ`. -/
+abbrev schwartzSeminormFamily (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] :
+    (ℕ × ℕ) → Seminorm ℝ (SchwartzMap E ℝ) :=
+  _root_.schwartzSeminormFamily ℝ E ℝ
+
+/-- A monotone `ℕ`-indexed seminorm family generating the Schwartz topology on `𝓢(E, ℝ)`, obtained by
+taking finite sups over `Finset.Iic (n,n)`. -/
+noncomputable def schwartzSeminormSeq (E : Type*) [NormedAddCommGroup E] [NormedSpace ℝ E] (n : ℕ) :
+    Seminorm ℝ (SchwartzMap E ℝ) :=
+  (Finset.Iic (n, n)).sup (schwartzSeminormFamily (E := E))
+
+theorem schwartzSeminormSeq_mono : Monotone (schwartzSeminormSeq (E := E)) := by
   intro a b hab
   have hsubset : Finset.Iic (a, a) ⊆ Finset.Iic (b, b) := by
     intro x hx
@@ -65,16 +72,17 @@ theorem schwartzSeminormSeq_mono : Monotone schwartzSeminormSeq := by
     exact Finset.mem_Iic.mpr (le_trans hxle hab')
   exact Finset.sup_mono hsubset
 
-theorem schwartzSeminormSeq_withSeminorms : WithSeminorms schwartzSeminormSeq := by
+theorem schwartzSeminormSeq_withSeminorms : WithSeminorms (schwartzSeminormSeq (E := E)) := by
   -- Start from Mathlib's `WithSeminorms` for the `(ℕ × ℕ)`-indexed Schwartz family.
-  let q : (ℕ × ℕ) → Seminorm ℝ TestFunction := schwartzSeminormFamily_TestFunction
+  let q : (ℕ × ℕ) → Seminorm ℝ (SchwartzMap E ℝ) := schwartzSeminormFamily (E := E)
   have hq : WithSeminorms q := by
-    simpa [q, schwartzSeminormFamily_TestFunction] using (schwartz_withSeminorms (𝕜 := ℝ) (E := SpaceTime) (F := ℝ))
+    simpa [q, schwartzSeminormFamily] using
+      (schwartz_withSeminorms (𝕜 := ℝ) (E := E) (F := ℝ))
   -- Replace `q` by its `Finset.Iic` partial sups. This does not change the topology.
-  let q' : (ℕ × ℕ) → Seminorm ℝ TestFunction := fun i => (Finset.Iic i).sup q
+  let q' : (ℕ × ℕ) → Seminorm ℝ (SchwartzMap E ℝ) := fun i => (Finset.Iic i).sup q
   have hq' : WithSeminorms q' := WithSeminorms.partial_sups (hp := hq)
   -- Restrict to the diagonal `n ↦ q' (n,n)`; this is cofinal, hence generates the same topology.
-  let p : ℕ → Seminorm ℝ TestFunction := fun n => q' (n, n)
+  let p : ℕ → Seminorm ℝ (SchwartzMap E ℝ) := fun n => q' (n, n)
   have hpq' : Seminorm.IsBounded q' p LinearMap.id := by
     intro n
     refine ⟨{(n, n)}, 1, ?_⟩
@@ -93,6 +101,26 @@ theorem schwartzSeminormSeq_withSeminorms : WithSeminorms schwartzSeminormSeq :=
   simpa [schwartzSeminormSeq, p, q'] using
     (WithSeminorms.congr (p := q') (q := p) (hp := hq') (hpq := hpq') (hqp := hq'p)
       : WithSeminorms p)
+
+end SchwartzSeq
+
+/-! ## A canonical monotone `ℕ`-family generating the Schwartz topology -/
+
+/-- The underlying Schwartz seminorm family on `TestFunction`, indexed by `ℕ × ℕ`. -/
+abbrev schwartzSeminormFamily_TestFunction : (ℕ × ℕ) → Seminorm ℝ TestFunction :=
+  SchwartzSeq.schwartzSeminormFamily (E := SpaceTime)
+
+/-- A monotone `ℕ`-indexed seminorm family generating the Schwartz topology, obtained by taking
+finite sups over `Finset.Iic (n,n)`. -/
+noncomputable def schwartzSeminormSeq (n : ℕ) : Seminorm ℝ TestFunction :=
+  SchwartzSeq.schwartzSeminormSeq (E := SpaceTime) n
+
+theorem schwartzSeminormSeq_mono : Monotone schwartzSeminormSeq := by
+  simpa [schwartzSeminormSeq] using (SchwartzSeq.schwartzSeminormSeq_mono (E := SpaceTime))
+
+theorem schwartzSeminormSeq_withSeminorms : WithSeminorms schwartzSeminormSeq := by
+  simpa [schwartzSeminormSeq] using
+    (SchwartzSeq.schwartzSeminormSeq_withSeminorms (E := SpaceTime))
 
 /-! ## The remaining nuclearity assumption, in canonical Schwartz terms -/
 

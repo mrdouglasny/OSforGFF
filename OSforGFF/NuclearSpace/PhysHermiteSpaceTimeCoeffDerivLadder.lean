@@ -348,15 +348,27 @@ lemma lineDeriv_eigenfunctionRealSpaceTime_unitVec (ξ : ℝ) (hξ : ξ ≠ 0)
     lineDeriv ℝ (eigenfunctionRealSpaceTime ξ hξ n) x (unitVec i) =
       ((((idx n i : ℕ) : ℝ) / ξ) * eigenfunctionRealSpaceTime ξ hξ (lower i n) x)
         - (1 / (2 * ξ)) * eigenfunctionRealSpaceTime ξ hξ (raise i n) x := by
-  fin_cases i
-  · simpa [raise, lower, idx] using
-      (lineDeriv_eigenfunctionRealSpaceTime_unitVec0 (ξ := ξ) (hξ := hξ) (n := n) (x := x))
-  · simpa [raise, lower, idx] using
-      (lineDeriv_eigenfunctionRealSpaceTime_unitVec1 (ξ := ξ) (hξ := hξ) (n := n) (x := x))
-  · simpa [raise, lower, idx] using
-      (lineDeriv_eigenfunctionRealSpaceTime_unitVec2 (ξ := ξ) (hξ := hξ) (n := n) (x := x))
-  · simpa [raise, lower, idx] using
-      (lineDeriv_eigenfunctionRealSpaceTime_unitVec3 (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+  cases i using Fin.cases with
+  | zero =>
+      simpa [raise, lower, idx] using
+        (lineDeriv_eigenfunctionRealSpaceTime_unitVec0 (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+  | succ i =>
+      cases i using Fin.cases with
+      | zero =>
+          simpa [raise, lower, idx] using
+            (lineDeriv_eigenfunctionRealSpaceTime_unitVec1 (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+      | succ i =>
+          cases i using Fin.cases with
+          | zero =>
+              simpa [raise, lower, idx] using
+                (lineDeriv_eigenfunctionRealSpaceTime_unitVec2 (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+          | succ i =>
+              cases i using Fin.cases with
+              | zero =>
+                  simpa [raise, lower, idx] using
+                    (lineDeriv_eigenfunctionRealSpaceTime_unitVec3 (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+              | succ i =>
+                  exact (False.elim (Nat.not_lt_zero _ i.isLt))
 
 /-! ## Coefficient ladder for coordinate derivatives -/
 

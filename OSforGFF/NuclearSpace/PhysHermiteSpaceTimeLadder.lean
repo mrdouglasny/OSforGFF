@@ -369,15 +369,27 @@ lemma coord_mul_eigenfunctionRealSpaceTime (ξ : ℝ) (hξ : ξ ≠ 0)
     (coordCLM i x) * eigenfunctionRealSpaceTime ξ hξ n x =
       (ξ / 2) * eigenfunctionRealSpaceTime ξ hξ (raise i n) x
         + ((((idx n i : ℕ) : ℝ) * ξ) * eigenfunctionRealSpaceTime ξ hξ (lower i n) x) := by
-  fin_cases i
-  · simpa [raise, lower, idx] using
-      (coord0_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
-  · simpa [raise, lower, idx] using
-      (coord1_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
-  · simpa [raise, lower, idx] using
-      (coord2_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
-  · simpa [raise, lower, idx] using
-      (coord3_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+  cases i using Fin.cases with
+  | zero =>
+      simpa [raise, lower, idx] using
+        (coord0_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+  | succ i =>
+      cases i using Fin.cases with
+      | zero =>
+          simpa [raise, lower, idx] using
+            (coord1_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+      | succ i =>
+          cases i using Fin.cases with
+          | zero =>
+              simpa [raise, lower, idx] using
+                (coord2_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+          | succ i =>
+              cases i using Fin.cases with
+              | zero =>
+                  simpa [raise, lower, idx] using
+                    (coord3_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+              | succ i =>
+                  exact (False.elim (Nat.not_lt_zero _ i.isLt))
 
 end SpaceTimeHermite
 

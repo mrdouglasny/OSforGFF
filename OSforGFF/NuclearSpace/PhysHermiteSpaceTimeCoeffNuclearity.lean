@@ -71,7 +71,7 @@ their closed ranges.
 open scoped Topology
 
 -- Force quotient topology to be the norm-induced one (avoid inheriting Schwartz quotient topology).
-local instance (priority := 1001) (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) :
+local instance (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) :
     TopologicalSpace (OSforGFF.QuotBySeminorm (E := TestFunction) (coeffSeminormSeq ξ hξ k)) :=
   (PseudoMetricSpace.toUniformSpace.toTopologicalSpace :
     TopologicalSpace (OSforGFF.QuotBySeminorm (E := TestFunction) (coeffSeminormSeq ξ hξ k)))
