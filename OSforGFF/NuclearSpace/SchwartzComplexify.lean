@@ -28,7 +28,8 @@ noncomputable section
 abbrev ofRealSchwartz : TestFunction →L[ℝ] TestFunctionℂ :=
   _root_.toComplexCLM
 
-@[simp] lemma ofRealSchwartz_apply (f : TestFunction) (x : SpaceTime) :
+@[simp]
+lemma ofRealSchwartz_apply (f : TestFunction) (x : SpaceTime) :
     ofRealSchwartz f x = (f x : ℂ) := by
   simp [ofRealSchwartz]
 

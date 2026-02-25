@@ -64,6 +64,10 @@ lemma lower₃_raise₃ (n : ℕ) : lower₃ (raise₃ n) = n := by
     rw [unpair₄_lower₃]
     simp : unpair₄ (lower₃ (raise₃ n)) = unpair₄ n)
 
+@[simp]
+lemma lower_raise (i : Fin STDimension) (n : ℕ) : lower i (raise i n) = n := by
+  fin_cases i <;> simp [raise, lower]
+
 /-! ## Coordinatewise ladder operators on `TestFunction` -/
 
 /-- The (coordinatewise) operator `f ↦ (xᵢ/ξ) f - ξ (∂ᵢ f)` on `TestFunction`. -/
@@ -204,6 +208,48 @@ lemma coeffCLM_SpaceTime_numPlusOneCLM3 (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f
   rw [coeffCLM_SpaceTime_raiseOpCLM3 (ξ := ξ) (hξ := hξ) (n := raise₃ n) (f := f)]
   simp
   ring
+
+lemma coeffCLM_SpaceTime_lowerOpCLM (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension)
+    (n : ℕ) (f : TestFunction) :
+    coeffCLM_SpaceTime ξ hξ n (lowerOpCLM ξ i f)
+      = coeffCLM_SpaceTime ξ hξ (raise i n) f := by
+  fin_cases i
+  · simpa [raise, lower] using
+      coeffCLM_SpaceTime_lowerOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower] using
+      coeffCLM_SpaceTime_lowerOpCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower] using
+      coeffCLM_SpaceTime_lowerOpCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower] using
+      coeffCLM_SpaceTime_lowerOpCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+
+lemma coeffCLM_SpaceTime_raiseOpCLM (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension)
+    (n : ℕ) (f : TestFunction) :
+    coeffCLM_SpaceTime ξ hξ n (raiseOpCLM ξ i f)
+      = (2 : ℝ) * (((idx n i : ℕ) : ℝ)) * coeffCLM_SpaceTime ξ hξ (lower i n) f := by
+  fin_cases i
+  · simpa [raise, lower, idx] using
+      coeffCLM_SpaceTime_raiseOpCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower, idx] using
+      coeffCLM_SpaceTime_raiseOpCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower, idx] using
+      coeffCLM_SpaceTime_raiseOpCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower, idx] using
+      coeffCLM_SpaceTime_raiseOpCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+
+lemma coeffCLM_SpaceTime_numPlusOneCLM (ξ : ℝ) (hξ : ξ ≠ 0) (i : Fin STDimension)
+    (n : ℕ) (f : TestFunction) :
+    coeffCLM_SpaceTime ξ hξ n (numPlusOneCLM ξ i f)
+      = ((((idx n i : ℕ) + 1 : ℕ) : ℝ)) * coeffCLM_SpaceTime ξ hξ n f := by
+  fin_cases i
+  · simpa [raise, lower, idx] using
+      coeffCLM_SpaceTime_numPlusOneCLM0 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower, idx] using
+      coeffCLM_SpaceTime_numPlusOneCLM1 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower, idx] using
+      coeffCLM_SpaceTime_numPlusOneCLM2 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
+  · simpa [raise, lower, idx] using
+      coeffCLM_SpaceTime_numPlusOneCLM3 (ξ := ξ) (hξ := hξ) (n := n) (f := f)
 
 end SpaceTimeHermite
 

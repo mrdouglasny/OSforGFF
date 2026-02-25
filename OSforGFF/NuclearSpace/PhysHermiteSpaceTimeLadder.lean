@@ -67,6 +67,34 @@ noncomputable def raise₃ (n : ℕ) : ℕ :=
 noncomputable def lower₃ (n : ℕ) : ℕ :=
   pairEquiv₄ ((unpair₄₁ n, unpair₄₂ n), (unpair₄₃ n, unpair₄₄ n - 1))
 
+/-! ### Coordinate-parametric wrappers -/
+
+/-- Increment the `i`-th decoded component of `n`. -/
+noncomputable def raise (i : Fin STDimension) (n : ℕ) : ℕ :=
+  match i with
+  | ⟨0, _⟩ => raise₀ n
+  | ⟨1, _⟩ => raise₁ n
+  | ⟨2, _⟩ => raise₂ n
+  | ⟨3, _⟩ => raise₃ n
+
+/-- Decrement the `i`-th decoded component of `n` (using Nat subtraction). -/
+noncomputable def lower (i : Fin STDimension) (n : ℕ) : ℕ :=
+  match i with
+  | ⟨0, _⟩ => lower₀ n
+  | ⟨1, _⟩ => lower₁ n
+  | ⟨2, _⟩ => lower₂ n
+  | ⟨3, _⟩ => lower₃ n
+
+@[simp] lemma raise_zero (n : ℕ) : raise 0 n = raise₀ n := rfl
+@[simp] lemma raise_one (n : ℕ) : raise 1 n = raise₁ n := rfl
+@[simp] lemma raise_two (n : ℕ) : raise 2 n = raise₂ n := rfl
+@[simp] lemma raise_three (n : ℕ) : raise 3 n = raise₃ n := rfl
+
+@[simp] lemma lower_zero (n : ℕ) : lower 0 n = lower₀ n := rfl
+@[simp] lemma lower_one (n : ℕ) : lower 1 n = lower₁ n := rfl
+@[simp] lemma lower_two (n : ℕ) : lower 2 n = lower₂ n := rfl
+@[simp] lemma lower_three (n : ℕ) : lower 3 n = lower₃ n := rfl
+
 @[simp] lemma unpair₄_raise₀ (n : ℕ) :
     unpair₄ (raise₀ n) = ((unpair₄₁ n + 1, unpair₄₂ n), (unpair₄₃ n, unpair₄₄ n)) := by
   simp [raise₀, unpair₄]
@@ -334,6 +362,22 @@ lemma coord3_mul_eigenfunctionRealSpaceTime (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ
     _ = (ξ / 2) * eigenfunctionRealSpaceTime ξ hξ (raise₃ n) x
           + (unpair₄₄ n * ξ) * eigenfunctionRealSpaceTime ξ hξ (lower₃ n) x := by
           simp [habcdRaise, habcdLower]
+
+/-- Coordinate-uniform multiplication ladder identity on spacetime eigenfunctions. -/
+lemma coord_mul_eigenfunctionRealSpaceTime (ξ : ℝ) (hξ : ξ ≠ 0)
+    (i : Fin STDimension) (n : ℕ) (x : SpaceTime) :
+    (coordCLM i x) * eigenfunctionRealSpaceTime ξ hξ n x =
+      (ξ / 2) * eigenfunctionRealSpaceTime ξ hξ (raise i n) x
+        + ((((idx n i : ℕ) : ℝ) * ξ) * eigenfunctionRealSpaceTime ξ hξ (lower i n) x) := by
+  fin_cases i
+  · simpa [raise, lower, idx] using
+      (coord0_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+  · simpa [raise, lower, idx] using
+      (coord1_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+  · simpa [raise, lower, idx] using
+      (coord2_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
+  · simpa [raise, lower, idx] using
+      (coord3_mul_eigenfunctionRealSpaceTime (ξ := ξ) (hξ := hξ) (n := n) (x := x))
 
 end SpaceTimeHermite
 

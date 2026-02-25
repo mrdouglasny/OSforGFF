@@ -52,7 +52,7 @@ import «OSforGFF».GaussianProcessKolmogorovIsGaussian
 
 -- Measure construction (Minlos)
 import «OSforGFF».Minlos
-import «OSforGFF».MinlosAxiomatic
+--import «OSforGFF».MinlosAxiomatic
 import «OSforGFF».MinlosAnalytic
 import «OSforGFF».WeakDualMeasurability
 import «OSforGFF».MinlosGaussianKolmogorov

@@ -58,8 +58,6 @@ noncomputable def schwartzSeminormSeq (n : ℕ) : Seminorm ℝ TestFunction :=
 
 theorem schwartzSeminormSeq_mono : Monotone schwartzSeminormSeq := by
   intro a b hab
-  classical
-  -- Use monotonicity of `Finset.Iic` and `Finset.sup_mono`.
   have hsubset : Finset.Iic (a, a) ⊆ Finset.Iic (b, b) := by
     intro x hx
     have hxle : x ≤ (a, a) := Finset.mem_Iic.mp hx
@@ -68,7 +66,6 @@ theorem schwartzSeminormSeq_mono : Monotone schwartzSeminormSeq := by
   exact Finset.sup_mono hsubset
 
 theorem schwartzSeminormSeq_withSeminorms : WithSeminorms schwartzSeminormSeq := by
-  classical
   -- Start from Mathlib's `WithSeminorms` for the `(ℕ × ℕ)`-indexed Schwartz family.
   let q : (ℕ × ℕ) → Seminorm ℝ TestFunction := schwartzSeminormFamily_TestFunction
   have hq : WithSeminorms q := by
@@ -81,24 +78,18 @@ theorem schwartzSeminormSeq_withSeminorms : WithSeminorms schwartzSeminormSeq :=
   have hpq' : Seminorm.IsBounded q' p LinearMap.id := by
     intro n
     refine ⟨{(n, n)}, 1, ?_⟩
-    -- `p n = q' (n,n)` is literally one of the seminorms in `q'`.
     simp [p, one_smul]
   have hq'p : Seminorm.IsBounded p q' LinearMap.id := by
     intro i
-    -- choose `n = max i.1 i.2` so that `i ≤ (n,n)`.
     refine ⟨{Nat.max i.1 i.2}, 1, ?_⟩
     have hle : q' i ≤ p (Nat.max i.1 i.2) := by
-      -- `Finset.Iic i ⊆ Finset.Iic (n,n)`, hence the corresponding sup is ≤.
       have hi : i ≤ (Nat.max i.1 i.2, Nat.max i.1 i.2) :=
         Prod.mk_le_mk.2 ⟨le_max_left _ _, le_max_right _ _⟩
       have hsubset : Finset.Iic i ⊆ Finset.Iic (Nat.max i.1 i.2, Nat.max i.1 i.2) := by
         intro x hx
         exact Finset.mem_Iic.mpr (le_trans (Finset.mem_Iic.mp hx) hi)
       simpa [q', p] using (Finset.sup_mono hsubset)
-    -- Turn the pointwise inequality into the required `≤ C • s.sup _` form.
-    -- Here `C = 1` and `s = {n}`.
     simpa [Seminorm.comp_apply, p, one_smul] using hle
-  -- Conclude by topology congruence.
   simpa [schwartzSeminormSeq, p, q'] using
     (WithSeminorms.congr (p := q') (q := p) (hp := hq') (hpq := hpq') (hqp := hq'p)
       : WithSeminorms p)
@@ -119,7 +110,6 @@ def SchwartzNuclearInclusion : Prop :=
         (p := schwartzSeminormSeq m)
         (q := schwartzSeminormSeq n)
         (by
-          -- Monotonicity gives `q ≤ p`.
           have hm := schwartzSeminormSeq_mono (a := n) (b := m) (Nat.le_of_lt hnm)
           exact hm))
 
@@ -135,7 +125,6 @@ theorem schwartzNuclearInclusion_of_equivFamily
         (BanachOfSeminorm.inclCLM (E := TestFunction) (p := q m) (q := q n)
           (hqmono (Nat.le_of_lt hnm)))) :
     SchwartzNuclearInclusion := by
-  classical
   intro n
   rcases
       (NuclearSpaceStd.isNuclear_inclCLM_of_isBounded (E := TestFunction)
@@ -143,7 +132,6 @@ theorem schwartzNuclearInclusion_of_equivFamily
         schwartzSeminormSeq_mono hqmono hb_q_le_sch hb_sch_le_q hqNuclear n)
     with ⟨m, hnm, hNuc⟩
   refine ⟨m, hnm, ?_⟩
-  -- the inclusion map is definitionaly the canonical one for `schwartzSeminormSeq`.
   simpa using hNuc
 
 /-- A more canonical variant: if `q` is a monotone seminorm sequence that generates the Schwartz
@@ -156,7 +144,6 @@ theorem schwartzNuclearInclusion_of_withSeminorms
         (BanachOfSeminorm.inclCLM (E := TestFunction) (p := q m) (q := q n)
           (hqmono (Nat.le_of_lt hnm)))) :
     SchwartzNuclearInclusion := by
-  -- derive the `IsBounded` comparisons from `WithSeminorms`
   have hb_q_le_sch :
       Seminorm.IsBounded schwartzSeminormSeq q (LinearMap.id : TestFunction →ₗ[ℝ] TestFunction) :=
     WithSeminorms.isBounded_id (p := schwartzSeminormSeq) (q := q)
@@ -171,13 +158,11 @@ theorem schwartzNuclearInclusion_of_withSeminorms
 `NuclearSpaceStd` in the sense used by the Minlos/GFF pipeline. -/
 theorem nuclearSpaceStd_TestFunction_of_schwartzNuclearInclusion
     (hSch : SchwartzNuclearInclusion) : NuclearSpaceStd TestFunction := by
-  classical
   refine ⟨?_⟩
   refine ⟨schwartzSeminormSeq, schwartzSeminormSeq_mono, schwartzSeminormSeq_withSeminorms, ?_⟩
   intro n
   rcases hSch n with ⟨m, hnm, hNuc⟩
   refine ⟨m, hnm, ?_⟩
-  -- The inclusion map is definitionaly the one in the class field.
   simpa using hNuc
 
 end

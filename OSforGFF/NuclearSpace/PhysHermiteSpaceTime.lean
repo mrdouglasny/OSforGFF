@@ -46,7 +46,8 @@ namespace SpaceTimeHermite
 def unpair₄ (n : ℕ) : (ℕ × ℕ) × (ℕ × ℕ) :=
   OSforGFF.RapidDecaySeqMulti.pairEquiv₄.symm n
 
-@[simp] lemma unpair₄_apply (n : ℕ) :
+@[simp]
+lemma unpair₄_apply (n : ℕ) :
     unpair₄ n = OSforGFF.RapidDecaySeqMulti.pairEquiv₄.symm n := rfl
 
 abbrev unpair₄₁ (n : ℕ) : ℕ := (unpair₄ n).1.1
@@ -63,10 +64,17 @@ def idx (n : ℕ) : Fin STDimension → ℕ
   | ⟨2, _⟩ => unpair₄₃ n
   | ⟨3, _⟩ => unpair₄₄ n
 
-@[simp] lemma idx_zero (n : ℕ) : idx n 0 = unpair₄₁ n := by rfl
-@[simp] lemma idx_one (n : ℕ) : idx n 1 = unpair₄₂ n := by rfl
-@[simp] lemma idx_two (n : ℕ) : idx n 2 = unpair₄₃ n := by rfl
-@[simp] lemma idx_three (n : ℕ) : idx n 3 = unpair₄₄ n := by rfl
+@[simp]
+lemma idx_zero (n : ℕ) : idx n 0 = unpair₄₁ n := by rfl
+
+@[simp]
+lemma idx_one (n : ℕ) : idx n 1 = unpair₄₂ n := by rfl
+
+@[simp]
+lemma idx_two (n : ℕ) : idx n 2 = unpair₄₃ n := by rfl
+
+@[simp]
+lemma idx_three (n : ℕ) : idx n 3 = unpair₄₄ n := by rfl
 
 /-- `idx` is surjective: every `Fin 4 → ℕ` multi-index is encoded by some `n : ℕ`. -/
 lemma idx_surjective : Function.Surjective (idx : ℕ → Fin STDimension → ℕ) := by
@@ -100,11 +108,13 @@ lemma base₄_eq_unpair₄ (n : ℕ) :
 abbrev coordCLM (i : Fin STDimension) : SpaceTime →L[ℝ] ℝ :=
   (EuclideanSpace.proj (𝕜 := ℝ) (ι := Fin STDimension) i)
 
-@[simp] lemma coordCLM_apply (i : Fin STDimension) (x : SpaceTime) :
+@[simp]
+lemma coordCLM_apply (i : Fin STDimension) (x : SpaceTime) :
     coordCLM i x = x i := by
   simp [coordCLM]
 
-@[simp] lemma coordCLM_toLp (i : Fin STDimension) (v : Fin STDimension → ℝ) :
+@[simp]
+lemma coordCLM_toLp (i : Fin STDimension) (v : Fin STDimension → ℝ) :
     coordCLM i (WithLp.toLp (2 : ℝ≥0∞) v) = v i := by
   simp [coordCLM]
 
@@ -140,7 +150,8 @@ noncomputable def coeffCLM_SpaceTime (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) :
   (SchwartzMap.integralCLM (𝕜 := ℝ) (μ := (volume : Measure SpaceTime))).comp
     (SchwartzMap.smulLeftCLM (F := ℝ) (eigenfunctionRealSpaceTime ξ hξ n))
 
-@[simp] lemma coeffCLM_SpaceTime_apply (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
+@[simp]
+lemma coeffCLM_SpaceTime_apply (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) (f : TestFunction) :
     coeffCLM_SpaceTime ξ hξ n f =
       ∫ x : SpaceTime, eigenfunctionRealSpaceTime ξ hξ n x * f x := by
   have hg : (eigenfunctionRealSpaceTime ξ hξ n).HasTemperateGrowth :=
@@ -152,7 +163,8 @@ noncomputable def coeffCLM_SpaceTime (ξ : ℝ) (hξ : ξ ≠ 0) (n : ℕ) :
 noncomputable def coeffCLM_SpaceTime_pi (ξ : ℝ) (hξ : ξ ≠ 0) : TestFunction →L[ℝ] (ℕ → ℝ) :=
   ContinuousLinearMap.pi (fun n : ℕ => coeffCLM_SpaceTime ξ hξ n)
 
-@[simp] lemma coeffCLM_SpaceTime_pi_apply (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) (n : ℕ) :
+@[simp]
+lemma coeffCLM_SpaceTime_pi_apply (ξ : ℝ) (hξ : ξ ≠ 0) (f : TestFunction) (n : ℕ) :
     coeffCLM_SpaceTime_pi ξ hξ f n = coeffCLM_SpaceTime ξ hξ n f := by
   rfl
 
@@ -241,7 +253,8 @@ lemma integral_eigenfunctionRealSpaceTime_self (ξ : ℝ) (hξ : ξ ≠ 0) (n : 
 noncomputable def normConstSpaceTime (ξ : ℝ) (n : ℕ) : ℝ :=
   ∏ i : Fin STDimension, (|ξ| * (↑(idx n i).factorial * 2 ^ (idx n i) * √Real.pi))
 
-@[simp] lemma normConstSpaceTime_def (ξ : ℝ) (n : ℕ) :
+@[simp]
+lemma normConstSpaceTime_def (ξ : ℝ) (n : ℕ) :
     normConstSpaceTime ξ n =
       ∏ i : Fin STDimension, (|ξ| * (↑(idx n i).factorial * 2 ^ (idx n i) * √Real.pi)) := rfl
 
