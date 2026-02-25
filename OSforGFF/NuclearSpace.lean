@@ -28,6 +28,7 @@ and suffices for the GFF construction via the Minlos theorem.
 
 import Mathlib.Analysis.LocallyConvex.WithSeminorms
 import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+import OSforGFF.NuclearSpace.Defs
 
 open scoped BigOperators
 
@@ -39,15 +40,15 @@ The hierarchy of operator conditions between normed spaces:
   nuclear (trace-class) ⊂ Hilbert-Schmidt ⊂ compact
 -/
 
-/-- A continuous linear map between normed spaces is **nuclear** if it admits a
-    representation T(x) = ∑ₙ (φₙ x) • yₙ where ∑ₙ ‖φₙ‖ · ‖yₙ‖ < ∞. -/
-def IsNuclearMap {E F : Type*}
+/-- Compatibility alias to the canonical nuclear-map API in `OSforGFF.NuclearSpace.Defs`.
+
+This keeps the historical unqualified name `IsNuclearMap` available while ensuring both old
+and new code use the same definition. -/
+abbrev IsNuclearMap {E F : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E]
     [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
     (T : E →L[ℝ] F) : Prop :=
-  ∃ (φ : ℕ → (E →L[ℝ] ℝ)) (y : ℕ → F),
-    Summable (fun n => ‖φ n‖ * ‖y n‖) ∧
-    ∀ x, T x = ∑' n, (φ n x) • y n
+  OSforGFF.IsNuclearMap (𝕜 := ℝ) T
 
 /-! ### Hilbertian Seminorms -/
 

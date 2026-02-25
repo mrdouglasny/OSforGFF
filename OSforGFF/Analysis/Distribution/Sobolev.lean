@@ -19,7 +19,7 @@ variable {E F : Type*}
   [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
 
 open FourierTransform TemperedDistribution ENNReal MeasureTheory
-open scoped SchwartzMap LineDeriv Real
+open scoped SchwartzMap LineDeriv Real RealInnerProductSpace
 
 section TemperedFourierMultiplierCompat
 
@@ -281,6 +281,163 @@ end BesselPotential
 section normed
 
 variable [NormedSpace ℂ F] [CompleteSpace F]
+
+omit [CompleteSpace F] in
+private lemma toReal_eLpNorm_two_eq (h : 𝓢(E, F)) :
+    ENNReal.toReal (eLpNorm h (2 : ℝ≥0∞) (volume : Measure E)) =
+      (∫ ξ : E, ‖h ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ ((2 : ℝ)⁻¹) := by
+  have hm : MemLp (fun ξ : E => h ξ) (2 : ℝ≥0∞) (volume : Measure E) :=
+    h.memLp (p := (2 : ℝ≥0∞)) (μ := (volume : Measure E))
+  have hnonneg :
+      0 ≤ (∫ ξ : E, ‖h ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ ((2 : ℝ)⁻¹) := by
+    positivity
+  have he :
+      eLpNorm h (2 : ℝ≥0∞) (volume : Measure E) =
+        ENNReal.ofReal
+          ((∫ ξ : E, ‖h ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ ((2 : ℝ)⁻¹)) := by
+    simpa using
+      (MeasureTheory.MemLp.eLpNorm_eq_integral_rpow_norm
+        (μ := (volume : Measure E))
+        (hp1 := (by norm_num))
+        (hp2 := (by norm_num))
+        hm)
+  rw [he]
+  simpa using (ENNReal.toReal_ofReal hnonneg)
+
+omit [CompleteSpace F] in
+private lemma integral_norm_rpow_two_rpow_inv_eq_norm_toLp (h : 𝓢(E, F)) :
+    (∫ ξ : E, ‖h ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ))
+      = ‖h.toLp 2 (volume : Measure E)‖ := by
+  have hnorm :=
+    (SchwartzMap.norm_toLp (f := h) (p := (2 : ℝ≥0∞)) (μ := (volume : Measure E))).symm
+  simpa using (toReal_eLpNorm_two_eq (h := h)).symm.trans hnorm
+
+/-- Generic weighted Sobolev/Fourier pointwise control on scalar Schwartz functions.
+
+If `w, wInv : E → ℂ` satisfy `‖w ξ‖ * ‖wInv ξ‖ = 1`, with `w ∈ L²` and
+`wInv` of temperate growth, then pointwise values are controlled by the weighted `L²` Fourier
+norm:
+
+`‖f x‖ ≤ ‖w‖_{L²} * ‖wInv • 𝓕 f‖_{L²}`.
+
+This packages the weighted Cauchy–Schwarz step used in Sobolev embeddings independently of any
+specific choice of weight.
+-/
+theorem SchwartzMap.norm_apply_le_weightedFourier_toLp_two
+    {w wInv : E → ℂ}
+    (hw_memLp : MemLp w (ENNReal.ofReal (2 : ℝ)) (volume : Measure E))
+    (hwInv_growth : wInv.HasTemperateGrowth)
+    (hw_mul_inv : ∀ ξ : E, ‖w ξ‖ * ‖wInv ξ‖ = 1)
+    (f : 𝓢(E, ℂ)) (x : E) :
+    ‖f x‖ ≤
+      ((∫ ξ : E, ‖w ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ))) *
+        ‖(SchwartzMap.smulLeftCLM (F := ℂ) wInv (𝓕 f)).toLp 2 (volume : Measure E)‖ := by
+  have hfourierInv :
+      f x = ∫ ξ : E, 𝐞 ⟪ξ, x⟫ • (𝓕 f) ξ := by
+    have hx : f x = (𝓕⁻ (𝓕 f)) x := by simp
+    have hx' :
+        (𝓕⁻ (𝓕 f)) x = 𝓕⁻ ((𝓕 f : 𝓢(E, ℂ)) : E → ℂ) x := by
+      simpa using congrArg (fun h => h x) (SchwartzMap.fourierInv_coe (f := 𝓕 f))
+    have hx'' :
+        𝓕⁻ ((𝓕 f : 𝓢(E, ℂ)) : E → ℂ) x = ∫ ξ : E, 𝐞 ⟪ξ, x⟫ • (𝓕 f) ξ := by
+      simpa using (Real.fourierInv_eq (f := ((𝓕 f : 𝓢(E, ℂ)) : E → ℂ)) x)
+    exact hx.trans (hx'.trans hx'')
+  have hnorm_int :
+      ‖f x‖ ≤ ∫ ξ : E, ‖(𝓕 f) ξ‖ ∂(volume : Measure E) := by
+    have hnorm :
+        ‖∫ ξ : E, 𝐞 ⟪ξ, x⟫ • (𝓕 f) ξ ∂(volume : Measure E)‖
+          ≤ ∫ ξ : E, ‖(𝓕 f) ξ‖ ∂(volume : Measure E) := by
+      refine (norm_integral_le_integral_norm (f := fun ξ : E => 𝐞 ⟪ξ, x⟫ • (𝓕 f) ξ)).trans ?_
+      refine le_of_eq ?_
+      refine integral_congr_ae ?_
+      filter_upwards with ξ
+      simp
+    simpa [hfourierInv] using hnorm
+
+  let hW : 𝓢(E, ℂ) := SchwartzMap.smulLeftCLM (F := ℂ) wInv (𝓕 f)
+  have hW_apply (ξ : E) : hW ξ = wInv ξ • (𝓕 f) ξ := by
+    simpa [hW] using
+      (SchwartzMap.smulLeftCLM_apply_apply (F := ℂ)
+        (g := wInv) (hg := hwInv_growth) (𝓕 f) ξ)
+  have hmem_hW : MemLp hW (ENNReal.ofReal (2 : ℝ)) (volume : Measure E) := by
+    simpa [hW] using
+      (hW.memLp (p := (ENNReal.ofReal (2 : ℝ))) (μ := (volume : Measure E)))
+  have hmem_weighted :
+      MemLp (fun ξ : E ↦ wInv ξ • (𝓕 f) ξ)
+        (ENNReal.ofReal (2 : ℝ)) (volume : Measure E) := by
+    have hAE :
+        (fun ξ : E ↦ wInv ξ • (𝓕 f) ξ) =ᶠ[ae (volume : Measure E)] hW := by
+      refine Filter.Eventually.of_forall ?_
+      intro ξ
+      exact (hW_apply ξ).symm
+    exact (MeasureTheory.memLp_congr_ae hAE).2 hmem_hW
+
+  have hpq : (2 : ℝ).HolderConjugate (2 : ℝ) := Real.HolderConjugate.two_two
+  have hholder :
+      (∫ ξ : E, ‖w ξ‖ * ‖wInv ξ • (𝓕 f) ξ‖ ∂(volume : Measure E))
+        ≤ ((∫ ξ : E, ‖w ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ))) *
+            ((∫ ξ : E, ‖wInv ξ • (𝓕 f) ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ))) := by
+    exact integral_mul_norm_le_Lp_mul_Lq
+      (μ := (volume : Measure E))
+      (f := w)
+      (g := (fun ξ : E ↦ wInv ξ • (𝓕 f) ξ : E → ℂ))
+      (p := (2 : ℝ))
+      (q := (2 : ℝ))
+      hpq
+      hw_memLp
+      hmem_weighted
+  have hfactor :
+      (fun ξ : E ↦ ‖w ξ‖ * ‖wInv ξ • (𝓕 f) ξ‖)
+        = (fun ξ : E ↦ ‖(𝓕 f) ξ‖) := by
+    funext ξ
+    calc
+      ‖w ξ‖ * ‖wInv ξ • (𝓕 f) ξ‖ = ‖w ξ‖ * (‖wInv ξ‖ * ‖(𝓕 f) ξ‖) := by
+        simp
+      _ = (‖w ξ‖ * ‖wInv ξ‖) * ‖(𝓕 f) ξ‖ := by ring
+      _ = ‖(𝓕 f) ξ‖ := by simp [hw_mul_inv ξ]
+  have hweighted :
+      (∫ ξ : E, ‖(𝓕 f) ξ‖ ∂(volume : Measure E))
+        ≤ ((∫ ξ : E, ‖w ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ))) *
+            ((∫ ξ : E, ‖wInv ξ • (𝓕 f) ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ))) := by
+    have hEq :
+        (∫ ξ : E, ‖(𝓕 f) ξ‖ ∂(volume : Measure E))
+          = ∫ ξ : E, ‖w ξ‖ * ‖wInv ξ • (𝓕 f) ξ‖ ∂(volume : Measure E) := by
+      refine integral_congr_ae ?_
+      exact Filter.Eventually.of_forall (fun ξ => by
+        calc
+          ‖(𝓕 f) ξ‖ = (‖w ξ‖ * ‖wInv ξ‖) * ‖(𝓕 f) ξ‖ := by simp [hw_mul_inv ξ]
+          _ = ‖w ξ‖ * (‖wInv ξ‖ * ‖(𝓕 f) ξ‖) := by ring
+          _ = ‖w ξ‖ * ‖wInv ξ • (𝓕 f) ξ‖ := by simp)
+    rw [hEq]
+    exact hholder
+  have hW_eq :
+      ((∫ ξ : E, ‖wInv ξ • (𝓕 f) ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ)))
+        = ‖hW.toLp 2 (volume : Measure E)‖ := by
+    have hEqInt :
+        (∫ ξ : E, ‖hW ξ‖ ^ (2 : ℝ) ∂(volume : Measure E))
+          = ∫ ξ : E, ‖wInv ξ • (𝓕 f) ξ‖ ^ (2 : ℝ) ∂(volume : Measure E) := by
+      refine integral_congr_ae ?_
+      exact Filter.Eventually.of_forall (fun ξ => by
+        change ‖hW ξ‖ ^ (2 : ℝ) = ‖wInv ξ • (𝓕 f) ξ‖ ^ (2 : ℝ)
+        rw [hW_apply ξ])
+    calc
+      ((∫ ξ : E, ‖wInv ξ • (𝓕 f) ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ)))
+          = (∫ ξ : E, ‖hW ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ)) := by
+              rw [hEqInt]
+      _ = ‖hW.toLp 2 (volume : Measure E)‖ :=
+        integral_norm_rpow_two_rpow_inv_eq_norm_toLp (h := hW)
+  have hweighted' :
+      (∫ ξ : E, ‖(𝓕 f) ξ‖ ∂(volume : Measure E))
+        ≤ ((∫ ξ : E, ‖w ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ))) *
+            ‖hW.toLp 2 (volume : Measure E)‖ := by
+    rw [hW_eq] at hweighted
+    exact hweighted
+  have hweighted'' :
+      (∫ ξ : E, ‖(𝓕 f) ξ‖ ∂(volume : Measure E))
+        ≤ ((∫ ξ : E, ‖w ξ‖ ^ (2 : ℝ) ∂(volume : Measure E)) ^ (1 / (2 : ℝ))) *
+            ‖(SchwartzMap.smulLeftCLM (F := ℂ) wInv (𝓕 f)).toLp 2 (volume : Measure E)‖ := by
+    simpa only [hW] using hweighted'
+  exact le_trans hnorm_int hweighted''
 
 def MemSobolev (s : ℝ) (p : ℝ≥0∞) [hp : Fact (1 ≤ p)] (f : 𝓢'(E, F)) : Prop :=
   ∃ (f' : Lp F p (volume : Measure E)),
