@@ -60,11 +60,48 @@ local notation "base₄" => OSforGFF.RapidDecaySeqMulti.base₄
 
 /-! ## The pulled-back seminorm sequence -/
 
+/-- General coefficient seminorm pullback along an arbitrary linear coefficient map. -/
+noncomputable def coeffSeminormSeqOf
+    {E : Type*} [AddCommGroup E] [Module ℝ E]
+    (base : ℕ → ℝ)
+    (coeffMap : E →ₗ[ℝ] OSforGFF.RapidDecaySeqBase.space base)
+    (k : ℕ) : Seminorm ℝ E :=
+  SeminormPullback.seminormSeq (base := base) (coeffMap := coeffMap) k
+
+@[simp]
+lemma coeffSeminormSeqOf_apply
+    {E : Type*} [AddCommGroup E] [Module ℝ E]
+    (base : ℕ → ℝ)
+    (coeffMap : E →ₗ[ℝ] OSforGFF.RapidDecaySeqBase.space base)
+    (k : ℕ) (f : E) :
+    coeffSeminormSeqOf (base := base) (coeffMap := coeffMap) k f =
+      OSforGFF.RapidDecaySeqBase.Space.seminorm (base := base) k (coeffMap f) := by
+  rfl
+
+@[simp]
+lemma coeffSeminormSeqOf_apply_eq_norm
+    {E : Type*} [AddCommGroup E] [Module ℝ E]
+    (base : ℕ → ℝ)
+    (coeffMap : E →ₗ[ℝ] OSforGFF.RapidDecaySeqBase.space base)
+    (k : ℕ) (f : E) :
+    coeffSeminormSeqOf (base := base) (coeffMap := coeffMap) k f =
+      ‖OSforGFF.RapidDecaySeqBase.Space.toL2ₗ (base := base) k (coeffMap f)‖ := by
+  rfl
+
+theorem coeffSeminormSeqOf_mono
+    {E : Type*} [AddCommGroup E] [Module ℝ E]
+    (base : ℕ → ℝ)
+    (coeffMap : E →ₗ[ℝ] OSforGFF.RapidDecaySeqBase.space base)
+    (hbase : ∀ n, (1 : ℝ) ≤ base n) :
+    Monotone (coeffSeminormSeqOf (base := base) (coeffMap := coeffMap)) := by
+  simpa [coeffSeminormSeqOf] using
+    (SeminormPullback.seminormSeq_mono (base := base) (coeffMap := coeffMap) hbase)
+
 /-- The coefficient seminorm sequence on `TestFunction`, defined by pulling back the
 weighted `ℓ²` seminorms on `RapidDecaySeqBase.space base₄` along
 `normalizedCoeffRapidDecayₗ ξ hξ`. -/
 noncomputable def coeffSeminormSeq (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) : Seminorm ℝ TestFunction :=
-  SeminormPullback.seminormSeq (base := base₄) (coeffMap := normalizedCoeffRapidDecayₗ ξ hξ) k
+  coeffSeminormSeqOf (base := base₄) (coeffMap := normalizedCoeffRapidDecayₗ ξ hξ) k
 
 @[simp]
 lemma coeffSeminormSeq_apply (ξ : ℝ) (hξ : ξ ≠ 0) (k : ℕ) (f : TestFunction) :
