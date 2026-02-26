@@ -284,10 +284,12 @@ lake build
 
 Requires Lean 4 and Mathlib (pinned via `lake-manifest.json`).
 
-## Planned Generalizations
+## Planned Generalizations (MC suggestions)
 
-1. Other spacetime dimensions, as discussed in [docs/dimension_dependence.md](docs/dimension_dependence.md)
-2. Explicit construction of the measure not using Minlos
+With the foundational Euclidean QFT axioms are discharged for the free field, ongoing development focuses on:
+1. **Fully Dimension-Agnostic Instantiations:** Completing the migration of the 4D spacetime Hermite model to generic `d`-dimensional Euclidean spaces.
+2. **Infinite-Dimensional Stochastic Calculus:** Integrating Cameron-Martin spaces and Gaussian Integration by Parts (GIBP) on real Hilbert spaces. 
+3. **Interacting QFTs:** Leveraging the abstract Gel'fand triple API and GIBP to formalize Wick-ordered products and construct interacting measures (e.g., the $P(\phi)_2$ model).
 
 ## Authors
 
