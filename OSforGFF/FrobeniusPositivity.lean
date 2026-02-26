@@ -42,14 +42,10 @@ lemma frobenius_eq_trace_transpose_mul
     simp [Matrix.trace, Matrix.mul_apply]
   -- Reorder the Frobenius double sum and rename indices to match htrace
   calc
-    (∑ j, ∑ l, G j l * B j l)
-        = ∑ l, ∑ j, G j l * B j l := by
+    (∑ j, ∑ l, G j l * B j l) = ∑ i, ∑ k, G k i * B k i := by
           simpa using
             (Finset.sum_comm :
-              (∑ j, ∑ l, G j l * B j l) = (∑ l, ∑ j, G j l * B j l))
-    _ = ∑ i, ∑ k, G k i * B k i := by
-          -- rename bound variables (l→i) in the outer sum, (j→k) in the inner sum
-          apply Finset.sum_congr rfl; intro i _; rfl
+              (∑ j, ∑ l, G j l * B j l) = (∑ i, ∑ k, G k i * B k i))
     _ = Matrix.trace (G.transpose * B) := htrace.symm
 
 /-- Congruence by an orthogonal/invertible matrix preserves nonzeroness (real case).

@@ -53,6 +53,15 @@ lemma continuous_entrywiseExp (ι : Type u) [Fintype ι] [DecidableEq ι] :
     (continuous_apply j).comp (continuous_apply i)
   simpa [entrywiseExp] using (Real.continuous_exp.comp hcoord)
 
+/-- Over `ℝ`, entrywise exponential preserves Hermitian symmetry. -/
+private lemma isHermitian_entrywiseExp_real (R : Matrix ι ι ℝ)
+    (hR : R.IsHermitian) : (entrywiseExp R).IsHermitian := by
+  rw [Matrix.IsHermitian]
+  ext i j
+  have h_R_herm : R j i = R i j := by
+    simpa using (Matrix.IsHermitian.apply hR j i).symm
+  simpa [Matrix.conjTranspose, entrywiseExp] using congrArg Real.exp h_R_herm
+
 /-- Hadamard identity element: the all-ones matrix for entrywise multiplication. -/
 @[simp] def hadamardOne (ι : Type u) [Fintype ι] : Matrix ι ι ℝ := fun _ _ => 1
 
@@ -481,13 +490,8 @@ lemma posSemidef_entrywiseExp_hadamardSeries_of_posSemidef
     -- (1) For each ε > 0, entrywiseExp (R + εI) is PosDef (hence PosSemidef)
     -- (2) The limit entrywiseExp R exists by continuity
     -- (3) PosSemidef is a closed condition (IsHermitian + nonnegative quadratic form)
-    have h_herm : (entrywiseExp R).IsHermitian := by
-      -- entrywiseExp preserves Hermitian symmetry
-      rw [Matrix.IsHermitian]
-      ext i j
-      have h_R_herm : R j i = R i j := by
-        simpa using (Matrix.IsHermitian.apply hR.isHermitian j i).symm
-      simpa [Matrix.conjTranspose, entrywiseExp] using congrArg Real.exp h_R_herm
+    have h_herm : (entrywiseExp R).IsHermitian :=
+      isHermitian_entrywiseExp_real (ι:=ι) R hR.isHermitian
     apply Matrix.PosSemidef.of_dotProduct_mulVec_nonneg h_herm
     intro x
     -- For real vectors, star x = x
