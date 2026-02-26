@@ -14,6 +14,7 @@ import «OSforGFF».ComplexTestFunction
 import «OSforGFF».SpacetimeDecomp
 import «OSforGFF».TimeTranslation
 import «OSforGFF».Spacetime.Defs
+import «OSforGFF».Spacetime.VectorValued
 import «OSforGFF».Spacetime.TimeDirection
 
 -- Euclidean group and symmetries

@@ -37,7 +37,7 @@ noncomputable section
 
 open scoped RealInnerProductSpace
 
-/-- A minimal Gel'fand triple package `N ⊂ H ⊂ N'`.
+/-- A minimal Gel'fand triple API `N ⊂ H ⊂ N'`.
 
 `toHilbert` is the canonical continuous embedding of test vectors into the
 pivot Hilbert space. The dual `N'` is modeled by `WeakDual ℝ N`. -/
@@ -111,16 +111,15 @@ noncomputable def dualEmbedding : T.H →L[ℝ] WeakDual ℝ T.N :=
       intro n
       simp
     cont := by
-      -- Continuity follows from continuity of evaluation maps of `WeakDual`.
       refine WeakDual.continuous_of_continuous_eval
         (𝕜 := ℝ) (E := T.N)
         (g := fun h : T.H => ((innerSL ℝ (E := T.H) h).comp T.toHilbert : WeakDual ℝ T.N)) ?_
       intro n
-      -- `h ↦ ⟪h, T.toHilbert n⟫` is continuous as evaluation of `innerSLFlip` at `T.toHilbert n`.
       simpa [innerSLFlip_apply_apply] using
         (innerSLFlip ℝ (E := T.H) (T.toHilbert n)).continuous }
 
-@[simp] lemma dualEmbedding_apply (h : T.H) (n : T.N) :
+@[simp]
+lemma dualEmbedding_apply (h : T.H) (n : T.N) :
     T.dualEmbedding h n = ⟪h, T.toHilbert n⟫ := by
   rfl
 
