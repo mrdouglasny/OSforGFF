@@ -66,6 +66,17 @@ lemma continuous_entrywiseExp (ι : Type u) [Fintype ι] [DecidableEq ι] :
 @[simp] lemma hadamardPow_succ (R : Matrix ι ι ℝ) (n : ℕ) :
   hadamardPow R (n+1) = hadamardPow R n ∘ₕ R := rfl
 
+/-- Over `ℝ`, the Hadamard product of Hermitian matrices is Hermitian. -/
+private lemma isHermitian_hadamard_real {A B : Matrix ι ι ℝ}
+    (hA : A.IsHermitian) (hB : B.IsHermitian) : (A ∘ₕ B).IsHermitian := by
+  rw [Matrix.IsHermitian]
+  ext i j
+  have hAij : A i j = A j i := by
+    simpa using (Matrix.IsHermitian.apply hA i j).symm
+  have hBij : B i j = B j i := by
+    simpa using (Matrix.IsHermitian.apply hB i j).symm
+  simp [Matrix.conjTranspose, Matrix.hadamard, hAij, hBij]
+
 /-- Hadamard powers act entrywise as usual scalar powers. -/
 lemma hadamardPow_apply (R : Matrix ι ι ℝ) (n : ℕ) (i j : ι) :
   hadamardPow R n i j = (R i j) ^ n := by
@@ -308,26 +319,13 @@ lemma posDef_entrywiseExp_hadamardSeries_of_posDef
     intro n
     induction n with
     | zero =>
-      -- n = 0
-      -- hadamardOne is symmetric
       rw [hadamardPow_zero]
-      -- direct by entries
-      rw [Matrix.IsHermitian]
-      ext i j; simp [hadamardOne, Matrix.conjTranspose]
-    | succ n ih =>
-      -- succ
-      -- (A ∘ₕ R) is Hermitian if both are Hermitian (entrywise symmetry)
-      -- use pointwise characterization
-      rw [hadamardPow_succ]
-      -- prove IsHermitian of hadamard by unfolding
       rw [Matrix.IsHermitian]
       ext i j
-      have hAij : (hadamardPow (ι:=ι) R n) i j = (hadamardPow (ι:=ι) R n) j i := by
-        -- from ih
-        simpa using (Matrix.IsHermitian.apply ih i j).symm
-      have hRij : R i j = R j i := by
-        simpa using (Matrix.IsHermitian.apply hHermR i j).symm
-      simp [Matrix.conjTranspose, Matrix.hadamard, hAij, hRij]
+      simp [hadamardOne, Matrix.conjTranspose]
+    | succ n ih =>
+      rw [hadamardPow_succ]
+      exact isHermitian_hadamard_real (ι:=ι) ih hHermR
   -- Show IsHermitian for the series (termwise symmetry)
   have hHermS : (entrywiseExp_hadamardSeries (ι:=ι) R).IsHermitian := by
     rw [Matrix.IsHermitian]
@@ -487,16 +485,9 @@ lemma posSemidef_entrywiseExp_hadamardSeries_of_posSemidef
       -- entrywiseExp preserves Hermitian symmetry
       rw [Matrix.IsHermitian]
       ext i j
-      simp only [Matrix.conjTranspose, Matrix.transpose_apply, Matrix.map_apply, entrywiseExp]
-      simp only [star_id_of_comm]
-      -- Goal: Real.exp (R j i) = Real.exp (R i j)
-      -- Use hermiticity of R: R j i = R i j, then apply Real.exp
       have h_R_herm : R j i = R i j := by
-        have h1 := Matrix.IsHermitian.apply hR.isHermitian j i
-        have h_star : star (R i j) = R i j := star_id_of_comm
-        exact h1.symm.trans h_star
-      -- Apply Real.exp to both sides
-      exact congr_arg Real.exp h_R_herm
+        simpa using (Matrix.IsHermitian.apply hR.isHermitian j i).symm
+      simpa [Matrix.conjTranspose, entrywiseExp] using congrArg Real.exp h_R_herm
     apply Matrix.PosSemidef.of_dotProduct_mulVec_nonneg h_herm
     intro x
     -- For real vectors, star x = x
