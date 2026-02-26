@@ -1,3 +1,8 @@
 .lake/
 .claude/
 scripts/
+.DS_Store
+.cursor/
+MathlibDocumentationStyle.md
+MathlibNamingConventions.md
+MathlibStyle.md

@@ -12,7 +12,7 @@ import OSforGFF.FunctionalAnalysis
 /-!
 # Coordinate-free Euclidean time direction API
 
-This module packages the minimal coordinate-free data needed for OS-style time evolution:
+This module provides the minimal coordinate-free data needed for OS-style time evolution:
 
 - a distinguished unit direction `e` in an ambient Euclidean space `E`,
 - scalar-time translations `x ↦ x + t • e`,
@@ -48,8 +48,8 @@ noncomputable def timeCoord : E →L[ℝ] ℝ :=
 lemma timeCoord_vec : τ.timeCoord τ.vec = 1 := by
   calc
     τ.timeCoord τ.vec = ‖τ.vec‖ ^ (2 : ℕ) := by
-      simpa [timeCoord] using (real_inner_self_eq_norm_sq τ.vec)
-    _ = 1 := by simpa [τ.norm_eq_one]
+      simp [timeCoord]
+    _ = 1 := by simp [τ.norm_eq_one]
 
 lemma timeCoord_smul_vec (t : ℝ) : τ.timeCoord (t • τ.vec) = t := by
   simpa [τ.timeCoord_vec] using (map_smul τ.timeCoord t τ.vec)
@@ -176,10 +176,10 @@ noncomputable def reflectTestFunctionReal [FiniteDimensional ℝ E] :
     intro x
     have hnorm : ‖g x‖ = ‖x‖ := by
       simpa [g] using (ops.reflect.norm_map x)
-    calc
-      ‖x‖ = ‖g x‖ := by simpa [hnorm]
-      _ ≤ 1 + ‖g x‖ := by linarith [norm_nonneg (g x)]
-      _ = (1 : ℝ) * (1 + ‖g x‖) ^ (1 : ℕ) := by ring
+    have hx : ‖x‖ ≤ 1 + ‖g x‖ := by
+      have : ‖g x‖ ≤ 1 + ‖g x‖ := by linarith [norm_nonneg (g x)]
+      simpa [hnorm] using this
+    simpa [pow_one] using hx
   exact SchwartzMap.compCLM (𝕜 := ℝ) (hg := hgrowth) (hg_upper := hupper)
 
 @[simp] lemma reflectTestFunctionReal_apply [FiniteDimensional ℝ E]

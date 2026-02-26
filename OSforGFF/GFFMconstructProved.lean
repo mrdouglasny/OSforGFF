@@ -1,5 +1,6 @@
 import OSforGFF.Basic
 import OSforGFF.CovarianceR
+import OSforGFF.Minlos.GelfandTriple
 import OSforGFF.MinlosGaussianProved
 
 import Mathlib.Probability.Distributions.Gaussian.Real
@@ -56,6 +57,59 @@ noncomputable def gaussianFreeField_free_proved (m : ℝ) [Fact (0 < m)]
   gaussianProcessWeakDual_of_nuclear
     (E := TestFunction) (H := TargetHilbertSpace m) (T := embeddingMap m)
     (h_sq := continuous_norm_embeddingMap_sq (m := m))
+
+/-!
+## The GFF as a Gel'fand triple
+
+We package the proved GFF construction into the abstract `Minlos.GelfandTriple` API:
+
+- `N = TestFunction`,
+- `H = TargetHilbertSpace m`,
+- `N' = WeakDual ℝ N`,
+- `toHilbert = embeddingMapCLM m` (a continuous version of `embeddingMap m`).
+
+This is the key “universality boundary”: downstream measure-theoretic code can depend only on the
+abstract triple interface, not on the Fourier/Hermite implementation used to prove nuclearity.
+-/
+
+/-- The concrete Gel'fand triple underlying the free GFF measure construction. -/
+noncomputable def gffGelfandTriple (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
+    OSforGFF.Minlos.GelfandTriple where
+  N := TestFunction
+  H := TargetHilbertSpace m
+  toHilbert := embeddingMapCLM (m := m)
+
+@[simp] lemma gffGelfandTriple_toHilbert_apply (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] (f : TestFunction) :
+    (gffGelfandTriple (m := m)).toHilbert f = embeddingMap m f := by
+  simpa [gffGelfandTriple] using (embeddingMapCLM_apply (m := m) f)
+
+lemma continuous_norm_gffGelfandTriple_sq (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
+    Continuous fun f : TestFunction => (‖(gffGelfandTriple (m := m)).toHilbert f‖ ^ 2 : ℝ) := by
+  simpa [gffGelfandTriple, embeddingMapCLM_apply] using (continuous_norm_embeddingMap_sq (m := m))
+
+/-- The proved free GFF measure, expressed through the abstract Gel'fand triple API. -/
+noncomputable def gaussianFreeField_free_proved_ofTriple (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
+    ProbabilityMeasure FieldConfiguration :=
+  OSforGFF.Minlos.gaussianMeasureOfTriple (T := gffGelfandTriple (m := m))
+
+theorem gaussianFreeField_free_proved_eq_ofTriple (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
+    gaussianFreeField_free_proved (m := m) = gaussianFreeField_free_proved_ofTriple (m := m) := by
+  simp [gaussianFreeField_free_proved, gaussianFreeField_free_proved_ofTriple,
+    OSforGFF.Minlos.gaussianMeasureOfTriple, gffGelfandTriple]
+  have hT :
+      ((embeddingMapCLM (m := m) : TestFunction →L[ℝ] TargetHilbertSpace m) :
+          TestFunction →ₗ[ℝ] TargetHilbertSpace m) =
+        embeddingMap m := by
+    apply LinearMap.ext
+    intro f
+    exact embeddingMapCLM_apply (m := m) f
+  simp [hT]
+
 
 /-- Real characteristic functional of `gaussianFreeField_free_proved`: for real test functions `f`,
 the generating functional has the Gaussian form with covariance `freeCovarianceFormR`. -/

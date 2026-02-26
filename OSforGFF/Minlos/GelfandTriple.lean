@@ -6,6 +6,7 @@ Authors: Matteo Cipollina
 
 import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Topology.Algebra.Module.WeakDual
+import Mathlib.Analysis.InnerProductSpace.LinearMap
 import OSforGFF.Minlos
 import OSforGFF.MinlosAxiomatic
 import OSforGFF.MinlosGaussianProved
@@ -33,6 +34,8 @@ namespace OSforGFF
 namespace Minlos
 
 noncomputable section
+
+open scoped RealInnerProductSpace
 
 /-- A minimal Gel'fand triple package `N ⊂ H ⊂ N'`.
 
@@ -73,8 +76,53 @@ abbrev DualSpace := WeakDual ℝ T.N
 def covarianceDiagonal (f : T.N) : ℝ :=
   ‖T.toHilbert f‖ ^ (2 : ℕ)
 
+lemma continuous_norm_toHilbert_sq :
+    Continuous fun f : T.N => (‖T.toHilbert f‖ ^ (2 : ℕ) : ℝ) := by
+  have hnorm : Continuous fun f : T.N => ‖T.toHilbert f‖ :=
+    Continuous.norm T.toHilbert.continuous
+  simpa using (Continuous.pow hnorm 2)
+
 lemma covarianceDiagonal_nonneg (f : T.N) : 0 ≤ T.covarianceDiagonal f := by
   simp [covarianceDiagonal]
+
+/-!
+### Canonical embedding `H → N'`
+
+When `H` is a real inner product space and `toHilbert : N →L[ℝ] H`, we can map any
+`h : H` to a continuous linear functional on `N` via
+
+`n ↦ ⟪h, toHilbert n⟫_ℝ`.
+
+This lands in `WeakDual ℝ N`, hence represents the canonical inclusion `H ↪ N'`.
+-/
+
+/-- The canonical map `H → N'` induced by the embedding `N → H`. -/
+noncomputable def dualEmbedding : T.H →L[ℝ] WeakDual ℝ T.N :=
+  { toFun := fun h =>
+      (innerSL ℝ h).comp T.toHilbert
+    map_add' := by
+      intro h₁ h₂
+      apply DFunLike.ext
+      intro n
+      simp
+    map_smul' := by
+      intro c h
+      apply DFunLike.ext
+      intro n
+      simp
+    cont := by
+      -- Continuity follows from continuity of evaluation maps of `WeakDual`.
+      refine WeakDual.continuous_of_continuous_eval
+        (𝕜 := ℝ) (E := T.N)
+        (g := fun h : T.H => ((innerSL ℝ (E := T.H) h).comp T.toHilbert : WeakDual ℝ T.N)) ?_
+      intro n
+      -- `h ↦ ⟪h, T.toHilbert n⟫` is continuous as evaluation of `innerSLFlip` at `T.toHilbert n`.
+      simpa [innerSLFlip_apply_apply] using
+        (innerSLFlip ℝ (E := T.H) (T.toHilbert n)).continuous }
+
+@[simp] lemma dualEmbedding_apply (h : T.H) (n : T.N) :
+    T.dualEmbedding h n = ⟪h, T.toHilbert n⟫ := by
+  rfl
 
 end GelfandTriple
 
@@ -120,23 +168,20 @@ instance instMinlosOnGelfandTriple_ofMinlosTheorem
 /-- Gaussian measure along a Gel'fand triple embedding `N → H`
 obtained from the proved nuclear support route. -/
 noncomputable def gaussianMeasureOfTriple
-    (T : GelfandTriple)
-    (h_sq : Continuous fun f : T.N => (‖T.toHilbert f‖ ^ 2 : ℝ)) :
+    (T : GelfandTriple) :
     ProbabilityMeasure (WeakDual ℝ T.N) :=
   OSforGFF.MinlosGaussianProved.gaussianProcessWeakDual_of_nuclear
-    (E := T.N) (H := T.H) (T := T.toHilbert) h_sq
+    (E := T.N) (H := T.H) (T := T.toHilbert) (h_sq := T.continuous_norm_toHilbert_sq)
 
 /-- Characteristic-functional identity for `gaussianMeasureOfTriple`. -/
 theorem integral_exp_eval_eq_gaussianMeasureOfTriple
-    (T : GelfandTriple)
-    (h_sq : Continuous fun f : T.N => (‖T.toHilbert f‖ ^ 2 : ℝ))
-    (f : T.N) :
+    (T : GelfandTriple) (f : T.N) :
     (∫ ω, Complex.exp (I * ((ω f : ℝ) : ℂ))
-        ∂(gaussianMeasureOfTriple T h_sq).toMeasure) =
+        ∂(gaussianMeasureOfTriple T).toMeasure) =
       Complex.exp (-(1 / 2 : ℂ) * (‖T.toHilbert f‖ ^ 2 : ℝ)) := by
   simpa [gaussianMeasureOfTriple] using
     (OSforGFF.MinlosGaussianProved.integral_exp_eval_eq_gaussianProcessWeakDual_of_nuclear
-      (E := T.N) (H := T.H) (T := T.toHilbert) (h_sq := h_sq) f)
+      (E := T.N) (H := T.H) (T := T.toHilbert) (h_sq := T.continuous_norm_toHilbert_sq) f)
 
 end
 end Minlos
