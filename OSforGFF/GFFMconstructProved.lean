@@ -91,6 +91,12 @@ noncomputable def gaussianFreeField_free_proved_ofTriple (m : ℝ) [Fact (0 < m)
     ProbabilityMeasure FieldConfiguration :=
   OSforGFF.Minlos.gaussianMeasureOfTriple (T := gffGelfandTriple (m := m))
 
+lemma continuous_norm_gffGelfandTriple_sq (m : ℝ) [Fact (0 < m)]
+    [OSforGFF.NuclearSpaceStd TestFunction] :
+    Continuous fun f : TestFunction => (‖(gffGelfandTriple (m := m)).toHilbert f‖ ^ 2 : ℝ) := by
+  simpa [gffGelfandTriple, embeddingMapCLM_apply] using (continuous_norm_embeddingMap_sq (m := m))
+
+
 theorem gaussianFreeField_free_proved_eq_ofTriple (m : ℝ) [Fact (0 < m)]
     [OSforGFF.NuclearSpaceStd TestFunction] :
     gaussianFreeField_free_proved (m := m) = gaussianFreeField_free_proved_ofTriple (m := m) := by
