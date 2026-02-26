@@ -115,14 +115,16 @@ lemma distributionPairing_smul (c : 𝕜) (ω : VectorFieldConfiguration 𝕜 E 
   rfl
 
 /-- Evaluation at a test function as a continuous linear map `ω ↦ ω f`. -/
-@[simp] def distributionPairingCLM (f : VectorTestFunction 𝕜 E V) :
+@[simp]
+def distributionPairingCLM (f : VectorTestFunction 𝕜 E V) :
     VectorFieldConfiguration 𝕜 E V →L[𝕜] 𝕜 where
   toFun ω := distributionPairing (𝕜 := 𝕜) (E := E) (V := V) ω f
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
   cont := WeakDual.eval_continuous (𝕜 := 𝕜) (E := VectorTestFunction 𝕜 E V) f
 
-@[simp] lemma distributionPairingCLM_apply (f : VectorTestFunction 𝕜 E V)
+@[simp]
+lemma distributionPairingCLM_apply (f : VectorTestFunction 𝕜 E V)
     (ω : VectorFieldConfiguration 𝕜 E V) :
     distributionPairingCLM (𝕜 := 𝕜) (E := E) (V := V) f ω =
       distributionPairing (𝕜 := 𝕜) (E := E) (V := V) ω f :=
