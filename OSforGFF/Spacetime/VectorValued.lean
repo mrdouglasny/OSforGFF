@@ -10,7 +10,7 @@ import Mathlib.Topology.Algebra.Module.WeakDual
 /-!
 # Vector-valued Schwartz test functions and distribution spaces
 
-This module provides small, reusable aliases and operations for **vector-valued** Schwartz spaces
+This module provides reusable aliases and basic operations for **vector-valued** Schwartz spaces
 and their weak duals (tempered distributions), intended as the minimal abstraction layer needed to
 support internal symmetries (e.g. global gauge rotations) in a QFT formalization.
 

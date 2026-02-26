@@ -85,11 +85,6 @@ noncomputable def gffGelfandTriple (m : ℝ) [Fact (0 < m)]
     (gffGelfandTriple (m := m)).toHilbert f = embeddingMap m f := by
   simpa [gffGelfandTriple] using (embeddingMapCLM_apply (m := m) f)
 
-lemma continuous_norm_gffGelfandTriple_sq (m : ℝ) [Fact (0 < m)]
-    [OSforGFF.NuclearSpaceStd TestFunction] :
-    Continuous fun f : TestFunction => (‖(gffGelfandTriple (m := m)).toHilbert f‖ ^ 2 : ℝ) := by
-  simpa [gffGelfandTriple, embeddingMapCLM_apply] using (continuous_norm_embeddingMap_sq (m := m))
-
 /-- The proved free GFF measure, expressed through the abstract Gel'fand triple API. -/
 noncomputable def gaussianFreeField_free_proved_ofTriple (m : ℝ) [Fact (0 < m)]
     [OSforGFF.NuclearSpaceStd TestFunction] :
