@@ -49,6 +49,39 @@ abbrev VectorFieldConfiguration (𝕜 : Type*) (E : Type*) (V : Type*)
     [NormedAddCommGroup V] [NormedSpace ℝ V] [NormedSpace 𝕜 V] [SMulCommClass ℝ 𝕜 V] :=
   WeakDual 𝕜 (VectorTestFunction 𝕜 E V)
 
+namespace WeakDual
+
+section Comap
+
+variable {𝕜 : Type*} [CommSemiring 𝕜] [TopologicalSpace 𝕜] [ContinuousAdd 𝕜]
+variable [ContinuousConstSMul 𝕜 𝕜]
+variable {E F : Type*} [AddCommMonoid E] [Module 𝕜 E] [TopologicalSpace E]
+variable [AddCommMonoid F] [Module 𝕜 F] [TopologicalSpace F]
+
+/-- Contravariant action of a continuous linear map on weak duals by precomposition. -/
+noncomputable def comap (L : E →L[𝕜] F) : WeakDual 𝕜 F →L[𝕜] WeakDual 𝕜 E :=
+  { toFun := fun ω => ω.comp L
+    map_add' := by
+      intro ω₁ ω₂
+      rfl
+    map_smul' := by
+      intro c ω
+      rfl
+    cont := by
+      refine WeakDual.continuous_of_continuous_eval (𝕜 := 𝕜) (E := E)
+        (g := fun ω : WeakDual 𝕜 F => (ω.comp L : WeakDual 𝕜 E)) ?_
+      intro e
+      simpa using (WeakDual.eval_continuous (𝕜 := 𝕜) (E := F) (L e)) }
+
+@[simp]
+lemma comap_apply (L : E →L[𝕜] F) (ω : WeakDual 𝕜 F) (e : E) :
+    comap (𝕜 := 𝕜) L ω e = ω (L e) :=
+  rfl
+
+end Comap
+
+end WeakDual
+
 /-!
 ## Pairing (distributions acting on test functions)
 
@@ -60,19 +93,22 @@ just evaluation `ω f : 𝕜`. We also expose this as a continuous linear map in
 def distributionPairing (ω : VectorFieldConfiguration 𝕜 E V) (f : VectorTestFunction 𝕜 E V) : 𝕜 :=
   ω f
 
-@[simp] lemma distributionPairing_apply (ω : VectorFieldConfiguration 𝕜 E V)
+@[simp]
+lemma distributionPairing_apply (ω : VectorFieldConfiguration 𝕜 E V)
     (f : VectorTestFunction 𝕜 E V) :
     distributionPairing (𝕜 := 𝕜) (E := E) (V := V) ω f = ω f :=
   rfl
 
-@[simp] lemma distributionPairing_add (ω₁ ω₂ : VectorFieldConfiguration 𝕜 E V)
+@[simp]
+lemma distributionPairing_add (ω₁ ω₂ : VectorFieldConfiguration 𝕜 E V)
     (f : VectorTestFunction 𝕜 E V) :
     distributionPairing (𝕜 := 𝕜) (E := E) (V := V) (ω₁ + ω₂) f =
       distributionPairing (𝕜 := 𝕜) (E := E) (V := V) ω₁ f +
         distributionPairing (𝕜 := 𝕜) (E := E) (V := V) ω₂ f :=
   rfl
 
-@[simp] lemma distributionPairing_smul (c : 𝕜) (ω : VectorFieldConfiguration 𝕜 E V)
+@[simp]
+lemma distributionPairing_smul (c : 𝕜) (ω : VectorFieldConfiguration 𝕜 E V)
     (f : VectorTestFunction 𝕜 E V) :
     distributionPairing (𝕜 := 𝕜) (E := E) (V := V) (c • ω) f =
       c * distributionPairing (𝕜 := 𝕜) (E := E) (V := V) ω f :=
@@ -103,37 +139,25 @@ dually to a continuous linear map on weak duals by precomposition.
 /-- Lift a target-space map `A : V →L[𝕜] W` to a continuous linear map on Schwartz spaces. -/
 noncomputable def liftInternalSymmetry (A : V →L[𝕜] W) :
     VectorTestFunction 𝕜 E V →L[𝕜] VectorTestFunction 𝕜 E W := by
-  classical
-  -- Use the generic `SchwartzMap.mkCLM` constructor: it packages continuity once we provide
-  -- a seminorm bound on all derivatives.
   refine SchwartzMap.mkCLM (𝕜 := 𝕜) (D := E) (E := V) (F := E) (G := W)
     (fun f x => A (f x))
     (fun f g x => by simp)
     (fun c f x => by simp)
     (fun f => by
-      -- smoothness: `A` is smooth and `f` is smooth
       simpa using ContDiff.comp (A.restrictScalars ℝ).contDiff f.smooth')
     (by
       rintro ⟨k, n⟩
       refine ⟨{(k, n)}, ‖(A.restrictScalars ℝ)‖, by positivity, ?_⟩
       intro f x
       simp only [Finset.sup_singleton, schwartzSeminormFamily_apply]
-      -- Derivatives of `A ∘ f` are obtained by applying `A` to the derivatives of `f`.
       have h_deriv :
           iteratedFDeriv ℝ n (fun y => (A.restrictScalars ℝ) (f y)) x =
             (A.restrictScalars ℝ).compContinuousMultilinearMap (iteratedFDeriv ℝ n f x) :=
         ContinuousLinearMap.iteratedFDeriv_comp_left (A.restrictScalars ℝ)
           (f.smooth _).contDiffAt (WithTop.coe_le_coe.mpr le_top)
-      -- Bound using the operator norm.
-      -- First rewrite by the derivative formula, then use `le_seminorm`.
-      -- (At `n=0` this is just the pointwise bound on `‖A (f x)‖`.)
-      -- Rewrite the derivative term, then apply the operator-norm bound.
-      -- Note: `schwartzSeminormFamily_apply` rewrites `schwartzSeminormFamily ... (k,n)` to `seminorm`.
       have hx :
           ‖x‖ ^ k * ‖iteratedFDeriv ℝ n (fun y => (A.restrictScalars ℝ) (f y)) x‖
             ≤ ‖(A.restrictScalars ℝ)‖ * (‖x‖ ^ k * ‖iteratedFDeriv ℝ n f x‖) := by
-        -- Use `h_deriv` then the bound on `compContinuousMultilinearMap`.
-        -- (We avoid `simp` here to keep the goal shape stable.)
         rw [h_deriv]
         calc
           ‖x‖ ^ k *
@@ -144,7 +168,6 @@ noncomputable def liftInternalSymmetry (A : V →L[𝕜] W) :
                       (A.restrictScalars ℝ) _
                   · exact pow_nonneg (norm_nonneg _) _
           _ = ‖(A.restrictScalars ℝ)‖ * (‖x‖ ^ k * ‖iteratedFDeriv ℝ n f x‖) := by ring
-      -- Finish by bounding the remaining factor by the seminorm.
       calc
         ‖x‖ ^ k * ‖iteratedFDeriv ℝ n (fun y => (A.restrictScalars ℝ) (f y)) x‖
             ≤ ‖(A.restrictScalars ℝ)‖ * (‖x‖ ^ k * ‖iteratedFDeriv ℝ n f x‖) := hx
@@ -157,33 +180,23 @@ noncomputable def liftInternalSymmetry (A : V →L[𝕜] W) :
 /-- Dual action on distributions: precompose with the lifted test-function map. -/
 noncomputable def liftInternalSymmetryDual (A : V →L[𝕜] W) :
     VectorFieldConfiguration 𝕜 E W →L[𝕜] VectorFieldConfiguration 𝕜 E V :=
-  { toFun := fun ω => ω.comp (liftInternalSymmetry (𝕜 := 𝕜) (E := E) A)
-    map_add' := by
-      intro ω₁ ω₂
-      rfl
-    map_smul' := by
-      intro c ω
-      rfl
-    cont := by
-      refine WeakDual.continuous_of_continuous_eval (𝕜 := 𝕜) (E := VectorTestFunction 𝕜 E V)
-        (g := fun ω : VectorFieldConfiguration 𝕜 E W =>
-          (ω.comp (liftInternalSymmetry (𝕜 := 𝕜) (E := E) A) : VectorFieldConfiguration 𝕜 E V)) ?_
-      intro f
-      simpa using
-        (WeakDual.eval_continuous (𝕜 := 𝕜) (E := VectorTestFunction 𝕜 E W)
-          (liftInternalSymmetry (𝕜 := 𝕜) (E := E) A f)) }
+  WeakDual.comap (𝕜 := 𝕜) (E := VectorTestFunction 𝕜 E V) (F := VectorTestFunction 𝕜 E W)
+    (liftInternalSymmetry (𝕜 := 𝕜) (E := E) A)
 
-@[simp] lemma liftInternalSymmetry_apply (A : V →L[𝕜] W) (f : VectorTestFunction 𝕜 E V) (x : E) :
+@[simp]
+lemma liftInternalSymmetry_apply (A : V →L[𝕜] W) (f : VectorTestFunction 𝕜 E V) (x : E) :
     liftInternalSymmetry (𝕜 := 𝕜) (E := E) A f x = A (f x) := by
   rfl
 
-@[simp] lemma liftInternalSymmetryDual_apply (A : V →L[𝕜] W)
+@[simp]
+lemma liftInternalSymmetryDual_apply (A : V →L[𝕜] W)
     (ω : VectorFieldConfiguration 𝕜 E W) (f : VectorTestFunction 𝕜 E V) :
     liftInternalSymmetryDual (𝕜 := 𝕜) (E := E) A ω f =
       ω (liftInternalSymmetry (𝕜 := 𝕜) (E := E) A f) := by
   rfl
 
-@[simp] lemma distributionPairing_liftInternalSymmetryDual (A : V →L[𝕜] W)
+@[simp]
+lemma distributionPairing_liftInternalSymmetryDual (A : V →L[𝕜] W)
     (ω : VectorFieldConfiguration 𝕜 E W) (f : VectorTestFunction 𝕜 E V) :
     distributionPairing (𝕜 := 𝕜) (E := E) (V := V)
         (liftInternalSymmetryDual (𝕜 := 𝕜) (E := E) A ω) f
