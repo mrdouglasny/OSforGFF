@@ -224,12 +224,10 @@ lemma frobenius_pos_of_psd_posdef
 
     exact congr_transpose_mul_mul_ne_zero U G hU_right hG_ne_zero
   -- Trace cyclicity: reduce to trace(H * diagonal d)
-  have hG_herm : G.IsHermitian := by
-    rw [Matrix.PosSemidef] at hG_psd; exact hG_psd.1
+  have hG_herm : G.IsHermitian := hG_psd.1
   have htrace_cycle : Matrix.trace (G.transpose * B) = Matrix.trace (H * (Matrix.diagonal d)) := by
     have hG_symm : G.transpose = G := by
-      rw [Matrix.IsHermitian, Matrix.conjTranspose_eq_transpose_of_trivial] at hG_herm
-      exact hG_herm
+      simpa [Matrix.IsHermitian, Matrix.conjTranspose_eq_transpose_of_trivial] using hG_herm
     rw [hG_symm, hB_decomp]
     rw [← Matrix.mul_assoc, ← Matrix.mul_assoc]
     rw [Matrix.trace_mul_comm]
@@ -240,8 +238,7 @@ lemma frobenius_pos_of_psd_posdef
   -- Expand trace(H * diagonal d) as ∑ i d i * H i i
   have htrace_sum : Matrix.trace (H * Matrix.diagonal d) = ∑ i, d i * H i i := by
     classical
-    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal]
-    exact Finset.sum_congr rfl (fun i _ => mul_comm _ _)
+    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal, mul_comm]
   -- Diagonal entries of H are ≥ 0 from PSD
   have hdiag_nonneg : ∀ i, 0 ≤ H i i := fun i => hH_psd.diag_nonneg
   -- From nonzero PSD, some diagonal is positive (local lemma)
