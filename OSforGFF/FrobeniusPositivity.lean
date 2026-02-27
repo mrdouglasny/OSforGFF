@@ -73,45 +73,27 @@ lemma psd_cauchy_schwarz
   -- Note: The suggested replacement CStarAlgebra.nonneg_iff_eq_star_mul_self requires
   -- PartialOrder on matrices which doesn't exist in general
   obtain ⟨B, rfl⟩ := (Matrix.posSemidef_iff_eq_conjTranspose_mul_self (A := H)).mp hH_psd
-  set u : ι → ℝ := B.mulVec x with hu
-  set v : ι → ℝ := B.mulVec y with hv
-  -- xᵀ (Bᵀ B) y = (Bx)⋅(By)
+  have hform (a b : ι → ℝ) :
+      a ⬝ᵥ (B.transpose * B).mulVec b = (B.mulVec a) ⬝ᵥ (B.mulVec b) := by
+    have h1 : (B.transpose * B).mulVec b = B.transpose.mulVec (B.mulVec b) := by
+      exact (Matrix.mulVec_mulVec b B.transpose B).symm
+    calc
+      a ⬝ᵥ (B.transpose * B).mulVec b
+          = a ⬝ᵥ B.transpose.mulVec (B.mulVec b) := by rw [h1]
+      _ = (Matrix.vecMul a B.transpose) ⬝ᵥ (B.mulVec b) := by
+        exact dotProduct_mulVec a Bᵀ (B.mulVec b)
+      _ = (B.mulVec a) ⬝ᵥ (B.mulVec b) := by
+        have := (Matrix.vecMul_transpose (A := B) (x := a))
+        simpa using congrArg (fun w => w ⬝ᵥ (B.mulVec b)) this
+  let u : ι → ℝ := B.mulVec x
+  let v : ι → ℝ := B.mulVec y
+  -- xᵀ (Bᵀ B) y = (Bx)⋅(By), and similarly for x/x and y/y
   have hxy : x ⬝ᵥ (B.transpose * B).mulVec y = u ⬝ᵥ v := by
-    have h1 : (B.transpose * B).mulVec y = B.transpose.mulVec v := by
-      simp [hv, Matrix.mulVec_mulVec]
-    calc
-      x ⬝ᵥ (B.transpose * B).mulVec y
-          = x ⬝ᵥ B.transpose.mulVec v := by simp [h1]
-      _ = (Matrix.vecMul x B.transpose) ⬝ᵥ v := by
-        exact dotProduct_mulVec x Bᵀ v
-      _ = (B.mulVec x) ⬝ᵥ v := by
-        -- rewrite vecMul x Bᵀ = B *ᵥ x, then apply to dotProduct _ ⬝ᵥ v
-        have := (Matrix.vecMul_transpose (A := B) (x := x))
-        simpa [hu] using congrArg (fun w => w ⬝ᵥ v) this
-  -- xᵀ (Bᵀ B) x = (Bx)⋅(Bx)
+    simpa [u, v] using hform x y
   have hxx : x ⬝ᵥ (B.transpose * B).mulVec x = u ⬝ᵥ u := by
-    have h1 : (B.transpose * B).mulVec x = B.transpose.mulVec u := by
-      simp [hu, Matrix.mulVec_mulVec]
-    calc
-      x ⬝ᵥ (B.transpose * B).mulVec x
-          = x ⬝ᵥ B.transpose.mulVec u := by simp [h1]
-      _ = (Matrix.vecMul x B.transpose) ⬝ᵥ u := by
-        exact dotProduct_mulVec x Bᵀ u
-      _ = u ⬝ᵥ u := by
-        have := (Matrix.vecMul_transpose (A := B) (x := x))
-        simpa [hu] using congrArg (fun w => w ⬝ᵥ u) this
-  -- yᵀ (Bᵀ B) y = (By)⋅(By)
+    simpa [u] using hform x x
   have hyy : y ⬝ᵥ (B.transpose * B).mulVec y = v ⬝ᵥ v := by
-    have h1 : (B.transpose * B).mulVec y = B.transpose.mulVec v := by
-      simp [hv, Matrix.mulVec_mulVec]
-    calc
-      y ⬝ᵥ (B.transpose * B).mulVec y
-          = y ⬝ᵥ B.transpose.mulVec v := by simp [h1]
-      _ = (Matrix.vecMul y B.transpose) ⬝ᵥ v := by
-        exact dotProduct_mulVec y Bᵀ v
-      _ = v ⬝ᵥ v := by
-        have := (Matrix.vecMul_transpose (A := B) (x := y))
-        simpa [hv] using congrArg (fun w => w ⬝ᵥ v) this
+    simpa [v] using hform y y
   -- Cauchy–Schwarz in ℝ^ι: |u⋅v|^2 ≤ (u⋅u)(v⋅v)
   have hCS : (u ⬝ᵥ v)^2 ≤ (u ⬝ᵥ u) * (v ⬝ᵥ v) := by
     classical
@@ -154,9 +136,6 @@ lemma posSemidef_diag_pos_exists_of_ne_zero
   -- Show all off-diagonals are zero
   have hoff : ∀ i j, H i j = 0 := by
     intro i j
-    by_cases hij : i = j
-    · subst hij; simp [hdiag_zero i]
-    -- both diagonals are zero, so off-diagonal vanishes by the lemma
     exact psd_offdiag_zero_of_diag_zero H hH_psd (hdiag_zero i) (hdiag_zero j)
   -- Hence H = 0, contradiction
   have : H = 0 := by
