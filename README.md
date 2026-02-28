@@ -33,7 +33,8 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
 ## Project Structure
 
 The 47 library files are organized into 6 layers, with imports flowing from
-earlier to later sections. The dependency graph is in [dependency/import_graph.svg](dependency/import_graph.svg).
+earlier to later sections. See [docs/architecture.md](docs/architecture.md) for dependency structure,
+design choices, and proof outlines. The dependency graph is in [dependency/import_graph.svg](dependency/import_graph.svg).
 
 ---
 
@@ -162,7 +163,7 @@ Requires Lean 4 and Mathlib (pinned via `lake-manifest.json`).
 ## Planned Generalizations
 
 1. Other spacetime dimensions, as discussed in [docs/dimension_dependence.md](docs/dimension_dependence.md)
-2. Explicit construction of the measure not using Minlos
+2. Explicit construction of the measure not using Minlos (in progress at [mrdouglasny/GFF4D](https://github.com/mrdouglasny/GFF4D) and [or4nge19/OSforGFF](https://github.com/or4nge19/OSforGFF))
 
 ## Authors
 
