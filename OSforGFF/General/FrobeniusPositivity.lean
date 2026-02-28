@@ -42,14 +42,10 @@ lemma frobenius_eq_trace_transpose_mul
     simp [Matrix.trace, Matrix.mul_apply]
   -- Reorder the Frobenius double sum and rename indices to match htrace
   calc
-    (∑ j, ∑ l, G j l * B j l)
-        = ∑ l, ∑ j, G j l * B j l := by
+    (∑ j, ∑ l, G j l * B j l) = ∑ i, ∑ k, G k i * B k i := by
           simpa using
             (Finset.sum_comm :
-              (∑ j, ∑ l, G j l * B j l) = (∑ l, ∑ j, G j l * B j l))
-    _ = ∑ i, ∑ k, G k i * B k i := by
-          -- rename bound variables (l→i) in the outer sum, (j→k) in the inner sum
-          apply Finset.sum_congr rfl; intro i _; rfl
+              (∑ j, ∑ l, G j l * B j l) = (∑ i, ∑ k, G k i * B k i))
     _ = Matrix.trace (G.transpose * B) := htrace.symm
 
 /-- Congruence by an orthogonal/invertible matrix preserves nonzeroness (real case).
@@ -77,45 +73,27 @@ lemma psd_cauchy_schwarz
   -- Note: The suggested replacement CStarAlgebra.nonneg_iff_eq_star_mul_self requires
   -- PartialOrder on matrices which doesn't exist in general
   obtain ⟨B, rfl⟩ := (Matrix.posSemidef_iff_eq_conjTranspose_mul_self (A := H)).mp hH_psd
-  set u : ι → ℝ := B.mulVec x with hu
-  set v : ι → ℝ := B.mulVec y with hv
-  -- xᵀ (Bᵀ B) y = (Bx)⋅(By)
+  have hform (a b : ι → ℝ) :
+      a ⬝ᵥ (B.transpose * B).mulVec b = (B.mulVec a) ⬝ᵥ (B.mulVec b) := by
+    have h1 : (B.transpose * B).mulVec b = B.transpose.mulVec (B.mulVec b) := by
+      exact (Matrix.mulVec_mulVec b B.transpose B).symm
+    calc
+      a ⬝ᵥ (B.transpose * B).mulVec b
+          = a ⬝ᵥ B.transpose.mulVec (B.mulVec b) := by rw [h1]
+      _ = (Matrix.vecMul a B.transpose) ⬝ᵥ (B.mulVec b) := by
+        exact dotProduct_mulVec a Bᵀ (B.mulVec b)
+      _ = (B.mulVec a) ⬝ᵥ (B.mulVec b) := by
+        have := (Matrix.vecMul_transpose (A := B) (x := a))
+        simpa using congrArg (fun w => w ⬝ᵥ (B.mulVec b)) this
+  let u : ι → ℝ := B.mulVec x
+  let v : ι → ℝ := B.mulVec y
+  -- xᵀ (Bᵀ B) y = (Bx)⋅(By), and similarly for x/x and y/y
   have hxy : x ⬝ᵥ (B.transpose * B).mulVec y = u ⬝ᵥ v := by
-    have h1 : (B.transpose * B).mulVec y = B.transpose.mulVec v := by
-      simp [hv, Matrix.mulVec_mulVec]
-    calc
-      x ⬝ᵥ (B.transpose * B).mulVec y
-          = x ⬝ᵥ B.transpose.mulVec v := by simp [h1]
-      _ = (Matrix.vecMul x B.transpose) ⬝ᵥ v := by
-        exact dotProduct_mulVec x Bᵀ v
-      _ = (B.mulVec x) ⬝ᵥ v := by
-        -- rewrite vecMul x Bᵀ = B *ᵥ x, then apply to dotProduct _ ⬝ᵥ v
-        have := (Matrix.vecMul_transpose (A := B) (x := x))
-        simpa [hu] using congrArg (fun w => w ⬝ᵥ v) this
-  -- xᵀ (Bᵀ B) x = (Bx)⋅(Bx)
+    simpa [u, v] using hform x y
   have hxx : x ⬝ᵥ (B.transpose * B).mulVec x = u ⬝ᵥ u := by
-    have h1 : (B.transpose * B).mulVec x = B.transpose.mulVec u := by
-      simp [hu, Matrix.mulVec_mulVec]
-    calc
-      x ⬝ᵥ (B.transpose * B).mulVec x
-          = x ⬝ᵥ B.transpose.mulVec u := by simp [h1]
-      _ = (Matrix.vecMul x B.transpose) ⬝ᵥ u := by
-        exact dotProduct_mulVec x Bᵀ u
-      _ = u ⬝ᵥ u := by
-        have := (Matrix.vecMul_transpose (A := B) (x := x))
-        simpa [hu] using congrArg (fun w => w ⬝ᵥ u) this
-  -- yᵀ (Bᵀ B) y = (By)⋅(By)
+    simpa [u] using hform x x
   have hyy : y ⬝ᵥ (B.transpose * B).mulVec y = v ⬝ᵥ v := by
-    have h1 : (B.transpose * B).mulVec y = B.transpose.mulVec v := by
-      simp [hv, Matrix.mulVec_mulVec]
-    calc
-      y ⬝ᵥ (B.transpose * B).mulVec y
-          = y ⬝ᵥ B.transpose.mulVec v := by simp [h1]
-      _ = (Matrix.vecMul y B.transpose) ⬝ᵥ v := by
-        exact dotProduct_mulVec y Bᵀ v
-      _ = v ⬝ᵥ v := by
-        have := (Matrix.vecMul_transpose (A := B) (x := y))
-        simpa [hv] using congrArg (fun w => w ⬝ᵥ v) this
+    simpa [v] using hform y y
   -- Cauchy–Schwarz in ℝ^ι: |u⋅v|^2 ≤ (u⋅u)(v⋅v)
   have hCS : (u ⬝ᵥ v)^2 ≤ (u ⬝ᵥ u) * (v ⬝ᵥ v) := by
     classical
@@ -158,9 +136,6 @@ lemma posSemidef_diag_pos_exists_of_ne_zero
   -- Show all off-diagonals are zero
   have hoff : ∀ i j, H i j = 0 := by
     intro i j
-    by_cases hij : i = j
-    · subst hij; simp [hdiag_zero i]
-    -- both diagonals are zero, so off-diagonal vanishes by the lemma
     exact psd_offdiag_zero_of_diag_zero H hH_psd (hdiag_zero i) (hdiag_zero j)
   -- Hence H = 0, contradiction
   have : H = 0 := by
@@ -224,12 +199,10 @@ lemma frobenius_pos_of_psd_posdef
 
     exact congr_transpose_mul_mul_ne_zero U G hU_right hG_ne_zero
   -- Trace cyclicity: reduce to trace(H * diagonal d)
-  have hG_herm : G.IsHermitian := by
-    rw [Matrix.PosSemidef] at hG_psd; exact hG_psd.1
+  have hG_herm : G.IsHermitian := hG_psd.1
   have htrace_cycle : Matrix.trace (G.transpose * B) = Matrix.trace (H * (Matrix.diagonal d)) := by
     have hG_symm : G.transpose = G := by
-      rw [Matrix.IsHermitian, Matrix.conjTranspose_eq_transpose_of_trivial] at hG_herm
-      exact hG_herm
+      simpa [Matrix.IsHermitian, Matrix.conjTranspose_eq_transpose_of_trivial] using hG_herm
     rw [hG_symm, hB_decomp]
     rw [← Matrix.mul_assoc, ← Matrix.mul_assoc]
     rw [Matrix.trace_mul_comm]
@@ -240,8 +213,7 @@ lemma frobenius_pos_of_psd_posdef
   -- Expand trace(H * diagonal d) as ∑ i d i * H i i
   have htrace_sum : Matrix.trace (H * Matrix.diagonal d) = ∑ i, d i * H i i := by
     classical
-    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal]
-    exact Finset.sum_congr rfl (fun i _ => mul_comm _ _)
+    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal, mul_comm]
   -- Diagonal entries of H are ≥ 0 from PSD
   have hdiag_nonneg : ∀ i, 0 ≤ H i i := fun i => hH_psd.diag_nonneg
   -- From nonzero PSD, some diagonal is positive (local lemma)

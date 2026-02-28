@@ -85,8 +85,9 @@ lemma innerProduct_is_pd_kernel :
   rw [split_sum]
 
   -- Each sum equals ⟪v_a, v_a⟫ or ⟪v_b, v_b⟫ = ‖v‖²
-  have sum_a_eq : ∑ i : Fin m, ∑ j : Fin m, a i * a j * ⟪x i, x j⟫_ℝ = ⟪v_a, v_a⟫_ℝ := by
-    simp only [v_a]
+  have sum_w_eq (w : Fin m → ℝ) :
+      ∑ i : Fin m, ∑ j : Fin m, w i * w j * ⟪x i, x j⟫_ℝ =
+        ⟪(∑ i : Fin m, w i • x i), (∑ i : Fin m, w i • x i)⟫_ℝ := by
     conv_rhs => rw [sum_inner]
     apply Finset.sum_congr rfl; intro i _
     rw [real_inner_smul_left, inner_sum, Finset.mul_sum]
@@ -94,14 +95,11 @@ lemma innerProduct_is_pd_kernel :
     rw [real_inner_smul_right]
     ring
 
+  have sum_a_eq : ∑ i : Fin m, ∑ j : Fin m, a i * a j * ⟪x i, x j⟫_ℝ = ⟪v_a, v_a⟫_ℝ := by
+    simpa [v_a] using sum_w_eq a
+
   have sum_b_eq : ∑ i : Fin m, ∑ j : Fin m, b i * b j * ⟪x i, x j⟫_ℝ = ⟪v_b, v_b⟫_ℝ := by
-    simp only [v_b]
-    conv_rhs => rw [sum_inner]
-    apply Finset.sum_congr rfl; intro i _
-    rw [real_inner_smul_left, inner_sum, Finset.mul_sum]
-    apply Finset.sum_congr rfl; intro j _
-    rw [real_inner_smul_right]
-    ring
+    simpa [v_b] using sum_w_eq b
 
   rw [sum_a_eq, sum_b_eq]
 
@@ -202,17 +200,17 @@ lemma exp_is_pd_kernel {α : Type*} (K : α → α → ℂ) (hK : IsPositiveDefi
     simp_rw [h_entry]
     -- Split and rearrange to matrix form
     simp only [add_mul, Finset.sum_add_distrib]
-    -- aᵀNa + bᵀNb
-    simp only [dotProduct, Matrix.mulVec]
-    congr 1
-    · apply Finset.sum_congr rfl; intro i _
+    -- Rewrite each quadratic sum as a dotProduct.
+    have sum_w_matrix (w : Fin m → ℝ) :
+        ∑ i : Fin m, ∑ j : Fin m, w i * w j * N i j = w ⬝ᵥ (N.mulVec w) := by
+      simp only [dotProduct, Matrix.mulVec]
+      apply Finset.sum_congr rfl
+      intro i _
       rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl; intro j _
+      apply Finset.sum_congr rfl
+      intro j _
       ring
-    · apply Finset.sum_congr rfl; intro i _
-      rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl; intro j _
-      ring
+    simp [sum_w_matrix a, sum_w_matrix b]
 
   rw [h_sum_eq]
   exact add_nonneg (hN_psd.dotProduct_mulVec_nonneg a) (hN_psd.dotProduct_mulVec_nonneg b)

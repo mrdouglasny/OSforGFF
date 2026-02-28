@@ -112,27 +112,21 @@ lemma timeReflection_inner_map (x y : SpaceTime) :
   · simp [h]
 
 /-- Time reflection as a linear isometry equivalence -/
+@[simp] lemma timeReflection_involutive (x : SpaceTime) :
+    timeReflection (timeReflection x) = x := by
+  apply PiLp.ext
+  intro i
+  simp only [timeReflection, WithLp.equiv_symm_apply]
+  by_cases h : i = 0
+  · subst h
+    simp [Function.update_self]
+  · simp [Function.update_of_ne h]
+
 def timeReflectionLE : SpaceTime ≃ₗᵢ[ℝ] SpaceTime :=
 { toFun := timeReflection
   invFun := timeReflection  -- Time reflection is self-inverse
-  left_inv := by
-    intro x
-    apply PiLp.ext
-    intro i
-    simp only [timeReflection, WithLp.equiv_symm_apply]
-    by_cases h : i = 0
-    · subst h
-      simp [Function.update_self]
-    · simp [Function.update_of_ne h]
-  right_inv := by
-    intro x
-    apply PiLp.ext
-    intro i
-    simp only [timeReflection, WithLp.equiv_symm_apply]
-    by_cases h : i = 0
-    · subst h
-      simp [Function.update_self]
-    · simp [Function.update_of_ne h]
+  left_inv := timeReflection_involutive
+  right_inv := timeReflection_involutive
   map_add' := timeReflectionLinear.map_add'
   map_smul' := timeReflectionLinear.map_smul'
   norm_map' := by
@@ -165,40 +159,33 @@ example (x : SpaceTime) :
     where `timeReflection` negates the time coordinate (0th component) while
     preserving spatial coordinates. This version acts on complex test functions and
     is used to formulate the Osterwalder-Schrader star operation. -/
-noncomputable def compTimeReflection : TestFunctionℂ →L[ℝ] TestFunctionℂ := by
-  have hg_upper : ∃ (k : ℕ) (C : ℝ), ∀ (x : SpaceTime), ‖x‖ ≤ C * (1 + ‖timeReflectionCLM x‖) ^ k := by
-    use 1; use 1; simp; intro x
-    -- timeReflectionCLM is an isometry, so ‖timeReflectionCLM x‖ = ‖x‖
-    have h_iso : ‖timeReflectionCLM x‖ = ‖x‖ := by
-      -- Use the fact that timeReflection preserves norms (it's an isometry)
-      have h_norm_preserved : ‖timeReflection x‖ = ‖x‖ := by
-        exact LinearIsometryEquiv.norm_map timeReflectionLE x
-      -- timeReflectionCLM x = timeReflection x by definition
-      rw [← h_norm_preserved]
-      -- timeReflectionCLM x = timeReflection x
-      rfl
-    rw [h_iso]
-    -- Now we need ‖x‖ ≤ 1 + ‖x‖, which is always true
-    linarith [norm_nonneg x]
-  exact SchwartzMap.compCLM (𝕜 := ℝ) (hg := timeReflectionCLM.hasTemperateGrowth) (hg_upper := hg_upper)
+private lemma timeReflection_hg_upper :
+    ∃ (k : ℕ) (C : ℝ), ∀ (x : SpaceTime), ‖x‖ ≤ C * (1 + ‖timeReflectionCLM x‖) ^ k := by
+  use 1, 1
+  intro x
+  have h_iso : ‖timeReflectionCLM x‖ = ‖x‖ := by
+    have h_norm_preserved : ‖timeReflection x‖ = ‖x‖ := LinearIsometryEquiv.norm_map timeReflectionLE x
+    rw [← h_norm_preserved]
+    rfl
+  rw [h_iso]
+  have hx : ‖x‖ ≤ 1 + ‖x‖ := by linarith [norm_nonneg x]
+  calc
+    ‖x‖ ≤ 1 + ‖x‖ := hx
+    _ = 1 * (1 + ‖x‖) ^ (1 : ℕ) := by simp [pow_one]
+
+noncomputable def compTimeReflection : TestFunctionℂ →L[ℝ] TestFunctionℂ :=
+  SchwartzMap.compCLM (𝕜 := ℝ)
+    (hg := timeReflectionCLM.hasTemperateGrowth)
+    (hg_upper := timeReflection_hg_upper)
 
 /-- Composition with time reflection as a continuous linear map on **real-valued**
     test functions. This version will be used when working with positive-time
     subspaces defined over ℝ, so that reflection positivity can be formulated
     without passing through complex scalars. -/
 noncomputable def compTimeReflectionReal : TestFunction →L[ℝ] TestFunction := by
-  have hg_upper : ∃ (k : ℕ) (C : ℝ), ∀ (x : SpaceTime), ‖x‖ ≤ C * (1 + ‖timeReflectionCLM x‖) ^ k := by
-    use 1; use 1; simp; intro x
-    have h_iso : ‖timeReflectionCLM x‖ = ‖x‖ := by
-      -- timeReflectionCLM coincides with the geometric time reflection, hence an isometry
-      have h_norm_preserved : ‖timeReflection x‖ = ‖x‖ := by
-        exact LinearIsometryEquiv.norm_map timeReflectionLE x
-      -- Rewrite using the definition of timeReflectionCLM
-      rw [← h_norm_preserved]
-      rfl
-    rw [h_iso]
-    linarith [norm_nonneg x]
-  exact SchwartzMap.compCLM (𝕜 := ℝ) (hg := timeReflectionCLM.hasTemperateGrowth) (hg_upper := hg_upper)
+  exact SchwartzMap.compCLM (𝕜 := ℝ)
+    (hg := timeReflectionCLM.hasTemperateGrowth)
+    (hg_upper := timeReflection_hg_upper)
 
 /-- Time reflection is linear on real test functions. -/
 lemma compTimeReflectionReal_linear_combination {n : ℕ} (f : Fin n → TestFunction) (c : Fin n → ℝ) :
