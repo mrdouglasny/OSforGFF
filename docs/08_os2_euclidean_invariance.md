@@ -35,16 +35,16 @@ This is the cleanest OS axiom proof: it requires **zero project-specific axioms*
 
 | Declaration | Description |
 |-------------|-------------|
-| [`CovarianceEuclideanInvariantℂ_μ_GFF`](../OSforGFF/OS2_GFF.lean#L151) | $C(gx, gy) = C(x, y)$ for all $g \in E(4)$ (GFF covariance) |
-| [`freeCovarianceℂ_bilinear_euclidean_invariant`](../OSforGFF/OS2_GFF.lean#L111) | $\langle g \cdot f, C(g \cdot h)\rangle = \langle f, Ch\rangle$ |
-| [`euclidean_action_apply`](../OSforGFF/OS2_GFF.lean#L46) | $(g \cdot f)(x) = f(g^{-1} \cdot x)$ |
-| [`euclidean_pullback_eq_inv_act`](../OSforGFF/OS2_GFF.lean#L53) | $g^{-1} \cdot x = \mathrm{act}(g^{-1}, x)$ |
-| [`euclidean_pullback_act`](../OSforGFF/OS2_GFF.lean#L57) | $g^{-1} \cdot (g \cdot y) = y$ |
-| [`act_euclidean_pullback`](../OSforGFF/OS2_GFF.lean#L62) | $g \cdot (g^{-1} \cdot x) = x$ |
-| [`actEquiv`](../OSforGFF/OS2_GFF.lean#L70) | $x \mapsto g \cdot x$ is a measurable equivalence on $\mathbb{R}^4$ |
-| [`measurePreserving_actEquiv`](../OSforGFF/OS2_GFF.lean#L79) | $(g_*)\lambda = \lambda$ for $g \in E(4)$ |
+| [`CovarianceEuclideanInvariantℂ_μ_GFF`](../OSforGFF/OS/OS2_Invariance.lean#L151) | $C(gx, gy) = C(x, y)$ for all $g \in E(4)$ (GFF covariance) |
+| [`freeCovarianceℂ_bilinear_euclidean_invariant`](../OSforGFF/OS/OS2_Invariance.lean#L111) | $\langle g \cdot f, C(g \cdot h)\rangle = \langle f, Ch\rangle$ |
+| [`euclidean_action_apply`](../OSforGFF/OS/OS2_Invariance.lean#L46) | $(g \cdot f)(x) = f(g^{-1} \cdot x)$ |
+| [`euclidean_pullback_eq_inv_act`](../OSforGFF/OS/OS2_Invariance.lean#L53) | $g^{-1} \cdot x = \mathrm{act}(g^{-1}, x)$ |
+| [`euclidean_pullback_act`](../OSforGFF/OS/OS2_Invariance.lean#L57) | $g^{-1} \cdot (g \cdot y) = y$ |
+| [`act_euclidean_pullback`](../OSforGFF/OS/OS2_Invariance.lean#L62) | $g \cdot (g^{-1} \cdot x) = x$ |
+| [`actEquiv`](../OSforGFF/OS/OS2_Invariance.lean#L70) | $x \mapsto g \cdot x$ is a measurable equivalence on $\mathbb{R}^4$ |
+| [`measurePreserving_actEquiv`](../OSforGFF/OS/OS2_Invariance.lean#L79) | $(g_*)\lambda = \lambda$ for $g \in E(4)$ |
 
-The master theorem `gaussian_satisfies_OS2` in `GaussianFreeField.lean` derives OS2 from Gaussianity and covariance invariance. The file `OS2_GFF.lean` proves the GFF-specific covariance invariance.
+The master theorem `gaussian_satisfies_OS2` in `Measure/GaussianFreeField.lean` derives OS2 from Gaussianity and covariance invariance. The file `OS/OS2_Invariance.lean` proves the GFF-specific covariance invariance.
 
 ## Detailed Proof Outline
 
@@ -71,7 +71,7 @@ This depends only on $\|x - y\|$. Since Euclidean transformations preserve dista
 
 $$\|g \cdot x - g \cdot y\| = \|R(x - y)\| = \|x - y\|$$
 
-we have $C(g \cdot x, g \cdot y) = C(x, y)$. This is the content of `freeCovariance_euclidean_invariant` from `Covariance.lean`.
+we have $C(g \cdot x, g \cdot y) = C(x, y)$. This is the content of `freeCovariance_euclidean_invariant` from `Covariance/Position.lean`.
 
 ### Step 3: Measure preservation
 
@@ -104,7 +104,7 @@ The theorem `CovarianceEuclideanInvariantℂ_μ_GFF` connects the abstract covar
 
 ### Step 6: Derive OS2
 
-The general theorem `gaussian_satisfies_OS2` in `GaussianFreeField.lean` shows that for any Gaussian measure (`isGaussianGJ`) with Euclidean-invariant covariance (`CovarianceEuclideanInvariantℂ`), OS2 holds. The proof is essentially:
+The general theorem `gaussian_satisfies_OS2` in `Measure/GaussianFreeField.lean` shows that for any Gaussian measure (`isGaussianGJ`) with Euclidean-invariant covariance (`CovarianceEuclideanInvariantℂ`), OS2 holds. The proof is essentially:
 
 $$Z[g \cdot f] = \exp\left(-\tfrac{1}{2}\langle g \cdot f, C(g \cdot f)\rangle\right) = \exp\left(-\tfrac{1}{2}\langle f, Cf\rangle\right) = Z[f]$$
 

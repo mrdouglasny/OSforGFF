@@ -14,7 +14,7 @@ This project follows the Glimm-Jaffe formulation (Quantum Physics, pp. 89-90) an
 
 ## Lean Infrastructure
 
-The axiom definitions live in a single file: `OSforGFF/OS_Axioms.lean`. All definitions take a `ProbabilityMeasure FieldConfiguration` as their primary argument, where `FieldConfiguration` is a type alias for the topological dual of the Schwartz space (representing field configurations $\omega \in \mathcal{S}'(\mathbb{R}^4)$).
+The axiom definitions live in a single file: `OSforGFF/OS/Axioms.lean`. All definitions take a `ProbabilityMeasure FieldConfiguration` as their primary argument, where `FieldConfiguration` is a type alias for the topological dual of the Schwartz space (representing field configurations $\omega \in \mathcal{S}'(\mathbb{R}^4)$).
 
 Key supporting types and functions:
 - `GJGeneratingFunctionalℂ` -- the complex generating functional $Z[f] = \int e^{i\langle\omega, f\rangle} d\mu(\omega)$ for complex test functions
@@ -28,14 +28,14 @@ Key supporting types and functions:
 
 | Declaration | Description |
 |-------------|-------------|
-| [`OS0_Analyticity`](../OSforGFF/OS_Axioms.lean#L73) | $z \mapsto Z[\sum z_i J_i]$ is analytic on $\mathbb{C}^n$ |
-| [`TwoPointIntegrable`](../OSforGFF/OS_Axioms.lean#L79) | $S_2(x)$ is locally integrable |
-| [`OS1_Regularity`](../OSforGFF/OS_Axioms.lean#L83) | $\lvert Z[f]\rvert \le e^{c(\lVert f\rVert_1 + \lVert f\rVert_p^p)}$ for some $p \in [1,2]$, $c > 0$ |
-| [`OS2_EuclideanInvariance`](../OSforGFF/OS_Axioms.lean#L91) | $Z[g \cdot f] = Z[f]$ for all $g \in E(4)$ |
-| [`OS3_ReflectionPositivity`](../OSforGFF/OS_Axioms.lean#L100) | $\sum_{ij} c_i c_j \mathrm{Re}\left(Z[f_i - \Theta f_j]\right) \ge 0$ |
-| [`OS4_Clustering`](../OSforGFF/OS_Axioms.lean#L123) | $\lvert Z[f + T_a g] - Z[f]Z[g]\rvert \to 0$ as $\lVert a\rVert \to \infty$ |
-| [`OS4_Ergodicity`](../OSforGFF/OS_Axioms.lean#L136) | $\frac{1}{T}\int_0^T A(T_s \varphi)\ ds \to \mathbb{E}_\mu[A]$ in $L^2(\mu)$ |
-| [`OS4_PolynomialClustering`](../OSforGFF/OS_Axioms.lean#L158) | $\lvert\mathbb{E}[e^{\langle\varphi,f\rangle + \langle T_s\varphi,g\rangle}] - \mathbb{E}[e^{\langle\varphi,f\rangle}]\mathbb{E}[e^{\langle\varphi,g\rangle}]\rvert \le c(1+s)^{-\alpha}$ |
+| [`OS0_Analyticity`](../OSforGFF/OS/Axioms.lean#L73) | $z \mapsto Z[\sum z_i J_i]$ is analytic on $\mathbb{C}^n$ |
+| [`TwoPointIntegrable`](../OSforGFF/OS/Axioms.lean#L79) | $S_2(x)$ is locally integrable |
+| [`OS1_Regularity`](../OSforGFF/OS/Axioms.lean#L83) | $\lvert Z[f]\rvert \le e^{c(\lVert f\rVert_1 + \lVert f\rVert_p^p)}$ for some $p \in [1,2]$, $c > 0$ |
+| [`OS2_EuclideanInvariance`](../OSforGFF/OS/Axioms.lean#L91) | $Z[g \cdot f] = Z[f]$ for all $g \in E(4)$ |
+| [`OS3_ReflectionPositivity`](../OSforGFF/OS/Axioms.lean#L100) | $\sum_{ij} c_i c_j \mathrm{Re}\left(Z[f_i - \Theta f_j]\right) \ge 0$ |
+| [`OS4_Clustering`](../OSforGFF/OS/Axioms.lean#L123) | $\lvert Z[f + T_a g] - Z[f]Z[g]\rvert \to 0$ as $\lVert a\rVert \to \infty$ |
+| [`OS4_Ergodicity`](../OSforGFF/OS/Axioms.lean#L136) | $\frac{1}{T}\int_0^T A(T_s \varphi)\ ds \to \mathbb{E}_\mu[A]$ in $L^2(\mu)$ |
+| [`OS4_PolynomialClustering`](../OSforGFF/OS/Axioms.lean#L158) | $\lvert\mathbb{E}[e^{\langle\varphi,f\rangle + \langle T_s\varphi,g\rangle}] - \mathbb{E}[e^{\langle\varphi,f\rangle}]\mathbb{E}[e^{\langle\varphi,g\rangle}]\rvert \le c(1+s)^{-\alpha}$ |
 
 ## Axiom Definitions
 

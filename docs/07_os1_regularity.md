@@ -35,17 +35,17 @@ The proof has two parts:
 
 | Declaration | Description |
 |-------------|-------------|
-| [`gaussianFreeField_satisfies_OS1_revised`](../OSforGFF/OS1_GFF.lean#L528) | Main theorem: GFF satisfies OS1 with $p=2$, $c=1/(2m^2)$ |
-| [`fourier_plancherel_schwartz`](../OSforGFF/OS1_GFF.lean#L60) | $\lVert\hat{f}\rVert_{L^2} = \lVert f\rVert_{L^2}$ for Schwartz functions |
-| [`SchwingerTwoPointFunction_GFF`](../OSforGFF/OS1_GFF.lean#L83) | $S_2^{\mathrm{GFF}}(x) := C_{\mathrm{free}}(x)$ |
-| [`schwingerTwoPoint_eq_freeCovarianceKernel`](../OSforGFF/OS1_GFF.lean#L87) | $S_2^{\mathrm{GFF}}(x) = C_{\mathrm{free}}(m, x)$ (definitional) |
-| [`schwingerTwoPointFunction_eq_GFF`](../OSforGFF/OS1_GFF.lean#L99) | Abstract $S_2(x) = S_2^{\mathrm{GFF}}(x)$ for $x \ne 0$ |
-| [`schwinger_two_point_decay_bound_GFF`](../OSforGFF/OS1_GFF.lean#L145) | $\lvert S_2^{\mathrm{GFF}}(x-y)\rvert \le C\lVert x-y\rVert^{-2}$ |
-| [`schwinger_two_point_decay_bound`](../OSforGFF/OS1_GFF.lean#L162) | $\lvert S_2(x-y)\rvert \le C\lVert x-y\rVert^{-2}$ |
-| [`schwingerTwoPoint_measurable`](../OSforGFF/OS1_GFF.lean#L189) | $S_2$ is AE-strongly measurable |
-| [`gff_generating_norm_eq`](../OSforGFF/OS1_GFF.lean#L219) | $\lvert Z[f]\rvert = \exp(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle)$ |
-| [`gff_generating_bound_by_imaginary`](../OSforGFF/OS1_GFF.lean#L229) | $\exp(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle) \le \exp(\tfrac{1}{2}\langle f_{\mathrm{im}}, Cf_{\mathrm{im}}\rangle)$ |
-| [`gff_generating_L2_bound`](../OSforGFF/OS1_GFF.lean#L468) | $\lvert Z[f]\rvert \le \exp((1/(2m^2))\lVert f\rVert_{L^2}^2)$ |
+| [`gaussianFreeField_satisfies_OS1_revised`](../OSforGFF/OS/OS1_Regularity.lean#L528) | Main theorem: GFF satisfies OS1 with $p=2$, $c=1/(2m^2)$ |
+| [`fourier_plancherel_schwartz`](../OSforGFF/OS/OS1_Regularity.lean#L60) | $\lVert\hat{f}\rVert_{L^2} = \lVert f\rVert_{L^2}$ for Schwartz functions |
+| [`SchwingerTwoPointFunction_GFF`](../OSforGFF/OS/OS1_Regularity.lean#L83) | $S_2^{\mathrm{GFF}}(x) := C_{\mathrm{free}}(x)$ |
+| [`schwingerTwoPoint_eq_freeCovarianceKernel`](../OSforGFF/OS/OS1_Regularity.lean#L87) | $S_2^{\mathrm{GFF}}(x) = C_{\mathrm{free}}(m, x)$ (definitional) |
+| [`schwingerTwoPointFunction_eq_GFF`](../OSforGFF/OS/OS1_Regularity.lean#L99) | Abstract $S_2(x) = S_2^{\mathrm{GFF}}(x)$ for $x \ne 0$ |
+| [`schwinger_two_point_decay_bound_GFF`](../OSforGFF/OS/OS1_Regularity.lean#L145) | $\lvert S_2^{\mathrm{GFF}}(x-y)\rvert \le C\lVert x-y\rVert^{-2}$ |
+| [`schwinger_two_point_decay_bound`](../OSforGFF/OS/OS1_Regularity.lean#L162) | $\lvert S_2(x-y)\rvert \le C\lVert x-y\rVert^{-2}$ |
+| [`schwingerTwoPoint_measurable`](../OSforGFF/OS/OS1_Regularity.lean#L189) | $S_2$ is AE-strongly measurable |
+| [`gff_generating_norm_eq`](../OSforGFF/OS/OS1_Regularity.lean#L219) | $\lvert Z[f]\rvert = \exp(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle)$ |
+| [`gff_generating_bound_by_imaginary`](../OSforGFF/OS/OS1_Regularity.lean#L229) | $\exp(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle) \le \exp(\tfrac{1}{2}\langle f_{\mathrm{im}}, Cf_{\mathrm{im}}\rangle)$ |
+| [`gff_generating_L2_bound`](../OSforGFF/OS/OS1_Regularity.lean#L468) | $\lvert Z[f]\rvert \le \exp((1/(2m^2))\lVert f\rVert_{L^2}^2)$ |
 
 ## Detailed Proof Outline
 
@@ -80,7 +80,7 @@ The free propagator satisfies the pointwise bound $1/((2\pi)^2\|k\|^2 + m^2) \le
 
 $$\langle g, Cg\rangle \le \frac{1}{m^2} \int |\hat{g}(k)|^2\  dk = \frac{1}{m^2}\|g\|_{L^2}^2$$
 
-where the last equality is the Plancherel theorem (`fourier_plancherel_schwartz`). The connection between position-space and momentum-space representations uses the Parseval identity (`parseval_covariance_schwartz_bessel` from `CovarianceR.lean`).
+where the last equality is the Plancherel theorem (`fourier_plancherel_schwartz`). The connection between position-space and momentum-space representations uses the Parseval identity (`parseval_covariance_schwartz_bessel` from `Covariance/RealForm.lean`).
 
 Since $\|f_{\mathrm{im}}\|_{L^2} \le \|f\|_{L^2}$ pointwise ($|f_{\mathrm{im}}(x)| \le |f(x)|$), combining gives:
 
@@ -98,7 +98,7 @@ $$|Z[f]| \le \exp\left(\frac{1}{2m^2}\left(\|f\|_{L^1} + \|f\|_{L^2}^2\right)\ri
 **Step 5: Decay bound.**
 The GFF two-point function is $S_2^{\mathrm{GFF}}(x) = C_{\mathrm{free}}(x) = (m/(4\pi^2\|x\|))K_1(m\|x\|)$, where $K_1$ is the modified Bessel function of the second kind.
 
-From Bessel function asymptotics ($K_1(z) \sim 1/z$ near the origin, exponential decay at infinity), there exists $C > 0$ such that $|S_2(x-y)| \le C\|x-y\|^{-2}$ for all $x, y$. This is proved in `schwinger_two_point_decay_bound_GFF` using `freeCovarianceKernel_decay_bound` from `CovarianceMomentum.lean`, which relies on `besselK1_near_origin_bound` and `besselK1_asymptotic`.
+From Bessel function asymptotics ($K_1(z) \sim 1/z$ near the origin, exponential decay at infinity), there exists $C > 0$ such that $|S_2(x-y)| \le C\|x-y\|^{-2}$ for all $x, y$. This is proved in `schwinger_two_point_decay_bound_GFF` using `freeCovarianceKernel_decay_bound` from `Covariance/Momentum.lean`, which relies on `besselK1_near_origin_bound` and `besselK1_asymptotic`.
 
 **Lean theorem**: `schwinger_two_point_decay_bound`
 
@@ -114,7 +114,7 @@ Combined with the decay bound and measurability (`schwingerTwoPoint_measurable`)
 
 ### Axioms Used
 
-The proof has 0 project-specific axioms. The decay bound and measurability, which were formerly axioms, are now proved theorems. The decay bound is derived from Bessel function analysis in `CovarianceMomentum.lean`. Measurability follows from the agreement with the free covariance kernel (which is integrable, hence AE-strongly measurable).
+The proof has 0 project-specific axioms. The decay bound and measurability, which were formerly axioms, are now proved theorems. The decay bound is derived from Bessel function analysis in `Covariance/Momentum.lean`. Measurability follows from the agreement with the free covariance kernel (which is integrable, hence AE-strongly measurable).
 
 ## References
 

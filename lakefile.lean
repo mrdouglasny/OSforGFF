@@ -9,7 +9,7 @@ package «OSforGFF» where
   -- add any additional package configuration options here
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git"
+  "https://github.com/leanprover-community/mathlib4.git" @ "v4.28.0"
 
 @[default_target]
 lean_lib «OSforGFF» where

@@ -33,20 +33,20 @@ The five hypotheses verified are:
 
 | Declaration | Description |
 |-------------|-------------|
-| [`gaussianFreeField_satisfies_OS0`](../OSforGFF/OS0_GFF.lean#L1120) | Main theorem: the GFF satisfies OS0 analyticity |
-| [`holomorphic_integral_of_locally_L1_bound`](../OSforGFF/OS0_GFF.lean#L105) | Analytic integrand + local $L^1$ bounds $\Rightarrow$ analytic integral |
-| [`gff_integrand_measurable`](../OSforGFF/OS0_GFF.lean#L167) | $\omega \mapsto \exp(i\langle\omega, \sum z_i J_i\rangle)$ is measurable |
-| [`gff_integrand_analytic`](../OSforGFF/OS0_GFF.lean#L195) | $z \mapsto \exp(i\langle\omega, \sum z_i J_i\rangle)$ is analytic for fixed $\omega$ |
-| [`gff_integrand_integrable`](../OSforGFF/OS0_GFF.lean#L536) | $\exp(i\langle\omega, \sum z_i J_i\rangle) \in L^1(\mu_{\mathrm{GFF}})$ |
-| [`gff_integrand_fderiv_measurable`](../OSforGFF/OS0_GFF.lean#L562) | $\omega \mapsto D_z \exp(i\langle\omega, \sum z_i J_i\rangle)$ is measurable |
-| [`gff_integrand_fderiv_bound`](../OSforGFF/OS0_GFF.lean#L681) | Local $L^1$ bound on the Frechet derivative |
-| [`norm_exp_I_distributionPairingℂ_real`](../OSforGFF/OS0_GFF.lean#L269) | $\lvert e^{i\langle\omega,f\rangle}\rvert = e^{-\omega(f_{\mathrm{im}})}$ |
-| [`gff_exp_abs_pairing_integrable`](../OSforGFF/OS0_GFF.lean#L461) | $\exp\lvert\omega(f)\rvert \in L^1(\mu_{\mathrm{GFF}})$ |
-| [`gff_exp_abs_pairing_memLp`](../OSforGFF/OS0_GFF.lean#L328) | $\exp\lvert\omega(f)\rvert \in L^p(\mu_{\mathrm{GFF}})$ for $p < \infty$ |
-| [`gff_exp_abs_sum_memLp`](../OSforGFF/OS0_GFF.lean#L469) | $\exp(\sum_i |\omega(g_i)|) \in L^2(\mu_{\mathrm{GFF}})$ |
-| [`gff_integrand_norm_integrable`](../OSforGFF/OS0_GFF.lean#L522) | $\lvert\exp(i\langle\omega,f\rangle)\rvert \in L^1(\mu_{\mathrm{GFF}})$ |
-| [`distributionPairingℂ_real_continuous`](../OSforGFF/OS0_GFF.lean#L152) | $\omega \mapsto \langle\omega, f\rangle$ is continuous |
-| [`differentiable_analyticAt_finDim`](../OSforGFF/OS0_GFF.lean#L86) | Goursat's theorem in $n$ dimensions: $\mathbb{C}$-differentiable $\Rightarrow$ analytic |
+| [`gaussianFreeField_satisfies_OS0`](../OSforGFF/OS/OS0_Analyticity.lean#L1120) | Main theorem: the GFF satisfies OS0 analyticity |
+| [`holomorphic_integral_of_locally_L1_bound`](../OSforGFF/OS/OS0_Analyticity.lean#L105) | Analytic integrand + local $L^1$ bounds $\Rightarrow$ analytic integral |
+| [`gff_integrand_measurable`](../OSforGFF/OS/OS0_Analyticity.lean#L167) | $\omega \mapsto \exp(i\langle\omega, \sum z_i J_i\rangle)$ is measurable |
+| [`gff_integrand_analytic`](../OSforGFF/OS/OS0_Analyticity.lean#L195) | $z \mapsto \exp(i\langle\omega, \sum z_i J_i\rangle)$ is analytic for fixed $\omega$ |
+| [`gff_integrand_integrable`](../OSforGFF/OS/OS0_Analyticity.lean#L536) | $\exp(i\langle\omega, \sum z_i J_i\rangle) \in L^1(\mu_{\mathrm{GFF}})$ |
+| [`gff_integrand_fderiv_measurable`](../OSforGFF/OS/OS0_Analyticity.lean#L562) | $\omega \mapsto D_z \exp(i\langle\omega, \sum z_i J_i\rangle)$ is measurable |
+| [`gff_integrand_fderiv_bound`](../OSforGFF/OS/OS0_Analyticity.lean#L681) | Local $L^1$ bound on the Frechet derivative |
+| [`norm_exp_I_distributionPairingℂ_real`](../OSforGFF/OS/OS0_Analyticity.lean#L269) | $\lvert e^{i\langle\omega,f\rangle}\rvert = e^{-\omega(f_{\mathrm{im}})}$ |
+| [`gff_exp_abs_pairing_integrable`](../OSforGFF/OS/OS0_Analyticity.lean#L461) | $\exp\lvert\omega(f)\rvert \in L^1(\mu_{\mathrm{GFF}})$ |
+| [`gff_exp_abs_pairing_memLp`](../OSforGFF/OS/OS0_Analyticity.lean#L328) | $\exp\lvert\omega(f)\rvert \in L^p(\mu_{\mathrm{GFF}})$ for $p < \infty$ |
+| [`gff_exp_abs_sum_memLp`](../OSforGFF/OS/OS0_Analyticity.lean#L469) | $\exp(\sum_i |\omega(g_i)|) \in L^2(\mu_{\mathrm{GFF}})$ |
+| [`gff_integrand_norm_integrable`](../OSforGFF/OS/OS0_Analyticity.lean#L522) | $\lvert\exp(i\langle\omega,f\rangle)\rvert \in L^1(\mu_{\mathrm{GFF}})$ |
+| [`distributionPairingℂ_real_continuous`](../OSforGFF/OS/OS0_Analyticity.lean#L152) | $\omega \mapsto \langle\omega, f\rangle$ is continuous |
+| [`differentiable_analyticAt_finDim`](../OSforGFF/OS/OS0_Analyticity.lean#L86) | Goursat's theorem in $n$ dimensions: $\mathbb{C}$-differentiable $\Rightarrow$ analytic |
 
 ## Detailed Proof Outline
 
@@ -57,7 +57,7 @@ For fixed $\omega \in \mathcal{S}'$, the function $z \mapsto \exp(i \sum_i z_i \
 - Multiplication by $i$ and the exponential are entire.
 - Composition of analytic functions is analytic.
 
-The key identity is `pairing_linear_combo` from `ComplexTestFunction.lean`, which establishes linearity of the distributional pairing in the test function argument.
+The key identity is `pairing_linear_combo` from `Spacetime/ComplexTestFunction.lean`, which establishes linearity of the distributional pairing in the test function argument.
 
 **Lean theorem**: `gff_integrand_analytic`
 
@@ -75,7 +75,7 @@ $$\|\exp(i\langle\omega, f\rangle)\| = \exp(-\omega(f_{\mathrm{im}}))$$
 
 This follows from $|e^{a+ib}| = e^a$ applied to $i\langle\omega, f\rangle = i\langle\omega, f_{\mathrm{re}}\rangle - \langle\omega, f_{\mathrm{im}}\rangle$.
 
-When $f_{\mathrm{im}} \ne 0$, the norm $\exp(-\omega(f_{\mathrm{im}}))$ can be large for field configurations where $\omega(f_{\mathrm{im}}) < 0$. Integrability then requires **Fernique's theorem**: for Gaussian measures, $\exp(\alpha \langle\omega, g\rangle^2)$ is integrable for sufficiently small $\alpha > 0$. This is established by `gaussianFreeField_pairing_expSq_integrable` in `GFFMconstruct.lean`.
+When $f_{\mathrm{im}} \ne 0$, the norm $\exp(-\omega(f_{\mathrm{im}}))$ can be large for field configurations where $\omega(f_{\mathrm{im}}) < 0$. Integrability then requires **Fernique's theorem**: for Gaussian measures, $\exp(\alpha \langle\omega, g\rangle^2)$ is integrable for sufficiently small $\alpha > 0$. This is established by `gaussianFreeField_pairing_expSq_integrable` in `Measure/Construct.lean`.
 
 **Lean theorem**: `gff_integrand_integrable`
 
@@ -118,7 +118,7 @@ The proof requires 1 project-specific axiom:
 
 | Axiom | Mathematical content |
 |-------|---------------------|
-| [`differentiable_analyticAt_finDim`](../OSforGFF/OS0_GFF.lean#L86) | Goursat's theorem in $n$ dimensions: holomorphic $\Rightarrow$ analytic in $\mathbb{C}^n$ |
+| [`differentiable_analyticAt_finDim`](../OSforGFF/OS/OS0_Analyticity.lean#L86) | Goursat's theorem in $n$ dimensions: holomorphic $\Rightarrow$ analytic in $\mathbb{C}^n$ |
 
 This is a standard result in several complex variables. It is not yet available in Mathlib because the full SCV machinery (polydisk Cauchy integral formula, etc.) has not been formalized.
 

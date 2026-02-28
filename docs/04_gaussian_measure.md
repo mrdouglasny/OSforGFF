@@ -52,90 +52,90 @@ From the complex Gaussian identity $Z[J] = e^{-\frac{1}{2}S_2(J,J)}$:
 
 ## Key Declarations
 
-### Minlos Theorem (`Minlos.lean`)
+### Minlos Theorem (`Measure/Minlos.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`NuclearSpace`](../OSforGFF/NuclearSpace.lean#L126) | Nuclear space via Hilbert-Schmidt embedding characterization |
-| [`schwartz_nuclear`](../OSforGFF/NuclearSpace.lean#L145) | Schwartz space is nuclear (axiom) |
-| [`minlos_uniqueness`](../OSforGFF/Minlos.lean#L89) | Derived: two measures with same CF on nuclear space are equal |
-| [`gaussian_characteristic_functional`](../OSforGFF/Minlos.lean#L104) | $f \mapsto e^{-\frac{1}{2}C(f,f)}$ |
-| [`gaussian_rbf_pd_innerProduct`](../OSforGFF/Minlos.lean#L129) | $e^{-\lVert h\rVert^2/2}$ is positive-definite |
-| [`gaussian_positive_definite_via_embedding`](../OSforGFF/Minlos.lean#L141) | $e^{-\frac{1}{2}C(f,f)}$ is positive-definite when $C(f,f) = \lVert Tf\rVert^2$ |
-| [`minlos_gaussian_construction`](../OSforGFF/Minlos.lean#L186) | $\exists\ \mu$ with $\int e^{i\langle\omega,f\rangle}\ d\mu = e^{-\frac{1}{2}C(f,f)}$ |
-| [`gaussian_measure_characteristic_functional`](../OSforGFF/Minlos.lean#L221) | Same, returning `ProbabilityMeasure` |
-| [`gaussian_measure_symmetry`](../OSforGFF/Minlos.lean#L254) | If $g$ preserves $C$, then $g_*\mu = \mu$ |
+| [`NuclearSpace`](../OSforGFF/Measure/NuclearSpace.lean#L126) | Nuclear space via Hilbert-Schmidt embedding characterization |
+| [`schwartz_nuclear`](../OSforGFF/Measure/NuclearSpace.lean#L145) | Schwartz space is nuclear (axiom) |
+| [`minlos_uniqueness`](../OSforGFF/Measure/Minlos.lean#L89) | Derived: two measures with same CF on nuclear space are equal |
+| [`gaussian_characteristic_functional`](../OSforGFF/Measure/Minlos.lean#L104) | $f \mapsto e^{-\frac{1}{2}C(f,f)}$ |
+| [`gaussian_rbf_pd_innerProduct`](../OSforGFF/Measure/Minlos.lean#L129) | $e^{-\lVert h\rVert^2/2}$ is positive-definite |
+| [`gaussian_positive_definite_via_embedding`](../OSforGFF/Measure/Minlos.lean#L141) | $e^{-\frac{1}{2}C(f,f)}$ is positive-definite when $C(f,f) = \lVert Tf\rVert^2$ |
+| [`minlos_gaussian_construction`](../OSforGFF/Measure/Minlos.lean#L186) | $\exists\ \mu$ with $\int e^{i\langle\omega,f\rangle}\ d\mu = e^{-\frac{1}{2}C(f,f)}$ |
+| [`gaussian_measure_characteristic_functional`](../OSforGFF/Measure/Minlos.lean#L221) | Same, returning `ProbabilityMeasure` |
+| [`gaussian_measure_symmetry`](../OSforGFF/Measure/Minlos.lean#L254) | If $g$ preserves $C$, then $g_*\mu = \mu$ |
 
-### Analytic Properties (`MinlosAnalytic.lean`)
-
-| Declaration | Description |
-|-------------|-------------|
-| [`CovarianceForm`](../OSforGFF/MinlosAnalytic.lean#L52) | Structure packaging a bilinear form $Q$ with its properties |
-| [`negMap`](../OSforGFF/MinlosAnalytic.lean#L63) | The negation map $\omega \mapsto -\omega$ |
-| [`negMap_measurable`](../OSforGFF/MinlosAnalytic.lean#L66) | Negation is measurable |
-| [`integral_neg_invariance`](../OSforGFF/MinlosAnalytic.lean#L75) | $\mu$ is invariant under $\omega \mapsto -\omega$ |
-| [`moment_zero_from_realCF`](../OSforGFF/MinlosAnalytic.lean#L196) | $\int\langle\omega,a\rangle\ d\mu = 0$ |
-
-### GFF Construction (`GFFMconstruct.lean`)
+### Analytic Properties (`Measure/MinlosAnalytic.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`CovarianceFunction`](../OSforGFF/GFFMconstruct.lean#L124) | Type packaging covariance data for the construction |
-| [`isCenteredGJ`](../OSforGFF/GFFMconstruct.lean#L133) | Predicate: $\int\langle\omega,f\rangle\ d\mu = 0$ for all $f$ |
-| [`isGaussianGJ`](../OSforGFF/GFFMconstruct.lean#L138) | Predicate: $Z[J] = e^{-\frac{1}{2}S_2(J,J)}$ |
-| [`instNuclear_TestFunction`](../OSforGFF/GFFMconstruct.lean#L149) | Instance: `TestFunction` is a `NuclearSpace` |
-| [`constructGaussianMeasureMinlos_free`](../OSforGFF/GFFMconstruct.lean#L152) | Minlos construction applied to free covariance |
-| [`gaussianFreeField_free`](../OSforGFF/GFFMconstruct.lean#L177) | The GFF probability measure on `FieldConfiguration` |
+| [`CovarianceForm`](../OSforGFF/Measure/MinlosAnalytic.lean#L52) | Structure packaging a bilinear form $Q$ with its properties |
+| [`negMap`](../OSforGFF/Measure/MinlosAnalytic.lean#L63) | The negation map $\omega \mapsto -\omega$ |
+| [`negMap_measurable`](../OSforGFF/Measure/MinlosAnalytic.lean#L66) | Negation is measurable |
+| [`integral_neg_invariance`](../OSforGFF/Measure/MinlosAnalytic.lean#L75) | $\mu$ is invariant under $\omega \mapsto -\omega$ |
+| [`moment_zero_from_realCF`](../OSforGFF/Measure/MinlosAnalytic.lean#L196) | $\int\langle\omega,a\rangle\ d\mu = 0$ |
+
+### GFF Construction (`Measure/Construct.lean`)
+
+| Declaration | Description |
+|-------------|-------------|
+| [`CovarianceFunction`](../OSforGFF/Measure/Construct.lean#L124) | Type packaging covariance data for the construction |
+| [`isCenteredGJ`](../OSforGFF/Measure/Construct.lean#L133) | Predicate: $\int\langle\omega,f\rangle\ d\mu = 0$ for all $f$ |
+| [`isGaussianGJ`](../OSforGFF/Measure/Construct.lean#L138) | Predicate: $Z[J] = e^{-\frac{1}{2}S_2(J,J)}$ |
+| [`instNuclear_TestFunction`](../OSforGFF/Measure/Construct.lean#L149) | Instance: `TestFunction` is a `NuclearSpace` |
+| [`constructGaussianMeasureMinlos_free`](../OSforGFF/Measure/Construct.lean#L152) | Minlos construction applied to free covariance |
+| [`gaussianFreeField_free`](../OSforGFF/Measure/Construct.lean#L177) | The GFF probability measure on `FieldConfiguration` |
 | `mu_GFF` | Alias for `gaussianFreeField_free` |
-| [`gff_real_characteristic`](../OSforGFF/GFFMconstruct.lean#L185) | $Z[J] = e^{-\frac{1}{2}C(J,J)}$ for real $J$ |
-| [`gff_pairing_is_gaussian`](../OSforGFF/GFFMconstruct.lean#L272) | Law of $\langle\omega,\phi\rangle$ is $\mathcal{N}(0, C(\phi,\phi))$ |
-| [`gaussianFreeField_pairing_memLp`](../OSforGFF/GFFMconstruct.lean#L295) | $\langle\omega,\phi\rangle \in L^p$ for all $p < \infty$ |
-| [`gff_pairing_square_integrable`](../OSforGFF/GFFMconstruct.lean#L311) | $\langle\omega,\phi\rangle^2$ is integrable |
-| [`gff_second_moment_eq_covariance`](../OSforGFF/GFFMconstruct.lean#L329) | $\int\langle\omega,\phi\rangle^2\ d\mu = C(\phi,\phi)$ |
-| [`freeCovarianceFormR_gaussian_cf_pd`](../OSforGFF/GFFMconstruct.lean#L355) | Gaussian CF with free covariance is positive-definite |
-| [`freeCovarianceForm`](../OSforGFF/GFFMconstruct.lean#L370) | The `CovarianceForm` structure for the free theory |
-| [`gaussianFreeField_free_centered`](../OSforGFF/GFFMconstruct.lean#L387) | $\int\langle\omega,f\rangle\ d\mu = 0$ |
-| [`gaussianFreeField_pairing_expSq_integrable`](../OSforGFF/GFFMconstruct.lean#L426) | $e^{\alpha\langle\omega,\phi\rangle^2}$ is integrable for small $\alpha$ |
-| [`gaussian_pairing_square_integrable_real`](../OSforGFF/GFFMconstruct.lean#L454) | $\langle\omega,\phi\rangle^2$ integrable (real pairing version) |
+| [`gff_real_characteristic`](../OSforGFF/Measure/Construct.lean#L185) | $Z[J] = e^{-\frac{1}{2}C(J,J)}$ for real $J$ |
+| [`gff_pairing_is_gaussian`](../OSforGFF/Measure/Construct.lean#L272) | Law of $\langle\omega,\phi\rangle$ is $\mathcal{N}(0, C(\phi,\phi))$ |
+| [`gaussianFreeField_pairing_memLp`](../OSforGFF/Measure/Construct.lean#L295) | $\langle\omega,\phi\rangle \in L^p$ for all $p < \infty$ |
+| [`gff_pairing_square_integrable`](../OSforGFF/Measure/Construct.lean#L311) | $\langle\omega,\phi\rangle^2$ is integrable |
+| [`gff_second_moment_eq_covariance`](../OSforGFF/Measure/Construct.lean#L329) | $\int\langle\omega,\phi\rangle^2\ d\mu = C(\phi,\phi)$ |
+| [`freeCovarianceFormR_gaussian_cf_pd`](../OSforGFF/Measure/Construct.lean#L355) | Gaussian CF with free covariance is positive-definite |
+| [`freeCovarianceForm`](../OSforGFF/Measure/Construct.lean#L370) | The `CovarianceForm` structure for the free theory |
+| [`gaussianFreeField_free_centered`](../OSforGFF/Measure/Construct.lean#L387) | $\int\langle\omega,f\rangle\ d\mu = 0$ |
+| [`gaussianFreeField_pairing_expSq_integrable`](../OSforGFF/Measure/Construct.lean#L426) | $e^{\alpha\langle\omega,\phi\rangle^2}$ is integrable for small $\alpha$ |
+| [`gaussian_pairing_square_integrable_real`](../OSforGFF/Measure/Construct.lean#L454) | $\langle\omega,\phi\rangle^2$ integrable (real pairing version) |
 
-### Gaussian Moments (`GaussianMoments.lean`)
-
-| Declaration | Description |
-|-------------|-------------|
-| [`gaussian_complex_pairing_abs_sq_integrable`](../OSforGFF/GaussianMoments.lean#L55) | $|\langle\omega,\phi\rangle|^2$ is integrable for complex $\phi$ |
-| [`gaussian_pairing_product_integrable_free_2point`](../OSforGFF/GaussianMoments.lean#L115) | $\langle\omega,\phi\rangle\langle\omega,\psi\rangle$ is integrable for complex $\phi, \psi$ |
-| [`covariance_bilinear_from_general`](../OSforGFF/GaussianMoments.lean#L241) | `CovarianceBilinear` holds for the GFF |
-
-### Gaussian Identity (`GFFIsGaussian.lean`)
+### Gaussian Moments (`Schwinger/GaussianMoments.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`gff_complex_characteristic_OS0`](../OSforGFF/GFFIsGaussian.lean#L225) | $Z_{\mathbb{C}}[J] = e^{-\frac{1}{2}C_{\text{bilinear}}(J,J)}$ for complex $J$ |
-| [`schwinger_eq_covariance_real`](../OSforGFF/GFFIsGaussian.lean#L376) | $S_2(f,g) = C(f,g)$ for real $f, g$ |
-| [`gff_two_point_equals_covarianceℂ_free`](../OSforGFF/GFFIsGaussian.lean#L467) | $S_2(f,g) = C(f,g)$ for complex $f, g$ |
-| [`gff_complex_generating`](../OSforGFF/GFFIsGaussian.lean#L527) | $Z_{\mathbb{C}}[J] = e^{-\frac{1}{2}S_2(J,J)}$ |
-| [`isGaussianGJ_gaussianFreeField_free`](../OSforGFF/GFFIsGaussian.lean#L543) | The GFF satisfies `IsGaussianGJ` |
-| [`gff_two_param_analytic`](../OSforGFF/GFFIsGaussian.lean#L100) | $(z_0,z_1) \mapsto Z[z_0 f + z_1 g]$ analytic on $\mathbb{C}^2$ |
-| [`gff_slice_analytic_z0`](../OSforGFF/GFFIsGaussian.lean#L127) | $z_0 \mapsto Z[z_0 f + tg]$ is analytic |
-| [`gff_slice_analytic_z1`](../OSforGFF/GFFIsGaussian.lean#L155) | $z_1 \mapsto Z[z_0 f + z_1 g]$ is analytic |
-| [`gff_cf_agrees_on_reals_OS0`](../OSforGFF/GFFIsGaussian.lean#L209) | Complex $Z$ agrees with real $Z$ on real parameters |
+| [`gaussian_complex_pairing_abs_sq_integrable`](../OSforGFF/Schwinger/GaussianMoments.lean#L55) | $|\langle\omega,\phi\rangle|^2$ is integrable for complex $\phi$ |
+| [`gaussian_pairing_product_integrable_free_2point`](../OSforGFF/Schwinger/GaussianMoments.lean#L115) | $\langle\omega,\phi\rangle\langle\omega,\psi\rangle$ is integrable for complex $\phi, \psi$ |
+| [`covariance_bilinear_from_general`](../OSforGFF/Schwinger/GaussianMoments.lean#L241) | `CovarianceBilinear` holds for the GFF |
 
-### Master Theorem (`GaussianFreeField.lean`)
+### Gaussian Identity (`Measure/IsGaussian.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`gaussian_satisfies_OS0`](../OSforGFF/GaussianFreeField.lean#L114) | Gaussian measures satisfy OS0 (analyticity) |
-| [`gaussian_satisfies_OS2`](../OSforGFF/GaussianFreeField.lean#L219) | Gaussian measures satisfy OS2 (Euclidean invariance) |
-| [`CovarianceContinuous`](../OSforGFF/GaussianFreeField.lean#L82) | Predicate: covariance is jointly continuous |
-| [`CovarianceEuclideanInvariant`](../OSforGFF/GaussianFreeField.lean#L208) | Predicate: $C(gx, gy) = C(x,y)$ |
-| [`CovarianceEuclideanInvariantℂ`](../OSforGFF/GaussianFreeField.lean#L214) | Complex version |
-| [`GJcov_bilin`](../OSforGFF/GaussianFreeField.lean#L97) | Covariance as a `BilinMap` |
+| [`gff_complex_characteristic_OS0`](../OSforGFF/Measure/IsGaussian.lean#L225) | $Z_{\mathbb{C}}[J] = e^{-\frac{1}{2}C_{\text{bilinear}}(J,J)}$ for complex $J$ |
+| [`schwinger_eq_covariance_real`](../OSforGFF/Measure/IsGaussian.lean#L376) | $S_2(f,g) = C(f,g)$ for real $f, g$ |
+| [`gff_two_point_equals_covarianceℂ_free`](../OSforGFF/Measure/IsGaussian.lean#L467) | $S_2(f,g) = C(f,g)$ for complex $f, g$ |
+| [`gff_complex_generating`](../OSforGFF/Measure/IsGaussian.lean#L527) | $Z_{\mathbb{C}}[J] = e^{-\frac{1}{2}S_2(J,J)}$ |
+| [`isGaussianGJ_gaussianFreeField_free`](../OSforGFF/Measure/IsGaussian.lean#L543) | The GFF satisfies `IsGaussianGJ` |
+| [`gff_two_param_analytic`](../OSforGFF/Measure/IsGaussian.lean#L100) | $(z_0,z_1) \mapsto Z[z_0 f + z_1 g]$ analytic on $\mathbb{C}^2$ |
+| [`gff_slice_analytic_z0`](../OSforGFF/Measure/IsGaussian.lean#L127) | $z_0 \mapsto Z[z_0 f + tg]$ is analytic |
+| [`gff_slice_analytic_z1`](../OSforGFF/Measure/IsGaussian.lean#L155) | $z_1 \mapsto Z[z_0 f + z_1 g]$ is analytic |
+| [`gff_cf_agrees_on_reals_OS0`](../OSforGFF/Measure/IsGaussian.lean#L209) | Complex $Z$ agrees with real $Z$ on real parameters |
+
+### Master Theorem (`Measure/GaussianFreeField.lean`)
+
+| Declaration | Description |
+|-------------|-------------|
+| [`gaussian_satisfies_OS0`](../OSforGFF/Measure/GaussianFreeField.lean#L114) | Gaussian measures satisfy OS0 (analyticity) |
+| [`gaussian_satisfies_OS2`](../OSforGFF/Measure/GaussianFreeField.lean#L219) | Gaussian measures satisfy OS2 (Euclidean invariance) |
+| [`CovarianceContinuous`](../OSforGFF/Measure/GaussianFreeField.lean#L82) | Predicate: covariance is jointly continuous |
+| [`CovarianceEuclideanInvariant`](../OSforGFF/Measure/GaussianFreeField.lean#L208) | Predicate: $C(gx, gy) = C(x,y)$ |
+| [`CovarianceEuclideanInvariantℂ`](../OSforGFF/Measure/GaussianFreeField.lean#L214) | Complex version |
+| [`GJcov_bilin`](../OSforGFF/Measure/GaussianFreeField.lean#L97) | Covariance as a `BilinMap` |
 
 ## Detailed Proof Outline
 
 ### Minlos Construction
 
-1. **Embedding:** From `CovarianceR.lean`, we have `sqrtPropagatorEmbedding`: there exists a Hilbert space $H$ and a linear map $T\colon \text{TestFunction} \to H$ such that $C(f,f) = \|Tf\|^2$.
+1. **Embedding:** From `Covariance/RealForm.lean`, we have `sqrtPropagatorEmbedding`: there exists a Hilbert space $H$ and a linear map $T\colon \text{TestFunction} \to H$ such that $C(f,f) = \|Tf\|^2$.
 
 2. **Positive definiteness:** The function $f \mapsto e^{-\frac{1}{2}\|Tf\|^2}$ is positive-definite because:
    - $e^{-\frac{1}{2}\|h\|^2}$ is positive-definite on $H$ (by `gaussian_rbf_pd_innerProduct`, proved via Schur product theorem and Hadamard exponential series).

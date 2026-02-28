@@ -13,22 +13,22 @@ This section develops $L^2$ space infrastructure and properties of bilinear form
 - **Local integrability:** Functions with $|f(x)| \le C\|x\|^{-\alpha}$ and $\alpha < d$ are locally integrable in dimension $d \ge 3$.
 - **Double mollifier convergence:** For a kernel $C$ continuous away from the origin, the double convolution with approximate identities converges to $C(a)$ as the support shrinks to zero.
 
-### Key Declarations (`OSforGFF/FunctionalAnalysis.lean`)
+### Key Declarations (`OSforGFF/General/FunctionalAnalysis.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`schwartzToL2`](../OSforGFF/FunctionalAnalysis.lean#L254) | $\mathcal{S}(\mathbb{R}^d,\mathbb{C}) \hookrightarrow L^2$ as CLM |
-| [`schwartzToL2'`](../OSforGFF/FunctionalAnalysis.lean#L260) | Variant for `EuclideanSpace` |
-| [`linfty_mul_L2_CLM`](../OSforGFF/FunctionalAnalysis.lean#L303) | $L^\infty$ multiplier as CLM on $L^2$ |
-| [`linfty_mul_L2_CLM_norm_bound`](../OSforGFF/FunctionalAnalysis.lean#L347) | $\lVert gf\rVert_2 \le C\lVert f\rVert_2$ |
-| [`locallyIntegrable_of_rpow_decay_real`](../OSforGFF/FunctionalAnalysis.lean#L513) | $\lvert f(x)\rvert \le C\lVert x\rVert^{-\alpha},\ \alpha < d \implies$ locally integrable ($d \ge 3$) |
-| [`integrableOn_ball_of_rpow_decay`](../OSforGFF/FunctionalAnalysis.lean#L408) | Integrability on balls for power-law singularity |
-| [`schwartz_bilinear_integrable_of_translationInvariant_L1`](../OSforGFF/FunctionalAnalysis.lean#L585) | $f(x)\ K_0(x-y)\ g(y)$ integrable when $K_0 \in L^1$ |
-| [`schwartz_integrable_decay`](../OSforGFF/FunctionalAnalysis.lean#L887) | $\lvert f(x)\rvert \le C(1+\lVert x\rVert)^{-N}$ for all $N$ |
-| [`schwartz_vanishing_linear_bound_general`](../OSforGFF/FunctionalAnalysis.lean#L758) | $f\mid_{t\le 0}=0 \implies \lvert f(t,x)\rvert \le Ct$ |
-| [`SchwartzMap.translate`](../OSforGFF/FunctionalAnalysis.lean#L858) | Translation of Schwartz functions |
-| [`double_mollifier_convergence`](../OSforGFF/FunctionalAnalysis.lean#L1045) | Double convolution with bump functions $\to$ kernel value |
-| [`polynomial_decay_integrable_3d`](../OSforGFF/FunctionalAnalysis.lean#L553) | $(1+\lVert x\rVert)^{-4}$ integrable in $\mathbb{R}^3$ |
+| [`schwartzToL2`](../OSforGFF/General/FunctionalAnalysis.lean#L254) | $\mathcal{S}(\mathbb{R}^d,\mathbb{C}) \hookrightarrow L^2$ as CLM |
+| [`schwartzToL2'`](../OSforGFF/General/FunctionalAnalysis.lean#L260) | Variant for `EuclideanSpace` |
+| [`linfty_mul_L2_CLM`](../OSforGFF/General/FunctionalAnalysis.lean#L303) | $L^\infty$ multiplier as CLM on $L^2$ |
+| [`linfty_mul_L2_CLM_norm_bound`](../OSforGFF/General/FunctionalAnalysis.lean#L347) | $\lVert gf\rVert_2 \le C\lVert f\rVert_2$ |
+| [`locallyIntegrable_of_rpow_decay_real`](../OSforGFF/General/FunctionalAnalysis.lean#L513) | $\lvert f(x)\rvert \le C\lVert x\rVert^{-\alpha},\ \alpha < d \implies$ locally integrable ($d \ge 3$) |
+| [`integrableOn_ball_of_rpow_decay`](../OSforGFF/General/FunctionalAnalysis.lean#L408) | Integrability on balls for power-law singularity |
+| [`schwartz_bilinear_integrable_of_translationInvariant_L1`](../OSforGFF/General/FunctionalAnalysis.lean#L585) | $f(x)\ K_0(x-y)\ g(y)$ integrable when $K_0 \in L^1$ |
+| [`schwartz_integrable_decay`](../OSforGFF/General/FunctionalAnalysis.lean#L887) | $\lvert f(x)\rvert \le C(1+\lVert x\rVert)^{-N}$ for all $N$ |
+| [`schwartz_vanishing_linear_bound_general`](../OSforGFF/General/FunctionalAnalysis.lean#L758) | $f\mid_{t\le 0}=0 \implies \lvert f(t,x)\rvert \le Ct$ |
+| [`SchwartzMap.translate`](../OSforGFF/General/FunctionalAnalysis.lean#L858) | Translation of Schwartz functions |
+| [`double_mollifier_convergence`](../OSforGFF/General/FunctionalAnalysis.lean#L1045) | Double convolution with bump functions $\to$ kernel value |
+| [`polynomial_decay_integrable_3d`](../OSforGFF/General/FunctionalAnalysis.lean#L553) | $(1+\lVert x\rVert)^{-4}$ integrable in $\mathbb{R}^3$ |
 
 ### Detailed Proof Outline
 
@@ -64,29 +64,29 @@ where $K_{\mathrm{sing}}$ is compactly supported and $K_{\mathrm{tail}}$ is boun
 
 The final result combines both pieces using the triangle inequality.
 
-### Key Declarations (`OSforGFF/QuantitativeDecay.lean`)
+### Key Declarations (`OSforGFF/General/QuantitativeDecay.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`PolynomialDecayBound`](../OSforGFF/QuantitativeDecay.lean#L58) | Structure: $\lvert f(x)\rvert \le C(1+\lVert x\rVert)^{-N}$ |
-| [`schwartz_has_polynomial_decay`](../OSforGFF/QuantitativeDecay.lean#L70) | Schwartz functions have polynomial decay of any integer order |
-| [`schwartz_has_polynomial_decay_real`](../OSforGFF/QuantitativeDecay.lean#L103) | Same for any real exponent $N > 0$ |
-| [`exp_decay_implies_polynomial_decay`](../OSforGFF/QuantitativeDecay.lean#L122) | $e^{-mx} \le C(1+x)^{-\alpha}$ for any $\alpha$ |
-| [`norm_exp_decay_implies_polynomial_decay`](../OSforGFF/QuantitativeDecay.lean#L164) | Exponential norm decay $\implies$ polynomial decay |
-| [`convolution_polynomial_decay`](../OSforGFF/QuantitativeDecay.lean#L276) | Polynomial decay of convolution when both factors decay |
-| [`convolution_compactSupport_decay`](../OSforGFF/QuantitativeDecay.lean#L440) | Convolution with compactly supported kernel inherits Schwartz decay |
-| [`convolution_expDecay_polynomial_decay`](../OSforGFF/QuantitativeDecay.lean#L617) | Schwartz $*$ exp-decaying kernel has polynomial decay |
+| [`PolynomialDecayBound`](../OSforGFF/General/QuantitativeDecay.lean#L58) | Structure: $\lvert f(x)\rvert \le C(1+\lVert x\rVert)^{-N}$ |
+| [`schwartz_has_polynomial_decay`](../OSforGFF/General/QuantitativeDecay.lean#L70) | Schwartz functions have polynomial decay of any integer order |
+| [`schwartz_has_polynomial_decay_real`](../OSforGFF/General/QuantitativeDecay.lean#L103) | Same for any real exponent $N > 0$ |
+| [`exp_decay_implies_polynomial_decay`](../OSforGFF/General/QuantitativeDecay.lean#L122) | $e^{-mx} \le C(1+x)^{-\alpha}$ for any $\alpha$ |
+| [`norm_exp_decay_implies_polynomial_decay`](../OSforGFF/General/QuantitativeDecay.lean#L164) | Exponential norm decay $\implies$ polynomial decay |
+| [`convolution_polynomial_decay`](../OSforGFF/General/QuantitativeDecay.lean#L276) | Polynomial decay of convolution when both factors decay |
+| [`convolution_compactSupport_decay`](../OSforGFF/General/QuantitativeDecay.lean#L440) | Convolution with compactly supported kernel inherits Schwartz decay |
+| [`convolution_expDecay_polynomial_decay`](../OSforGFF/General/QuantitativeDecay.lean#L617) | Schwartz $*$ exp-decaying kernel has polynomial decay |
 
-### Key Declarations (`OSforGFF/SchwartzTranslationDecay.lean`)
+### Key Declarations (`OSforGFF/General/SchwartzTranslationDecay.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`schwartz_bilinear_translation_decay_proof`](../OSforGFF/SchwartzTranslationDecay.lean#L591) | $\iint f\ K\ g(\cdot - a) \to 0$ at cocompact (power-law $K$) |
-| [`schwartz_bilinear_translation_decay_polynomial_proof`](../OSforGFF/QuantitativeDecay.lean#L758) | Quantitative polynomial bound (exp-decaying $K$) |
-| [`convolution_vanishes_of_integrable_and_C0`](../OSforGFF/SchwartzTranslationDecay.lean#L279) | $L^1 * C_0 \to 0$ at infinity |
-| [`schwartz_bilinear_prod_integrable`](../OSforGFF/SchwartzTranslationDecay.lean#L435) | $f(x)\ K(x-y)\ g(y)$ jointly integrable |
-| [`kernelSingular`](../OSforGFF/SchwartzTranslationDecay.lean#L105) | Truncation of kernel to a ball |
-| [`kernelTail`](../OSforGFF/SchwartzTranslationDecay.lean#L109) | Kernel restricted to complement of ball |
+| [`schwartz_bilinear_translation_decay_proof`](../OSforGFF/General/SchwartzTranslationDecay.lean#L591) | $\iint f\ K\ g(\cdot - a) \to 0$ at cocompact (power-law $K$) |
+| [`schwartz_bilinear_translation_decay_polynomial_proof`](../OSforGFF/General/QuantitativeDecay.lean#L758) | Quantitative polynomial bound (exp-decaying $K$) |
+| [`convolution_vanishes_of_integrable_and_C0`](../OSforGFF/General/SchwartzTranslationDecay.lean#L279) | $L^1 * C_0 \to 0$ at infinity |
+| [`schwartz_bilinear_prod_integrable`](../OSforGFF/General/SchwartzTranslationDecay.lean#L435) | $f(x)\ K(x-y)\ g(y)$ jointly integrable |
+| [`kernelSingular`](../OSforGFF/General/SchwartzTranslationDecay.lean#L105) | Truncation of kernel to a ball |
+| [`kernelTail`](../OSforGFF/General/SchwartzTranslationDecay.lean#L109) | Kernel restricted to complement of ball |
 
 ---
 
@@ -117,30 +117,30 @@ Key identities proved:
 3. Factor out $e^{-2\sqrt{ab}}$.
 4. Glasser's master theorem (a change-of-variables identity) evaluates the remaining Gaussian-like integral as $\sqrt{\pi}/(2\sqrt{b})$.
 
-### Key Declarations (`OSforGFF/FourierTransforms.lean`)
+### Key Declarations (`OSforGFF/General/FourierTransforms.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`fourier_exponential_decay`](../OSforGFF/FourierTransforms.lean#L521) | $\widehat{e^{-\mu\lvert x\rvert}} = 2\mu/(k^2+\mu^2)$ |
-| [`fourier_exponential_decay'`](../OSforGFF/FourierTransforms.lean#L483) | Same with opposite sign convention |
-| [`fourier_exp_decay_positive_halfline`](../OSforGFF/FourierTransforms.lean#L328) | $\int_0^\infty e^{ikx}\ e^{-\mu x}\ dx$ |
-| [`fourier_exp_decay_negative_halfline`](../OSforGFF/FourierTransforms.lean#L386) | $\int_{-\infty}^0 e^{ikx}\ e^{\mu x}\ dx$ |
-| [`fourier_inversion_exp_decay`](../OSforGFF/FourierTransforms.lean#L641) | $(2\pi)^{-1}\int e^{ikx}\ 2\mu/(k^2+\mu^2)\ dk$ |
-| [`fourier_lorentzian_1d`](../OSforGFF/FourierTransforms.lean#L723) | $\int e^{ikx}/(k^2+\mu^2)\ dk = (\pi/\mu)\ e^{-\mu\lvert x\rvert}$ |
-| [`integrable_exponential_decay`](../OSforGFF/FourierTransforms.lean#L138) | $e^{-\mu\lvert x\rvert} \in L^1(\mathbb{R})$ |
-| [`integrable_exponential_decay_fourier`](../OSforGFF/FourierTransforms.lean#L161) | $e^{ikx}\ e^{-\mu\lvert x\rvert} \in L^1(\mathbb{R})$ |
-| [`tendsto_cexp_atTop_zero`](../OSforGFF/FourierTransforms.lean#L224) | $e^{cx} \to 0$ as $x \to +\infty$ when $\mathrm{Re}(c) < 0$ |
-| [`tendsto_cexp_atBot_zero`](../OSforGFF/FourierTransforms.lean#L239) | $e^{cx} \to 0$ as $x \to -\infty$ when $\mathrm{Re}(c) > 0$ |
+| [`fourier_exponential_decay`](../OSforGFF/General/FourierTransforms.lean#L521) | $\widehat{e^{-\mu\lvert x\rvert}} = 2\mu/(k^2+\mu^2)$ |
+| [`fourier_exponential_decay'`](../OSforGFF/General/FourierTransforms.lean#L483) | Same with opposite sign convention |
+| [`fourier_exp_decay_positive_halfline`](../OSforGFF/General/FourierTransforms.lean#L328) | $\int_0^\infty e^{ikx}\ e^{-\mu x}\ dx$ |
+| [`fourier_exp_decay_negative_halfline`](../OSforGFF/General/FourierTransforms.lean#L386) | $\int_{-\infty}^0 e^{ikx}\ e^{\mu x}\ dx$ |
+| [`fourier_inversion_exp_decay`](../OSforGFF/General/FourierTransforms.lean#L641) | $(2\pi)^{-1}\int e^{ikx}\ 2\mu/(k^2+\mu^2)\ dk$ |
+| [`fourier_lorentzian_1d`](../OSforGFF/General/FourierTransforms.lean#L723) | $\int e^{ikx}/(k^2+\mu^2)\ dk = (\pi/\mu)\ e^{-\mu\lvert x\rvert}$ |
+| [`integrable_exponential_decay`](../OSforGFF/General/FourierTransforms.lean#L138) | $e^{-\mu\lvert x\rvert} \in L^1(\mathbb{R})$ |
+| [`integrable_exponential_decay_fourier`](../OSforGFF/General/FourierTransforms.lean#L161) | $e^{ikx}\ e^{-\mu\lvert x\rvert} \in L^1(\mathbb{R})$ |
+| [`tendsto_cexp_atTop_zero`](../OSforGFF/General/FourierTransforms.lean#L224) | $e^{cx} \to 0$ as $x \to +\infty$ when $\mathrm{Re}(c) < 0$ |
+| [`tendsto_cexp_atBot_zero`](../OSforGFF/General/FourierTransforms.lean#L239) | $e^{cx} \to 0$ as $x \to -\infty$ when $\mathrm{Re}(c) > 0$ |
 
-### Key Declarations (`OSforGFF/LaplaceIntegral.lean`)
+### Key Declarations (`OSforGFF/General/LaplaceIntegral.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`laplace_integral_half_power`](../OSforGFF/LaplaceIntegral.lean#L542) | $\int_0^\infty s^{-1/2}\ e^{-a/s-bs}\ ds = \sqrt{\pi/b}\ e^{-2\sqrt{ab}}$ |
-| [`laplace_integral_half_power_nonneg`](../OSforGFF/LaplaceIntegral.lean#L558) | Extension to $a \ge 0$ |
-| [`glasser_gaussian_integral`](../OSforGFF/LaplaceIntegral.lean#L447) | $\int_0^\infty e^{-(c/u - u)^2}\ du = \sqrt{\pi}/2$ |
-| [`weighted_glasser_integral_eq_gaussian`](../OSforGFF/LaplaceIntegral.lean#L414) | $\int_0^\infty (1+c/u^2)\ e^{-(c/u-u)^2}\ du = \sqrt{\pi}$ |
-| [`glasser_integral_substitution_identity`](../OSforGFF/LaplaceIntegral.lean#L100) | Substitution symmetry for Glasser integrals |
+| [`laplace_integral_half_power`](../OSforGFF/General/LaplaceIntegral.lean#L542) | $\int_0^\infty s^{-1/2}\ e^{-a/s-bs}\ ds = \sqrt{\pi/b}\ e^{-2\sqrt{ab}}$ |
+| [`laplace_integral_half_power_nonneg`](../OSforGFF/General/LaplaceIntegral.lean#L558) | Extension to $a \ge 0$ |
+| [`glasser_gaussian_integral`](../OSforGFF/General/LaplaceIntegral.lean#L447) | $\int_0^\infty e^{-(c/u - u)^2}\ du = \sqrt{\pi}/2$ |
+| [`weighted_glasser_integral_eq_gaussian`](../OSforGFF/General/LaplaceIntegral.lean#L414) | $\int_0^\infty (1+c/u^2)\ e^{-(c/u-u)^2}\ du = \sqrt{\pi}$ |
+| [`glasser_integral_substitution_identity`](../OSforGFF/General/LaplaceIntegral.lean#L100) | Substitution symmetry for Glasser integrals |
 
 ---
 
@@ -155,19 +155,19 @@ This section provides measure-theoretic estimates for time averages of stochasti
 - **Product $L^2$ membership:** Joint measurability + uniform slice $L^2$ bounds $\implies$ $L^2$ membership on the product.
 - **Double integral polynomial decay:** $\displaystyle\int_0^T\int_0^T (1+|s-u|)^{-\alpha}\ ds\ du \le CT$ for $\alpha > 1$.
 
-### Key Declarations (`OSforGFF/L2TimeIntegral.lean`)
+### Key Declarations (`OSforGFF/General/L2TimeIntegral.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`sq_setIntegral_le_measure_mul_setIntegral_sq_proved`](../OSforGFF/L2TimeIntegral.lean#L86) | $\lVert\int_{[a,b]} f\rVert^2 \le (b-a)\int_{[a,b]}\lVert f\rVert^2$ |
-| [`L2_time_average_bound`](../OSforGFF/L2TimeIntegral.lean#L204) | $L^2$ norm of time average $\le$ sup of slicewise $L^2$ |
-| [`time_average_memLp_two`](../OSforGFF/OS4_Ergodicity.lean#L267) | Time average of $L^2$ process $\in L^2$ |
-| [`memLp_prod_of_uniform_slicewise_bound`](../OSforGFF/L2TimeIntegral.lean#L298) | Product $L^2$ from uniform slicewise bounds |
-| [`double_integral_polynomial_decay_bound_proved`](../OSforGFF/L2TimeIntegral.lean#L495) | $\int_0^T\int_0^T(1+\lvert s-u\rvert)^{-\alpha}\ ds\ du \le CT$ |
-| [`L2_variance_time_average_bound`](../OSforGFF/L2TimeIntegral.lean#L725) | $\mathrm{Var}(\text{time avg}) \le \iint \mathrm{Cov}$ |
-| [`L2_process_covariance_fubini_integrable`](../OSforGFF/L2TimeIntegral.lean#L875) | Fubini integrability for $L^2$ process covariance |
-| [`minkowski_weighted_L2_sum_proved`](../OSforGFF/L2TimeIntegral.lean#L666) | Minkowski inequality for weighted $L^2$ sums |
-| [`gff_covariance_norm_integrableOn_slice_proved`](../OSforGFF/L2TimeIntegral.lean#L459) | Covariance norm integrable on time slices |
+| [`sq_setIntegral_le_measure_mul_setIntegral_sq_proved`](../OSforGFF/General/L2TimeIntegral.lean#L86) | $\lVert\int_{[a,b]} f\rVert^2 \le (b-a)\int_{[a,b]}\lVert f\rVert^2$ |
+| [`L2_time_average_bound`](../OSforGFF/General/L2TimeIntegral.lean#L204) | $L^2$ norm of time average $\le$ sup of slicewise $L^2$ |
+| [`time_average_memLp_two`](../OSforGFF/OS/OS4_Ergodicity.lean#L267) | Time average of $L^2$ process $\in L^2$ |
+| [`memLp_prod_of_uniform_slicewise_bound`](../OSforGFF/General/L2TimeIntegral.lean#L298) | Product $L^2$ from uniform slicewise bounds |
+| [`double_integral_polynomial_decay_bound_proved`](../OSforGFF/General/L2TimeIntegral.lean#L495) | $\int_0^T\int_0^T(1+\lvert s-u\rvert)^{-\alpha}\ ds\ du \le CT$ |
+| [`L2_variance_time_average_bound`](../OSforGFF/General/L2TimeIntegral.lean#L725) | $\mathrm{Var}(\text{time avg}) \le \iint \mathrm{Cov}$ |
+| [`L2_process_covariance_fubini_integrable`](../OSforGFF/General/L2TimeIntegral.lean#L875) | Fubini integrability for $L^2$ process covariance |
+| [`minkowski_weighted_L2_sum_proved`](../OSforGFF/General/L2TimeIntegral.lean#L666) | Minkowski inequality for weighted $L^2$ sums |
+| [`gff_covariance_norm_integrableOn_slice_proved`](../OSforGFF/General/L2TimeIntegral.lean#L459) | Covariance norm integrable on time slices |
 
 ---
 
@@ -182,29 +182,29 @@ This section develops the theory of positive-definite functions and matrices nee
 - **Gaussian RBF positive definiteness:** $h \mapsto e^{-\|h\|^2/2}$ is positive definite on any inner product space.
 - **Abstract positive definiteness:** The type class `IsPositiveDefinite` for translation-invariant positive-definite functions on groups.
 
-### Key Declarations (`OSforGFF/SchurProduct.lean`)
+### Key Declarations (`OSforGFF/General/SchurProduct.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`schur_product_posDef`](../OSforGFF/SchurProduct.lean#L491) | $A \circ B \succeq 0$ when $A, B \succeq 0$ (Schur product) |
-| [`kronLike_posDef`](../OSforGFF/SchurProduct.lean#L383) | Kronecker-like product of PosDef matrices is PosDef |
+| [`schur_product_posDef`](../OSforGFF/General/SchurProduct.lean#L491) | $A \circ B \succeq 0$ when $A, B \succeq 0$ (Schur product) |
+| [`kronLike_posDef`](../OSforGFF/General/SchurProduct.lean#L383) | Kronecker-like product of PosDef matrices is PosDef |
 
-### Key Declarations (`OSforGFF/HadamardExp.lean`)
-
-| Declaration | Description |
-|-------------|-------------|
-| [`entrywiseExp`](../OSforGFF/HadamardExp.lean#L38) | Entrywise exponential $(\exp_\circ R)_{ij} = e^{R_{ij}}$ |
-| [`posDef_entrywiseExp_hadamardSeries_of_posDef`](../OSforGFF/HadamardExp.lean#L310) | $R \succ 0 \implies \exp_\circ(R) \succ 0$ |
-| [`posSemidef_entrywiseExp_hadamardSeries_of_posSemidef`](../OSforGFF/HadamardExp.lean#L425) | $R \succeq 0 \implies \exp_\circ(R) \succeq 0$ |
-| [`hadamardPow_posDef_of_posDef`](../OSforGFF/HadamardExp.lean#L141) | $R \succ 0 \implies R^{\circ k} \succ 0$ |
-
-### Key Declarations (`OSforGFF/PositiveDefinite.lean`, `OSforGFF/GaussianRBF.lean`)
+### Key Declarations (`OSforGFF/General/HadamardExp.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`IsPositiveDefinite`](../OSforGFF/PositiveDefinite.lean#L36) | Positive-definite function on an additive group |
-| [`IsPositiveDefiniteKernel`](../OSforGFF/GaussianRBF.lean#L24) | Positive-definite kernel $K(x,y)$ |
-| [`gaussian_rbf_pd_innerProduct_proof`](../OSforGFF/GaussianRBF.lean#L223) | $h \mapsto e^{-\lVert h\rVert^2/2}$ is positive definite |
+| [`entrywiseExp`](../OSforGFF/General/HadamardExp.lean#L38) | Entrywise exponential $(\exp_\circ R)_{ij} = e^{R_{ij}}$ |
+| [`posDef_entrywiseExp_hadamardSeries_of_posDef`](../OSforGFF/General/HadamardExp.lean#L310) | $R \succ 0 \implies \exp_\circ(R) \succ 0$ |
+| [`posSemidef_entrywiseExp_hadamardSeries_of_posSemidef`](../OSforGFF/General/HadamardExp.lean#L425) | $R \succeq 0 \implies \exp_\circ(R) \succeq 0$ |
+| [`hadamardPow_posDef_of_posDef`](../OSforGFF/General/HadamardExp.lean#L141) | $R \succ 0 \implies R^{\circ k} \succ 0$ |
+
+### Key Declarations (`OSforGFF/General/PositiveDefinite.lean`, `OSforGFF/General/GaussianRBF.lean`)
+
+| Declaration | Description |
+|-------------|-------------|
+| [`IsPositiveDefinite`](../OSforGFF/General/PositiveDefinite.lean#L36) | Positive-definite function on an additive group |
+| [`IsPositiveDefiniteKernel`](../OSforGFF/General/GaussianRBF.lean#L24) | Positive-definite kernel $K(x,y)$ |
+| [`gaussian_rbf_pd_innerProduct_proof`](../OSforGFF/General/GaussianRBF.lean#L223) | $h \mapsto e^{-\lVert h\rVert^2/2}$ is positive definite |
 
 ---
 
@@ -214,12 +214,12 @@ This section develops the theory of positive-definite functions and matrices nee
 
 A small number of standard mathematical results are assumed as axioms (via `axiom`) because their proofs would require substantial Mathlib extensions.
 
-### Key Declarations (`OSforGFF/NuclearSpace.lean`)
+### Key Declarations (`OSforGFF/Measure/NuclearSpace.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`NuclearSpace`](../OSforGFF/NuclearSpace.lean#L126) | Nuclear space via Hilbert-Schmidt embedding characterization |
-| [`schwartz_nuclear`](../OSforGFF/NuclearSpace.lean#L145) | $\mathcal{S}$ is nuclear (assumed) |
+| [`NuclearSpace`](../OSforGFF/Measure/NuclearSpace.lean#L126) | Nuclear space via Hilbert-Schmidt embedding characterization |
+| [`schwartz_nuclear`](../OSforGFF/Measure/NuclearSpace.lean#L145) | $\mathcal{S}$ is nuclear (assumed) |
 
 ## References
 

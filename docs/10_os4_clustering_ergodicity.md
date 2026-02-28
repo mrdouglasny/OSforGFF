@@ -63,56 +63,56 @@ $$\mathrm{Var}\left(\frac{1}{T}\int_0^T A(T_s\phi)\ ds\right) \leq \frac{1}{T^2}
 
 ## Key Declarations
 
-### MGF infrastructure (`OS4_MGF.lean`)
+### MGF infrastructure (`OS/OS4_MGF.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`timeTranslationE`](../OSforGFF/OS4_MGF.lean#L146) | $T_s \in E(4)$: $T_s(x) = x + se_0$ |
-| [`freeCovarianceℂ_bilinear_timeTranslation_invariant`](../OSforGFF/OS4_MGF.lean#L165) | $C(T_sf, T_sg) = C(f,g)$ |
-| [`gff_mgf_formula`](../OSforGFF/OS4_MGF.lean#L176) | $\mathbb{E}[e^{\langle\phi, J\rangle}] = e^{\frac{1}{2}C(J,J)}$ |
-| [`gff_generating_time_invariant`](../OSforGFF/OS4_MGF.lean#L207) | $Z[T_sf] = Z[f]$ |
-| [`gff_joint_mgf_factorization`](../OSforGFF/OS4_MGF.lean#L220) | $\mathbb{E}[e^{\langle\phi,f+g\rangle}] = Z[f]\ Z[g]\ e^{C(f,g)}$ |
-| [`exp_sub_one_bound_general`](../OSforGFF/OS4_MGF.lean#L252) | $|e^x - 1| \leq |x| e^{|x|}$ |
+| [`timeTranslationE`](../OSforGFF/OS/OS4_MGF.lean#L146) | $T_s \in E(4)$: $T_s(x) = x + se_0$ |
+| [`freeCovarianceℂ_bilinear_timeTranslation_invariant`](../OSforGFF/OS/OS4_MGF.lean#L165) | $C(T_sf, T_sg) = C(f,g)$ |
+| [`gff_mgf_formula`](../OSforGFF/OS/OS4_MGF.lean#L176) | $\mathbb{E}[e^{\langle\phi, J\rangle}] = e^{\frac{1}{2}C(J,J)}$ |
+| [`gff_generating_time_invariant`](../OSforGFF/OS/OS4_MGF.lean#L207) | $Z[T_sf] = Z[f]$ |
+| [`gff_joint_mgf_factorization`](../OSforGFF/OS/OS4_MGF.lean#L220) | $\mathbb{E}[e^{\langle\phi,f+g\rangle}] = Z[f]\ Z[g]\ e^{C(f,g)}$ |
+| [`exp_sub_one_bound_general`](../OSforGFF/OS/OS4_MGF.lean#L252) | $|e^x - 1| \leq |x| e^{|x|}$ |
 
-### Clustering (`OS4_Clustering.lean`)
-
-| Declaration | Description |
-|-------------|-------------|
-| [`schwinger2_sum_expansion`](../OSforGFF/OS4_Clustering.lean#L71) | $S_2(f+g, f+g) = S_2(f,f) + 2S_2(f,g) + S_2(g,g)$ |
-| [`gff_generating_sum_factorization`](../OSforGFF/OS4_Clustering.lean#L104) | $Z[f+g] = Z[f] \cdot Z[g] \cdot e^{-S_2(f,g)}$ |
-| [`gff_generating_norm_le_one_real`](../OSforGFF/OS4_Clustering.lean#L161) | $|Z[f]| \leq 1$ for real $f$ |
-| [`GFF_OS4_from_small_decay_real`](../OSforGFF/OS4_Clustering.lean#L197) | $|S_2(f, T_ag)| < \delta \implies |Z[f+T_ag] - Z[f]Z[g]| < 2\delta$ |
-| [`schwartz_cross_covariance_decay_real`](../OSforGFF/OS4_Clustering.lean#L336) | $S_2(f, T_ag) \to 0$ as $\lVert a\rVert \to \infty$ |
-| [`gaussianFreeField_satisfies_OS4`](../OSforGFF/OS4_Clustering.lean#L475) | **Main clustering theorem**: GFF satisfies `OS4_Clustering` |
-| [`freeCovarianceClustering_real`](../OSforGFF/OS4_Clustering.lean#L524) | Covariance clustering for the GFF |
-| [`gaussianFreeField_satisfies_OS4_PolynomialClustering`](../OSforGFF/OS4_Clustering.lean#L636) | $\lvert Z[f+T_ag]-Z[f]Z[g]\rvert \le c(1+\lVert a\rVert)^{-\alpha}$ for any $\alpha > 0$ |
-
-### Ergodicity (`OS4_Ergodicity.lean`)
+### Clustering (`OS/OS4_Clustering.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`OS4'_Ergodicity_generating`](../OSforGFF/OS4_Ergodicity.lean#L82) | Ergodicity for single generating functions $e^{\langle\phi,f\rangle}$ |
-| [`OS4''_Clustering`](../OSforGFF/OS4_Ergodicity.lean#L95) | Polynomial clustering with $\alpha = 6$ |
-| [`gff_exp_time_translated_memLp_two`](../OSforGFF/OS4_Ergodicity.lean#L125) | $e^{\langle T_s\phi, f\rangle} \in L^2(\mu)$ |
-| [`gff_exp_L2_norm_constant`](../OSforGFF/OS4_Ergodicity.lean#L219) | $\lVert e^{\langle T_s\phi, f\rangle}\rVert_{L^2}$ is constant in $s$ |
-| [`time_average_memLp_two`](../OSforGFF/OS4_Ergodicity.lean#L267) | $\frac{1}{T}\int_0^T e^{\langle T_s\phi, f\rangle}\ ds \in L^2(\mu)$ |
-| [`gff_product_expectation_stationarity`](../OSforGFF/OS4_Ergodicity.lean#L374) | $\mathbb{E}[A(T_s\phi)\overline{A(T_u\phi)}]$ depends only on $s-u$ |
-| [`gff_covariance_continuous`](../OSforGFF/OS4_Ergodicity.lean#L497) | $s \mapsto \mathrm{Cov}(A(T_s\phi), A(\phi))$ is continuous |
-| [`L2_time_average_variance_bound`](../OSforGFF/OS4_Ergodicity.lean#L577) | $\mathrm{Var}(\frac{1}{T}\int_0^T A_s) \le \frac{1}{T^2}\int_0^T\int_0^T \lvert\mathrm{Cov}(s,u)\rvert\ ds\ du$ |
-| [`double_integral_decay_bound`](../OSforGFF/OS4_Ergodicity.lean#L361) | $\int_0^T\int_0^T(1+\lvert s-u\rvert)^{-3}\ ds\ du \leq 2TC$ |
-| [`clustering_implies_covariance_decay`](../OSforGFF/OS4_Ergodicity.lean#L722) | $\lvert\mathrm{Cov}(s,u)\rvert \leq c(1+\lvert s-u\rvert)^{-\alpha}$ |
-| [`variance_decay_from_clustering`](../OSforGFF/OS4_Ergodicity.lean#L886) | $\mathrm{Var}(\text{time avg}) = O(1/T) \to 0$ |
-| [`OS4'_implies_OS4`](../OSforGFF/OS4_Ergodicity.lean#L1070) | Single-function ergodicity $\implies$ linear-combination ergodicity |
-| [`OS4''_implies_OS4'`](../OSforGFF/OS4_Ergodicity.lean#L1318) | Polynomial clustering $\implies$ single-function ergodicity |
-| [`OS4''_implies_OS4_Ergodicity`](../OSforGFF/OS4_Ergodicity.lean#L1330) | Polynomial clustering $\implies$ full ergodicity |
-| [`OS4_PolynomialClustering_implies_OS4_Ergodicity`](../OSforGFF/OS4_Ergodicity.lean#L1339) | **Main ergodicity theorem**: polynomial clustering ($\alpha=6$) $\implies$ `OS4_Ergodicity` |
+| [`schwinger2_sum_expansion`](../OSforGFF/OS/OS4_Clustering.lean#L71) | $S_2(f+g, f+g) = S_2(f,f) + 2S_2(f,g) + S_2(g,g)$ |
+| [`gff_generating_sum_factorization`](../OSforGFF/OS/OS4_Clustering.lean#L104) | $Z[f+g] = Z[f] \cdot Z[g] \cdot e^{-S_2(f,g)}$ |
+| [`gff_generating_norm_le_one_real`](../OSforGFF/OS/OS4_Clustering.lean#L161) | $|Z[f]| \leq 1$ for real $f$ |
+| [`GFF_OS4_from_small_decay_real`](../OSforGFF/OS/OS4_Clustering.lean#L197) | $|S_2(f, T_ag)| < \delta \implies |Z[f+T_ag] - Z[f]Z[g]| < 2\delta$ |
+| [`schwartz_cross_covariance_decay_real`](../OSforGFF/OS/OS4_Clustering.lean#L336) | $S_2(f, T_ag) \to 0$ as $\lVert a\rVert \to \infty$ |
+| [`gaussianFreeField_satisfies_OS4`](../OSforGFF/OS/OS4_Clustering.lean#L475) | **Main clustering theorem**: GFF satisfies `OS4_Clustering` |
+| [`freeCovarianceClustering_real`](../OSforGFF/OS/OS4_Clustering.lean#L524) | Covariance clustering for the GFF |
+| [`gaussianFreeField_satisfies_OS4_PolynomialClustering`](../OSforGFF/OS/OS4_Clustering.lean#L636) | $\lvert Z[f+T_ag]-Z[f]Z[g]\rvert \le c(1+\lVert a\rVert)^{-\alpha}$ for any $\alpha > 0$ |
+
+### Ergodicity (`OS/OS4_Ergodicity.lean`)
+
+| Declaration | Description |
+|-------------|-------------|
+| [`OS4'_Ergodicity_generating`](../OSforGFF/OS/OS4_Ergodicity.lean#L82) | Ergodicity for single generating functions $e^{\langle\phi,f\rangle}$ |
+| [`OS4''_Clustering`](../OSforGFF/OS/OS4_Ergodicity.lean#L95) | Polynomial clustering with $\alpha = 6$ |
+| [`gff_exp_time_translated_memLp_two`](../OSforGFF/OS/OS4_Ergodicity.lean#L125) | $e^{\langle T_s\phi, f\rangle} \in L^2(\mu)$ |
+| [`gff_exp_L2_norm_constant`](../OSforGFF/OS/OS4_Ergodicity.lean#L219) | $\lVert e^{\langle T_s\phi, f\rangle}\rVert_{L^2}$ is constant in $s$ |
+| [`time_average_memLp_two`](../OSforGFF/OS/OS4_Ergodicity.lean#L267) | $\frac{1}{T}\int_0^T e^{\langle T_s\phi, f\rangle}\ ds \in L^2(\mu)$ |
+| [`gff_product_expectation_stationarity`](../OSforGFF/OS/OS4_Ergodicity.lean#L374) | $\mathbb{E}[A(T_s\phi)\overline{A(T_u\phi)}]$ depends only on $s-u$ |
+| [`gff_covariance_continuous`](../OSforGFF/OS/OS4_Ergodicity.lean#L497) | $s \mapsto \mathrm{Cov}(A(T_s\phi), A(\phi))$ is continuous |
+| [`L2_time_average_variance_bound`](../OSforGFF/OS/OS4_Ergodicity.lean#L577) | $\mathrm{Var}(\frac{1}{T}\int_0^T A_s) \le \frac{1}{T^2}\int_0^T\int_0^T \lvert\mathrm{Cov}(s,u)\rvert\ ds\ du$ |
+| [`double_integral_decay_bound`](../OSforGFF/OS/OS4_Ergodicity.lean#L361) | $\int_0^T\int_0^T(1+\lvert s-u\rvert)^{-3}\ ds\ du \leq 2TC$ |
+| [`clustering_implies_covariance_decay`](../OSforGFF/OS/OS4_Ergodicity.lean#L722) | $\lvert\mathrm{Cov}(s,u)\rvert \leq c(1+\lvert s-u\rvert)^{-\alpha}$ |
+| [`variance_decay_from_clustering`](../OSforGFF/OS/OS4_Ergodicity.lean#L886) | $\mathrm{Var}(\text{time avg}) = O(1/T) \to 0$ |
+| [`OS4'_implies_OS4`](../OSforGFF/OS/OS4_Ergodicity.lean#L1070) | Single-function ergodicity $\implies$ linear-combination ergodicity |
+| [`OS4''_implies_OS4'`](../OSforGFF/OS/OS4_Ergodicity.lean#L1318) | Polynomial clustering $\implies$ single-function ergodicity |
+| [`OS4''_implies_OS4_Ergodicity`](../OSforGFF/OS/OS4_Ergodicity.lean#L1330) | Polynomial clustering $\implies$ full ergodicity |
+| [`OS4_PolynomialClustering_implies_OS4_Ergodicity`](../OSforGFF/OS/OS4_Ergodicity.lean#L1339) | **Main ergodicity theorem**: polynomial clustering ($\alpha=6$) $\implies$ `OS4_Ergodicity` |
 
 ## Detailed Proof Outline
 
 ### Clustering proof chain
 
 ```
-schwartz_bilinear_translation_decay         (TextbookAxioms / SchwartzTranslationDecay)
+schwartz_bilinear_translation_decay         (General/SchwartzTranslationDecay)
   -- Bilinear integral of Schwartz functions against decaying kernel vanishes
   -- at large separations.
         |

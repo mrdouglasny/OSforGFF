@@ -46,54 +46,54 @@ The proof has two main parts that work together:
 
 ## Key Declarations
 
-### Covariance RP infrastructure (`OS3_MixedRepInfra.lean`, `OS3_MixedRep.lean`)
+### Covariance RP infrastructure (`OS/OS3_MixedRepInfra.lean`, `OS/OS3_MixedRep.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`heatKernel_eq_gaussianFT`](../OSforGFF/OS3_MixedRepInfra.lean#L191) | $H_t(z) = \mathcal{F}[e^{-t\lVert k\rVert^2}](z)$ |
-| [`schwinger_bilinear_integrable`](../OSforGFF/OS3_MixedRep.lean#L883) | $\int_0^\infty e^{-sm^2} \lvert\langle f, H_s g\rangle\rvert\ ds < \infty$ |
-| [`schwinger_fubini_core`](../OSforGFF/OS3_MixedRep.lean#L1102) | Fubini swap: $(x,y)$-integral vs $s$-integral |
-| [`schwinger_fubini_swap`](../OSforGFF/OS3_MixedRep.lean#L1182) | Pull $s$-integral inside the bilinear form |
-| [`bilinear_schwinger_eq_heatKernel`](../OSforGFF/OS3_MixedRep.lean#L1321) | $\langle\Theta f, Cf\rangle = \int_0^\infty e^{-sm^2}\langle\Theta f, H_s f\rangle\ ds$ |
-| [`heatKernel_bilinear_fourier_form`](../OSforGFF/OS3_MixedRep.lean#L259) | $\langle f, H_s g\rangle = \int e^{-s\lVert k\rVert^2}\hat{f}(-k)\hat{g}(k)\ dk$ |
-| [`laplace_s_integral_with_norm`](../OSforGFF/OS3_MixedRep.lean#L723) | $\int_0^\infty \sqrt{\pi/s}\ e^{-t^2/(4s)-s\omega^2}\ ds = (\pi/\omega)e^{-\omega\lvert t\rvert}$ |
-| [`bessel_bilinear_eq_mixed_representation`](../OSforGFF/OS3_MixedRep.lean#L1711) | Mixed (energy-momentum) representation of $\langle\Theta f, Cf\rangle$ |
-| [`bilinear_to_k0_inside`](../OSforGFF/OS3_MixedRep.lean#L1773) | Rewrite with $k_0$ integral internalized |
-| [`fubini_s_ksp_swap`](../OSforGFF/OS3_MixedRepInfra.lean#L2848) | Fubini swap: proper-time $s$ vs spatial momentum $\vec{k}$ |
-| [`fubini_s_xy_swap`](../OSforGFF/OS3_MixedRepInfra.lean#L3064) | Fubini swap: proper-time $s$ vs spacetime $(x,y)$ |
-| [`fubini_ksp_xy_swap`](../OSforGFF/OS3_MixedRepInfra.lean#L3547) | Fubini swap: spatial momentum $\vec{k}$ vs spacetime $(x,y)$ |
+| [`heatKernel_eq_gaussianFT`](../OSforGFF/OS/OS3_MixedRepInfra.lean#L191) | $H_t(z) = \mathcal{F}[e^{-t\lVert k\rVert^2}](z)$ |
+| [`schwinger_bilinear_integrable`](../OSforGFF/OS/OS3_MixedRep.lean#L883) | $\int_0^\infty e^{-sm^2} \lvert\langle f, H_s g\rangle\rvert\ ds < \infty$ |
+| [`schwinger_fubini_core`](../OSforGFF/OS/OS3_MixedRep.lean#L1102) | Fubini swap: $(x,y)$-integral vs $s$-integral |
+| [`schwinger_fubini_swap`](../OSforGFF/OS/OS3_MixedRep.lean#L1182) | Pull $s$-integral inside the bilinear form |
+| [`bilinear_schwinger_eq_heatKernel`](../OSforGFF/OS/OS3_MixedRep.lean#L1321) | $\langle\Theta f, Cf\rangle = \int_0^\infty e^{-sm^2}\langle\Theta f, H_s f\rangle\ ds$ |
+| [`heatKernel_bilinear_fourier_form`](../OSforGFF/OS/OS3_MixedRep.lean#L259) | $\langle f, H_s g\rangle = \int e^{-s\lVert k\rVert^2}\hat{f}(-k)\hat{g}(k)\ dk$ |
+| [`laplace_s_integral_with_norm`](../OSforGFF/OS/OS3_MixedRep.lean#L723) | $\int_0^\infty \sqrt{\pi/s}\ e^{-t^2/(4s)-s\omega^2}\ ds = (\pi/\omega)e^{-\omega\lvert t\rvert}$ |
+| [`bessel_bilinear_eq_mixed_representation`](../OSforGFF/OS/OS3_MixedRep.lean#L1711) | Mixed (energy-momentum) representation of $\langle\Theta f, Cf\rangle$ |
+| [`bilinear_to_k0_inside`](../OSforGFF/OS/OS3_MixedRep.lean#L1773) | Rewrite with $k_0$ integral internalized |
+| [`fubini_s_ksp_swap`](../OSforGFF/OS/OS3_MixedRepInfra.lean#L2848) | Fubini swap: proper-time $s$ vs spatial momentum $\vec{k}$ |
+| [`fubini_s_xy_swap`](../OSforGFF/OS/OS3_MixedRepInfra.lean#L3064) | Fubini swap: proper-time $s$ vs spacetime $(x,y)$ |
+| [`fubini_ksp_xy_swap`](../OSforGFF/OS/OS3_MixedRepInfra.lean#L3547) | Fubini swap: spatial momentum $\vec{k}$ vs spacetime $(x,y)$ |
 
-### Covariance RP direct proof (`OS3_CovarianceRP.lean`)
-
-| Declaration | Description |
-|-------------|-------------|
-| [`QFT.RPProof.rpInnerProduct`](../OSforGFF/OS3_CovarianceRP.lean#L115) | RP inner product: $\langle \Theta f, f\rangle_C$ via Bessel kernel |
-| [`QFT.RPProof.weightedLaplaceFourier`](../OSforGFF/OS3_MixedRepInfra.lean#L122) | $F_\omega(\vec{k}) = \int f(x)\ e^{-\omega x_0}e^{-i\vec{k}\cdot\vec{x}}\ dx$ |
-| [`QFT.RPProof.mixed_representation`](../OSforGFF/OS3_CovarianceRP.lean#L148) | Mixed representation of the RP inner product |
-| [`QFT.RPProof.factorization_to_squared_norm_direct`](../OSforGFF/OS3_CovarianceRP.lean#L256) | Positive-time factorization into $\lvert F_\omega\rvert^2$ |
-| [`QFT.RPProof.rp_equals_squared_norm_integral`](../OSforGFF/OS3_CovarianceRP.lean#L350) | $\langle\Theta f, f\rangle_C = \frac{1}{2(2\pi)^3}\int \frac{\lvert F_\omega(\vec{k})\rvert^2}{\omega}\ d\vec{k}$ |
-| [`QFT.RPProof.freeCovariance_reflection_positive_direct`](../OSforGFF/OS3_CovarianceRP.lean#L375) | $\mathrm{Re}\langle \Theta f, f\rangle_C \geq 0$ |
-
-### Bridge and real formulation (`OS3_CovarianceRP.lean`)
+### Covariance RP direct proof (`OS/OS3_CovarianceRP.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`QFT.rpInnerProduct`](../OSforGFF/OS3_CovarianceRP.lean#L78) | RP inner product in QFT namespace |
-| [`QFT.rpInnerProduct_eq_rpProof`](../OSforGFF/OS3_CovarianceRP.lean#L409) | Bridge: QFT and RPProof definitions agree (by `rfl`) |
-| [`QFT.freeCovariance_reflection_positive_bilinear`](../OSforGFF/OS3_CovarianceRP.lean#L427) | $\mathrm{Re}\langle\Theta f, Cf\rangle \geq 0$ for complex $f \in \mathcal{S}_+$ |
-| [`QFT.freeCovariance_reflection_positive_bilinear_real`](../OSforGFF/OS3_CovarianceRP.lean#L457) | $\langle\Theta f, Cf\rangle \geq 0$ for real $f \in \mathcal{S}_+$ |
-| [`QFT.freeCovariance_reflection_positive_real`](../OSforGFF/OS3_CovarianceRP.lean#L478) | Alias for the real version |
+| [`QFT.RPProof.rpInnerProduct`](../OSforGFF/OS/OS3_CovarianceRP.lean#L115) | RP inner product: $\langle \Theta f, f\rangle_C$ via Bessel kernel |
+| [`QFT.RPProof.weightedLaplaceFourier`](../OSforGFF/OS/OS3_MixedRepInfra.lean#L122) | $F_\omega(\vec{k}) = \int f(x)\ e^{-\omega x_0}e^{-i\vec{k}\cdot\vec{x}}\ dx$ |
+| [`QFT.RPProof.mixed_representation`](../OSforGFF/OS/OS3_CovarianceRP.lean#L148) | Mixed representation of the RP inner product |
+| [`QFT.RPProof.factorization_to_squared_norm_direct`](../OSforGFF/OS/OS3_CovarianceRP.lean#L256) | Positive-time factorization into $\lvert F_\omega\rvert^2$ |
+| [`QFT.RPProof.rp_equals_squared_norm_integral`](../OSforGFF/OS/OS3_CovarianceRP.lean#L350) | $\langle\Theta f, f\rangle_C = \frac{1}{2(2\pi)^3}\int \frac{\lvert F_\omega(\vec{k})\rvert^2}{\omega}\ d\vec{k}$ |
+| [`QFT.RPProof.freeCovariance_reflection_positive_direct`](../OSforGFF/OS/OS3_CovarianceRP.lean#L375) | $\mathrm{Re}\langle \Theta f, f\rangle_C \geq 0$ |
 
-### GFF OS3 assembly (`OS3_GFF.lean`)
+### Bridge and real formulation (`OS/OS3_CovarianceRP.lean`)
 
 | Declaration | Description |
 |-------------|-------------|
-| [`freeCovarianceFormR_reflection_matrix_posSemidef`](../OSforGFF/OS3_GFF.lean#L68) | $R_{ij} = \langle\Theta f_i, Cf_j\rangle$ is PSD |
-| [`freeCovarianceFormR_reflection_expansion`](../OSforGFF/OS3_GFF.lean#L215) | $C(f-\Theta g, f-\Theta g) = C(f,f) + C(g,g) - 2\langle\Theta f, Cg\rangle$ |
-| [`gaussianFreeField_real_generating_re`](../OSforGFF/OS3_GFF.lean#L329) | $\mathrm{Re}(Z[h]) = \exp(-C(h,h)/2)$ for real $h$ |
-| [`gaussianFreeField_real_entry_factor`](../OSforGFF/OS3_GFF.lean#L349) | $\mathrm{Re}(Z[f_i - \Theta f_j]) = Z[f_i] \cdot Z[f_j] \cdot e^{R_{ij}}$ |
-| [`gaussianFreeField_OS3_matrix_real`](../OSforGFF/OS3_GFF.lean#L440) | $\sum_{ij} c_i c_j \mathrm{Re}(Z[f_i - \Theta f_j]) \geq 0$ |
-| [`gaussianFreeField_OS3_real`](../OSforGFF/OS3_GFF.lean#L509) | **Master OS3 theorem**: GFF satisfies `OS3_ReflectionPositivity` |
+| [`QFT.rpInnerProduct`](../OSforGFF/OS/OS3_CovarianceRP.lean#L78) | RP inner product in QFT namespace |
+| [`QFT.rpInnerProduct_eq_rpProof`](../OSforGFF/OS/OS3_CovarianceRP.lean#L409) | Bridge: QFT and RPProof definitions agree (by `rfl`) |
+| [`QFT.freeCovariance_reflection_positive_bilinear`](../OSforGFF/OS/OS3_CovarianceRP.lean#L427) | $\mathrm{Re}\langle\Theta f, Cf\rangle \geq 0$ for complex $f \in \mathcal{S}_+$ |
+| [`QFT.freeCovariance_reflection_positive_bilinear_real`](../OSforGFF/OS/OS3_CovarianceRP.lean#L457) | $\langle\Theta f, Cf\rangle \geq 0$ for real $f \in \mathcal{S}_+$ |
+| [`QFT.freeCovariance_reflection_positive_real`](../OSforGFF/OS/OS3_CovarianceRP.lean#L478) | Alias for the real version |
+
+### GFF OS3 assembly (`OS/OS3_ReflectionPositivity.lean`)
+
+| Declaration | Description |
+|-------------|-------------|
+| [`freeCovarianceFormR_reflection_matrix_posSemidef`](../OSforGFF/OS/OS3_ReflectionPositivity.lean#L68) | $R_{ij} = \langle\Theta f_i, Cf_j\rangle$ is PSD |
+| [`freeCovarianceFormR_reflection_expansion`](../OSforGFF/OS/OS3_ReflectionPositivity.lean#L215) | $C(f-\Theta g, f-\Theta g) = C(f,f) + C(g,g) - 2\langle\Theta f, Cg\rangle$ |
+| [`gaussianFreeField_real_generating_re`](../OSforGFF/OS/OS3_ReflectionPositivity.lean#L329) | $\mathrm{Re}(Z[h]) = \exp(-C(h,h)/2)$ for real $h$ |
+| [`gaussianFreeField_real_entry_factor`](../OSforGFF/OS/OS3_ReflectionPositivity.lean#L349) | $\mathrm{Re}(Z[f_i - \Theta f_j]) = Z[f_i] \cdot Z[f_j] \cdot e^{R_{ij}}$ |
+| [`gaussianFreeField_OS3_matrix_real`](../OSforGFF/OS/OS3_ReflectionPositivity.lean#L440) | $\sum_{ij} c_i c_j \mathrm{Re}(Z[f_i - \Theta f_j]) \geq 0$ |
+| [`gaussianFreeField_OS3_real`](../OSforGFF/OS/OS3_ReflectionPositivity.lean#L509) | **Master OS3 theorem**: GFF satisfies `OS3_ReflectionPositivity` |
 
 ## Detailed Proof Outline
 
@@ -167,7 +167,7 @@ By the **Schur product theorem**, if $R$ is PSD then the entrywise exponential $
 
 $$e^{R_{ij}} = \sum_{k=0}^\infty \frac{(R_{ij})^k}{k!}$$
 
-Each term is an entrywise $k$-th power of a PSD matrix, which is PSD by repeated Hadamard products. The convergent sum of PSD matrices is PSD. This is proved via `entrywiseExp_posSemidef_of_posSemidef` (using infrastructure from `HadamardExp.lean`).
+Each term is an entrywise $k$-th power of a PSD matrix, which is PSD by repeated Hadamard products. The convergent sum of PSD matrices is PSD. This is proved via `entrywiseExp_posSemidef_of_posSemidef` (using infrastructure from `General/HadamardExp.lean`).
 
 #### Step 8 -- Entry factorization and assembly
 
@@ -209,7 +209,7 @@ Level 3: Single-function RP
 
 Level 4: Matrix infrastructure
   freeCovarianceFormR_reflection_matrix_posSemidef
-  entrywiseExp_posSemidef_of_posSemidef (HadamardExp.lean)
+  entrywiseExp_posSemidef_of_posSemidef (General/HadamardExp.lean)
 
 Level 5: Gaussian factorization
   freeCovarianceFormR_reflection_expansion
