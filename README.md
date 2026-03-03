@@ -26,9 +26,9 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
 
 | Axiom | File | Mathematical content |
 |-------|------|---------------------|
-| [`schwartz_nuclear`](OSforGFF/Measure/NuclearSpace.lean) | [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) | Schwartz space is nuclear (Treves, Ch. 51) |
-| [`minlos_theorem`](OSforGFF/Measure/Minlos.lean) | [Minlos](OSforGFF/Measure/Minlos.lean) | Minlos theorem: nuclear char. functional → unique measure (Gel'fand-Vilenkin IV) |
-| [`differentiable_analyticAt_finDim`](OSforGFF/OS/OS0_Analyticity.lean) | [OS0_Analyticity](OSforGFF/OS/OS0_Analyticity.lean) | Hartogs' theorem in n dimensions: ℂ-differentiable implies analytic |
+| [`schwartz_nuclear`](OSforGFF/Measure/NuclearSpace.lean) | [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) | [Schwartz space is nuclear (Treves, Ch. 51)](summary/OSforGFF/Measure/NuclearSpace.md) |
+| [`minlos_theorem`](OSforGFF/Measure/Minlos.lean) | [Minlos](OSforGFF/Measure/Minlos.lean) | [Minlos theorem: nuclear char. functional → unique measure (Gel'fand-Vilenkin IV)](summary/OSforGFF/Measure/Minlos.md) |
+| [`differentiable_analyticAt_finDim`](OSforGFF/OS/OS0_Analyticity.lean) | [OS0_Analyticity](OSforGFF/OS/OS0_Analyticity.lean) | [Hartogs' theorem in n dimensions: ℂ-differentiable implies analytic](summary/OSforGFF/OS/OS0_Analyticity.md) |
 
 ## Project Structure
 
@@ -44,18 +44,18 @@ Pure extensions of Mathlib with no project-specific definitions.
 
 | File | Contents |
 |------|----------|
-| [FunctionalAnalysis](OSforGFF/General/FunctionalAnalysis.lean) | L² Fourier transform infrastructure, Plancherel identity |
-| [FrobeniusPositivity](OSforGFF/General/FrobeniusPositivity.lean) | Frobenius inner product, positive semidefinite matrix theory |
-| [SchurProduct](OSforGFF/General/SchurProduct.lean) | Schur product theorem (Hadamard product preserves PSD) |
-| [HadamardExp](OSforGFF/General/HadamardExp.lean) | Entrywise exponential of PSD matrices is PSD |
-| [PositiveDefinite](OSforGFF/General/PositiveDefinite.lean) | Positive definite functions and kernels |
-| [GaussianRBF](OSforGFF/General/GaussianRBF.lean) | Gaussian RBF kernel exp(-‖x-y‖²) is positive definite |
-| [FourierTransforms](OSforGFF/General/FourierTransforms.lean) | 1D Fourier identities: Lorentzian ↔ exponential decay |
-| [LaplaceIntegral](OSforGFF/General/LaplaceIntegral.lean) | Laplace integral identity (Bessel K_{1/2}): ∫ s^{-1/2} e^{-a/s-bs} ds |
-| [BesselFunction](OSforGFF/General/BesselFunction.lean) | Modified Bessel function K₁ via integral representation |
-| [QuantitativeDecay](OSforGFF/General/QuantitativeDecay.lean) | Schwartz bilinear forms with exponentially decaying kernels have polynomial decay |
-| [SchwartzTranslationDecay](OSforGFF/General/SchwartzTranslationDecay.lean) | Schwartz seminorm bounds under translation |
-| [L2TimeIntegral](OSforGFF/General/L2TimeIntegral.lean) | L² bounds for time integrals: Cauchy-Schwarz, Fubini, Minkowski |
+| [FunctionalAnalysis](OSforGFF/General/FunctionalAnalysis.lean) | [L² Fourier transform infrastructure, Plancherel identity](summary/OSforGFF/General/FunctionalAnalysis.md) |
+| [FrobeniusPositivity](OSforGFF/General/FrobeniusPositivity.lean) | [Frobenius inner product, positive semidefinite matrix theory](summary/OSforGFF/General/FrobeniusPositivity.md) |
+| [SchurProduct](OSforGFF/General/SchurProduct.lean) | [Schur product theorem (Hadamard product preserves PSD)](summary/OSforGFF/General/SchurProduct.md) |
+| [HadamardExp](OSforGFF/General/HadamardExp.lean) | [Entrywise exponential of PSD matrices is PSD](summary/OSforGFF/General/HadamardExp.md) |
+| [PositiveDefinite](OSforGFF/General/PositiveDefinite.lean) | [Positive definite functions and kernels](summary/OSforGFF/General/PositiveDefinite.md) |
+| [GaussianRBF](OSforGFF/General/GaussianRBF.lean) | [Gaussian RBF kernel exp(-‖x-y‖²) is positive definite](summary/OSforGFF/General/GaussianRBF.md) |
+| [FourierTransforms](OSforGFF/General/FourierTransforms.lean) | [1D Fourier identities: Lorentzian ↔ exponential decay](summary/OSforGFF/General/FourierTransforms.md) |
+| [LaplaceIntegral](OSforGFF/General/LaplaceIntegral.lean) | [Laplace integral identity (Bessel K_{1/2}): ∫ s^{-1/2} e^{-a/s-bs} ds](summary/OSforGFF/General/LaplaceIntegral.md) |
+| [BesselFunction](OSforGFF/General/BesselFunction.lean) | [Modified Bessel function K₁ via integral representation](summary/OSforGFF/General/BesselFunction.md) |
+| [QuantitativeDecay](OSforGFF/General/QuantitativeDecay.lean) | [Schwartz bilinear forms with exponentially decaying kernels have polynomial decay](summary/OSforGFF/General/QuantitativeDecay.md) |
+| [SchwartzTranslationDecay](OSforGFF/General/SchwartzTranslationDecay.lean) | [Schwartz seminorm bounds under translation](summary/OSforGFF/General/SchwartzTranslationDecay.md) |
+| [L2TimeIntegral](OSforGFF/General/L2TimeIntegral.lean) | [L² bounds for time integrals: Cauchy-Schwarz, Fubini, Minkowski](summary/OSforGFF/General/L2TimeIntegral.md) |
 
 ---
 
@@ -65,15 +65,15 @@ Test functions, symmetries, and integration infrastructure.
 
 | File | Contents |
 |------|----------|
-| [Basic](OSforGFF/Spacetime/Basic.lean) | SpaceTime (ℝ⁴), TestFunction, FieldConfiguration, distribution pairing |
-| [Euclidean](OSforGFF/Spacetime/Euclidean.lean) | Euclidean group E(4) = ℝ⁴ ⋊ O(4) and its action on test functions |
-| [DiscreteSymmetry](OSforGFF/Spacetime/DiscreteSymmetry.lean) | Time reflection Θ: (t,x̄) ↦ (−t,x̄) |
-| [Decomposition](OSforGFF/Spacetime/Decomposition.lean) | Measure-preserving SpaceTime ≃ ℝ × ℝ³ decomposition |
-| [ComplexTestFunction](OSforGFF/Spacetime/ComplexTestFunction.lean) | Complex-valued Schwartz test functions and conjugation |
-| [PositiveTimeTestFunction](OSforGFF/Spacetime/PositiveTimeTestFunction.lean) | Subtype of test functions supported at positive time |
-| [TimeTranslation](OSforGFF/Spacetime/TimeTranslation.lean) | Time translation operators T_s on Schwartz space |
-| [ProdIntegrable](OSforGFF/Spacetime/ProdIntegrable.lean) | Integrability of Schwartz function products |
-| [Tonelli](OSforGFF/Spacetime/Tonelli.lean) | Tonelli/Fubini for Schwartz integrands on spacetime |
+| [Basic](OSforGFF/Spacetime/Basic.lean) | [SpaceTime (ℝ⁴), TestFunction, FieldConfiguration, distribution pairing](summary/OSforGFF/Spacetime/Basic.md) |
+| [Euclidean](OSforGFF/Spacetime/Euclidean.lean) | [Euclidean group E(4) = ℝ⁴ ⋊ O(4) and its action on test functions](summary/OSforGFF/Spacetime/Euclidean.md) |
+| [DiscreteSymmetry](OSforGFF/Spacetime/DiscreteSymmetry.lean) | [Time reflection Θ: (t,x̄) ↦ (−t,x̄)](summary/OSforGFF/Spacetime/DiscreteSymmetry.md) |
+| [Decomposition](OSforGFF/Spacetime/Decomposition.lean) | [Measure-preserving SpaceTime ≃ ℝ × ℝ³ decomposition](summary/OSforGFF/Spacetime/Decomposition.md) |
+| [ComplexTestFunction](OSforGFF/Spacetime/ComplexTestFunction.lean) | [Complex-valued Schwartz test functions and conjugation](summary/OSforGFF/Spacetime/ComplexTestFunction.md) |
+| [PositiveTimeTestFunction](OSforGFF/Spacetime/PositiveTimeTestFunction.lean) | [Subtype of test functions supported at positive time](summary/OSforGFF/Spacetime/PositiveTimeTestFunction.md) |
+| [TimeTranslation](OSforGFF/Spacetime/TimeTranslation.lean) | [Time translation operators T_s on Schwartz space](summary/OSforGFF/Spacetime/TimeTranslation.md) |
+| [ProdIntegrable](OSforGFF/Spacetime/ProdIntegrable.lean) | [Integrability of Schwartz function products](summary/OSforGFF/Spacetime/ProdIntegrable.md) |
+| [Tonelli](OSforGFF/Spacetime/Tonelli.lean) | [Tonelli/Fubini for Schwartz integrands on spacetime](summary/OSforGFF/Spacetime/Tonelli.md) |
 
 ---
 
@@ -83,9 +83,9 @@ Generating functionals and correlation functions.
 
 | File | Contents |
 |------|----------|
-| [Defs](OSforGFF/Schwinger/Defs.lean) | Generating functional Z[J] = ∫ e^{i⟨φ,J⟩} dμ, Schwinger n-point functions |
-| [TwoPoint](OSforGFF/Schwinger/TwoPoint.lean) | Two-point function S₂(x) as mollifier limit |
-| [GaussianMoments](OSforGFF/Schwinger/GaussianMoments.lean) | Gaussian moments: all n-point functions are integrable |
+| [Defs](OSforGFF/Schwinger/Defs.lean) | [Generating functional Z[J] = ∫ e^{i⟨φ,J⟩} dμ, Schwinger n-point functions](summary/OSforGFF/Schwinger/Defs.md) |
+| [TwoPoint](OSforGFF/Schwinger/TwoPoint.lean) | [Two-point function S₂(x) as mollifier limit](summary/OSforGFF/Schwinger/TwoPoint.md) |
+| [GaussianMoments](OSforGFF/Schwinger/GaussianMoments.lean) | [Gaussian moments: all n-point functions are integrable](summary/OSforGFF/Schwinger/GaussianMoments.md) |
 
 ---
 
@@ -95,10 +95,10 @@ The free scalar field propagator C(x,y) = (m/4π²|x−y|) K₁(m|x−y|) and it
 
 | File | Contents |
 |------|----------|
-| [Momentum](OSforGFF/Covariance/Momentum.lean) | Momentum-space propagator 1/(k²+m²), decay bounds |
+| [Momentum](OSforGFF/Covariance/Momentum.lean) | [Momentum-space propagator 1/(k²+m²), decay bounds](summary/OSforGFF/Covariance/Momentum.md) |
 | [Parseval](OSforGFF/Covariance/Parseval.lean) | Parseval identity: ⟨f,Cf⟩ = ∫\|f̂(k)\|² P(k) dk |
-| [Position](OSforGFF/Covariance/Position.lean) | Position-space covariance, Euclidean invariance, Schwinger representation |
-| [RealForm](OSforGFF/Covariance/RealForm.lean) | Real covariance bilinear form, square root propagator embedding |
+| [Position](OSforGFF/Covariance/Position.lean) | [Position-space covariance, Euclidean invariance, Schwinger representation](summary/OSforGFF/Covariance/Position.md) |
+| [RealForm](OSforGFF/Covariance/RealForm.lean) | [Real covariance bilinear form, square root propagator embedding](summary/OSforGFF/Covariance/RealForm.md) |
 
 ---
 
@@ -108,12 +108,12 @@ Construction of the GFF probability measure via the Minlos theorem.
 
 | File | Contents |
 |------|----------|
-| [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) | Nuclear space definition (Hilbert-Schmidt embedding characterization) |
-| [Minlos](OSforGFF/Measure/Minlos.lean) | Minlos theorem (axiom), Gaussian measure construction |
-| [MinlosAnalytic](OSforGFF/Measure/MinlosAnalytic.lean) | Symmetry and moments for Gaussian measures (sign-flip invariance, zero mean) |
-| [Construct](OSforGFF/Measure/Construct.lean) | GFF measure construction: covariance → characteristic functional → μ |
-| [IsGaussian](OSforGFF/Measure/IsGaussian.lean) | Verification that S₂(f,g) = C(f,g) via OS0 derivative interchange |
-| [GaussianFreeField](OSforGFF/Measure/GaussianFreeField.lean) | Main GFF assembly: μ_GFF m as a ProbabilityMeasure |
+| [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) | [Nuclear space definition (Hilbert-Schmidt embedding characterization)](summary/OSforGFF/Measure/NuclearSpace.md) |
+| [Minlos](OSforGFF/Measure/Minlos.lean) | [Minlos theorem (axiom), Gaussian measure construction](summary/OSforGFF/Measure/Minlos.md) |
+| [MinlosAnalytic](OSforGFF/Measure/MinlosAnalytic.lean) | [Symmetry and moments for Gaussian measures (sign-flip invariance, zero mean)](summary/OSforGFF/Measure/MinlosAnalytic.md) |
+| [Construct](OSforGFF/Measure/Construct.lean) | [GFF measure construction: covariance → characteristic functional → μ](summary/OSforGFF/Measure/Construct.md) |
+| [IsGaussian](OSforGFF/Measure/IsGaussian.lean) | [Verification that S₂(f,g) = C(f,g) via OS0 derivative interchange](summary/OSforGFF/Measure/IsGaussian.md) |
+| [GaussianFreeField](OSforGFF/Measure/GaussianFreeField.lean) | [Main GFF assembly: μ_GFF m as a ProbabilityMeasure](summary/OSforGFF/Measure/GaussianFreeField.md) |
 
 **Note:** `IsGaussian` imports `OS0_Analyticity` because it uses the proved analyticity of
 Z[z₀f + z₁g] to identify S₂(f,g) = C(f,g) via the identity theorem. The dependency
@@ -127,18 +127,18 @@ Axiom definitions, individual proofs, and master theorem.
 
 | File | Contents |
 |------|----------|
-| [Axioms](OSforGFF/OS/Axioms.lean) | Formal Lean definitions of OS0 through OS4 |
-| [OS0_Analyticity](OSforGFF/OS/OS0_Analyticity.lean) | Hartogs + Fernique: derivative–integral interchange |
+| [Axioms](OSforGFF/OS/Axioms.lean) | [Formal Lean definitions of OS0 through OS4](summary/OSforGFF/OS/Axioms.md) |
+| [OS0_Analyticity](OSforGFF/OS/OS0_Analyticity.lean) | [Hartogs + Fernique: derivative–integral interchange](summary/OSforGFF/OS/OS0_Analyticity.md) |
 | [OS1_Regularity](OSforGFF/OS/OS1_Regularity.lean) | Plancherel + momentum-space bound: \|Z[f]\| ≤ exp(‖f‖²/2m²) |
 | [OS2_Invariance](OSforGFF/OS/OS2_Invariance.lean) | C(x,y) depends only on \|x−y\|, Lebesgue measure invariance |
-| [OS3_MixedRepInfra](OSforGFF/OS/OS3_MixedRepInfra.lean) | Schwinger parametrization and Fubini theorems for absolute integrability |
-| [OS3_MixedRep](OSforGFF/OS/OS3_MixedRep.lean) | Mixed representation via Schwinger → heat kernel → Laplace transform |
+| [OS3_MixedRepInfra](OSforGFF/OS/OS3_MixedRepInfra.lean) | [Schwinger parametrization and Fubini theorems for absolute integrability](summary/OSforGFF/OS/OS3_MixedRepInfra.md) |
+| [OS3_MixedRep](OSforGFF/OS/OS3_MixedRep.lean) | [Mixed representation via Schwinger → heat kernel → Laplace transform](summary/OSforGFF/OS/OS3_MixedRep.md) |
 | [OS3_CovarianceRP](OSforGFF/OS/OS3_CovarianceRP.lean) | Covariance reflection positivity: ⟨Θf, Cf⟩ = ∫ (1/ω)\|F_ω\|² ≥ 0 |
-| [OS3_ReflectionPositivity](OSforGFF/OS/OS3_ReflectionPositivity.lean) | Schur–Hadamard lifts covariance RP to generating functional |
-| [OS4_MGF](OSforGFF/OS/OS4_MGF.lean) | Shared infrastructure: MGF formula, time translation duality |
-| [OS4_Clustering](OSforGFF/OS/OS4_Clustering.lean) | Gaussian factorization + convolution decay lemma (domain split at ‖y‖=‖x‖/2) |
-| [OS4_Ergodicity](OSforGFF/OS/OS4_Ergodicity.lean) | Polynomial clustering (α=6) → L² convergence |
-| [Master](OSforGFF/OS/Master.lean) | Assembles OS0–OS4 into `gaussianFreeField_satisfies_all_OS_axioms` |
+| [OS3_ReflectionPositivity](OSforGFF/OS/OS3_ReflectionPositivity.lean) | [Schur–Hadamard lifts covariance RP to generating functional](summary/OSforGFF/OS/OS3_ReflectionPositivity.md) |
+| [OS4_MGF](OSforGFF/OS/OS4_MGF.lean) | [Shared infrastructure: MGF formula, time translation duality](summary/OSforGFF/OS/OS4_MGF.md) |
+| [OS4_Clustering](OSforGFF/OS/OS4_Clustering.lean) | [Gaussian factorization + convolution decay lemma (domain split at ‖y‖=‖x‖/2)](summary/OSforGFF/OS/OS4_Clustering.md) |
+| [OS4_Ergodicity](OSforGFF/OS/OS4_Ergodicity.lean) | [Polynomial clustering (α=6) → L² convergence](summary/OSforGFF/OS/OS4_Ergodicity.md) |
+| [Master](OSforGFF/OS/Master.lean) | [Assembles OS0–OS4 into `gaussianFreeField_satisfies_all_OS_axioms`](summary/OSforGFF/OS/Master.md) |
 
 ---
 
