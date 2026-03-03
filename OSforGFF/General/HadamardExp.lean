@@ -3,6 +3,16 @@ Copyright (c) 2025 Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim. All r
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+import OSforGFF.General.SchurProduct
+import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Analysis.Normed.Algebra.Exponential
+import Mathlib.Analysis.Complex.TaylorSeries
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Topology.Basic
+import Mathlib.Order.Filter.Defs
+import Mathlib.Order.Filter.Basic
+import Mathlib.Topology.Constructions
+
 /-!
 # Entrywise Exponential of PSD Matrices
 
@@ -13,16 +23,6 @@ coefficients `1/n!` yields a PD matrix. The PSD case follows by a continuity arg
 `R + ε I` is PD for every `ε > 0`, and the limit `ε → 0` uses continuity of the entrywise
 exponential.
 -/
-
-import OSforGFF.General.SchurProduct
-import Mathlib.Analysis.SpecialFunctions.Exp
-import Mathlib.Analysis.Normed.Algebra.Exponential
-import Mathlib.Analysis.Complex.TaylorSeries
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.Topology.Basic
-import Mathlib.Order.Filter.Defs
-import Mathlib.Order.Filter.Basic
-import Mathlib.Topology.Constructions
 
 set_option linter.unusedSectionVars false
 

@@ -3,15 +3,6 @@ Copyright (c) 2025 Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim. All r
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-/-!
-# Frobenius Positivity
-
-If `G` is positive semidefinite and nonzero, and `B` is positive definite, then the Frobenius
-inner product `⟪G, B⟫ = ∑ j l, G j l * B j l` is strictly positive. The proof diagonalizes
-`B = U D Uᵀ` via the spectral theorem, conjugates `G` to `H = Uᵀ G U` (which remains PSD and
-nonzero), and reduces to `⟪G, B⟫ = tr(H D) = ∑ i, λᵢ Hᵢᵢ > 0`.
--/
-
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.PosDef
 import Mathlib.Analysis.Matrix.Spectrum
@@ -23,6 +14,15 @@ import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Data.Matrix.Mul
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.Matrix.Order
+
+/-!
+# Frobenius Positivity
+
+If `G` is positive semidefinite and nonzero, and `B` is positive definite, then the Frobenius
+inner product `⟪G, B⟫ = ∑ j l, G j l * B j l` is strictly positive. The proof diagonalizes
+`B = U D Uᵀ` via the spectral theorem, conjugates `G` to `H = Uᵀ G U` (which remains PSD and
+nonzero), and reduces to `⟪G, B⟫ = tr(H D) = ∑ i, λᵢ Hᵢᵢ > 0`.
+-/
 
 open Matrix
 
