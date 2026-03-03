@@ -131,3 +131,68 @@ The main overlap is the Fubini/integrability infrastructure (`OS3_MixedRepInfra.
 the nonnegativity argument: Proof 1 uses the algebraic fact $\lvert z \rvert^2 \geq 0$
 after a Fourier change of variables; Proof 2 uses the deeper analytic fact that a
 specific Hankel operator is positive semidefinite.
+
+---
+
+## Euclidean invariance: from diagonal RP to bilinear-form RP?
+
+### What `OS3_DiagonalRP.lean` establishes
+
+`OS3_DiagonalRP.lean` exploits Euclidean invariance in two ways:
+
+**1. Pointwise nonnegativity** (`freeCovariance_reflection_nonneg`):
+$C(\Theta x, y) \geq 0$ for all positive-time $x, y$.
+Proof: since the covariance depends only on Euclidean distance,
+$C(\Theta x, y) = G(\lVert \Theta x - y \rVert)$, we can find a point $x' = (t, 0, 0, 0)$
+on the time axis with $\lVert \Theta x' - x' \rVert = \lVert \Theta x - y \rVert$, hence
+$C(\Theta x, y) = C(\Theta x', x') \geq 0$ by the diagonal theorem.
+
+**2. Axis normalization** (`exists_euclidean_to_axis_form`):
+For any $x, y \in \mathbb{R}^4$ there exists a Euclidean motion $g$ and $t \geq 0$ such
+that $g(x) = (t, 0, 0, 0)$ and $g(y) = (-t, 0, 0, 0)$.  Proved via:
+(i) find $R \in O(4)$ rotating $x - y$ onto the time axis (`exists_rotation_map_to_timeAxis`);
+(ii) compose with a spatial translation to center the pair.
+
+The proof of `freeCovariance_reflection_nonneg` actually uses a simpler argument —
+it does not invoke `exists_euclidean_to_axis_form` but instead directly constructs
+$x' = \text{onTimeAxis}(t)$ for $t = \lVert \Theta x - y \rVert / 2$ and uses the
+fact that $G$ depends only on the scalar distance.  The full axis normalization theorem
+is available for future use.
+
+### The question for bilinear-form RP
+
+The pointwise approach reduces a two-point question to a one-number question by using
+Euclidean invariance.  Can the same idea be used to prove positive *definiteness* of the
+kernel $K(x, y) = C(\Theta x, y)$?
+
+The kernel $K(x,y) = G(\lVert \Theta x - y \rVert)$ has the following invariance: it
+depends only on the "pseudo-distance" $d(x,y) = \lVert \Theta x - y \rVert$, which is
+Euclidean-invariant under simultaneous spatial rotations and translations of both $x$ and
+$y$.  Two classical theorems relate radial positive definiteness to scalar properties of
+$G$:
+
+**Bochner's theorem** (translation-invariant kernels): a kernel $K(x,y) = G(x - y)$ on
+$\mathbb{R}^n$ is positive definite if and only if its Fourier transform $\hat{G} \geq 0$.
+This applies to $H_s^{3D}(\lVert \bar{x} - \bar{y} \rVert)$ (the spatial factor): its
+Fourier transform is $e^{-s\lvert \bar{k} \rvert^2} \geq 0$, so $H_s^{3D}$ is positive
+definite on $\mathbb{R}^3$ by Bochner.  This would be a cleaner replacement for the
+explicit Parseval computation in Sorry 2.
+
+**Schoenberg's theorem** (radial positive definiteness): a radial function $G(r)$ gives a
+positive definite kernel $G(\lVert x - y \rVert)$ on $\mathbb{R}^n$ (for all $n$) if and
+only if $G$ is *completely monotone*, i.e. $(-1)^k G^{(k)} \geq 0$ for all $k \geq 0$.
+The Schwinger representation $G(r) = \int_0^\infty e^{-sm^2} H_s(r)\, ds$ is precisely
+the Bernstein/Laplace-transform witness for complete monotonicity of $r \mapsto G(\sqrt{r})$.
+So Schoenberg's theorem would reduce bilinear-form RP for the full covariance to the fact
+that the Bessel kernel $G$ is completely monotone — a very clean one-line argument in
+principle.
+
+**Open question**: Can `exists_euclidean_to_axis_form` (or Schoenberg/Bochner applied to
+the full 4D radial structure) give a self-contained proof of bilinear-form RP that avoids
+both the explicit Fourier computation of Proof 1 and the 1D Hankel axiom of Proof 2?
+
+The likely answer is yes for the 3D spatial factor (Bochner is more or less
+formalizable once translation-invariant convolution kernels are in Mathlib), but the 1D
+time factor — the key point of RP — still requires either the Laplace symbol argument
+(`heatKernel1D_RP`) or the direct Fourier trick (`|F̂|² ≥ 0`) of Proof 1.  Schoenberg
+in full generality would formalize this cleanly but is itself a substantial Mathlib gap.
