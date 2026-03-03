@@ -73,7 +73,7 @@ noncomputable def SpatialToMomentum_draft (f : SpatialL2) : SpaceTime → ℂ
 ### [`parseval_covariance_schwartz_regulated'`](../../OSforGFF/Covariance/Position.lean#L116) — Theorem
 
 **Statement**: For $\alpha, m > 0$ and a Schwartz function $f$, the Parseval identity holds for the regulated bilinear form:
-$$\operatorname{Re}\!\iint f(x)\,C_\alpha(x,y)\,\overline{f(y)}\,dx\,dy = \int e^{-\alpha(2\pi)^2\lVert k\rVert^2}\,\lvert\hat f(k)\rvert^2\,P^{\mathrm{ml}}_m(k)\,dk.$$
+$$\mathrm{Re}\!\iint f(x)\,C_\alpha(x,y)\,\overline{f(y)}\,dx\,dy = \int e^{-\alpha(2\pi)^2\lVert k\rVert^2}\,\lvert\hat f(k)\rvert^2\,P^{\mathrm{ml}}_m(k)\,dk.$$
 
 **Proof uses**: [`parseval_covariance_schwartz_regulated`](../../OSforGFF/Covariance/Parseval.lean#L569)
 
@@ -125,7 +125,7 @@ $$\iint (\Theta f)(x)\,C(x,y)\,g(y)\,dx\,dy = \iint f(x)\,C(\Theta x,\Theta y)\,
 
 ### [`re_integral_ofReal`](../../OSforGFF/Covariance/Position.lean#L223) — Lemma
 
-**Statement**: For an integrable real-valued function $h$, the real part of the complex integral equals the real integral: $\operatorname{Re}\!\int (h(x):ℂ)\,d\mu = \int h(x)\,d\mu$.
+**Statement**: For an integrable real-valued function $h$, the real part of the complex integral equals the real integral: $\mathrm{Re}\!\int (h(x):ℂ)\,d\mu = \int h(x)\,d\mu$.
 
 **Proof uses**: `integral_ofReal_eq`
 
@@ -294,7 +294,7 @@ def freeCovarianceℂ_regulated (α : ℝ) (m : ℝ) (f g : TestFunctionℂ) : �
 ### [`freeCovarianceℂ_regulated_positive`](../../OSforGFF/Covariance/Position.lean#L584) — Theorem
 
 **Statement**: For $\alpha, m > 0$ and any Schwartz function $f$,
-$$\operatorname{Re}\!\iint f(x)\,C_\alpha(x,y)\,\overline{f(y)}\,dx\,dy \ge 0.$$
+$$\mathrm{Re}\!\iint f(x)\,C_\alpha(x,y)\,\overline{f(y)}\,dx\,dy \ge 0.$$
 
 **Proof uses**: [`parseval_covariance_schwartz_regulated'`](../../OSforGFF/Covariance/Position.lean#L116), [`freePropagatorMomentum_mathlib_nonneg`](../../OSforGFF/Covariance/Momentum.lean#L147)
 
@@ -313,7 +313,7 @@ def freeCovarianceℂ (m : ℝ) (f g : TestFunctionℂ) : ℂ
 ### [`freeCovarianceℂ_positive`](../../OSforGFF/Covariance/Position.lean#L601) — Theorem
 
 **Statement**: For $m>0$ and any Schwartz function $f$, the Bessel covariance bilinear form is positive definite:
-$$\operatorname{Re}\!\iint f(x)\,C(x,y)\,\overline{f(y)}\,dx\,dy \ge 0.$$
+$$\mathrm{Re}\!\iint f(x)\,C(x,y)\,\overline{f(y)}\,dx\,dy \ge 0.$$
 
 **Proof uses**: [`bilinear_covariance_regulated_tendsto_self`](../../OSforGFF/Covariance/Parseval.lean#L901), [`freeCovarianceℂ_regulated_positive`](../../OSforGFF/Covariance/Position.lean#L584)
 
@@ -322,7 +322,7 @@ $$\operatorname{Re}\!\iint f(x)\,C(x,y)\,\overline{f(y)}\,dx\,dy \ge 0.$$
 ### [`parseval_covariance_schwartz_bessel`](../../OSforGFF/Covariance/Position.lean#L628) — Theorem
 
 **Statement**: The Parseval identity for the unregulated Bessel covariance: for any Schwartz $f$,
-$$\operatorname{Re}\!\iint f(x)\,C(x,y)\,\overline{f(y)}\,dx\,dy = \int \lvert\hat f(k)\rvert^2\,P^{\mathrm{ml}}_m(k)\,dk.$$
+$$\mathrm{Re}\!\iint f(x)\,C(x,y)\,\overline{f(y)}\,dx\,dy = \int \lvert\hat f(k)\rvert^2\,P^{\mathrm{ml}}_m(k)\,dk.$$
 
 **Proof uses**: [`bilinear_covariance_regulated_tendsto_self`](../../OSforGFF/Covariance/Parseval.lean#L901), [`parseval_covariance_schwartz_correct`](../../OSforGFF/Covariance/Parseval.lean#L628)
 

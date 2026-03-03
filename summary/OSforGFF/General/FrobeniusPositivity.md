@@ -11,7 +11,7 @@ and nonzero, and $B$ is positive definite, then the Frobenius inner product
 $\langle G, B \rangle = \sum_{j,l} G_{jl} B_{jl}$ is strictly positive. The proof
 proceeds by diagonalizing $B = U D U^\top$ via the spectral theorem, conjugating $G$ to
 $H = U^\top G U$ (which remains PSD and nonzero), and then reducing to the fact that
-$\langle G, B \rangle = \operatorname{tr}(H D) = \sum_i \lambda_i H_{ii} > 0$.
+$\langle G, B \rangle = \mathrm{tr}(H D) = \sum_i \lambda_i H_{ii} > 0$.
 
 ## Status
 
@@ -24,7 +24,7 @@ $\langle G, B \rangle = \operatorname{tr}(H D) = \sum_i \lambda_i H_{ii} > 0$.
 ### [`frobenius_eq_trace_transpose_mul`](../../OSforGFF/General/FrobeniusPositivity.lean#L36) — Lemma
 
 **Statement**: For real matrices $G, B$ with index type $\iota$,
-$$\sum_{j,l} G_{jl} B_{jl} = \operatorname{tr}(G^\top B).$$
+$$\sum_{j,l} G_{jl} B_{jl} = \mathrm{tr}(G^\top B).$$
 
 **Proof uses**: `Finset.sum_comm`
 

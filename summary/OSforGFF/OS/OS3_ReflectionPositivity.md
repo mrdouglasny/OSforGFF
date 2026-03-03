@@ -90,7 +90,7 @@ i.e., `freeCovarianceFormR m (f - Θg) (f - Θg) = C(f,f) + C(g,g) - 2 C(Θf, g)
 
 **Statement**: The real part of the GFF generating functional on a real test function
 $h$ is
-$$\operatorname{Re}\bigl(Z[h]\bigr) = e^{-\frac{1}{2}\langle h, Ch \rangle_{\mathbb{R}}}.$$
+$$\mathrm{Re}\bigl(Z[h]\bigr) = e^{-\frac{1}{2}\langle h, Ch \rangle_{\mathbb{R}}}.$$
 
 **Proof uses**: [`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L137),
 `Complex.exp_ofReal_re`
@@ -101,8 +101,8 @@ $$\operatorname{Re}\bigl(Z[h]\bigr) = e^{-\frac{1}{2}\langle h, Ch \rangle_{\mat
 
 **Statement**: For positive-time functions $f, g$, the real part of
 $Z[f - \Theta g]$ factorises as
-$$\operatorname{Re}(Z[f - \Theta g])
-= \operatorname{Re}(Z[f]) \cdot \operatorname{Re}(Z[g]) \cdot
+$$\mathrm{Re}(Z[f - \Theta g])
+= \mathrm{Re}(Z[f]) \cdot \mathrm{Re}(Z[g]) \cdot
 e^{\langle \Theta f, Cg \rangle_{\mathbb{R}}}.$$
 
 **Proof uses**: [`gaussianFreeField_real_generating_re`](../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L335),
@@ -115,7 +115,7 @@ e^{\langle \Theta f, Cg \rangle_{\mathbb{R}}}.$$
 
 **Statement**: For any $n$ positive-time test functions $f_i$ and real coefficients
 $c_i$,
-$$\sum_{i,j} c_i c_j \operatorname{Re}\bigl(Z[f_i - \Theta f_j]\bigr) \geq 0.$$
+$$\sum_{i,j} c_i c_j \mathrm{Re}\bigl(Z[f_i - \Theta f_j]\bigr) \geq 0.$$
 
 **Proof uses**: [`gaussianFreeField_real_entry_factor`](../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L355),
 [`freeCovarianceFormR_reflection_matrix_posSemidef`](../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L74),
@@ -128,7 +128,7 @@ $$\sum_{i,j} c_i c_j \operatorname{Re}\bigl(Z[f_i - \Theta f_j]\bigr) \geq 0.$$
 
 **Statement**: The Gaussian free field measure $\mu_{\text{GFF}}(m)$ satisfies OS3
 (Osterwalder–Schrader reflection positivity):
-$$\operatorname{OS3\_ReflectionPositivity}(\mu_{\text{GFF}}(m)).$$
+$$\mathrm{OS3\_ReflectionPositivity}(\mu_{\text{GFF}}(m)).$$
 
 **Proof uses**: [`gaussianFreeField_OS3_matrix_real`](../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L446)
 

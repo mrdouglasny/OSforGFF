@@ -9,7 +9,7 @@
 Proves OS-1 (Regularity) for the Gaussian Free Field: the generating functional satisfies
 the exponential bound $\lVert Z[f] \rVert \leq \exp\!\bigl(\tfrac{1}{2m^2}\int\lVert f\rVert^2\bigr)$
 with $p = 2$ and $c = 1/(2m^2)$. The argument proceeds via: (1) $\lVert Z[f] \rVert =
-\exp(-\tfrac{1}{2}\operatorname{Re}\langle f, Cf\rangle_\mathbb{C})$, (2) positive semidefiniteness
+\exp(-\tfrac{1}{2}\mathrm{Re}\langle f, Cf\rangle_\mathbb{C})$, (2) positive semidefiniteness
 of $C$ bounds this by $\exp(\tfrac{1}{2}C(f_{\mathrm{im}}, f_{\mathrm{im}}))$, (3) a
 momentum-space Parseval estimate gives $C(g,g) \leq \lVert g \rVert_{L^2}^2 / m^2$.
 Local integrability of the two-point function $S_2(x) \sim \lvert x\rvert^{-2}$ follows
@@ -115,7 +115,7 @@ measurable with respect to Lebesgue measure on $\mathbb{R}^4$.
 ### [`gff_generating_norm_eq`](../../OSforGFF/OS/OS1_Regularity.lean#L218) — Lemma
 
 **Statement**: The norm of the GFF generating functional equals
-$$\lVert Z[f] \rVert = \exp\!\bigl(-\tfrac{1}{2} \operatorname{Re} C_\mathbb{C}(f,f)\bigr).$$
+$$\lVert Z[f] \rVert = \exp\!\bigl(-\tfrac{1}{2} \mathrm{Re} C_\mathbb{C}(f,f)\bigr).$$
 
 **Proof uses**: [`gff_complex_generating`](../../OSforGFF/Measure/IsGaussian.lean#L523),
 [`gff_two_point_equals_covarianceℂ_free`](../../OSforGFF/Measure/IsGaussian.lean#L463),
@@ -127,7 +127,7 @@ $$\lVert Z[f] \rVert = \exp\!\bigl(-\tfrac{1}{2} \operatorname{Re} C_\mathbb{C}(
 
 **Statement**: The norm of the generating functional is bounded above by
 $$\lVert Z[f] \rVert \leq \exp\!\bigl(\tfrac{1}{2} C_\mathbb{C}(if_{\mathrm{im}}, if_{\mathrm{im}})\bigr),$$
-using the real-part decomposition $\operatorname{Re} C_\mathbb{C}(f,f) = C(f_{\mathrm{re}}, f_{\mathrm{re}}) - C(f_{\mathrm{im}}, f_{\mathrm{im}})$ and positivity of $C$.
+using the real-part decomposition $\mathrm{Re} C_\mathbb{C}(f,f) = C(f_{\mathrm{re}}, f_{\mathrm{re}}) - C(f_{\mathrm{im}}, f_{\mathrm{im}})$ and positivity of $C$.
 
 **Proof uses**: [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L50),
 [`freeCovarianceℂ_bilinear_symm`](../../OSforGFF/Covariance/Position.lean#L528),

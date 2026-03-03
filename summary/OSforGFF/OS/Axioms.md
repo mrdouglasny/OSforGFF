@@ -78,7 +78,7 @@ def OS3_ReflectionPositivity (dμ_config : ProbabilityMeasure FieldConfiguration
 ```
 
 **Informal**: The measure satisfies reflection positivity in real form: for every $n$, every $n$-tuple of positive-time test functions $f_1, \ldots, f_n$, and every $c_1, \ldots, c_n \in \mathbb{R}$, the quadratic form
-$$\sum_{i,j} c_i \, c_j \, \operatorname{Re}\!\left(Z[f_i - \Theta f_j]\right) \geq 0,$$
+$$\sum_{i,j} c_i \, c_j \, \mathrm{Re}\!\left(Z[f_i - \Theta f_j]\right) \geq 0,$$
 where $\Theta$ denotes time reflection.
 
 ---

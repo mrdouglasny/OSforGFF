@@ -6,7 +6,7 @@
 
 ## Overview
 
-Proves reflection positivity for the free covariance: $\operatorname{Re}\langle \Theta f, Cf \rangle \geq 0$
+Proves reflection positivity for the free covariance: $\mathrm{Re}\langle \Theta f, Cf \rangle \geq 0$
 for test functions $f$ supported at positive time $x_0 \geq 0$. The key argument is a
 mixed-representation identity derived in `OS3_MixedRep`:
 $$\langle \Theta f, Cf \rangle = \frac{1}{2(2\pi)^3} \int_{\bar{k}} \frac{1}{\omega(\bar{k})} \left\lvert \int f(t,\bar{k})\, e^{-\omega t}\, dt \right\rvert^2 d\bar{k} \geq 0,$$
@@ -221,7 +221,7 @@ $$\langle \Theta f, f \rangle_C = \frac{1}{2(2\pi)^3} \int_{\bar{k}} \frac{1}{\o
 
 ### [`RPProof.freeCovariance_reflection_positive_direct`](../../OSforGFF/OS/OS3_CovarianceRP.lean#L347) — Theorem
 
-**Statement**: For any complex test function $f$ supported on positive time, the real part of the RP inner product is non-negative: $\operatorname{Re}\langle \Theta f, f \rangle_C \geq 0$.
+**Statement**: For any complex test function $f$ supported on positive time, the real part of the RP inner product is non-negative: $\mathrm{Re}\langle \Theta f, f \rangle_C \geq 0$.
 
 **Proof uses**: [`rp_equals_squared_norm_integral`](../../OSforGFF/OS/OS3_CovarianceRP.lean#L322),
 `MeasureTheory.integral_nonneg`, `Complex.normSq_nonneg`
@@ -241,7 +241,7 @@ $$\langle \Theta f, f \rangle_C = \frac{1}{2(2\pi)^3} \int_{\bar{k}} \frac{1}{\o
 ### [`freeCovariance_reflection_positive_bilinear`](../../OSforGFF/OS/OS3_CovarianceRP.lean#L399) — Theorem
 
 **Statement**: For any complex test function $f$ supported at positive time ($x_0 \geq 0$),
-$$\operatorname{Re}\langle \Theta f, f \rangle_C \geq 0.$$
+$$\mathrm{Re}\langle \Theta f, f \rangle_C \geq 0.$$
 
 **Proof uses**: [`rpInnerProduct_eq_rpProof`](../../OSforGFF/OS/OS3_CovarianceRP.lean#L381),
 [`RPProof.freeCovariance_reflection_positive_direct`](../../OSforGFF/OS/OS3_CovarianceRP.lean#L347)

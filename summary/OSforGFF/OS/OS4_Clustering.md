@@ -124,7 +124,7 @@ $$\lVert S_2(f, T_a g) \rVert < \varepsilon.$$
 
 **Statement**: The Gaussian free field measure $\mu_{\text{GFF}}(m)$ satisfies the OS4
 clustering axiom:
-$$\operatorname{OS4\_Clustering}(\mu_{\text{GFF}}(m)).$$
+$$\mathrm{OS4\_Clustering}(\mu_{\text{GFF}}(m)).$$
 
 **Proof uses**: [`schwartz_cross_covariance_decay_real`](../../OSforGFF/OS/OS4_Clustering.lean#L323),
 [`GFF_OS4_from_small_decay_real`](../../OSforGFF/OS/OS4_Clustering.lean#L184)

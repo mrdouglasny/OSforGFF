@@ -24,7 +24,7 @@ converges as $\alpha\to 0^+$ to the explicit Bessel formula $C(x,y)=\tfrac{m}{4\
 
 ### [`integral_ofReal_eq`](../../OSforGFF/Covariance/Momentum.lean#L63) — Theorem
 
-**Statement**: For an integrable function $h : \alpha \to \mathbb{R}$, the Bochner integral of its coercion to $\mathbb{C}$ equals $\operatorname{ofReal}$ of the real integral.
+**Statement**: For an integrable function $h : \alpha \to \mathbb{R}$, the Bochner integral of its coercion to $\mathbb{C}$ equals $\mathrm{ofReal}$ of the real integral.
 
 **Proof uses**: `integral_complex_ofReal`
 
@@ -115,7 +115,7 @@ noncomputable def freePropagatorMomentum_mathlib (m : ℝ) (k : SpaceTime) : ℝ
 noncomputable def freeCovariance_regulated (α : ℝ) (m : ℝ) (x y : SpaceTime) : ℝ
 ```
 **Informal**: The Gaussian-regulated position-space covariance
-$$C_\alpha(x,y) = \operatorname{Re}\!\int \frac{e^{-\alpha\lVert k\rVert^2}\,e^{-i\langle k,\,x-y\rangle}}{\lVert k\rVert^2+m^2}\,\frac{d^dk}{(2\pi)^d}$$
+$$C_\alpha(x,y) = \mathrm{Re}\!\int \frac{e^{-\alpha\lVert k\rVert^2}\,e^{-i\langle k,\,x-y\rangle}}{\lVert k\rVert^2+m^2}\,\frac{d^dk}{(2\pi)^d}$$
 which is absolutely convergent for $\alpha > 0$.
 
 ---
@@ -323,8 +323,8 @@ $$\int e^{-s\lVert k\rVert^2}\,e^{-i\langle k,z\rangle}\,dk = (2\pi)^4\,H(s,\lVe
 ### [`fubini_schwinger_integrand`](../../OSforGFF/Covariance/Momentum.lean#L725) — Theorem
 
 **Statement**: The Fubini swap identity
-$$\operatorname{Re}\!\left[\int_k\!\left(\int_0^\infty e^{-(\alpha+t)\lVert k\rVert^2-tm^2}dt\right)e^{-i\langle k,x-y\rangle}dk\right]
-= \int_0^\infty e^{-tm^2}\operatorname{Re}\!\left[\int_k e^{-(\alpha+t)\lVert k\rVert^2}e^{-i\langle k,x-y\rangle}dk\right]dt$$
+$$\mathrm{Re}\!\left[\int_k\!\left(\int_0^\infty e^{-(\alpha+t)\lVert k\rVert^2-tm^2}dt\right)e^{-i\langle k,x-y\rangle}dk\right]
+= \int_0^\infty e^{-tm^2}\mathrm{Re}\!\left[\int_k e^{-(\alpha+t)\lVert k\rVert^2}e^{-i\langle k,x-y\rangle}dk\right]dt$$
 holds for $\alpha,m>0$ and $x\ne y$.
 
 **Proof uses**: [`integrable_schwinger_fourier_integrand`](../../OSforGFF/Covariance/Momentum.lean#L614), `MeasureTheory.integral_integral_swap`, `norm_exp_neg_I_mul_real`
