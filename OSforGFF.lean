@@ -58,6 +58,7 @@ import «OSforGFF».OS.OS3_MixedRepInfra
 import «OSforGFF».OS.OS3_MixedRep
 import «OSforGFF».OS.OS3_CovarianceRP
 import «OSforGFF».OS.OS3_DiagonalRP
+import «OSforGFF».OS.OS3_HeatKernelRP
 import «OSforGFF».OS.OS3_ReflectionPositivity
 import «OSforGFF».OS.OS4_MGF
 import «OSforGFF».OS.OS4_Clustering
