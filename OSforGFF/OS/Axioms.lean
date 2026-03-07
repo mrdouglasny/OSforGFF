@@ -93,11 +93,30 @@ def OS2_EuclideanInvariance (dμ_config : ProbabilityMeasure FieldConfiguration)
     GJGeneratingFunctionalℂ dμ_config f =
     GJGeneratingFunctionalℂ dμ_config (QFT.euclidean_action g f)
 
-/-- Real formulation of OS3 reflection positivity using the real-valued positive time
-    subspace and the real generating functional. This version avoids explicit complex
-    coefficients and conjugation, aligning more closely with the new real-valued
-    `PositiveTimeTestFunction` infrastructure. -/
+/-- OS3 (Reflection Positivity): The generating functional defines a positive semi-definite
+    Hermitian form on positive-time test functions.  This is the standard complex formulation
+    (Osterwalder–Schrader 1975, axiom E2) using complex-valued test functions and complex
+    coefficients with conjugation, compatible with OS reconstruction.
+
+    The `star` operation on `TestFunctionℂ` is `(star f)(x) = conj(f(Θx))`, combining
+    time reflection with complex conjugation.  This is required by the `i` factor in the
+    characteristic function `Z[J] = ∫ exp(i⟨ω,J⟩) dμ` so that
+    `Z[f − star g] = ∫ exp(i⟨ω,f⟩) · conj(exp(i⟨ω,Θg⟩)) dμ`.
+
+    For real positive-time test functions embedded via `toComplex`, `star = compTimeReflection`
+    (see `star_toComplex_eq_compTimeReflection`), so this reduces to
+    `OS3_ReflectionPositivity_real`. -/
 def OS3_ReflectionPositivity (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
+  ∀ (n : ℕ) (f : Fin n → PositiveTimeTestFunctionℂ) (c : Fin n → ℂ),
+    0 ≤ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      GJGeneratingFunctionalℂ dμ_config
+        ((f i).val - star ((f j).val))).re
+
+/-- Real formulation of OS3 reflection positivity using real-valued positive-time
+    test functions and real coefficients.  This is equivalent to `OS3_ReflectionPositivity`
+    for measures where the generating functional is real on real test functions
+    (in particular for Gaussian measures). -/
+def OS3_ReflectionPositivity_real (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
   ∀ (n : ℕ) (f : Fin n → PositiveTimeTestFunction) (c : Fin n → ℝ),
     let reflection_matrix := fun i j : Fin n =>
       GJGeneratingFunctional dμ_config

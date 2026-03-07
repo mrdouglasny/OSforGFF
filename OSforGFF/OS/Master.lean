@@ -38,7 +38,7 @@ noncomputable section
 - OS0 is supplied by `QFT.gaussianFreeField_satisfies_OS0` via the holomorphic integral theorem
 - OS1 is supplied by `gaussianFreeField_satisfies_OS1_revised` via Fourier/momentum space methods
 - OS2 is supplied by `gaussian_satisfies_OS2` via Euclidean invariance of the free covariance
-- OS3 is supplied by `QFT.gaussianFreeField_OS3_real` via the Schur-Hadamard argument
+- OS3 is supplied by `QFT.gaussianFreeField_OS3` via the Schur-Hadamard argument (complex star formulation)
 - OS4 Clustering is supplied by `QFT.gaussianFreeField_satisfies_OS4` via Gaussian factorization
 - OS4 Ergodicity is supplied by polynomial clustering (α=6) → ergodicity
 
@@ -53,8 +53,8 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
   os2 := gaussian_satisfies_OS2 (μ_GFF m)
     (by exact isGaussianGJ_gaussianFreeField_free m)
     (QFT.CovarianceEuclideanInvariantℂ_μ_GFF m)
-  -- OS3 from the Schur-Hadamard argument
-  os3 := QFT.gaussianFreeField_OS3_real m
+  -- OS3 from the Schur-Hadamard argument (complex star formulation, sorry in gff_complexOS3_matrix)
+  os3 := QFT.gaussianFreeField_OS3 m
   -- OS4 Clustering (Gaussian factorization and covariance decay)
   os4_clustering := QFT.gaussianFreeField_satisfies_OS4 m
   -- OS4 Ergodicity: polynomial clustering (α=6) implies ergodicity

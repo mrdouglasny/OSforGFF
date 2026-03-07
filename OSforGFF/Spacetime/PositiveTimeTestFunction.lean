@@ -78,6 +78,40 @@ lemma PositiveTimeTestFunction.sum_smul_mem
   -- The sum automatically lives in the submodule by the submodule properties
   simp only [Submodule.coe_sum, Submodule.coe_smul_of_tower]
 
+/-- Submodule of **complex-valued** test functions supported in the positive time region.
+    This is a ℂ-submodule since ℂ-scalar multiplication preserves support. -/
+def PositiveTimeTestFunctionsℂ.submodule : Submodule ℂ TestFunctionℂ where
+  carrier := { f : TestFunctionℂ | tsupport f ⊆ positiveTimeSet }
+  zero_mem' := by
+    simp only [Set.mem_setOf_eq]
+    suffices h : tsupport (0 : TestFunctionℂ) = ∅ by
+      rw [h]
+      apply Set.empty_subset
+    rw [tsupport_eq_empty_iff]
+    rfl
+  add_mem' := fun {f g} hf hg => Set.Subset.trans (tsupport_add f g) (Set.union_subset hf hg)
+  smul_mem' := by
+    intro c f hf
+    refine (tsupport_smul_subset_right (fun _ : SpaceTime => c) f).trans hf
+
+/-- Type of complex-valued test functions supported in the positive time region -/
+abbrev PositiveTimeTestFunctionℂ : Type := PositiveTimeTestFunctionsℂ.submodule
+
+instance : AddCommMonoid PositiveTimeTestFunctionℂ := by infer_instance
+instance : AddCommGroup PositiveTimeTestFunctionℂ := by infer_instance
+
+lemma PositiveTimeTestFunctionℂ.zero_on_nonpositive
+    (f : PositiveTimeTestFunctionℂ) {x : SpaceTime}
+    (hx : getTimeComponent x ≤ 0) : f.val x = 0 := by
+  classical
+  have hx_not_support : x ∉ tsupport f.val := by
+    intro hx_mem
+    have hx_pos : getTimeComponent x > 0 := by
+      have hx_mem_pos : x ∈ positiveTimeSet := f.property hx_mem
+      simpa [positiveTimeSet, HasPositiveTime] using hx_mem_pos
+    have : getTimeComponent x < getTimeComponent x := lt_of_le_of_lt hx hx_pos
+    exact (lt_irrefl _ this)
+  exact image_eq_zero_of_notMem_tsupport hx_not_support
 
 /-- Helper lemma: starRingEnd ℂ commutes through derivatives and preserves norms -/
 lemma starRingEnd_iteratedFDeriv_norm_eq (g : TestFunctionℂ) (n : ℕ) (x : SpaceTime) :

@@ -18,7 +18,9 @@ import OSforGFF.Measure.IsGaussian
 # OS3 — Reflection Positivity for the GFF
 
 Lifts covariance reflection positivity to the full generating functional via
-the Schur product theorem. For positive-time fⱼ and real coefficients cⱼ:
+the Schur product theorem.
+
+**Real version** (complete): For positive-time real fⱼ and real coefficients cⱼ:
 
   ∑ᵢⱼ cᵢcⱼ Z[fᵢ − Θfⱼ] = ∑ᵢⱼ cᵢ'cⱼ' exp(Rᵢⱼ) ≥ 0
 
@@ -26,9 +28,18 @@ where Rᵢⱼ = ⟨Θfᵢ, Cfⱼ⟩ is PSD by covariance reflection positivity,
 cᵢ' = cᵢ exp(−½⟨fᵢ,Cfᵢ⟩), and exp(Rᵢⱼ) is PSD by the Schur product
 theorem (entrywise exponential of a PSD matrix is PSD).
 
-## Main result
+**Complex version** (sorry): For positive-time complex fⱼ and complex coefficients cⱼ:
 
-- `gaussianFreeField_OS3_real`: `OS3_ReflectionPositivity (μ_GFF m)`
+  ∑ᵢⱼ c̄ᵢcⱼ Z_ℂ[fᵢ − star fⱼ] ≥ 0
+
+where `star f = conj ∘ f ∘ Θ`.  The factorisation gives `Z_ℂ[fᵢ − star fⱼ] =
+conj(Aᵢ)·Aⱼ·exp(Rᵢⱼ)` with Hermitian PSD R, requiring the complex entrywise
+exponential PSD theorem.
+
+## Main results
+
+- `gaussianFreeField_OS3_real`: `OS3_ReflectionPositivity_real (μ_GFF m)`
+- `gaussianFreeField_OS3`: `OS3_ReflectionPositivity (μ_GFF m)`  (complex, sorry)
 -/
 
 open MeasureTheory Complex Matrix
@@ -510,13 +521,48 @@ lemma gaussianFreeField_OS3_matrix_real
 
   exact h_goal
 
-/-- Main theorem: the Gaussian free field satisfies OS3 (reflection positivity). -/
+/-- Main theorem: the Gaussian free field satisfies OS3_real (reflection positivity, real version). -/
 theorem gaussianFreeField_OS3_real :
-    OS3_ReflectionPositivity (gaussianFreeField_free m) := by
+    OS3_ReflectionPositivity_real (gaussianFreeField_free m) := by
   intro n f c
   simpa using gaussianFreeField_OS3_matrix_real (m := m) f c
 
 end GaussianRealReflectionPositivity
+
+section GaussianComplexReflectionPositivity
+
+variable (m : ℝ) [Fact (0 < m)]
+
+/-- The complex generating functional of the GFF satisfies OS3 with `star`.
+
+    **Proof strategy**: Factor `Z[fᵢ − star fⱼ]` using `gff_complex_generating`:
+      `Z[J] = exp(−½ C(J,J))`
+    The bilinear expansion gives:
+      `Z[fᵢ − star fⱼ] = exp(−½ αᵢ) · conj(exp(−½ αⱼ)) · exp(Rᵢⱼ)`
+    where `αᵢ = C(fᵢ, fᵢ)` and `Rᵢⱼ = C(fᵢ, star fⱼ)`.
+    The identity `C(star f, star g) = conj(C(f,g))` (real kernel + Θ isometry) gives
+    `B_j = conj(A_j)`.  With `wᵢ = cᵢ conj(Aᵢ)` the sum becomes
+    `∑ w̄ᵢ wⱼ exp(Rᵢⱼ)`.  R is Hermitian PSD (by `rpInnerProduct`) and exp(R)
+    (entrywise) is Hermitian PSD by the complex Schur product theorem. -/
+private lemma gff_complexOS3_matrix
+    {n : ℕ} (f : Fin n → PositiveTimeTestFunctionℂ) (c : Fin n → ℂ) :
+    0 ≤ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+        GJGeneratingFunctionalℂ (gaussianFreeField_free m)
+          ((f i).val - star (f j).val)).re := by
+  sorry
+
+/-- Main theorem: the Gaussian free field satisfies OS3 (complex reflection positivity).
+    This is the standard Osterwalder–Schrader formulation with complex-valued test
+    functions and complex coefficients, compatible with OS reconstruction.
+
+    The `star` operation is `(star f)(x) = conj(f(Θx))`.  For real test functions,
+    `star = compTimeReflection` (see `star_toComplex_eq_compTimeReflection`). -/
+theorem gaussianFreeField_OS3 :
+    OS3_ReflectionPositivity (gaussianFreeField_free m) := by
+  intro n f c
+  exact gff_complexOS3_matrix m f c
+
+end GaussianComplexReflectionPositivity
 
 end QFT
 
