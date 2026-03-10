@@ -447,12 +447,7 @@ lemma gff_exp_abs_pairing_memLp (f : TestFunction) (p : ENNReal) (hp : p ≠ ⊤
       ring_nf
     simp_rw [h_eq]
     -- Use that integrability implies lintegral is finite
-    have h_fin := h_exp_p_integrable.hasFiniteIntegral
-    rw [HasFiniteIntegral] at h_fin
-    convert h_fin using 1
-    apply lintegral_congr
-    intro ω
-    rw [Real.enorm_eq_ofReal (le_of_lt (Real.exp_pos _))]
+    exact Integrable.lintegral_lt_top h_exp_p_integrable
 
   exact ⟨h_aesm, h_eLpNorm_lt⟩
 

@@ -158,9 +158,6 @@ lemma posSemidef_diag_pos_exists_of_ne_zero
   -- Show all off-diagonals are zero
   have hoff : ∀ i j, H i j = 0 := by
     intro i j
-    by_cases hij : i = j
-    · subst hij; simp [hdiag_zero i]
-    -- both diagonals are zero, so off-diagonal vanishes by the lemma
     exact psd_offdiag_zero_of_diag_zero H hH_psd (hdiag_zero i) (hdiag_zero j)
   -- Hence H = 0, contradiction
   have : H = 0 := by
