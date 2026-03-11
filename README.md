@@ -138,6 +138,27 @@ Axiom definitions, individual proofs, and master theorem.
 
 ---
 
+## External Libraries
+
+We depend on two auxiliary Lean libraries for nuclear space theory and measure construction.
+Both are axiom-free.
+
+### [bochner](https://github.com/mrdouglasny/bochner) (BochnerMinlos)
+
+| Module | What we use | Imported by |
+|--------|-------------|-------------|
+| `Minlos.Main` | `minlos_theorem` — existence and uniqueness of probability measures from characteristic functionals on nuclear spaces | [Minlos](OSforGFF/Measure/Minlos.lean) |
+| `Minlos.NuclearSpace` | `IsHilbertNuclear` typeclass; `MeasurableSpace (WeakDual ℝ E)` cylinder σ-algebra instance | [Basic](OSforGFF/Spacetime/Basic.lean), [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) |
+| `Minlos.PietschBridge` | `isHilbertNuclear_of_nuclear` — bridge from Pietsch to Hilbert-Schmidt characterization | [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) |
+| `Bochner.PositiveDefinite` | `IsPositiveDefinite` structure for characteristic functionals | [Minlos](OSforGFF/Measure/Minlos.lean) |
+
+### [gaussian-field](https://github.com/mrdouglasny/gaussian-field) (GaussianField)
+
+| Module | What we use | Imported by |
+|--------|-------------|-------------|
+| `SchwartzNuclear.HermiteNuclear` | `schwartz_separableSpace` — Schwartz space is separable (via Hermite basis) | [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) |
+| `Nuclear.NuclearSpace` | `DyninMityaginSpace` → `NuclearSpace` — proves Schwartz space is nuclear | [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) |
+
 ## Dependencies and Cross-Cutting Concerns
 
 The import graph (`dependency/import_graph.svg`) is mostly layered, with one
