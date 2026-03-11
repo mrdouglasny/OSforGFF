@@ -20,7 +20,7 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
   OS4_Ergodicity (μ_GFF m)
 ```
 
-**Status:** Version 1.1, March 2026. 0 sorries, 0 axioms, ~32,000 lines of Lean across 47 files.
+**Status:** Version 2.0, March 2026. 0 sorries, 0 axioms, ~32,000 lines of Lean across 47 files.
 
 All results are fully proved — no assumed axioms. Nuclear space structure and the Minlos theorem
 are provided by the external libraries [bochner](https://github.com/mrdouglasny/bochner) and
