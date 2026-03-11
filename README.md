@@ -185,7 +185,7 @@ Requires Lean 4 and Mathlib (pinned via `lake-manifest.json`).
 
 ## Related Work
 
-- [or4nge19/OSforGFF](https://github.com/or4nge19/OSforGFF) — A fork pursuing a different measure construction pipeline: finite-dimensional Gaussians → Kolmogorov extension on test functions → nuclear support → pushforward to distribution space, avoiding the Minlos theorem. Develops coordinate-free Euclidean time-direction and dimension-agnostic Hermite APIs.
+- [or4nge19/OSforGFF](https://github.com/or4nge19/OSforGFF) — A fork by Matteo Cipollina pursuing a different measure construction pipeline: finite-dimensional Gaussians → Kolmogorov extension on test functions → nuclear support → pushforward to distribution space, avoiding the Minlos theorem. Develops coordinate-free Euclidean time-direction and dimension-agnostic Hermite APIs.
 
 ## Planned Generalizations
 
