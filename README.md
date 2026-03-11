@@ -186,7 +186,7 @@ Requires Lean 4 and Mathlib (pinned via `lake-manifest.json`).
 ## Planned Generalizations
 
 1. Other spacetime dimensions, as discussed in [docs/dimension_dependence.md](docs/dimension_dependence.md)
-2. Explicit construction of the measure not using Minlos (in progress at [mrdouglasny/GFF4D](https://github.com/mrdouglasny/GFF4D) and [or4nge19/OSforGFF](https://github.com/or4nge19/OSforGFF))
+2. ~~Explicit construction of the measure not using Minlos~~ — Done. The Minlos theorem and Kolmogorov extension are now fully proved in [bochner](https://github.com/mrdouglasny/bochner) and [kolmogorov_extension4](https://github.com/remydegenne/kolmogorov_extension4).
 
 ## Authors
 
