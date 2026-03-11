@@ -140,8 +140,8 @@ Axiom definitions, individual proofs, and master theorem.
 
 ## External Libraries
 
-We depend on two auxiliary Lean libraries for nuclear space theory and measure construction.
-Both are axiom-free.
+We depend on three auxiliary Lean libraries for nuclear space theory and measure construction.
+All are axiom-free.
 
 ### [bochner](https://github.com/mrdouglasny/bochner) (BochnerMinlos)
 
@@ -158,6 +158,12 @@ Both are axiom-free.
 |--------|-------------|-------------|
 | `SchwartzNuclear.HermiteNuclear` | `schwartz_separableSpace` — Schwartz space is separable (via Hermite basis) | [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) |
 | `Nuclear.NuclearSpace` | `DyninMityaginSpace` → `NuclearSpace` — proves Schwartz space is nuclear | [NuclearSpace](OSforGFF/Measure/NuclearSpace.lean) |
+
+### [kolmogorov_extension4](https://github.com/remydegenne/kolmogorov_extension4) (transitive, via bochner)
+
+| Module | What we use | Imported by |
+|--------|-------------|-------------|
+| `KolmogorovExtension4.KolmogorovExtension` | `projectiveLimit` — Kolmogorov extension theorem: constructs a measure on the infinite product from a consistent projective family of finite-dimensional measures | bochner's `Minlos.ProjectiveFamily` |
 
 ## Dependencies and Cross-Cutting Concerns
 
