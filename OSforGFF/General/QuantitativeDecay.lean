@@ -127,10 +127,7 @@ lemma exp_decay_implies_polynomial_decay (m α : ℝ) (hm : m > 0) (hα : α > 0
   use (α / m) ^ α * Real.exp m + 1
   constructor
   · -- Positivity of the constant
-    have h1 : (α / m) ^ α > 0 := Real.rpow_pos_of_pos (div_pos hα hm) α
-    have h2 : Real.exp m > 0 := Real.exp_pos m
-    have h3 : (α / m) ^ α * Real.exp m > 0 := mul_pos h1 h2
-    linarith
+    positivity
   · intro x hx
     have h_one_plus_pos : 0 < 1 + x := by positivity
     -- Use ProbabilityTheory.rpow_abs_le_mul_exp_abs

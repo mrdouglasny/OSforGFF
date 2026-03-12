@@ -385,11 +385,7 @@ lemma posDef_entrywiseExp_hadamardSeries_of_posDef
       have hPSD : (hadamardPow (ι:=ι) R n).PosSemidef := Matrix.PosDef.posSemidef hPD
       -- evaluate quadratic form
       have hxq : 0 ≤ x ⬝ᵥ (hadamardPow (ι:=ι) R n).mulVec x := hPSD.dotProduct_mulVec_nonneg x
-      -- multiply by positive coefficient 1/n!
-      have hcoeff : 0 ≤ (1 / (Nat.factorial n : ℝ)) := by
-        have : 0 < (Nat.factorial n : ℝ) := by exact_mod_cast (Nat.cast_pos.mpr (Nat.factorial_pos n))
-        exact div_nonneg (by norm_num) this.le
-      exact mul_nonneg hcoeff hxq
+      positivity
   have hterm_pos : 0 < f 1 := by
     -- n = 1 term equals xᵀ R x, which is strictly positive by hR
     have hEq1' : hadamardPow (ι:=ι) R 1 = Matrix.hadamard (hadamardOne (ι:=ι)) R := rfl

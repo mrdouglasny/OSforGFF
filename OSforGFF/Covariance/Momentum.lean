@@ -1407,23 +1407,9 @@ lemma freeCovariance_regulated_uniformly_bounded (α : ℝ) (hα : 0 < α) (m : 
           freePropagatorMomentum m k / (2 * Real.pi) ^ STDimension| := by
         congr 1; ext k
         rw [Complex.norm_mul]
-        -- ‖exp(-iθ)‖ = 1 for real θ: use Complex.norm_exp which gives ‖exp z‖ = exp z.re
-        -- For z = -I * r, we have z.re = 0, so ‖exp z‖ = exp 0 = 1
-        have h_phase : ‖Complex.exp (-Complex.I * ↑⟪k, x - y⟫_ℝ)‖ = 1 := by
-          rw [Complex.norm_exp]
-          simp only [neg_mul, Complex.neg_re, Complex.mul_re, Complex.I_re, Complex.I_im,
-            Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
-          simp -- finishes: rexp (-(0 * ...)) = rexp 0 = 1
-        rw [h_phase, mul_one]
+        rw [norm_exp_neg_I_mul_real, mul_one]
         simp only [Complex.norm_real]
-        -- Goal: |exp * prop / norm| = exp * prop / norm (since all positive)
-        have h_prop_pos : 0 < freePropagatorMomentum m k := by
-          unfold freePropagatorMomentum
-          apply div_pos one_pos (add_pos_of_nonneg_of_pos (sq_nonneg _) (sq_pos_of_pos hm))
-        have h_nonneg : 0 ≤ Real.exp (-α * ‖k‖^2) * freePropagatorMomentum m k / (2 * Real.pi) ^ STDimension :=
-          div_nonneg (mul_nonneg (Real.exp_pos _).le h_prop_pos.le) (by positivity)
-        -- ‖x‖ = |x| for reals, then use nonneg
-        rw [Real.norm_eq_abs]
+        exact norm_eq_abs _
       -- Step 4: |exp * prop / norm| ≤ exp / (m² * norm) since prop ≤ 1/m²
       _ ≤ ∫ k : SpaceTime, Real.exp (-α * ‖k‖^2) / (m^2 * (2 * Real.pi) ^ STDimension) := by
         apply MeasureTheory.integral_mono_of_nonneg
@@ -1506,13 +1492,7 @@ lemma aestronglyMeasurable_freeCovariance_regulated (α : ℝ) (hα : 0 < α) (m
       intro k
       simp only [F, bound]
       rw [Complex.norm_mul, Complex.norm_real]
-      have h_phase : ‖Complex.exp (-Complex.I * Complex.ofReal ⟪k, p.1 - p.2⟫_ℝ)‖ = 1 := by
-        -- -I * x = (-x) * I, then use norm_exp_ofReal_mul_I
-        have h_eq : -Complex.I * Complex.ofReal ⟪k, p.1 - p.2⟫_ℝ =
-            Complex.ofReal (-⟪k, p.1 - p.2⟫_ℝ) * Complex.I := by
-          simp only [Complex.ofReal_neg]; ring
-        rw [h_eq, Complex.norm_exp_ofReal_mul_I]
-      rw [h_phase, mul_one]
+      rw [norm_exp_neg_I_mul_real, mul_one]
       have h_prop_bound : freePropagatorMomentum m k ≤ 1 / m^2 := by
         simp only [freePropagatorMomentum]
         apply one_div_le_one_div_of_le (by positivity : 0 < m ^ 2)
@@ -1735,11 +1715,7 @@ lemma freeCovarianceKernel_decay_bound (m : ℝ) (hm : 0 < m) :
   -- Define the constant C = (cosh(1) + 2) / (4π²)
   -- This works for both near and far from origin
   set C := (Real.cosh 1 + 2) / (4 * Real.pi^2) with hC_def
-  have hC_pos : 0 < C := by
-    simp only [hC_def]
-    apply div_pos
-    · linarith [Real.cosh_pos (1 : ℝ)]
-    · nlinarith [Real.pi_pos]
+  have hC_pos : 0 < C := by positivity
   refine ⟨C, hC_pos, ?_⟩
   intro z
   by_cases hz : ‖z‖ = 0
@@ -1941,10 +1917,7 @@ lemma freeCovariance_exponential_bound (m : ℝ) (hm : 0 < m) (u v : SpaceTime)
           apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
           apply div_le_div_of_nonneg_right _ (le_of_lt hpi_sq_pos)
           apply mul_le_mul_of_nonneg_right hm_over_r_le
-          have : 0 < Real.sinh 1 + 2 := by
-            have h_sinh_pos : 0 < Real.sinh 1 := Real.sinh_pos_iff.mpr (by norm_num : (0:ℝ) < 1)
-            linarith
-          linarith
+          positivity
     _ = m^2 * (Real.sinh 1 + 2) / (4 * Real.pi^2) * Real.exp (-m * r) := by
           congr 1
           ring_nf
@@ -1983,9 +1956,7 @@ lemma freeCovarianceKernel_continuousOn (m : ℝ) (hm : 0 < m) :
       · exact continuousOn_const.mul continuousOn_id
       · intro r hr
         simp only [Set.mem_Ioi] at hr
-        have h1 : 0 < 4 * Real.pi^2 := by nlinarith [Real.pi_pos]
-        have h2 : 0 < 4 * Real.pi^2 * r := mul_pos h1 hr
-        exact ne_of_gt h2
+        positivity
     · -- K₁(mr) is continuous on (0, ∞)
       have h := besselK1_continuousOn.comp (continuousOn_const.mul continuousOn_id)
         (fun r hr => by simp only [Set.mem_Ioi] at hr ⊢; exact mul_pos hm hr)

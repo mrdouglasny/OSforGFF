@@ -593,9 +593,7 @@ lemma continuous_freePropagatorMomentum_mathlib (m : ℝ) [Fact (0 < m)] :
   refine Continuous.div continuous_const hdenom_cont ?h_ne
   intro k
   have hmpos : 0 < m := Fact.out
-  have h1 : 0 ≤ (2 * Real.pi)^2 * ‖k‖^2 := by positivity
-  have h2 : 0 < m^2 := sq_pos_of_pos hmpos
-  linarith
+  positivity
 
 /-- The integrand ‖f̂(k)‖² * P(k) is integrable for Schwartz f. -/
 lemma integrable_schwartz_propagator_mathlib (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :

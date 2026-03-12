@@ -130,40 +130,8 @@ lemma freeCovarianceFormR_reflection_matrix_posSemidef
 
       -- Apply linearity in first argument: ∑ᵢ cᵢ • θfᵢ
       have h_left : ∑ i, c i * freeCovarianceFormR m (QFT.compTimeReflectionReal (f i).val) (∑ j, c j • (f j).val) =
-        freeCovarianceFormR m (∑ i, c i • QFT.compTimeReflectionReal (f i).val) (∑ j, c j • (f j).val) := by
-        -- This uses freeCovarianceFormR_add_left and freeCovarianceFormR_smul_left repeatedly
-        induction' (Finset.univ : Finset (Fin n)) using Finset.induction with k s hk ih
-        · simp only [Finset.sum_empty]
-          -- freeCovarianceFormR m 0 0 = 0 (follows from linearity)
-          rw [← freeCovarianceFormR_zero_left (m := m)]
-        · rw [Finset.sum_insert hk, Finset.sum_insert hk]
-          -- Apply bilinearity systematically
-          -- Goal: show left side equals right side
-          -- Use freeCovarianceFormR_smul_left and inductive hypothesis
-
-          -- First apply smul_left to the k-th term
-          have h_smul_k :
-            c k * freeCovarianceFormR m (QFT.compTimeReflectionReal (f k).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) =
-            freeCovarianceFormR m (c k • QFT.compTimeReflectionReal (f k).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) := by
-            exact (freeCovarianceFormR_smul_left m _ _ _).symm
-
-          -- For the sum part, we need to extend each term's right argument and use linearity
-          have h_sum_extend :
-            ∑ x ∈ s, c x * freeCovarianceFormR m (QFT.compTimeReflectionReal (f x).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) =
-            freeCovarianceFormR m (∑ i ∈ s, c i • QFT.compTimeReflectionReal (f i).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) := by
-            exact freeCovarianceFormR_left_linear_any_right m f c s (c k • (f k).val + ∑ x ∈ s, c x • (f x).val)
-
-          -- Now combine using freeCovarianceFormR_add_left
-          calc
-          c k * freeCovarianceFormR m (QFT.compTimeReflectionReal (f k).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) +
-          ∑ x ∈ s, c x * freeCovarianceFormR m (QFT.compTimeReflectionReal (f x).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val)
-          = freeCovarianceFormR m (c k • QFT.compTimeReflectionReal (f k).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) +
-            freeCovarianceFormR m (∑ i ∈ s, c i • QFT.compTimeReflectionReal (f i).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) := by
-            rw [h_smul_k, h_sum_extend]
-          _ = freeCovarianceFormR m (c k • QFT.compTimeReflectionReal (f k).val + ∑ i ∈ s, c i • QFT.compTimeReflectionReal (f i).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) := by
-            exact (freeCovarianceFormR_add_left m _ _ _).symm
-          _ = freeCovarianceFormR m (∑ i ∈ insert k s, c i • QFT.compTimeReflectionReal (f i).val) (c k • (f k).val + ∑ x ∈ s, c x • (f x).val) := by
-            simp only [Finset.sum_insert hk]      -- Then expand the right sum using linearity in second argument
+        freeCovarianceFormR m (∑ i, c i • QFT.compTimeReflectionReal (f i).val) (∑ j, c j • (f j).val) :=
+          freeCovarianceFormR_left_linear_any_right m f c Finset.univ _
       have h_right : ∀ i, ∑ j, freeCovarianceFormR m (QFT.compTimeReflectionReal (f i).val) (f j).val * c j =
         freeCovarianceFormR m (QFT.compTimeReflectionReal (f i).val) (∑ j, c j • (f j).val) := by
         intro i

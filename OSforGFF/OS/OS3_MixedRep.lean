@@ -1231,31 +1231,6 @@ theorem schwinger_fubini_swap (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ) :
   -- (b) ∫_s ∫_x ∫_y F = ∫_s ∫_{(x,y)} F = ∫_{(s,x,y)} F  (by integral_integral twice)
   -- Hence (a) = (b).
 
-  -- Define the integrand function
-  set F : ℝ → SpaceTime → SpaceTime → ℂ :=
-    fun s x y => (starRingEnd ℂ (f x)) * f y *
-      (Real.exp (-s * m^2) : ℂ) * heatKernelPositionSpace s ‖timeReflection x - y‖ with hF
-
-  -- The goal is: ∫_x ∫_y [∫_s in Ioi 0, F s x y] = ∫_s in Ioi 0 [∫_x ∫_y F s x y]
-  --
-  -- Strategy: Both sides equal ∫∫∫ F over the product space by Fubini.
-  --
-  -- Use integral_integral_swap twice to relate:
-  -- ∫_x ∫_y ∫_s F = ∫_y ∫_x ∫_s F  (swap x ↔ y, holds by integrability)
-  --              = ∫_y ∫_s ∫_x F  (swap x ↔ s, holds by integrability)
-  --              = ∫_s ∫_y ∫_x F  (swap y ↔ s, holds by integrability)
-  --              = ∫_s ∫_x ∫_y F  (swap x ↔ y back)
-  --
-  -- The key is that h_int ensures integrability on all product orderings.
-
-  -- Technical: Apply Fubini-Tonelli via integral_integral_swap
-  -- For the restricted measure ∫_s in Ioi 0, this uses setIntegral properties.
-
-  -- The full formal proof requires showing that swapping x, y with s preserves
-  -- the integral value. Given that F is integrable (h_int), this follows from
-  -- the general Fubini theorem for σ-finite measures.
-
-  -- Use Fubini
   exact schwinger_fubini_core m f
 
 /-- The kernel-level Schwinger representation holds for Θx ≠ y.

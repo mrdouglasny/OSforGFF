@@ -291,17 +291,7 @@ lemma gff_generating_bound_by_imaginary (m : ℝ) [Fact (0 < m)] (f : TestFuncti
   have h_pos : 0 ≤ (freeCovarianceℂ_bilinear m frC frC).re := by
     -- For real test functions frC = toComplex fRe, the complex conjugate is the identity
     -- so freeCovarianceℂ_bilinear agrees with freeCovarianceℂ
-    have heq : freeCovarianceℂ_bilinear m frC frC = freeCovarianceℂ m frC frC := by
-      unfold freeCovarianceℂ_bilinear freeCovarianceℂ
-      congr 1
-      ext x
-      congr 1
-      ext y
-      -- For real-valued functions, conjugation is identity
-      have : starRingEnd ℂ (frC y) = frC y := by
-        simp [frC, toComplex_apply]
-      rw [this]
-    rw [heq]
+    rw [← freeCovarianceℂ_eq_bilinear_on_reals m]
     exact freeCovarianceℂ_positive m frC
   linarith
 
@@ -321,13 +311,8 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
   -- Parseval: real part of the covariance equals the momentum-space integral
   have h_parsevalC :
       (freeCovarianceℂ m (toComplex fIm) (toComplex fIm)).re
-        = ∫ k, ‖(SchwartzMap.fourierTransformCLM ℂ (toComplex fIm)) k‖^2 * freePropagatorMomentum_mathlib m k ∂volume := by
-    change
-      (∫ x, ∫ y,
-          (toComplex fIm x) * (freeCovariance m x y : ℂ) * (starRingEnd ℂ (toComplex fIm y))
-        ∂volume ∂volume).re
-        = ∫ k, ‖(SchwartzMap.fourierTransformCLM ℂ (toComplex fIm)) k‖^2 * freePropagatorMomentum_mathlib m k ∂volume
-    exact (parseval_covariance_schwartz_bessel (m := m) (f := toComplex fIm))
+        = ∫ k, ‖(SchwartzMap.fourierTransformCLM ℂ (toComplex fIm)) k‖^2 * freePropagatorMomentum_mathlib m k ∂volume :=
+    parseval_covariance_schwartz_bessel m (toComplex fIm)
 
   -- For real test functions, complex covariance equals the complex bilinear form
   have h_eq_bilin :
@@ -361,19 +346,8 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     (memLp_two_iff_integrable_sq_norm hF_meas).1 hF_memLp
 
   -- The weighted integrand measurability (not strictly needed for the monotonicity helper)
-  have h_prop_cont : Continuous fun k => freePropagatorMomentum_mathlib m k := by
-    unfold freePropagatorMomentum_mathlib
-    -- denom(k) = (2π)²‖k‖² + m² is continuous and strictly positive
-    have hdenom_cont : Continuous fun k : SpaceTime => (2 * Real.pi)^2 * ‖k‖^2 + m^2 := by
-      apply Continuous.add
-      · exact continuous_const.mul (continuous_norm.pow 2)
-      · exact continuous_const
-    refine Continuous.div continuous_const hdenom_cont ?h_ne
-    intro k
-    have hmpos : 0 < m := Fact.out
-    have h1 : 0 ≤ (2 * Real.pi)^2 * ‖k‖^2 := by positivity
-    have h2 : 0 < m^2 := sq_pos_of_pos hmpos
-    linarith
+  have h_prop_cont : Continuous fun k => freePropagatorMomentum_mathlib m k :=
+    continuous_freePropagatorMomentum_mathlib m
 
   have h_prop_meas : AEStronglyMeasurable (fun k => freePropagatorMomentum_mathlib m k) volume :=
     h_prop_cont.aestronglyMeasurable
@@ -557,11 +531,7 @@ theorem gaussianFreeField_satisfies_OS1_revised (m : ℝ) [Fact (0 < m)] :
         have hpt : ∀ x, 0 ≤ ‖f x‖ := by intro x; exact norm_nonneg _
         -- `integral_nonneg` is applicable to nonnegative functions over `volume`
         exact integral_nonneg hpt
-      have hcpos : 0 ≤ (1 / (2 * m^2)) := by
-        have hmpos : 0 < m := Fact.out
-        have hm2pos : 0 < m^2 := by exact sq_pos_of_pos hmpos
-        have hdenpos : 0 < 2 * m^2 := by nlinarith
-        exact le_of_lt (one_div_pos.mpr hdenpos)
+      have hcpos : 0 ≤ (1 / (2 * m^2)) := by positivity
       -- Use `add_nonneg` and rearrange
       have hadd : (1 / (2 * m^2)) * ∫ x, ‖f x‖ ∂volume ≥ 0 := by
         exact mul_nonneg hcpos hI1_nonneg
