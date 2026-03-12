@@ -374,11 +374,7 @@ lemma posDef_entrywiseExp_hadamardSeries_of_posDef
       have hPSD : (hadamardPow (ι:=ι) R n).PosSemidef := Matrix.PosDef.posSemidef hPD
       -- evaluate quadratic form
       have hxq : 0 ≤ x ⬝ᵥ (hadamardPow (ι:=ι) R n).mulVec x := hPSD.dotProduct_mulVec_nonneg x
-      -- multiply by positive coefficient 1/n!
-      have hcoeff : 0 ≤ (1 / (Nat.factorial n : ℝ)) := by
-        have : 0 < (Nat.factorial n : ℝ) := by exact_mod_cast (Nat.cast_pos.mpr (Nat.factorial_pos n))
-        exact div_nonneg (by norm_num) this.le
-      exact mul_nonneg hcoeff hxq
+      positivity
   have hterm_pos : 0 < f 1 := by
     -- n = 1 term equals xᵀ R x, which is strictly positive by hR
     have hEq1' : hadamardPow (ι:=ι) R 1 = Matrix.hadamard (hadamardOne (ι:=ι)) R := rfl
@@ -391,14 +387,7 @@ lemma posDef_entrywiseExp_hadamardSeries_of_posDef
       -- The summability of f follows from summable_hadamardQuadSeries
       -- f n = (1/n!) * (quadratic form in hadamardPow R n)
       exact summable_hadamardQuadSeries R x
-    -- Now compare tsum with the singleton partial sum at {1}
-    have h_f1_le : f 1 ≤ tsum f := by
-      -- bound partial sum by tsum for nonnegative terms
-      have h := (Summable.sum_le_tsum (s := ({1} : Finset ℕ)) (f := f)
-        (by intro n hn; exact hterm_nonneg n) hSumm_f)
-      simpa using h
-    -- Use strict positivity of f 1
-    exact lt_of_lt_of_le hterm_pos h_f1_le
+    exact Summable.tsum_pos hSumm_f hterm_nonneg 1 hterm_pos
   -- Conclude
   simpa [hq_tsum] using this
 

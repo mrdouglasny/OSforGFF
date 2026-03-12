@@ -487,14 +487,7 @@ lemma fourier_exponential_decay' (μ : ℝ) (hμ : 0 < μ) (k : ℝ) :
       (fun x : ℝ => Complex.exp (Complex.I * k * x) * Real.exp (-μ * |x|)) (Set.Ioi 0) volume :=
     h_int_full.integrableOn
   -- Split the integral: ∫_ℝ = ∫_{≤0} + ∫_{>0}
-  have h_split : ∫ x : ℝ, Complex.exp (Complex.I * k * x) * Real.exp (-μ * |x|) =
-      (∫ x : ℝ in Set.Iic 0, Complex.exp (Complex.I * k * x) * Real.exp (-μ * |x|)) +
-      (∫ x : ℝ in Set.Ioi 0, Complex.exp (Complex.I * k * x) * Real.exp (-μ * |x|)) := by
-    rw [← MeasureTheory.integral_union_ae (Set.Iic_disjoint_Ioi (le_refl (0:ℝ))).aedisjoint
-        measurableSet_Ioi.nullMeasurableSet h_int_Iic h_int_Ioi]
-    rw [Set.Iic_union_Ioi]
-    exact MeasureTheory.setIntegral_univ.symm
-  rw [h_split, h_Iic, h_Ioi]
+  rw [← intervalIntegral.integral_Iic_add_Ioi h_int_Iic h_int_Ioi, h_Iic, h_Ioi]
   exact fourier_exponential_decay_split μ hμ k
 
 /-- Variant with negative frequency convention e^{-ikx}. -/

@@ -170,27 +170,8 @@ theorem gaussian_satisfies_OS0
             exact (ContinuousLinearMap.proj j : (Fin n → ℂ) →L[ℂ] ℂ).analyticOnNhd _
           exact AnalyticOnNhd.mul coord_i coord_j
 
-      -- Apply finite sum analyticity twice by decomposing the sum
-      -- First for outer sum
-      have h_outer_sum : ∀ i, AnalyticOnNhd ℂ (fun z : Fin n → ℂ => ∑ j, z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) Set.univ := by
-        intro i
-        -- Apply sum analyticity to inner sum over j
-        have : (fun z : Fin n → ℂ => ∑ j, z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) =
-               (∑ j : Fin n, fun z => z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) := by
-          ext z; simp [Finset.sum_apply]
-        rw [this]
-        apply Finset.analyticOnNhd_sum
-        intro j _
-        exact h_monomial i j
-
-      -- Now apply for the outer sum
-      have : (fun z : Fin n → ℂ => ∑ i, ∑ j, z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) =
-             (∑ i : Fin n, fun z => ∑ j, z i * z j * SchwingerFunctionℂ₂ dμ_config (J i) (J j)) := by
-        ext z; simp [Finset.sum_apply]
-      rw [this]
-      apply Finset.analyticOnNhd_sum
-      intro i _
-      exact h_outer_sum i
+      refine analyticOnNhd_fun_sum univ fun n_1 a ↦ ?_
+      exact analyticOnNhd_fun_sum univ fun n_2 a ↦ h_monomial n_1 n_2
 
     -- Convert from AnalyticOnNhd to AnalyticOn
     exact h_sum_analytic.analyticOn

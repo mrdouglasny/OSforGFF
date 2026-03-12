@@ -279,18 +279,7 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
       show distributionPairingℂ_real ω (toComplex f) * distributionPairingℂ_real ω (toComplex (g.translate a)) = _
       rw [distributionPairingℂ_real_toComplex, distributionPairingℂ_real_toComplex, Complex.ofReal_mul]
     rw [h_fun_eq]
-    -- Now the goal is: ∫ ↑(f(ω) * g(ω)) dμ = ↑(∫ f(ω) * g(ω) dμ)
-    -- Need integrability for integral_ofReal_eq
-    have h_int : MeasureTheory.Integrable
-        (fun ω => distributionPairing ω f * distributionPairing ω (g.translate a))
-        (gaussianFreeField_free m).toMeasure := by
-      -- Use Hölder: L² × L² → L¹
-      have hf : MemLp (fun ω => distributionPairing ω f) 2 (gaussianFreeField_free m).toMeasure :=
-        gaussianFreeField_pairing_memLp m f 2 (by simp)
-      have hg : MemLp (fun ω => distributionPairing ω (g.translate a)) 2 (gaussianFreeField_free m).toMeasure :=
-        gaussianFreeField_pairing_memLp m (g.translate a) 2 (by simp)
-      exact hf.integrable_mul hg
-    exact integral_ofReal_eq (gaussianFreeField_free m).toMeasure _ h_int
+    exact integral_complex_ofReal
 
   have h_S2_norm : ‖S₂ fC T_a_gC‖ = |SchwingerFunction₂ (gaussianFreeField_free m) f (g.translate a)| := by
     rw [h_S2_eq, Complex.norm_real, Real.norm_eq_abs]

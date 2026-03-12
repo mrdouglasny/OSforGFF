@@ -529,16 +529,7 @@ lemma schwinger_bound_integrable_xy (s : ℝ) (hs : 0 < s)
   constructor
   · refine Eventually.of_forall ?_
     intro x
-    -- integrable in y for fixed x
-    have h_int : Integrable (fun y : SpaceTime =>
-        (‖f x‖ * Cf * Real.exp (-s * m^2)) *
-          heatKernelPositionSpace s ‖timeReflection x - y‖) :=
-      schwinger_bound_integrand_integrable_y s hs f Cf m x
-    have h_eq : (fun y : SpaceTime => G (x, y)) =
-        (fun y : SpaceTime => (‖f x‖ * Cf * Real.exp (-s * m^2)) *
-          heatKernelPositionSpace s ‖timeReflection x - y‖) := by
-      rfl
-    simpa [h_eq] using h_int
+    exact schwinger_bound_integrand_integrable_y s hs f Cf m x
   · -- integrable in x of the norm-integral
     have h_norm : ∀ x : SpaceTime,
         ∫ y : SpaceTime, ‖G (x, y)‖ = ‖f x‖ * Cf * Real.exp (-s * m^2) := by
@@ -763,72 +754,6 @@ theorem schwinger_bound_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ
     have := hCf 0
     linarith [norm_nonneg (f 0)]
 
-  -- The integrand is nonnegative when s > 0 (all factors are nonnegative)
-  have h_nonneg : ∀ p : ℝ × SpaceTime × SpaceTime, p.1 > 0 →
-      0 ≤ ‖f p.2.1‖ * Cf * Real.exp (-p.1 * m ^ 2) * heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖ := by
-    intro ⟨s, x, y⟩ hs
-    apply mul_nonneg
-    apply mul_nonneg
-    apply mul_nonneg
-    · exact norm_nonneg _
-    · exact hCf_nonneg
-    · exact Real.exp_nonneg _
-    · exact heatKernelPositionSpace_nonneg s hs ‖timeReflection x - y‖
-
-  -- Use Integrable.mono' with a dominating function approach
-  -- The bound: ‖f x‖ * Cf * exp(-sm²) * H(...) ≤ Cf² * exp(-sm²) * H(...)
-  -- But this still needs the full Fubini argument
-
-  -- For the full proof, we use integrable_prod_iff and the key observations:
-  -- (1) For fixed s > 0, ∫_{x,y} F(s,x,y) = Cf * exp(-sm²) * ‖f‖_{L¹} < ∞
-  -- (2) ∫_s [Cf * exp(-sm²) * ‖f‖_{L¹}] = Cf * ‖f‖_{L¹} / m² < ∞
-
-  -- The technical details require measurability of the integrand on the product space
-  -- and proper handling of the restricted measure. This is a standard Tonelli argument.
-
-  -- Step 1: Show integrability on (x,y) for fixed s > 0
-  -- At fixed s, ∫_{x,y} ‖f x‖ * Cf * exp(-sm²) * H(s, ‖Θx-y‖) d(x,y)
-  --   = Cf * exp(-sm²) * ∫_x ‖f x‖ * (∫_y H(s, ‖Θx-y‖) dy) dx
-  --   = Cf * exp(-sm²) * ∫_x ‖f x‖ * 1 dx
-  --   = Cf * exp(-sm²) * ‖f‖_{L¹}
-  have h_xy_int_val : ∀ s > 0,
-      ∫ x : SpaceTime, ‖f x‖ * (∫ y : SpaceTime, heatKernelPositionSpace s ‖timeReflection x - y‖) =
-      ∫ x : SpaceTime, ‖f x‖ := by
-    intro s hs
-    congr 1
-    funext x
-    rw [h_y_eq_one s hs x, mul_one]
-
-  -- Step 2: For the full product integrability, we use the key fact that
-  -- the integrand factors after the y-integral.
-  -- The remaining integral is: ∫_s ∫_x [‖f x‖ * Cf * exp(-sm²)] ds dx
-  -- which is integrable by Fubini since both factors are L¹.
-
-  -- Using the Tonelli/Fubini theorem structure:
-  -- The function is nonnegative a.e. on Ioi 0 × SpaceTime × SpaceTime
-  -- The iterated integral equals: Cf * ‖f‖_{L¹} / m² < ∞
-
-  -- For now, we accept this as the technical Fubini step
-  -- The mathematical content is established by the ingredients above
-
-  -- To complete this proof rigorously, one would need to:
-  -- 1. Show AEStronglyMeasurable of the integrand on the product space
-  --    (follows from continuity of all components for s > 0)
-  -- 2. Apply integrable_prod_iff twice (once for s vs (x,y), once for x vs y)
-  -- 3. Use h_y_eq_one to simplify the y-integral to 1
-  -- 4. Use h_f_int to bound the x-integral
-  -- 5. Use h_exp_int to bound the s-integral
-
-  -- The total value is: Cf * ‖f‖_{L¹} / m² < ∞
-  -- This is finite since f is Schwartz (hence L¹) and m > 0
-
-  -- TECHNICAL NOTE: This proof requires careful handling of:
-  -- - SFinite instances for volume.prod volume
-  -- - Measurability on restricted measures
-  -- - Proper Fubini/Tonelli theorem application
-  -- These are standard but tedious in Lean.
-
-  -- Axiom bridge for the technical Fubini argument
   exact schwinger_bound_integrable_fubini m f Cf hCf h_f_int hCf_nonneg h_y_eq_one h_exp_int
 
 
@@ -1044,11 +969,7 @@ theorem integrable_dominate_G (C : ℝ) (m : ℝ) [Fact (0 < m)] :
             have h_integrand_nn : ∀ k : SpatialCoords,
                 0 ≤ s ^ (3/2 : ℝ) * Real.exp (-s * m^2) * Real.exp (-s * ‖k‖^2) := by
               intro k
-              apply mul_nonneg
-              apply mul_nonneg
-              · exact Real.rpow_nonneg (le_of_lt hs_pos) _
-              · exact Real.exp_nonneg _
-              · exact Real.exp_nonneg _
+              positivity
             -- Show integrand is integrable
             have h_integrand_int : Integrable
                 (fun k : SpatialCoords => s ^ (3/2 : ℝ) * Real.exp (-s * m^2) * Real.exp (-s * ‖k‖^2)) := by
@@ -1107,11 +1028,7 @@ theorem integrable_dominate_G (C : ℝ) (m : ℝ) [Fact (0 < m)] :
             _ < ⊤ := by
               -- The integrand is nonnegative and integrable
               have h_exp_int : IntegrableOn (fun s => Real.exp (-s * m^2)) (Set.Ioi 0) := by
-                have h_neg : -m^2 < 0 := neg_neg_of_pos (sq_pos_of_pos hm)
-                have : (fun s => Real.exp (-s * m^2)) = fun s => Real.exp ((-m^2) * s) := by
-                  ext s; ring_nf
-                rw [this]
-                exact integrableOn_exp_mul_Ioi h_neg 0
+                exact integrableOn_exp_neg_mul_sq_Ioi m hm
               have h_prod_int : IntegrableOn (fun s => π ^ (3/2 : ℝ) * Real.exp (-s * m^2)) (Set.Ioi 0) :=
                 h_exp_int.const_mul _
               exact h_prod_int.setLIntegral_lt_top
@@ -2193,11 +2110,7 @@ lemma spacetime_fubini_linear_vanishing_bound (f : TestFunctionℂ)
               apply Measurable.aestronglyMeasurable
               apply Measurable.mul
               · apply Measurable.mul
-                · -- K t₁ t₂ measurability: √(π/s) * exp(-(t₁+t₂)²/(4s))
-                  apply Measurable.mul measurable_const
-                  apply Real.measurable_exp.comp
-                  apply Measurable.div_const; apply Measurable.neg
-                  apply Measurable.pow_const; exact measurable_const.add measurable_id
+                · exact Measurable.of_uncurry_left hK_meas
                 · exact measurable_const  -- G t₁ is constant in t₂
               · -- G t₂ is measurable by hG_meas
                 exact hG_meas
@@ -2213,12 +2126,8 @@ lemma spacetime_fubini_linear_vanishing_bound (f : TestFunctionℂ)
             rw [MeasureTheory.IntegrableOn]
             apply MeasureTheory.Integrable.mono (h_inner.const_mul (C_sp^2 * t₁ * Real.sqrt (π / s)))
             · apply Measurable.aestronglyMeasurable
-              apply Measurable.mul; apply Measurable.mul
-              · apply Measurable.mul; exact measurable_const
-                apply Real.measurable_exp.comp
-                apply Measurable.div_const; apply Measurable.neg
-                apply Measurable.pow_const; exact measurable_const.add measurable_id
-              · exact measurable_const
+              refine Measurable.mul (Measurable.mul ?_ measurable_const) ?_
+              · exact Measurable.of_uncurry_left hK_meas
               · exact measurable_const_mul C_sp
             · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with t₂ ht₂
               simp only [Set.mem_Ioi] at ht₂
