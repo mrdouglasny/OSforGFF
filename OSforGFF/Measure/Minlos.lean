@@ -165,7 +165,6 @@ theorem minlos_gaussian_construction
   (covariance_form : E → E → ℝ)
   (h_eq : ∀ f, covariance_form f f = (‖T f‖^2 : ℝ))
   (h_symm : ∀ f, covariance_form (-f) (-f) = covariance_form f f)
-  (_h_nuclear : True)
   (h_zero : covariance_form 0 0 = 0)
   (h_continuous : Continuous (fun f => covariance_form f f))
   : ∃ μ : ProbabilityMeasure (WeakDual ℝ E),
@@ -190,13 +189,12 @@ theorem gaussian_measure_characteristic_functional
   (covariance_form : E → E → ℝ)
   (h_eq : ∀ f, covariance_form f f = (‖T f‖^2 : ℝ))
   (h_symm : ∀ f, covariance_form (-f) (-f) = covariance_form f f)
-  (h_nuclear : True)
   (h_zero : covariance_form 0 0 = 0)
   (h_continuous : Continuous (fun f => covariance_form f f))
   : ∃ μ : ProbabilityMeasure (WeakDual ℝ E),
     (∀ f : E, ∫ ω, Complex.exp (I * (ω f)) ∂μ.toMeasure =
               gaussian_characteristic_functional covariance_form f) := by
-  obtain ⟨μ, hchar⟩ := minlos_gaussian_construction T covariance_form h_eq h_symm h_nuclear h_zero h_continuous
+  obtain ⟨μ, hchar⟩ := minlos_gaussian_construction T covariance_form h_eq h_symm h_zero h_continuous
   exact ⟨μ, fun f => (hchar f).symm⟩
 
 /-! ## Minlos Uniqueness (re-exported from bochner) -/

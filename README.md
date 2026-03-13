@@ -134,6 +134,7 @@ Axiom definitions, individual proofs, and master theorem.
 | [OS4_MGF](OSforGFF/OS/OS4_MGF.lean) | [Shared infrastructure: MGF formula, time translation duality](summary/OSforGFF/OS/OS4_MGF.md) |
 | [OS4_Clustering](OSforGFF/OS/OS4_Clustering.lean) | [Gaussian factorization + convolution decay lemma (domain split at ‖y‖=‖x‖/2)](summary/OSforGFF/OS/OS4_Clustering.md) |
 | [OS4_Ergodicity](OSforGFF/OS/OS4_Ergodicity.lean) | [Polynomial clustering (α=6) → L² convergence](summary/OSforGFF/OS/OS4_Ergodicity.md) |
+| [NonTrivial](OSforGFF/OS/NonTrivial.lean) | Nontriviality: C(f,f) > 0, positive variance, UV divergence C(x,y) → ∞ |
 | [Master](OSforGFF/OS/Master.lean) | [Assembles OS0–OS4 into `gaussianFreeField_satisfies_all_OS_axioms`](summary/OSforGFF/OS/Master.md) |
 
 ---

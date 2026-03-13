@@ -134,7 +134,7 @@ noncomputable def constructGaussianMeasureMinlos_free (m : ℝ) [Fact (0 < m)] :
     gaussian_measure_characteristic_functional
       (E := TestFunction) (H := H) T (freeCovarianceFormR m)
       (by intro f; simpa using h_eq f)
-      h_symm True.intro h_zero h_cont
+      h_symm h_zero h_cont
   exact Classical.choose h_minlos
 
 /-- The Gaussian Free Field with mass m > 0, constructed via specialized Minlos -/
@@ -171,7 +171,7 @@ theorem gff_real_characteristic (m : ℝ) [Fact (0 < m)] :
     gaussian_measure_characteristic_functional
       (E := TestFunction) (H := H) T (freeCovarianceFormR m)
       (by intro f; simpa using h_eq f)
-      h_symm True.intro h_zero h_cont
+      h_symm h_zero h_cont
   -- Unfold the definition of our chosen ProbabilityMeasure to reuse the spec
   have hchar := (Classical.choose_spec h_minlos)
   intro f
