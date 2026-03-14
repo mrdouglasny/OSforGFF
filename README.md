@@ -25,6 +25,7 @@ theorem gaussianFreeField_satisfies_all_OS_axioms (m : ℝ) [Fact (0 < m)] :
 All results are fully proved — no assumed axioms. Nuclear space structure and the Minlos theorem
 are provided by the external libraries [bochner](https://github.com/mrdouglasny/bochner) and
 [gaussian-field](https://github.com/mrdouglasny/gaussian-field), which are themselves axiom-free.
+The Minlos proof uses the external library [kolmogorov_extension4](https://github.com/remydegenne/kolmogorov_extension4).
 
 ## Project Structure
 
