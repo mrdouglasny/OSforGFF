@@ -15,7 +15,7 @@ require BochnerMinlos from git
   "https://github.com/mrdouglasny/bochner.git" @ "4d73f08"
 
 require GaussianField from git
-  "https://github.com/mrdouglasny/gaussian-field.git" @ "51e2368"
+  "https://github.com/mrdouglasny/gaussian-field.git" @ "4ce5d82"
 
 @[default_target]
 lean_lib «OSforGFF» where
