@@ -106,7 +106,7 @@ noncomputable def SchwingerTwoPointFunction
   else
     -- Use the filter limit along the sequence of bump functions
     -- The limit exists for "good" measures (those with continuous covariance kernels away from 0)
-    limUnder Filter.atTop
+    Filter.limUnder Filter.atTop
       (fun n : ℕ => if hn : n = 0 then 0 else SmearedTwoPointFunction dμ_config (standardBumpSequence n hn) x)
 
 /-- SchwingerTwoPointFunction vanishes at coincident points by definition. -/

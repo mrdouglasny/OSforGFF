@@ -26,7 +26,7 @@ nonzero), and reduces to `⟪G, B⟫ = tr(H D) = ∑ i, λᵢ Hᵢᵢ > 0`.
 
 open Matrix
 
-open scoped BigOperators
+open scoped BigOperators MatrixOrder
 
 set_option linter.unusedSectionVars false
 
@@ -65,16 +65,15 @@ lemma congr_transpose_mul_mul_ne_zero
   have : G = 0 := by simpa [hH, Matrix.mul_zero, Matrix.zero_mul] using hG_eq
   exact hG_ne_zero this
 
-set_option linter.deprecated false in
 /-- Cauchy–Schwarz for the semi-inner product induced by a PSD real matrix.
 For all vectors x,y: (xᵀ H y)^2 ≤ (xᵀ H x) (yᵀ H y). -/
 lemma psd_cauchy_schwarz
   (H : Matrix ι ι ℝ) (hH_psd : H.PosSemidef) (x y : ι → ℝ) :
   ((x ⬝ᵥ H.mulVec y)^2) ≤ (x ⬝ᵥ H.mulVec x) * (y ⬝ᵥ H.mulVec y) := by
   classical
-  -- Note: The suggested replacement CStarAlgebra.nonneg_iff_eq_star_mul_self requires
-  -- PartialOrder on matrices which doesn't exist in general
-  obtain ⟨B, rfl⟩ := (Matrix.posSemidef_iff_eq_conjTranspose_mul_self (A := H)).mp hH_psd
+  obtain ⟨B, hB⟩ := CStarAlgebra.nonneg_iff_eq_star_mul_self.mp hH_psd.nonneg
+  rw [star_eq_conjTranspose, conjTranspose_eq_transpose_of_trivial] at hB
+  subst hB
   have hform (a b : ι → ℝ) :
       a ⬝ᵥ (B.transpose * B).mulVec b = (B.mulVec a) ⬝ᵥ (B.mulVec b) := by
     have h1 : (B.transpose * B).mulVec b = B.transpose.mulVec (B.mulVec b) := by

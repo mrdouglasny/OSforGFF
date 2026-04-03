@@ -323,7 +323,7 @@ lemma iteratedFDeriv_timeTranslationSchwartz (n : ℕ) (h : ℝ) (f : TestFuncti
     simp only [timeShiftConst, unitTimeDir, EuclideanSpace.single, timeIndex]
     -- LHS: if i.val = 0 then h else 0
     -- RHS: h * (Pi.single timeIndex 1) i = h * (if i = timeIndex then 1 else 0)
-    simp only [PiLp.smul_apply, smul_eq_mul, Pi.single_apply]
+    simp only [PiLp.smul_apply, smul_eq_mul, PiLp.ofLp_single, Pi.single_apply]
     split_ifs with hi1 hi2
     · ring
     · -- hi1 : i.val = 0, hi2 : i ≠ ⟨0, _⟩ - contradiction
