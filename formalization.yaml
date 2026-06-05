@@ -1,0 +1,186 @@
+# formalization.yaml — https://github.com/mathlib-initiative/formalization.yaml (v0.3)
+# Describes the `main` branch state (clean, up-to-date with origin/main).
+# 0 sorries, 0 axioms; ~32,000 lines across 47 files (per README, Version 2.0, March 2026).
+version: "v0.3"
+
+project:
+  name: "OSforGFF"
+  authors: ["Michael R. Douglas"]
+  license: "Apache-2.0"
+
+sources:
+  - title: "Quantum Physics: A Functional Integral Point of View"
+    authors: ["James Glimm", "Arthur Jaffe"]
+    id: "ISBN:978-0-387-96477-7"
+    type: "textbook"
+    license: "proprietary"
+    note: "Primary reference; the construction and OS-axiom proofs follow GJ, pp. 89-90."
+  - title: "Axioms for Euclidean Green's functions"
+    authors: ["Konrad Osterwalder", "Robert Schrader"]
+    id: "10.1007/BF01645738"
+    type: "paper"
+    license: "proprietary"
+    note: "Commun. Math. Phys. 31 (1973) 83-112. Original OS axioms (OS0-OS4)."
+  - title: "Axioms for Euclidean Green's functions II"
+    authors: ["Konrad Osterwalder", "Robert Schrader"]
+    id: "10.1007/BF01608978"
+    type: "paper"
+    license: "proprietary"
+    note: "Commun. Math. Phys. 42 (1975) 281-305. Reflection positivity / reconstruction."
+  - title: "Generalized Functions, Volume 4: Applications of Harmonic Analysis"
+    authors: ["I. M. Gel'fand", "N. Ya. Vilenkin"]
+    id: "ISBN:978-1-4704-2662-5"
+    type: "textbook"
+    license: "proprietary"
+    note: "Nuclear spaces and the Minlos theorem (measure construction on S')."
+  - title: "Methods of Modern Mathematical Physics, Volume II: Fourier Analysis, Self-Adjointness"
+    authors: ["Michael Reed", "Barry Simon"]
+    id: "ISBN:978-0-12-585002-5"
+    type: "textbook"
+    license: "proprietary"
+    note: "Fourier-analytic and functional-analytic infrastructure for the covariance."
+
+status:
+  scope: >
+    Constructs the massive Gaussian Free Field (GFF) in four Euclidean spacetime
+    dimensions as a probability measure mu_GFF m on the tempered distributions
+    S'(R^4) (FieldConfiguration), built via the Minlos theorem from the free
+    covariance (-Delta + m^2)^{-1}, and proves it satisfies all five
+    Osterwalder-Schrader axioms (OS0 analyticity, OS1 regularity, OS2 Euclidean
+    invariance, OS3 reflection positivity, OS4 clustering + ergodicity).
+    The construction is specialized to mass m > 0 in d = 4; other dimensions and
+    a Minlos-free construction are noted as planned/related work but not in scope
+    here. Nuclear-space structure and the Minlos/Kolmogorov machinery are supplied
+    by the external libraries bochner (BochnerMinlos), gaussian-field
+    (GaussianField), and kolmogorov_extension4, all of which are axiom-free.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+  main_results:
+    - declaration: "OSforGFF.gaussianFreeField_satisfies_all_OS_axioms"
+      file: "OSforGFF/OS/Master.lean"
+      sorry_count: 0
+      axioms: []
+      literature_dependencies:
+        - statement: "the free GFF (m>0, d=4) satisfies all Osterwalder-Schrader axioms OS0-OS4"
+          source: "10.1007/BF01645738"
+        - statement: "reflection positivity (OS3) and OS reconstruction framework"
+          source: "10.1007/BF01608978"
+        - statement: "construction and proof conventions for the free Euclidean field"
+          source: "ISBN:978-0-387-96477-7"
+    - declaration: "gaussianFreeField_free"
+      file: "OSforGFF/Measure/Construct.lean"
+      sorry_count: 0
+      axioms: []
+      literature_dependencies:
+        - statement: "existence of the GFF measure on S'(R^4) via Minlos from the free covariance"
+          source: "ISBN:978-1-4704-2662-5"
+        - statement: "free scalar field covariance (-Delta+m^2)^{-1}"
+          source: "ISBN:978-0-387-96477-7"
+    - declaration: "QFT.gaussianFreeField_satisfies_OS0"
+      file: "OSforGFF/OS/OS0_Analyticity.lean"
+      sorry_count: 0
+      axioms: []
+      literature_dependencies:
+        - statement: "OS0: analyticity of the generating functional Z[sum z_i J_i]"
+          source: "10.1007/BF01645738"
+    - declaration: "gaussianFreeField_satisfies_OS1_revised"
+      file: "OSforGFF/OS/OS1_Regularity.lean"
+      sorry_count: 0
+      axioms: []
+      literature_dependencies:
+        - statement: "OS1: regularity / exponential bound on the generating functional"
+          source: "10.1007/BF01645738"
+    - declaration: "gaussian_satisfies_OS2"
+      file: "OSforGFF/Measure/GaussianFreeField.lean"
+      sorry_count: 0
+      axioms: []
+      literature_dependencies:
+        - statement: "OS2: Euclidean invariance of the measure / generating functional"
+          source: "10.1007/BF01645738"
+    - declaration: "QFT.gaussianFreeField_OS3"
+      file: "OSforGFF/OS/OS3_ReflectionPositivity.lean"
+      sorry_count: 0
+      axioms: []
+      literature_dependencies:
+        - statement: "OS3: reflection positivity via the Schur-Hadamard argument"
+          source: "10.1007/BF01608978"
+    - declaration: "QFT.gaussianFreeField_satisfies_OS4"
+      file: "OSforGFF/OS/OS4_Clustering.lean"
+      sorry_count: 0
+      axioms: []
+      literature_dependencies:
+        - statement: "OS4: clustering via Gaussian factorization and covariance decay"
+          source: "10.1007/BF01645738"
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["claude-opus-4-8"]
+      framework: "Claude Code"
+      prompting_notes: >
+        Cycle-by-cycle proving with compiler-guided repair. Coding assistance for
+        the project also used Claude Opus 4.6, Gemini 3 Pro, and GPT-5.2 Codex
+        (per README); this formalization.yaml records the standardized
+        agent-driven workflow.
+  notes: "Build: `lake build`. Mathlib + bochner + gaussian-field + kolmogorov_extension4 pinned via lake-manifest.json."
+
+fidelity:
+  divergences: >
+    The OS axioms are formalized in the Glimm-Jaffe probability-measure
+    formulation (predicates on ProbabilityMeasure FieldConfiguration) rather than
+    the original Schwinger-function formulation of Osterwalder-Schrader. OS3 is
+    stated in the complex star formulation (OS 1975 axiom E2) with an equivalent
+    real reformulation (OS3_ReflectionPositivity_real). OS4 is split into a
+    clustering statement and an ergodicity statement, with ergodicity derived from
+    a polynomial-clustering bound (alpha = 6) specific to the 4D mass gap. The
+    development is specialized to spacetime dimension d = 4 and mass m > 0.
+
+review:
+  status: "self-assessed"
+  reviewers: []
+  notes: >
+    0 sorries and 0 custom axioms in the OSforGFF source (47 files, ~32,000 lines;
+    per README Version 2.0). External dependencies (bochner, gaussian-field,
+    kolmogorov_extension4) are themselves axiom-free per their own documentation.
+
+alignment:
+  namespace: "OSforGFF / QFT (mixed; OS axiom predicates at root)"
+  statements:
+    - source: "10.1007/BF01645738"
+      lean: "OSforGFF.gaussianFreeField_satisfies_all_OS_axioms"
+      module: "OSforGFF.OS.Master"
+      status: "proved"
+      note: "Master theorem: SatisfiesAllOS (mu_GFF m) for m > 0."
+    - source: "ISBN:978-1-4704-2662-5"
+      lean: "gaussianFreeField_free"
+      module: "OSforGFF.Measure.Construct"
+      status: "proved"
+      note: "GFF measure on S'(R^4) via Minlos; mu_GFF m is the simp abbrev."
+    - source: "10.1007/BF01645738"
+      lean: "QFT.gaussianFreeField_satisfies_OS0"
+      module: "OSforGFF.OS.OS0_Analyticity"
+      status: "proved"
+    - source: "10.1007/BF01645738"
+      lean: "gaussianFreeField_satisfies_OS1_revised"
+      module: "OSforGFF.OS.OS1_Regularity"
+      status: "proved"
+    - source: "10.1007/BF01645738"
+      lean: "gaussian_satisfies_OS2"
+      module: "OSforGFF.Measure.GaussianFreeField"
+      status: "proved"
+    - source: "10.1007/BF01608978"
+      lean: "QFT.gaussianFreeField_OS3"
+      module: "OSforGFF.OS.OS3_ReflectionPositivity"
+      status: "proved"
+      note: "Reflection positivity (complex formulation); real form also proved."
+    - source: "10.1007/BF01645738"
+      lean: "QFT.gaussianFreeField_satisfies_OS4"
+      module: "OSforGFF.OS.OS4_Clustering"
+      status: "proved"
+      note: "Clustering; ergodicity via OS4_Ergodicity from polynomial clustering (alpha=6)."
+
+acknowledgements: >
+  Project authored with Sarah Hoback, Anna Mei, and Ron Nissim. Coding assistance
+  from Claude Opus 4.6, Gemini 3 Pro, and GPT-5.2 Codex. Nuclear-space and Minlos
+  infrastructure from the bochner, gaussian-field, and kolmogorov_extension4 libraries.
