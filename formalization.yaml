@@ -116,14 +116,18 @@ status:
 automation:
   methods:
     - method: "agent"
-      models: ["claude-opus-4-8"]
+      models: ["claude-opus-4-6"]
       framework: "Claude Code"
-      prompting_notes: >
-        Cycle-by-cycle proving with compiler-guided repair. Coding assistance for
-        the project also used Claude Opus 4.6, Gemini 3 Pro, and GPT-5.2 Codex
-        (per README); this formalization.yaml records the standardized
-        agent-driven workflow.
-  notes: "Build: `lake build`. Mathlib + bochner + gaussian-field + kolmogorov_extension4 pinned via lake-manifest.json."
+      prompting_notes: "Primary prover (also Claude Sonnet for some steps); cycle-by-cycle with compiler-guided repair."
+    - method: "agent"
+      models: ["gpt-5.2-codex"]
+      framework: "Codex"
+      prompting_notes: "Auxiliary proving (per README)."
+    - method: "other"
+      models: ["gemini-3-pro"]
+      framework: "Gemini"
+      prompting_notes: "Coding assistance / review (per README)."
+  notes: "Build: `lake build`. Mathlib + bochner + gaussian-field + kolmogorov_extension4 pinned via lake-manifest.json. Models per README acknowledgements."
 
 fidelity:
   divergences: >
