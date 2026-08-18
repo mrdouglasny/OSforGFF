@@ -293,7 +293,7 @@ Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 
 ### Coding Assistance
 
-Claude Opus 4.6, Gemini 3 Pro, GPT-5.2 Codex
+Claude Opus 4.6, Claude Fable 5, Gemini 3 Pro, GPT-5.2 Codex
 
 ## License
 
