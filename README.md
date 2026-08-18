@@ -251,6 +251,32 @@ axiom footprint and statement type of the generic, `d = 4`, `d = 3`, and `d = 2`
 statement. A companion `scripts/check-guardrails.sh` performs a source-level diff against the
 baseline (blocking new `axiom`/escape-hatch declarations).
 
+## Registry verification: `Challenge.lean` / `Solution.lean`
+
+For submission to the [Palomar Registry](https://github.com/PalomarRegistry/PalomarPolicy) of
+machine-checked results, the repository root carries a mechanically verifiable
+challenge/solution pair:
+
+- [`Challenge.lean`](Challenge.lean) — the **auditable statement**, self-contained over
+  Mathlib alone (its transitive imports contain no OSforGFF code): for every dimension
+  `d ≥ 2` and mass `m > 0` there exists a probability measure on `S'(ℝ^d)` whose generating
+  functional is the Gaussian `Z[f] = exp(−½⟨f, Cf⟩)` with the free covariance in proper-time
+  form, satisfying all five OS axioms as restated in the file. The characterization clause
+  pins the measure uniquely — without it, bare existence would be satisfied by the Dirac
+  measure at `0`. The file's single `sorry` is the challenge hole.
+- [`Solution.lean`](Solution.lean) — verbatim copies of the Challenge definitions plus the
+  proof, obtained from this library's dimension-generic master theorem via the canonical
+  proper-time propagator. The two files differ **only** in the import line, the module
+  docstring, and the proof (checkable with `diff`).
+- [`comparator.json`](comparator.json) — configuration for the
+  [Comparator](https://github.com/leanprover/comparator), which verifies mechanically that
+  the Solution proves the Challenge's theorem with only Lean's three foundational axioms
+  (`propext`, `Classical.choice`, `Quot.sound`).
+
+Build the pair with `lake build Challenge Solution` (the default `lake build` is
+unaffected). The dictionary between the Challenge's self-contained definitions and the
+library's is tabulated in [docs/challenge.md](docs/challenge.md).
+
 ## Related Work
 
 - [or4nge19/OSforGFF](https://github.com/or4nge19/OSforGFF) — A fork by Matteo Cipollina pursuing a different measure construction pipeline: finite-dimensional Gaussians → Kolmogorov extension on test functions → nuclear support → pushforward to distribution space, avoiding the Minlos theorem. Develops coordinate-free Euclidean time-direction and dimension-agnostic Hermite APIs.

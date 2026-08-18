@@ -42,6 +42,22 @@ if [ -n "$newax" ];  then echo "✗ BLOCK: axiom(s) in source (the library decla
 if [ -n "$hatch" ];  then echo "✗ BLOCK: escape hatch introduced (native_decide/unsafe/implemented_by/extern):" >&2; echo "$hatch" >&2; fail=1; fi
 if [ -n "$sorries" ]; then echo "⚠ WARN: sorry/admit in source — the build's #print axioms guard is the hard gate:"; echo "$sorries"; fi
 
+# Registry pair (root Challenge.lean / Solution.lean, outside the OSforGFF/ tree scanned
+# above): same hard gates on axioms/escape hatches. Sorry accounting differs by design —
+# Challenge.lean carries EXACTLY ONE `sorry` (the challenge hole for the registry
+# comparator); Solution.lean must carry none.
+SORRY_PAT='(:=|[^[:alnum:]_]by[^[:alnum:]_]|;)[[:space:]]*(sorry|admit)([^[:alnum:]_]|$)|sorryAx|^[[:space:]]*(sorry|admit)[[:space:]]*$'
+if [ -f Challenge.lean ] && [ -f Solution.lean ]; then
+  pax=$(grep -nE '^[[:space:]]*axiom[[:space:]]' Challenge.lean Solution.lean 2>/dev/null || true)
+  phatch=$(grep -nE 'native_decide|[^[:alnum:]_]unsafe[^[:alnum:]_]|@\[implemented_by|@\[extern' Challenge.lean Solution.lean 2>/dev/null || true)
+  nch=$(grep -cE "$SORRY_PAT" Challenge.lean 2>/dev/null || true)
+  nsol=$(grep -cE "$SORRY_PAT" Solution.lean 2>/dev/null || true)
+  if [ -n "$pax" ];   then echo "✗ BLOCK: axiom(s) in the registry pair:" >&2; echo "$pax" >&2; fail=1; fi
+  if [ -n "$phatch" ]; then echo "✗ BLOCK: escape hatch in the registry pair:" >&2; echo "$phatch" >&2; fail=1; fi
+  if [ "$nch" != "1" ];  then echo "⚠ WARN: Challenge.lean sorry count = $nch (expected exactly 1: the challenge hole)"; fi
+  if [ "$nsol" != "0" ]; then echo "⚠ WARN: Solution.lean contains sorry/admit (it must be fully proved)"; fi
+fi
+
 if [ "$fail" -ne 0 ]; then
   echo "✗ guardrail BLOCK — resolve before continuing." >&2
   exit 2
