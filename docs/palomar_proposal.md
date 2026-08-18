@@ -225,12 +225,27 @@ conjunct of the main theorem, so the axiom keeps its full force — and the resu
 is in fact *stronger* than the original, which left the existence of the pullback implicit in
 its construction.
 
-**Both halves are verified**, not sketched:
+**Both halves are verified**, not sketched, and both are in this branch — run them with:
+
+```bash
+lake build ChallengeSlim SolutionSlim
+```
 
 - `ChallengeSlim.lean` — 564 lines, `import Mathlib` only, compiles with exactly one `sorry`
   (the hole).
-- `SolutionSlim.lean` — compiles and proves it from the library.
-  `#print axioms` → `[propext, Classical.choice, Quot.sound]`.
+- `SolutionSlim.lean` — compiles and proves it from the library. It ends with a
+  `#print axioms`, so every build reports `[propext, Classical.choice, Quot.sound]` — the
+  permitted set — rather than asking you to take it on faith.
+
+Both are derived from `Challenge.lean`/`Solution.lean` on `cherkis/OSforGFFgeneral@palomar`
+with **OS2 alone** rewritten; the time-reflection, time-translation and regularised
+two-point sections are untouched. The pair therefore still declares the constants behind the
+three known mismatches, and running Comparator on it will still fail. It demonstrates that
+the pattern compiles and that the Solution discharges the characterised form — not that the
+submission passes.
+
+This branch also carries the `SchwartzTestFunction` rename of §4.1, which `SolutionSlim`
+requires: without it, `import Mathlib` alongside `import OSforGFF` does not elaborate at all.
 
 The Solution bridge is 20 lines, of which the only real content is that `LinearIsometry.inv`
 of an equivalence's underlying isometry is its inverse:

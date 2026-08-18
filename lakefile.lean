@@ -20,3 +20,15 @@ require mathlib from git
 @[default_target]
 lean_lib «OSforGFF» where
   -- add any library configuration options here
+
+/-! Demonstration of the "characterise, don't construct" pattern for the Palomar registry
+    Challenge (see docs/palomar_proposal.md §6). Not default targets: build explicitly with
+    `lake build ChallengeSlim SolutionSlim`. -/
+
+/-- OS2 restated as a characterisation, Mathlib-only. Carries the challenge hole. -/
+lean_lib «ChallengeSlim» where
+  srcDir := "."
+
+/-- Proves `ChallengeSlim`'s theorem from the OSforGFF library. -/
+lean_lib «SolutionSlim» where
+  srcDir := "."
