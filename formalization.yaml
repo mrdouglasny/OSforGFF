@@ -19,18 +19,6 @@ project:
   license: "Apache-2.0"
 
 sources:
-  - title: "Formalization of QFT"
-    authors: ["Michael R. Douglas", "Sarah Hoback", "Anna Mei", "Ron Nissim"]
-    id: "arXiv:2603.15770"
-    type: "article"
-    relationship: "other"
-    author_endorsement: "participated"
-    license: "CC BY 4.0"
-    note: >
-      Companion paper describing this library at its original four-dimensional stage
-      (construction of the free bosonic QFT in 4D Euclidean spacetime and proof of the
-      Glimm-Jaffe axioms in Lean 4). The present repository is that formalization,
-      subsequently made dimension-generic (every d >= 2) and freed of all assumed axioms.
   - title: "Quantum Physics: A Functional Integral Point of View"
     authors: ["James Glimm", "Arthur Jaffe"]
     id: "ISBN:978-0-387-96477-7"
