@@ -1,44 +1,91 @@
-# formalization.yaml — https://github.com/mathlib-initiative/formalization.yaml (v0.3)
-# Describes the `uniform-d` branch state (dimension-generic library, uniform μ_GFF d).
-# 0 sorries, 0 axioms; ~31,500 lines across 54 on-graph files (+2 off-graph Legacy files).
-version: "v0.3"
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# formalization.yaml — https://github.com/mathlib-initiative/formalization.yaml (v0.4)
+# Describes the dimension-generic library (uniform μ_GFF d, every d ≥ 2) together with the
+# registry Challenge/Solution pair. 0 proof-development sorries, 0 custom axioms;
+# ~31,500 lines across 54 on-graph files (+6 off-graph Legacy files) plus the root
+# Challenge.lean / Solution.lean (the Challenge's single `sorry` is the challenge hole
+# proved in Solution.lean, not proof debt).
+version: "v0.4"
 
 project:
   name: "OSforGFF"
-  authors: ["Michael R. Douglas"]
+  authors:
+    - "Sergey A. Cherkis"
+    - "Michael R. Douglas"
+    - "Sarah Hoback"
+    - "Anna Mei"
+    - "Ron Nissim"
+  responsible_maintainers: ["Michael R. Douglas"]
   license: "Apache-2.0"
 
 sources:
+  - title: "Formalization of QFT"
+    authors: ["Michael R. Douglas", "Sarah Hoback", "Anna Mei", "Ron Nissim"]
+    id: "arXiv:2603.15770"
+    type: "article"
+    relationship: "other"
+    author_endorsement: "participated"
+    license: "CC BY 4.0"
+    note: >
+      Companion paper describing this library at its original four-dimensional stage
+      (construction of the free bosonic QFT in 4D Euclidean spacetime and proof of the
+      Glimm-Jaffe axioms in Lean 4). The present repository is that formalization,
+      subsequently made dimension-generic (every d >= 2) and freed of all assumed axioms.
   - title: "Quantum Physics: A Functional Integral Point of View"
     authors: ["James Glimm", "Arthur Jaffe"]
     id: "ISBN:978-0-387-96477-7"
-    type: "textbook"
+    type: "book"
+    location: "ch. 6, pp. 89-90"
+    relationship: "formalizes"
+    author_endorsement: "not-contacted"
     license: "proprietary"
     note: "Primary reference; the construction and OS-axiom proofs follow GJ, pp. 89-90."
   - title: "Axioms for Euclidean Green's functions"
     authors: ["Konrad Osterwalder", "Robert Schrader"]
     id: "10.1007/BF01645738"
-    type: "paper"
+    type: "article"
+    relationship: "formalizes"
+    author_endorsement: "not-contacted"
     license: "proprietary"
     note: "Commun. Math. Phys. 31 (1973) 83-112. Original OS axioms (OS0-OS4)."
   - title: "Axioms for Euclidean Green's functions II"
     authors: ["Konrad Osterwalder", "Robert Schrader"]
     id: "10.1007/BF01608978"
-    type: "paper"
+    type: "article"
+    relationship: "formalizes"
+    author_endorsement: "not-contacted"
     license: "proprietary"
-    note: "Commun. Math. Phys. 42 (1975) 281-305. Reflection positivity / reconstruction."
+    note: >
+      Commun. Math. Phys. 42 (1975) 281-305. Reflection positivity (axiom E2, the complex
+      star formulation used here) / reconstruction.
   - title: "Generalized Functions, Volume 4: Applications of Harmonic Analysis"
     authors: ["I. M. Gel'fand", "N. Ya. Vilenkin"]
     id: "ISBN:978-1-4704-2662-5"
-    type: "textbook"
+    type: "book"
+    relationship: "background"
+    author_endorsement: "n/a"
     license: "proprietary"
     note: "Nuclear spaces and the Minlos theorem (measure construction on S')."
   - title: "Methods of Modern Mathematical Physics, Volume II: Fourier Analysis, Self-Adjointness"
     authors: ["Michael Reed", "Barry Simon"]
     id: "ISBN:978-0-12-585002-5"
-    type: "textbook"
+    type: "book"
+    relationship: "background"
+    author_endorsement: "not-contacted"
     license: "proprietary"
     note: "Fourier-analytic and functional-analytic infrastructure for the covariance."
+
+related_formalizations:
+  - id: "https://github.com/or4nge19/OSforGFF"
+    relationship: "other"
+    note: >
+      Fork by Matteo Cipollina pursuing an alternative measure-construction pipeline
+      (finite-dimensional Gaussians -> Kolmogorov extension -> pushforward), avoiding the
+      Minlos theorem.
+
+classification:
+  arxiv: ["hep-th", "cs.LO", "math-ph"]
+  msc2020: ["81T08", "81S40", "60G60"]
 
 status:
   scope: >
@@ -56,13 +103,28 @@ status:
     plus an all-dimensions corollary via a canonical proper-time propagator. The OS3
     mixed-representation proper-time Fubini domination runs at boundary-vanishing order d,
     so no upper bound on the dimension is needed. Nuclear-space structure and the
-    Minlos/Kolmogorov machinery are supplied by
-    the external libraries bochner (BochnerMinlos), gaussian-field (GaussianField), and
-    kolmogorov_extension4, all of which are axiom-free.
+    Minlos/Kolmogorov machinery are supplied by the external libraries bochner
+    (BochnerMinlos), gaussian-field (GaussianField), and kolmogorov_extension4, all of
+    which are axiom-free. For registry verification the repository additionally carries a
+    self-contained Mathlib-only restatement of the headline result (Challenge.lean; its
+    single `sorry` is the challenge hole) and its proof from the library (Solution.lean),
+    wired through comparator.json.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: []
   main_results:
+    - declaration: "Challenge.gaussianFreeField_satisfies_OS_axioms"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: []
+      comparator_config: "comparator.json"
+      literature_dependencies:
+        - statement: "for every d >= 2 and m > 0 the free GFF exists on S'(R^d), is characterized by its Gaussian generating functional with the proper-time covariance, and satisfies OS0-OS4"
+          source: "10.1007/BF01645738"
+        - statement: "reflection positivity in the complex star formulation (axiom E2)"
+          source: "10.1007/BF01608978"
+        - statement: "probability-measure formulation of the OS axioms"
+          source: "ISBN:978-0-387-96477-7"
     - declaration: "OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic"
       file: "OSforGFF/OS/Master.lean"
       sorry_count: 0
@@ -81,7 +143,7 @@ status:
       literature_dependencies:
         - statement: "all OS axioms hold in every dimension d>=2 via the canonical proper-time propagator (no closed form required)"
           source: "10.1007/BF01645738"
-    - declaration: "OSforGFF.gaussianFreeField_satisfies_all_OS_axioms"
+    - declaration: "OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4"
       file: "OSforGFF/OS/Master.lean"
       sorry_count: 0
       axioms: []
@@ -168,7 +230,17 @@ automation:
       models: ["gemini-3-pro"]
       framework: "Gemini"
       prompting_notes: "Coding assistance / review (per README)."
-  notes: "Build: `lake build`. Mathlib + bochner + gaussian-field + kolmogorov_extension4 pinned via lake-manifest.json. Models per README acknowledgements."
+    - method: "agent"
+      models: ["claude-fable-5"]
+      framework: "Claude Code"
+      prompting_notes: >
+        Registry submission packaging: the Mathlib-only Challenge restatement, the
+        Solution bridging proof, comparator configuration, and metadata.
+  notes: >
+    Build: `lake build` (library + guardrails); `lake build Challenge Solution` for the
+    registry pair. Mathlib + bochner + gaussian-field + kolmogorov_extension4 pinned via
+    lake-manifest.json (bochner and gaussian-field pinned to full commit SHAs in the
+    lakefile). Models per README acknowledgements.
 
 fidelity:
   divergences: >
@@ -180,32 +252,52 @@ fidelity:
     ergodicity statement, with ergodicity derived from a polynomial-clustering bound
     (alpha = 6). The dimension-generic master theorem is proved for every d >= 2: the OS3
     mixed-representation proper-time Fubini domination runs at boundary-vanishing order d,
-    so no upper bound on the dimension is needed.
+    so no upper bound on the dimension is needed. The registry Challenge restates the
+    headline existentially, in Mathlib-only terms: there exists a probability measure on
+    S'(R^d) whose generating functional is exp(-1/2 <f, Cf>) with C the proper-time
+    (heat-kernel) integral of the free covariance — the characterization clause pins the
+    measure uniquely (bare existence would be satisfied by the Dirac measure at 0) — and
+    which satisfies the five restated OS predicates; the dimension hypothesis 2 <= d is
+    carried as a Fact instance binder.
   axiom_footprint: >
-    All six headline theorems (the dimension-generic master theorem, the all-dimensions
-    corollary, and the d = 2, 3, 4, 5 instances) depend on exactly Lean's three foundational
-    axioms (propext, Classical.choice, Quot.sound); this is build-frozen via #guard_msgs in
-    OSforGFF/Guardrails.lean.
+    All six library headline theorems (the dimension-generic master theorem, the
+    all-dimensions corollary, and the d = 2, 3, 4, 5 instances) and the registry Solution
+    theorem depend on exactly Lean's three foundational axioms (propext, Classical.choice,
+    Quot.sound); for the library this is build-frozen via #guard_msgs in
+    OSforGFF/Guardrails.lean, and for the Solution it is enforced by comparator.json's
+    permitted_axioms.
 
 review:
   status: "self-assessed"
   reviewers: []
   notes: >
     0 sorries and 0 custom axioms in the OSforGFF source (54 on-graph files, ~31,500 lines,
-    plus 2 off-graph Legacy files preserving superseded 4D-era proofs). External dependencies
-    (bochner, gaussian-field, kolmogorov_extension4) are themselves axiom-free per their own
-    documentation.
+    plus 6 off-graph Legacy files preserving superseded 4D-era proofs). The single `sorry`
+    in Challenge.lean is the registry challenge hole, discharged by Solution.lean (which
+    contains verbatim copies of the Challenge definitions and the proof; the two files
+    differ only in import, module docstring, and the proof). External dependencies
+    (bochner, gaussian-field, kolmogorov_extension4) are themselves axiom-free per their
+    own documentation. The 4D core of the library was reviewed and merged upstream
+    (mrdouglasny/OSforGFF PR #7).
 
 alignment:
-  namespace: "OSforGFF / QFT (mixed; OS axiom predicates at root)"
+  namespace: "OSforGFF / QFT (library, mixed; OS axiom predicates at root); Challenge (registry statement)"
   statements:
+    - source: "10.1007/BF01645738"
+      lean: "Challenge.gaussianFreeField_satisfies_OS_axioms"
+      module: "Challenge"
+      status: "proved"
+      note: >
+        Registry headline (proved in Solution.lean): existence of the free GFF on S'(R^d)
+        for every d >= 2, m > 0, characterized by its Gaussian generating functional with
+        the proper-time covariance, satisfying the Mathlib-only restatements of OS0-OS4.
     - source: "10.1007/BF01645738"
       lean: "OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic"
       module: "OSforGFF.OS.Master"
       status: "proved"
       note: "Dimension-generic master theorem: SatisfiesAllOS (gaussianFreeField_free d m) for d>=2, m>0, given a GFFPropagator d m instance."
     - source: "10.1007/BF01645738"
-      lean: "OSforGFF.gaussianFreeField_satisfies_all_OS_axioms"
+      lean: "OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4"
       module: "OSforGFF.OS.Master"
       status: "proved"
       note: "d = 4 instance: SatisfiesAllOS (mu_GFF 4 m), from the generic theorem."
@@ -244,5 +336,6 @@ alignment:
 
 acknowledgements: >
   Project authored with Sarah Hoback, Anna Mei, and Ron Nissim. Coding assistance
-  from Claude Opus 4.6, Gemini 3 Pro, and GPT-5.2 Codex. Nuclear-space and Minlos
-  infrastructure from the bochner, gaussian-field, and kolmogorov_extension4 libraries.
+  from Claude Opus 4.6, Claude Fable 5, Gemini 3 Pro, and GPT-5.2 Codex. Nuclear-space
+  and Minlos infrastructure from the bochner, gaussian-field, and kolmogorov_extension4
+  libraries.

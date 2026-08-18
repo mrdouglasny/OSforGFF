@@ -275,6 +275,7 @@ This project is licensed under the Apache License, Version 2.0. See [LICENSE](LI
 
 ## References
 
+- Douglas, Hoback, Mei, Nissim: *Formalization of QFT* ([arXiv:2603.15770](https://arxiv.org/abs/2603.15770)) — the companion paper describing this library at its original four-dimensional stage
 - Glimm, Jaffe: *Quantum Physics* (Springer, 1987), pp. 89–90
 - Osterwalder, Schrader: *Axioms for Euclidean Green's functions* I & II (1973, 1975)
 - Gel'fand, Vilenkin: *Generalized Functions*, Vol. 4 (Academic Press, 1964)
