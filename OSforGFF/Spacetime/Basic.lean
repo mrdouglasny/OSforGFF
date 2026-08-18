@@ -59,8 +59,6 @@ abbrev SpaceTime (d : ℕ) := EuclideanSpace ℝ (Fin d)
 /-- Dimensions admitting a time/space split are nonzero, so `(0 : Fin d)` is available. -/
 instance {d : ℕ} [Fact (2 ≤ d)] : NeZero d := ⟨by have h : 2 ≤ d := Fact.out; omega⟩
 
-noncomputable instance (d : ℕ) : InnerProductSpace ℝ (SpaceTime d) := by infer_instance
-
 /-- The time component `x₀` of a spacetime point (the time/space split needs `d ≥ 2`). -/
 abbrev getTimeComponent {d : ℕ} [Fact (2 ≤ d)] (x : SpaceTime d) : ℝ :=
   x ⟨0, by have h : 2 ≤ d := Fact.out; omega⟩

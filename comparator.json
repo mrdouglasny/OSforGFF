@@ -1,0 +1,6 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": ["Challenge.gaussianFreeField_satisfies_OS_axioms"],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}
