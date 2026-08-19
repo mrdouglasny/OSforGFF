@@ -290,7 +290,27 @@ Comparator binaries reject the omission; add it to a local copy, never to the co
 
 ---
 
-## 10. Open question for Kim
+## 10. Policy notes
+
+A distillation of what the registry's own policy requires — the two gates, the mechanical
+requirements, the six editorial passes, the scoring floor, and the versioning rules — is in
+[`palomar_policy_notes.md`](palomar_policy_notes.md). Three things there bear directly on
+decisions still open here:
+
+- **The wrapper decision (§7) must be made before the first submission.** Re-registration
+  requires the same source repository and Comparator configuration path; a repository transfer
+  needs explicit operator review. Registering from `OSforGFF` and moving to a wrapper later is
+  not a cheap change of mind.
+- **Challenge size (§8) is lower-risk than assumed.** It feeds `auditability`, which is not a
+  registry score and may sit at 3 with a warning without blocking acceptance.
+- **Notability is the one dimension that mandates rejection below the floor**, and it must be
+  *affirmatively established* — a specifically identified credible research audience. Novelty
+  is explicitly not required, so the classical nature of the result is fine, but the case for
+  the audience has to be made in the narrative rather than left implicit.
+
+---
+
+## 11. Open question for Kim
 
 The Challenge is 654 lines against the 43 of `PALOMAR-2026-08-08-000001`. It is inside the
 hard limits (1,000 lines / 100 KiB) and over the advisory warning (300 lines / 32 KiB). Is a
