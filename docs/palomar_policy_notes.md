@@ -169,6 +169,14 @@ foundations), not left implicit. This is the highest-value remaining editorial w
 **Trust level.** Mathlib-only Challenge imports give `high` trust; ours qualifies. Tau Ceti
 would give `qualified`, so avoid it.
 
+**`project.description` is missing from our `formalization.yaml`.** It is not in the upstream
+v0.4 schema and is not a mechanical requirement, but Palomar's own template carries it and the
+statement-alignment prompt reads it as "a concise, project-wide public abstract" — the thing
+that pass assesses for whether it "points, directly or collectively, to the mathematical
+subject and principal result families." Absent it, the pass falls back to the README and
+docstrings. Adding it is cheap, and it is also the natural place to make the research-audience
+case that notability requires.
+
 **The pinning clause already helps.** The statement-alignment pass hunts for statements that
 "can be vacuous or materially weaker … than the presented claim". Sergey's
 `Z[f] = exp(−½⟨f,Cf⟩)` clause pre-empts the obvious vacuity objection.
@@ -197,10 +205,64 @@ never suffices.
 
 ---
 
+## 6a. Submitting as an agent, and how much a submission risks
+
+Push access to the submitted repository is proved one of two ways, and the private submission
+record says which.
+
+- **Browser.** A person signs in with GitHub OAuth; the server reads `permissions.push` with
+  that token and discards it. One account both *can push* and *identified itself*.
+- **Agent** (no browser). Create **a tag at the submitted commit** and **a secret gist
+  carrying the same challenge**; Palomar reads both. Creating a ref needs the same write
+  access, and the gist supplies an identity, "because a ref records no author and a third
+  party cannot ask GitHub who has push."
+
+The agent route is *deliberately the weaker* of the two: it establishes that someone who can
+push submitted the repository and that an account named itself, "which are not provably the
+same account." The private record carries that distinction. The **published** record does not
+— it names no proof route, because it names no submitter either.
+
+Neither route is evidence of authorship. The §4 authorisation relationship is recorded
+separately, and write access is explicitly not an answer to it.
+
+**The downside of trying is bounded.** From verification onward, the repository, commit,
+submission identifier, verification run and mechanical logs are **public**. But the editorial
+review and its outcome stay **private unless the submitter registers a review that identified
+no blocking problem** — registration requires explicit consent to the review digest. The
+submitter may withdraw from any non-terminal state, and withdrawal leaves no public editorial
+outcome. A `revision_required` or `rejected` outcome is not registered, and a corrected commit
+enters as a **new submission**, not a new version.
+
+The one irreversible step is registration. Since 2026-08-10 the database is append-only: "a
+registration made now is permanent publication history," and a record leaves public view only
+by moderator-authorised suppression, which leaves a date-only tombstone.
+
+---
+
+## 6b. `PalomarTemplate` — use it
+
+[`PalomarRegistry/PalomarTemplate`](https://github.com/PalomarRegistry/PalomarTemplate) is a
+public best-practice starter: `Challenge.lean`, `Solution.lean`, `comparator.json`, a fully
+commented `formalization.yaml` whose placeholder values are *deliberately invalid* until
+chosen, a `lakefile.toml`, a nested doc-gen4 project, and CI that builds with `lean-action`
+and independently checks the statement with Comparator.
+
+Most useful to us: **`scripts/verify-comparator.sh` runs pinned Comparator, lean4export,
+NanoDa and Landrun revisions** against the checked-in `comparator.json`, and
+`scripts/landrun-wrapper.sh` "refuses any Comparator request to switch off part of the
+sandbox." That is the real-`landrun` run we still owe, already scripted. If we build a wrapper
+repository, this is the base to start from rather than assembling one by hand.
+
+Note the template keeps its full proof development *inside* the submission repository — so it
+models the all-in-one layout, not the thin wrapper. The wrapper shape is documented separately
+in CONTRIBUTING §6.5.
+
+---
+
 ## 7. Still unread
 
-`docs/specification.md` (23 KB, binding for the write-access proof protocol),
 `docs/infrastructure.md` (37 KB), `docs/governance.md`, `docs/lawful-requests.md`,
-`prompts/materiality.md`, `tests/materiality-cases.json`, and CONTRIBUTING §8 (privacy,
-registration, rendering). `specification.md` matters if we submit via an agent rather than a
-browser sign-in, since the two prove different things.
+`prompts/materiality.md` and `tests/materiality-cases.json` (which define what counts as a
+*material* finding — worth reading before submission), and CONTRIBUTING §8. `specification.md`
+has now been read for the lifecycle and proof-route sections; its mechanical-verification and
+source-preservation sections have not.
