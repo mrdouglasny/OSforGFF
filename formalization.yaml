@@ -20,6 +20,16 @@ project:
     dimension-generic: one proof parameterized by d, consuming the free covariance only
     through a typeclass whose per-dimension input is a single closed-form radial kernel
     identified with the proper-time integral, with concrete instances at d = 2, 3, 4, 5.
+    The result addresses three research audiences. In constructive quantum field theory,
+    the free field satisfying OS0-OS4 is the base case (Glimm-Jaffe, ch. 6) on which
+    interacting constructions such as P(phi)_2 and phi^4_3 are built, so a machine-checked
+    base case is the reusable starting point for any formalized interacting construction.
+    In stochastic quantization and singular SPDEs, the massive GFF constructed here is the
+    reference Gaussian and the invariant measure of the free dynamics in every dimension
+    treated. And for researchers formalizing quantum field theory in various dimensions,
+    this is, to our knowledge, the first machine-checked verification of the
+    Osterwalder-Schrader axioms, with the dimension-generic propagator typeclass as the
+    designed extension point for further covariances and dimensions.
   authors:
     - "Sergey A. Cherkis"
     - "Michael R. Douglas"
