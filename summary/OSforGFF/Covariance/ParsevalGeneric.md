@@ -18,13 +18,13 @@ Around this core the file provides: regularity of the proper-time kernel (measur
 
 **Major gaps**: None — file is sorry-free.
 
-**Length**: 1101 lines, 7 definition(s) + 54 theorem(s)/lemma(s) (plus 2 private helper lemmas)
+**Length**: 1102 lines, 7 definition(s) + 54 theorem(s)/lemma(s) (plus 2 private helper lemmas)
 
 ---
 
 ## Proper-Time Kernel Regularity
 
-### [`properTimeCovariance_measurable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L63) — Lemma
+### [`properTimeCovariance_measurable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L64) — Lemma
 
 **Statement**: The proper-time covariance $r \mapsto C_S(r)$ is a measurable function of the radius.
 
@@ -32,15 +32,15 @@ Around this core the file provides: regularity of the proper-time kernel (measur
 
 ---
 
-### [`properTimeCovariance_norm_measurable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L73) — Lemma
+### [`properTimeCovariance_norm_measurable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L74) — Lemma
 
 **Statement**: $x \mapsto C_S(\lVert x\rVert)$ is measurable on $\mathbb{R}^d$.
 
-**Proof uses**: [`properTimeCovariance_measurable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L63), `measurable_norm`
+**Proof uses**: [`properTimeCovariance_measurable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L64), `measurable_norm`
 
 ---
 
-### [`properTime_slice_integrableOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L79) — Lemma
+### [`properTime_slice_integrableOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L80) — Lemma
 
 **Statement**: For $m > 0$ and $r > 0$, the proper-time integrand $t \mapsto e^{-tm^2}\,H_d(t,r)$ is integrable on $(0,\infty)$: the heat-kernel singularity $t^{-d/2}$ at $t = 0$ is suppressed by $e^{-r^2/(4t)}$.
 
@@ -48,17 +48,17 @@ Around this core the file provides: regularity of the proper-time kernel (measur
 
 ---
 
-### [`properTimeCovariance_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L126) — Lemma
+### [`properTimeCovariance_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L127) — Lemma
 
 **Statement**: The proper-time covariance $r \mapsto C_S(r)$ is continuous on $(0,\infty)$ (dominated convergence over the proper-time integral, with the dominator taken at radius $r_0/2$).
 
-**Proof uses**: `MeasureTheory.continuousAt_of_dominated`, [`properTime_slice_integrableOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L79)
+**Proof uses**: `MeasureTheory.continuousAt_of_dominated`, [`properTime_slice_integrableOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L80)
 
 ---
 
 ## The Covariance Pairings and Their Integrability
 
-### [`freeCovarianceℂ_bilinear`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L162) — Definition
+### [`freeCovarianceℂ_bilinear`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L163) — Definition
 
 **Lean signature**
 ```lean
@@ -69,7 +69,7 @@ def freeCovarianceℂ_bilinear {d : ℕ} (m : ℝ) [Fact (0 < m)] [Fact (2 ≤ d
 
 ---
 
-### [`freeCovarianceℂ`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L168) — Definition
+### [`freeCovarianceℂ`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L169) — Definition
 
 **Lean signature**
 ```lean
@@ -80,7 +80,7 @@ def freeCovarianceℂ {d : ℕ} (m : ℝ) [Fact (0 < m)] [Fact (2 ≤ d)]
 
 ---
 
-### [`diagonal_null_prod`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L177) — Lemma
+### [`diagonal_null_prod`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L178) — Lemma
 
 **Statement**: The diagonal $\{(x,y) \mid x = y\}$ is null for the product volume on $\mathbb{R}^d \times \mathbb{R}^d$.
 
@@ -88,27 +88,27 @@ def freeCovarianceℂ {d : ℕ} (m : ℝ) [Fact (0 < m)] [Fact (2 ≤ d)]
 
 ---
 
-### [`freeCovariance_ae_properTime`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L195) — Lemma
+### [`freeCovariance_ae_properTime`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L196) — Lemma
 
 **Statement**: Away from the (null) diagonal the covariance kernel agrees with the proper-time kernel: $(x,y) \mapsto C(x,y)$ equals $(x,y) \mapsto C_S(\lVert x-y\rVert)$ a.e. on the product space.
 
-**Proof uses**: [`diagonal_null_prod`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L177), `GFFPropagator.schwinger_eq`
+**Proof uses**: [`diagonal_null_prod`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L178), `GFFPropagator.schwinger_eq`
 
 ---
 
-### [`properTime_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L208) — Lemma
+### [`properTime_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L209) — Lemma
 
 **Statement**: The Schwartz-pair integrand against the proper-time kernel, $(x,y) \mapsto f(x)\,C_S(\lVert x-y\rVert)\,g(y)$, is integrable on the product space: the bound $\lVert f\rVert_\infty\,C_S(\lVert x-y\rVert)\,\lVert g(y)\rVert$ is a shear transport of a product of integrable functions.
 
-**Proof uses**: [`properTimeCovariance_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L184), `measurePreserving_sub_prod`, `Integrable.mul_prod`
+**Proof uses**: [`properTimeCovariance_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L207), `measurePreserving_sub_prod`, `Integrable.mul_prod`
 
 ---
 
-### [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L252) — Theorem
+### [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L253) — Theorem
 
 **Statement**: The bilinear-pairing integrand $(x,y) \mapsto f(x)\,C(x,y)\,g(y)$ is integrable on the product space.
 
-**Proof uses**: [`properTime_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L208), [`freeCovariance_ae_properTime`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L195)
+**Proof uses**: [`properTime_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L209), [`freeCovariance_ae_properTime`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L196)
 
 ---
 
@@ -116,7 +116,7 @@ def freeCovarianceℂ {d : ℕ} (m : ℝ) [Fact (0 < m)] [Fact (2 ≤ d)]
 
 (Two private helper lemmas, `fourierChar_coe_mul` and `fourierChar_coe_conj`, record that the complex coercion of the character $\mathbf{e}$ is multiplicative and conjugates to $\mathbf{e}(-\cdot)$.)
 
-### [`schwartzAutocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L264) — Definition
+### [`schwartzAutocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L265) — Definition
 
 **Lean signature**
 ```lean
@@ -126,7 +126,7 @@ def schwartzAutocorr {d : ℕ} (f : SchwartzTestFunctionℂ d) (z : SpaceTime d)
 
 ---
 
-### [`schwartzAutocorr_conj`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L273) — Lemma
+### [`schwartzAutocorr_conj`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L274) — Lemma
 
 **Statement**: The conjugated autocorrelation as an integral: $\overline{A(z)} = \int \overline{f(x)}\,f(x-z)\,dx$.
 
@@ -134,15 +134,15 @@ def schwartzAutocorr {d : ℕ} (f : SchwartzTestFunctionℂ d) (z : SpaceTime d)
 
 ---
 
-### [`schwartzAutocorr_neg`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L284) — Lemma
+### [`schwartzAutocorr_neg`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L285) — Lemma
 
 **Statement**: Reflecting the autocorrelation argument conjugates its value: $A(-z) = \overline{A(z)}$.
 
-**Proof uses**: [`schwartzAutocorr_conj`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L273), `integral_add_right_eq_self`
+**Proof uses**: [`schwartzAutocorr_conj`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L274), `integral_add_right_eq_self`
 
 ---
 
-### [`fourier_normSq_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L309) — Lemma
+### [`fourier_normSq_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L310) — Lemma
 
 **Statement**: The squared-modulus function $k \mapsto \hat f(k)\,\overline{\hat f(k)}$ of the Fourier transform of a Schwartz function is integrable.
 
@@ -150,26 +150,26 @@ def schwartzAutocorr {d : ℕ} (f : SchwartzTestFunctionℂ d) (z : SpaceTime d)
 
 ---
 
-### [`fourier_normSq_eq_conj_autocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L325) — Lemma
+### [`fourier_normSq_eq_conj_autocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L326) — Lemma
 
 **Statement**: The Fourier transform of $k \mapsto \hat f(k)\,\overline{\hat f(k)}$ is the conjugated autocorrelation: $\mathcal{F}\bigl[\hat f\,\overline{\hat f}\,\bigr](z) = \overline{A(z)}$ (Fubini against the character, then Fourier inversion of the Schwartz function).
 
-**Proof uses**: `Integrable.fourierInv_fourier_eq`, `MeasureTheory.integral_integral_swap`, [`schwartzAutocorr_conj`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L273)
+**Proof uses**: `Integrable.fourierInv_fourier_eq`, `MeasureTheory.integral_integral_swap`, [`schwartzAutocorr_conj`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L274)
 
 ---
 
-### [`properTime_pairing_eq_autocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L425) — Lemma
+### [`properTime_pairing_eq_autocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L426) — Lemma
 
 **Statement**: Fubini/shear form of the proper-time sesquilinear pairing: the pairing collapses against the autocorrelation,
 $$\iint f(x)\,C_S(\lVert x-y\rVert)\,\overline{f(y)}\,dx\,dy = \int C_S(\lVert z\rVert)\,A(z)\,dz.$$
 
-**Proof uses**: `MeasureTheory.integral_integral_swap`, `integral_sub_left_eq_self`, [`properTimeCovariance_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L184)
+**Proof uses**: `MeasureTheory.integral_integral_swap`, `integral_sub_left_eq_self`, [`properTimeCovariance_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L207)
 
 ---
 
 ## The Parseval Identity and Positivity
 
-### [`freeCovarianceℂ_self_eq_properTime`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L492) — Lemma
+### [`freeCovarianceℂ_self_eq_properTime`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L493) — Lemma
 
 **Statement**: The sesquilinear pairing with the `freeCovariance` kernel agrees with the proper-time kernel pairing: $\langle f, C\bar f\rangle = \iint f(x)\,C_S(\lVert x-y\rVert)\,\overline{f(y)}\,dx\,dy$ (the kernels agree away from the null diagonal).
 
@@ -177,34 +177,34 @@ $$\iint f(x)\,C_S(\lVert x-y\rVert)\,\overline{f(y)}\,dx\,dy = \int C_S(\lVert z
 
 ---
 
-### [`freeCovarianceℂ_self_eq_momentum`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L509) — Theorem
+### [`freeCovarianceℂ_self_eq_momentum`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L510) — Theorem
 
 **Statement**: **The complex Parseval identity for the covariance pairing**: the quadratic pairing equals the (real, nonnegative) momentum-space integral of $\lVert\hat f\rVert^2$ against the propagator,
 $$\langle f, C\bar f\rangle = \int_{\mathbb{R}^d} \lVert \hat f(k)\rVert^2\,P(k)\,dk \quad (\text{as a real number coerced to } \mathbb{C}).$$
 
-**Proof uses**: [`freeCovarianceℂ_self_eq_properTime`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L492), [`properTime_pairing_eq_autocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L425), [`schwartzAutocorr_neg`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L284), [`fourier_normSq_eq_conj_autocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L325), `VectorFourier.integral_bilin_fourierIntegral_eq_flip`, [`properTimeCovariance_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L319)
+**Proof uses**: [`freeCovarianceℂ_self_eq_properTime`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L493), [`properTime_pairing_eq_autocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L426), [`schwartzAutocorr_neg`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L285), [`fourier_normSq_eq_conj_autocorr`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L326), `VectorFourier.integral_bilin_fourierIntegral_eq_flip`, [`properTimeCovariance_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L342)
 
 ---
 
-### [`parseval_covariance_schwartz`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L576) — Theorem
+### [`parseval_covariance_schwartz`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L577) — Theorem
 
 **Statement**: **Parseval identity** for the covariance pairing, real form: $\mathrm{Re}\,\langle f, C\bar f\rangle = \int \lVert \hat f(k)\rVert^2\,P(k)\,dk$.
 
-**Proof uses**: [`freeCovarianceℂ_self_eq_momentum`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L509)
+**Proof uses**: [`freeCovarianceℂ_self_eq_momentum`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L510)
 
 ---
 
-### [`freeCovarianceℂ_positive`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L584) — Theorem
+### [`freeCovarianceℂ_positive`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L585) — Theorem
 
 **Statement**: Positivity of the covariance pairing: $0 \le \mathrm{Re}\,\langle f, C\bar f\rangle$.
 
-**Proof uses**: [`parseval_covariance_schwartz`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L576), `integral_nonneg`
+**Proof uses**: [`parseval_covariance_schwartz`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L577), `integral_nonneg`
 
 ---
 
 ## Real-Valued Test Functions and Time Reflection
 
-### [`toComplex_star_eq`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L600) — Lemma
+### [`toComplex_star_eq`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L601) — Lemma
 
 **Statement**: The complexification of a real test function is fixed by complex conjugation: $\overline{f_{\mathbb{C}}(x)} = f_{\mathbb{C}}(x)$.
 
@@ -212,7 +212,7 @@ $$\langle f, C\bar f\rangle = \int_{\mathbb{R}^d} \lVert \hat f(k)\rVert^2\,P(k)
 
 ---
 
-### [`re_integral_ofReal`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L607) — Lemma
+### [`re_integral_ofReal`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L608) — Lemma
 
 **Statement**: The real part of a complex integral of (the coercion of) a real-valued function is the real integral: $\mathrm{Re}\int (h(x) : \mathbb{C})\,d\mu = \int h\,d\mu$.
 
@@ -220,7 +220,7 @@ $$\langle f, C\bar f\rangle = \int_{\mathbb{R}^d} \lVert \hat f(k)\rVert^2\,P(k)
 
 ---
 
-### [`compTimeReflection_toComplex_eq_ofReal`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L617) — Lemma
+### [`compTimeReflection_toComplex_eq_ofReal`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L618) — Lemma
 
 **Statement**: Complexification commutes with composition by time reflection: $(\Theta f_{\mathbb{C}})(x) = ((\Theta_{\mathbb{R}} f)(x) : \mathbb{C})$.
 
@@ -228,15 +228,15 @@ $$\langle f, C\bar f\rangle = \int_{\mathbb{R}^d} \lVert \hat f(k)\rVert^2\,P(k)
 
 ---
 
-### [`compTimeReflection_toComplex_star_eq`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L623) — Lemma
+### [`compTimeReflection_toComplex_star_eq`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L624) — Lemma
 
 **Statement**: The time-reflected complexification of a real test function remains real-valued (fixed by conjugation).
 
-**Proof uses**: [`toComplex_star_eq`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L600)
+**Proof uses**: [`toComplex_star_eq`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L601)
 
 ---
 
-### [`double_integral_timeReflection`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L631) — Lemma
+### [`double_integral_timeReflection`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L632) — Lemma
 
 **Statement**: A double spacetime integral is unchanged when both variables are composed with geometric time reflection: $\iint G(\theta x, \theta y) = \iint G(x,y)$ (measure preservation plus Fubini).
 
@@ -246,7 +246,7 @@ $$\langle f, C\bar f\rangle = \int_{\mathbb{R}^d} \lVert \hat f(k)\rVert^2\,P(k)
 
 ## Invariance of the Covariance Kernel and the Kernel Pairings
 
-### [`freeCovariance_euclidean_invariant`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L653) — Theorem
+### [`freeCovariance_euclidean_invariant`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L654) — Theorem
 
 **Statement**: Euclidean invariance of the free covariance: for every Euclidean motion $g$, $C(g\cdot x,\, g\cdot y) = C(x,y)$ — the kernel is radial and Euclidean motions preserve distances.
 
@@ -254,7 +254,7 @@ $$\langle f, C\bar f\rangle = \int_{\mathbb{R}^d} \lVert \hat f(k)\rVert^2\,P(k)
 
 ---
 
-### [`timeReflectionE`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L661) — Definition
+### [`timeReflectionE`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L662) — Definition
 
 **Lean signature**
 ```lean
@@ -264,7 +264,7 @@ def timeReflectionE : QFT.E d
 
 ---
 
-### [`act_timeReflectionE`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L665) — Lemma
+### [`act_timeReflectionE`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L666) — Lemma
 
 **Statement**: The Euclidean action of `timeReflectionE` is geometric time reflection: $\mathrm{act}(\theta_E, x) = \theta x$.
 
@@ -272,131 +272,131 @@ def timeReflectionE : QFT.E d
 
 ---
 
-### [`covariance_timeReflection_invariant`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L671) — Lemma
+### [`covariance_timeReflection_invariant`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L672) — Lemma
 
 **Statement**: Time-reflection invariance of the position-space covariance kernel: $C(\theta x, \theta y) = C(x,y)$.
 
-**Proof uses**: [`freeCovariance_euclidean_invariant`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L653), [`act_timeReflectionE`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L665)
+**Proof uses**: [`freeCovariance_euclidean_invariant`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L654), [`act_timeReflectionE`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L666)
 
 ---
 
-### [`double_integral_timeReflection_covariance`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L680) — Lemma
+### [`double_integral_timeReflection_covariance`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L681) — Lemma
 
 **Statement**: Time-reflection change of variables for the covariance pairing: assuming integrability, $\iint (\Theta f)(x)\,C(x,y)\,g(y) = \iint f(x)\,C(\theta x, \theta y)\,(\Theta g)(y)$ — the reflection moves from the first test function to the kernel and the second test function.
 
-**Proof uses**: [`double_integral_timeReflection`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L631), involutivity of time reflection
+**Proof uses**: [`double_integral_timeReflection`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L632), involutivity of time reflection
 
 ---
 
-### [`integrable_compTimeReflection_covariance`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L704) — Lemma
+### [`integrable_compTimeReflection_covariance`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L705) — Lemma
 
 **Statement**: The covariance pairing integrand with a time-reflected first argument, $(x,y) \mapsto (\Theta f)(x)\,C(x,y)\,f(y)$, is integrable on the product space.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L252)
+**Proof uses**: [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L253)
 
 ---
 
-### [`integrable_real_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L713) — Lemma
+### [`integrable_real_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L714) — Lemma
 
 **Statement**: The real covariance kernel pairing integrand of a real test function, $(x,y) \mapsto (\Theta_{\mathbb{R}} f)(x)\,C(x,y)\,f(y)$, is integrable on the product space.
 
-**Proof uses**: [`integrable_compTimeReflection_covariance`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L704), [`compTimeReflection_toComplex_eq_ofReal`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L617), `Integrable.mono'`
+**Proof uses**: [`integrable_compTimeReflection_covariance`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L705), [`compTimeReflection_toComplex_eq_ofReal`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L618), `Integrable.mono'`
 
 ---
 
-### [`integral_prod_real_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L744) — Lemma
+### [`integral_prod_real_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L745) — Lemma
 
 **Statement**: Fubini form of the real covariance kernel pairing: the product-measure integral equals the iterated integral $\iint (\Theta_{\mathbb{R}} f)(x)\,C(x,y)\,f(y)\,dx\,dy$.
 
-**Proof uses**: `MeasureTheory.integral_prod`, [`integrable_real_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L713)
+**Proof uses**: `MeasureTheory.integral_prod`, [`integrable_real_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L714)
 
 ---
 
-### [`integral_prod_complex_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L755) — Lemma
+### [`integral_prod_complex_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L756) — Lemma
 
 **Statement**: Fubini form of the complex covariance kernel pairing over the product measure (complexified version of the previous lemma).
 
-**Proof uses**: `MeasureTheory.integral_prod`, [`integrable_compTimeReflection_covariance`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L704)
+**Proof uses**: `MeasureTheory.integral_prod`, [`integrable_compTimeReflection_covariance`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L705)
 
 ---
 
-### [`real_integral_eq_complex_re`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L767) — Lemma
+### [`real_integral_eq_complex_re`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L768) — Lemma
 
 **Statement**: The real reflected pairing is the real part of the complexified reflected pairing: $\iint (\Theta_{\mathbb{R}} f)\,C\,f = \mathrm{Re}\iint (\Theta f_{\mathbb{C}})\,C\,f_{\mathbb{C}}$.
 
-**Proof uses**: [`integral_prod_complex_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L755), [`integral_prod_real_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L744), [`re_integral_ofReal`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L607)
+**Proof uses**: [`integral_prod_complex_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L756), [`integral_prod_real_covariance_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L745), [`re_integral_ofReal`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L608)
 
 ---
 
 ## Bilinearity of the Covariance Pairing
 
-### [`freeCovarianceℂ_bilinear_inner_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L797) — Lemma
+### [`freeCovarianceℂ_bilinear_inner_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L798) — Lemma
 
 **Statement**: For each fixed $x$, the outer integrand $x \mapsto \int f(x)\,C(x,y)\,g(y)\,dy$ of the bilinear pairing is integrable.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L252), `Integrable.integral_prod_left`
+**Proof uses**: [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L253), `Integrable.integral_prod_left`
 
 ---
 
-### [`freeCovarianceℂ_bilinear_slice_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L805) — Lemma
+### [`freeCovarianceℂ_bilinear_slice_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L806) — Lemma
 
 **Statement**: For almost every $x$, the inner integrand $y \mapsto f(x)\,C(x,y)\,g(y)$ is integrable.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L252), `Integrable.prod_right_ae`
+**Proof uses**: [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L253), `Integrable.prod_right_ae`
 
 ---
 
-### [`freeCovarianceℂ_bilinear_add_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L814) — Theorem
+### [`freeCovarianceℂ_bilinear_add_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L815) — Theorem
 
 **Statement**: Bilinearity in the first argument, combined form: $\langle c f_1 + f_2, Cg\rangle = c\,\langle f_1, Cg\rangle + \langle f_2, Cg\rangle$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_inner_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L797), [`freeCovarianceℂ_bilinear_slice_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L805), `integral_add`, `integral_const_mul`
+**Proof uses**: [`freeCovarianceℂ_bilinear_inner_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L798), [`freeCovarianceℂ_bilinear_slice_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L806), `integral_add`, `integral_const_mul`
 
 ---
 
-### [`freeCovarianceℂ_bilinear_add_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L866) — Theorem
+### [`freeCovarianceℂ_bilinear_add_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L867) — Theorem
 
 **Statement**: $\langle f_1 + f_2, Cg\rangle = \langle f_1, Cg\rangle + \langle f_2, Cg\rangle$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_add_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L814) (with $c = 1$)
+**Proof uses**: [`freeCovarianceℂ_bilinear_add_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L815) (with $c = 1$)
 
 ---
 
-### [`freeCovarianceℂ_bilinear_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L874) — Theorem
+### [`freeCovarianceℂ_bilinear_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L875) — Theorem
 
 **Statement**: $\langle c\cdot f, Cg\rangle = c\,\langle f, Cg\rangle$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_add_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L814) (with $f_2 = 0$)
+**Proof uses**: [`freeCovarianceℂ_bilinear_add_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L815) (with $f_2 = 0$)
 
 ---
 
-### [`freeCovarianceℂ_bilinear_symm`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L893) — Theorem
+### [`freeCovarianceℂ_bilinear_symm`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L894) — Theorem
 
 **Statement**: Symmetry of the bilinear pairing: $\langle f, Cg\rangle = \langle g, Cf\rangle$ (Fubini plus symmetry of the kernel).
 
-**Proof uses**: `MeasureTheory.integral_integral_swap`, [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L252), [`freeCovariance_symm`](../../../OSforGFF/Covariance/Propagator.lean#L452)
+**Proof uses**: `MeasureTheory.integral_integral_swap`, [`freeCovarianceℂ_bilinear_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L253), [`freeCovariance_symm`](../../../OSforGFF/Covariance/Propagator.lean#L486)
 
 ---
 
-### [`freeCovarianceℂ_bilinear_smul_right`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L907) — Theorem
+### [`freeCovarianceℂ_bilinear_smul_right`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L908) — Theorem
 
 **Statement**: $\langle f, C(c\cdot g)\rangle = c\,\langle f, Cg\rangle$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_symm`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L893), [`freeCovarianceℂ_bilinear_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L874)
+**Proof uses**: [`freeCovarianceℂ_bilinear_symm`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L894), [`freeCovarianceℂ_bilinear_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L875)
 
 ---
 
-### [`freeCovarianceℂ_bilinear_add_right`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L914) — Theorem
+### [`freeCovarianceℂ_bilinear_add_right`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L915) — Theorem
 
 **Statement**: $\langle f, C(g_1 + g_2)\rangle = \langle f, Cg_1\rangle + \langle f, Cg_2\rangle$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_symm`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L893), [`freeCovarianceℂ_bilinear_add_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L866)
+**Proof uses**: [`freeCovarianceℂ_bilinear_symm`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L894), [`freeCovarianceℂ_bilinear_add_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L867)
 
 ---
 
 ## The Momentum Weight and the Weighted L² Multiplication Operator
 
-### [`freePropagatorMom_pos`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L931) — Lemma
+### [`freePropagatorMom_pos`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L932) — Lemma
 
 **Statement**: The momentum propagator is positive: $0 < P(k)$.
 
@@ -404,15 +404,15 @@ def timeReflectionE : QFT.E d
 
 ---
 
-### [`freePropagatorMom_nonneg`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L938) — Lemma
+### [`freePropagatorMom_nonneg`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L939) — Lemma
 
 **Statement**: $0 \le P(k)$.
 
-**Proof uses**: [`freePropagatorMom_pos`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L931)
+**Proof uses**: [`freePropagatorMom_pos`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L932)
 
 ---
 
-### [`freePropagatorMomSqrt`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L943) — Definition
+### [`freePropagatorMomSqrt`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L944) — Definition
 
 **Lean signature**
 ```lean
@@ -422,7 +422,7 @@ noncomputable def freePropagatorMomSqrt (d : ℕ) (m : ℝ) (k : EuclideanSpace 
 
 ---
 
-### [`freePropagatorMomSqrt_pos`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L946) — Lemma
+### [`freePropagatorMomSqrt_pos`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L947) — Lemma
 
 **Statement**: $0 < \mathrm{freePropagatorMomSqrt}\,k$.
 
@@ -430,7 +430,7 @@ noncomputable def freePropagatorMomSqrt (d : ℕ) (m : ℝ) (k : EuclideanSpace 
 
 ---
 
-### [`freePropagatorMomSqrt_sq`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L955) — Lemma
+### [`freePropagatorMomSqrt_sq`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L956) — Lemma
 
 **Statement**: The squared weight is the momentum propagator: $(\mathrm{freePropagatorMomSqrt}\,k)^2 = P(k)$.
 
@@ -438,7 +438,7 @@ noncomputable def freePropagatorMomSqrt (d : ℕ) (m : ℝ) (k : EuclideanSpace 
 
 ---
 
-### [`freePropagatorMomSqrt_continuous`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L961) — Lemma
+### [`freePropagatorMomSqrt_continuous`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L962) — Lemma
 
 **Statement**: The square-root weight is continuous in $k$.
 
@@ -446,15 +446,15 @@ noncomputable def freePropagatorMomSqrt (d : ℕ) (m : ℝ) (k : EuclideanSpace 
 
 ---
 
-### [`freePropagatorMomSqrt_measurable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L968) — Lemma
+### [`freePropagatorMomSqrt_measurable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L969) — Lemma
 
 **Statement**: The square-root weight is measurable.
 
-**Proof uses**: [`freePropagatorMomSqrt_continuous`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L961)
+**Proof uses**: [`freePropagatorMomSqrt_continuous`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L962)
 
 ---
 
-### [`freePropagatorMomSqrt_le_inv_mass`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L973) — Lemma
+### [`freePropagatorMomSqrt_le_inv_mass`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L974) — Lemma
 
 **Statement**: The weight is pointwise bounded by the inverse mass: $\mathrm{freePropagatorMomSqrt}\,k \le 1/m$.
 
@@ -462,15 +462,15 @@ noncomputable def freePropagatorMomSqrt (d : ℕ) (m : ℝ) (k : EuclideanSpace 
 
 ---
 
-### [`freePropagatorMomSqrt_bounded_ae`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L986) — Lemma
+### [`freePropagatorMomSqrt_bounded_ae`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L987) — Lemma
 
 **Statement**: The complexified weight is a.e. bounded by $1/m$ in norm.
 
-**Proof uses**: [`freePropagatorMomSqrt_le_inv_mass`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L973)
+**Proof uses**: [`freePropagatorMomSqrt_le_inv_mass`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L974)
 
 ---
 
-### [`freePropagatorMomSqrt_mul_CLM`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L994) — Definition
+### [`freePropagatorMomSqrt_mul_CLM`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L995) — Definition
 
 **Lean signature**
 ```lean
@@ -482,7 +482,7 @@ noncomputable def freePropagatorMomSqrt_mul_CLM (d : ℕ) (m : ℝ) [Fact (0 < m
 
 ---
 
-### [`freePropagatorMomSqrt_mul_CLM_spec`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1002) — Lemma
+### [`freePropagatorMomSqrt_mul_CLM_spec`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1003) — Lemma
 
 **Statement**: The multiplication operator acts pointwise almost everywhere: $(\mathrm{mul\_CLM}\,f)(k) = \mathrm{freePropagatorMomSqrt}\,k \cdot f(k)$ a.e.
 
@@ -490,7 +490,7 @@ noncomputable def freePropagatorMomSqrt_mul_CLM (d : ℕ) (m : ℝ) [Fact (0 < m
 
 ---
 
-### [`schwartz_normSq_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1010) — Lemma
+### [`schwartz_normSq_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1011) — Lemma
 
 **Statement**: Schwartz functions have integrable squared norm: $k \mapsto \lVert f(k)\rVert^2 \in L^1$.
 
@@ -500,7 +500,7 @@ noncomputable def freePropagatorMomSqrt_mul_CLM (d : ℕ) (m : ℝ) [Fact (0 < m
 
 ## The Centered Covariance Kernel and Its Decay
 
-### [`freeCovarianceKernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1021) — Definition
+### [`freeCovarianceKernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1022) — Definition
 
 **Lean signature**
 ```lean
@@ -511,7 +511,7 @@ noncomputable def freeCovarianceKernel (d : ℕ) (m : ℝ) [Fact (0 < m)] [Fact 
 
 ---
 
-### [`freeCovariance_eq_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1030) — Lemma
+### [`freeCovariance_eq_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1031) — Lemma
 
 **Statement**: Translation invariance: $C(x,y) = K(x-y)$.
 
@@ -519,35 +519,35 @@ noncomputable def freeCovarianceKernel (d : ℕ) (m : ℝ) [Fact (0 < m)] [Fact 
 
 ---
 
-### [`freeCovarianceKernel_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1037) — Lemma
+### [`freeCovarianceKernel_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1038) — Lemma
 
 **Statement**: The centered kernel is continuous away from the origin: it is the radial profile $\mathrm{Cprofile}\,\lVert z\rVert$, which agrees with the proper-time integral on $(0,\infty)$.
 
-**Proof uses**: [`properTimeCovariance_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L126), `GFFPropagator.schwinger_eq`
+**Proof uses**: [`properTimeCovariance_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L127), `GFFPropagator.schwinger_eq`
 
 ---
 
-### [`freeCovarianceKernel_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1050) — Lemma
+### [`freeCovarianceKernel_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1051) — Lemma
 
 **Statement**: The centered kernel is integrable on $\mathbb{R}^d$ (`GFFPropagator.integrable` in centered form).
 
-**Proof uses**: [`GFFPropagator.integrable`](../../../OSforGFF/Covariance/Propagator.lean#L395)
+**Proof uses**: [`GFFPropagator.integrable`](../../../OSforGFF/Covariance/Propagator.lean#L429)
 
 ---
 
-### [`freeCovarianceKernel_exp_decay`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1057) — Lemma
+### [`freeCovarianceKernel_exp_decay`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1058) — Lemma
 
 **Statement**: Exponential decay beyond unit radius, with rate $m/2$: there is $A > 0$ with $\lvert K(z)\rvert \le A\,e^{-(m/2)\lVert z\rVert}$ for all $\lVert z\rVert \ge 1$.
 
-**Proof uses**: [`GFFPropagator.decayBound`](../../../OSforGFF/Covariance/Propagator.lean#L407)
+**Proof uses**: [`GFFPropagator.decayBound`](../../../OSforGFF/Covariance/Propagator.lean#L441)
 
 ---
 
-### [`freeCovarianceKernel_decay_bound`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1072) — Lemma
+### [`freeCovarianceKernel_decay_bound`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1073) — Lemma
 
 **Statement**: Polynomial decay beyond unit radius: there is $C > 0$ with $\lvert K(z)\rvert \le C/\lVert z\rVert^2$ for all $\lVert z\rVert \ge 1$ (from the exponential decay via $e^{-x} \le 2/x^2$).
 
-**Proof uses**: [`freeCovarianceKernel_exp_decay`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1057), `Real.pow_div_factorial_le_exp`
+**Proof uses**: [`freeCovarianceKernel_exp_decay`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1058), `Real.pow_div_factorial_le_exp`
 
 ---
 

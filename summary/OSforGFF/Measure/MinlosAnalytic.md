@@ -20,13 +20,13 @@ sign-flip symmetry. No axioms are introduced in this file.
 
 **Main result**: Fully proven (0 sorries).
 
-**Length**: 208 lines, 2 definition(s) + 3 theorem(s)/lemma(s)
+**Length**: 209 lines, 2 definition(s) + 3 theorem(s)/lemma(s)
 
 ---
 
 ## Contents
 
-### [`CovarianceForm`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L50) — Definition
+### [`CovarianceForm`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L51) — Definition
 
 **Lean signature**
 ```lean
@@ -48,7 +48,7 @@ $\Phi(f) = \exp\!\bigl(-\tfrac{1}{2}Q(f,f)\bigr)$ is positive definite.
 
 ---
 
-### [`negMap`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L61) — Definition
+### [`negMap`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L62) — Definition
 
 **Lean signature**
 ```lean
@@ -60,7 +60,7 @@ def negMap : FieldConfiguration d → FieldConfiguration d
 
 ---
 
-### [`negMap_measurable`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L64) — Lemma
+### [`negMap_measurable`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L65) — Lemma
 
 **Statement**: The negation map $\omega \mapsto -\omega$ on `FieldConfiguration d` is measurable
 with respect to the cylinder $\sigma$-algebra.
@@ -70,7 +70,7 @@ with respect to the cylinder $\sigma$-algebra.
 
 ---
 
-### [`integral_neg_invariance`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L85) — Lemma
+### [`integral_neg_invariance`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L86) — Lemma
 
 **Statement**: Let $\mu$ be a probability measure on `FieldConfiguration d` whose characteristic
 functional equals the Gaussian $\exp\!\bigl(-\tfrac{1}{2} Q(f,f)\bigr)$ of a `CovarianceForm d`
@@ -78,7 +78,7 @@ for all test functions $f$ (with `SchwartzTestFunction d` nuclear and separable)
 integrable function $\varphi$,
 $$\int \varphi(\omega)\, d\mu(\omega) = \int \varphi(-\omega)\, d\mu(\omega).$$
 
-**Proof uses**: [`negMap_measurable`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L64),
+**Proof uses**: [`negMap_measurable`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L65),
 [`distributionPairing`](../../../OSforGFF/Spacetime/Basic.lean#L111),
 [`minlos_gaussian_uniqueness`](../../../OSforGFF/Measure/Minlos.lean#L184),
 `WeakDual.eval_measurable`,
@@ -87,13 +87,13 @@ $$\int \varphi(\omega)\, d\mu(\omega) = \int \varphi(-\omega)\, d\mu(\omega).$$
 
 ---
 
-### [`moment_zero_from_realCF`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L184) — Lemma
+### [`moment_zero_from_realCF`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L185) — Lemma
 
 **Statement**: Under the same hypotheses as `integral_neg_invariance`, for any test function
 $a$ such that $\omega \mapsto \omega(a)$ is integrable,
 $$\int \omega(a)\, d\mu(\omega) = 0.$$
 
-**Proof uses**: [`integral_neg_invariance`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L85),
+**Proof uses**: [`integral_neg_invariance`](../../../OSforGFF/Measure/MinlosAnalytic.lean#L86),
 `ContinuousLinearMap.neg_apply`, `integral_neg`, `self_eq_neg`
 
 ---

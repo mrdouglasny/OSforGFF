@@ -26,21 +26,21 @@ and the GFF measure `gaussianFreeField_free (d := d) m`.
 
 None — file is sorry-free.
 
-**Length**: 160 lines, 1 definition + 7 theorem(s)/lemma(s)
+**Length**: 144 lines, 1 definition + 7 theorem(s)/lemma(s)
 
 ---
 
 ## Euclidean action on test functions
 
-### [`euclidean_action_apply`](../../../OSforGFF/OS/OS2_Invariance.lean#L42) — Lemma
+### [`euclidean_action_apply`](../../../OSforGFF/OS/OS2_Invariance.lean#L43) — Lemma
 
 **Statement**: The Euclidean action on test functions satisfies $(g \cdot f)(x) = f(g^{-1} \cdot x)$, i.e., it acts by pullback.
 
-**Proof uses**: [`euclidean_action`](../../../OSforGFF/Spacetime/Euclidean.lean#L354)
+**Proof uses**: [`euclidean_action`](../../../OSforGFF/Spacetime/Euclidean.lean#L352)
 
 ---
 
-### [`euclidean_pullback_eq_inv_act`](../../../OSforGFF/OS/OS2_Invariance.lean#L50) — Lemma
+### [`euclidean_pullback_eq_inv_act`](../../../OSforGFF/OS/OS2_Invariance.lean#L51) — Lemma
 
 **Statement**: The Euclidean pullback satisfies $\mathrm{pullback}_g(x) = g^{-1} \cdot x$.
 
@@ -48,7 +48,7 @@ None — file is sorry-free.
 
 ---
 
-### [`euclidean_pullback_act`](../../../OSforGFF/OS/OS2_Invariance.lean#L55) — Lemma
+### [`euclidean_pullback_act`](../../../OSforGFF/OS/OS2_Invariance.lean#L56) — Lemma
 
 **Statement**: Composing pullback with the forward action cancels: $\mathrm{pullback}_g(g \cdot y) = y$.
 
@@ -56,7 +56,7 @@ None — file is sorry-free.
 
 ---
 
-### [`act_euclidean_pullback`](../../../OSforGFF/OS/OS2_Invariance.lean#L61) — Lemma
+### [`act_euclidean_pullback`](../../../OSforGFF/OS/OS2_Invariance.lean#L62) — Lemma
 
 **Statement**: The forward action followed by pullback is the identity: $g \cdot (\mathrm{pullback}_g(x)) = x$.
 
@@ -66,7 +66,7 @@ None — file is sorry-free.
 
 ## Change of variables for the bilinear form
 
-### [`actEquiv`](../../../OSforGFF/OS/OS2_Invariance.lean#L69) — Definition
+### [`actEquiv`](../../../OSforGFF/OS/OS2_Invariance.lean#L70) — Definition
 
 **Lean signature**
 ```lean
@@ -83,7 +83,7 @@ noncomputable def actEquiv (g : E d) : SpaceTime d ≃ᵐ SpaceTime d where
 
 ---
 
-### [`measurePreserving_actEquiv`](../../../OSforGFF/OS/OS2_Invariance.lean#L79) — Lemma
+### [`measurePreserving_actEquiv`](../../../OSforGFF/OS/OS2_Invariance.lean#L80) — Lemma
 
 **Statement**: The measurable equivalence `actEquiv g` is measure-preserving with respect to Lebesgue measure.
 
@@ -93,29 +93,29 @@ noncomputable def actEquiv (g : E d) : SpaceTime d ≃ᵐ SpaceTime d where
 
 ## Main theorem: Bilinear form invariance
 
-### [`freeCovarianceℂ_bilinear_euclidean_invariant`](../../../OSforGFF/OS/OS2_Invariance.lean#L111) — Theorem
+### [`freeCovarianceℂ_bilinear_euclidean_invariant`](../../../OSforGFF/OS/OS2_Invariance.lean#L95) — Theorem
 
 **Statement**: The complex bilinear covariance form is invariant under Euclidean transformations:
 $$C_\mathbb{C}(g \cdot f,\, g \cdot h) = C_\mathbb{C}(f, h)$$
 for all $g \in E(d)$ and complex test functions $f, h$.
 
-**Proof uses**: [`euclidean_action_apply`](../../../OSforGFF/OS/OS2_Invariance.lean#L42),
-[`act_euclidean_pullback`](../../../OSforGFF/OS/OS2_Invariance.lean#L61),
-[`freeCovariance_euclidean_invariant`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L653),
-[`measurePreserving_actEquiv`](../../../OSforGFF/OS/OS2_Invariance.lean#L79),
+**Proof uses**: [`euclidean_action_apply`](../../../OSforGFF/OS/OS2_Invariance.lean#L43),
+[`act_euclidean_pullback`](../../../OSforGFF/OS/OS2_Invariance.lean#L62),
+[`freeCovariance_euclidean_invariant`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L654),
+[`measurePreserving_actEquiv`](../../../OSforGFF/OS/OS2_Invariance.lean#L80),
 `MeasurePreserving.integral_comp'`
 
 ---
 
-### [`CovarianceEuclideanInvariantℂ_μ_GFF`](../../../OSforGFF/OS/OS2_Invariance.lean#L152) — Theorem
+### [`CovarianceEuclideanInvariantℂ_μ_GFF`](../../../OSforGFF/OS/OS2_Invariance.lean#L135) — Theorem
 
 **Statement**: The GFF measure $\mu_{\mathrm{GFF}}$ satisfies the complex covariance Euclidean
 invariance property: $S_2^{\mathbb{C}}(g \cdot f, g \cdot h) = S_2^{\mathbb{C}}(f, h)$ for all
 $g \in E(d)$ and complex test functions $f, h$; stated as
 `CovarianceEuclideanInvariantℂ (gaussianFreeField_free (d := d) m)`.
 
-**Proof uses**: [`gff_two_point_equals_covarianceℂ_free`](../../../OSforGFF/Measure/IsGaussian.lean#L461),
-[`freeCovarianceℂ_bilinear_euclidean_invariant`](../../../OSforGFF/OS/OS2_Invariance.lean#L111)
+**Proof uses**: [`gff_two_point_equals_covarianceℂ_free`](../../../OSforGFF/Measure/IsGaussian.lean#L454),
+[`freeCovarianceℂ_bilinear_euclidean_invariant`](../../../OSforGFF/OS/OS2_Invariance.lean#L95)
 
 ---
 

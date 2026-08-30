@@ -17,7 +17,7 @@ finite collection of points and complex coefficients.
 
 **Main result**: Fully proven — file is sorry-free.
 
-**Length**: 55 lines, 1 definition(s) + 1 theorem(s)/lemma(s)
+**Length**: 54 lines, 1 definition(s) + 1 theorem(s)/lemma(s)
 
 ---
 

@@ -29,7 +29,7 @@ decay step; the mass gap of the GFF yields every polynomial rate, and the master
 
 None — file is sorry-free.
 
-**Length**: 1303 lines, 2 definition(s) + 20 theorem(s)/lemma(s)
+**Length**: 1305 lines, 2 definition(s) + 20 theorem(s)/lemma(s)
 
 ---
 
@@ -73,7 +73,7 @@ respect to the GFF measure.
 
 ---
 
-### [`gff_exp_time_translated_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L126) — Lemma
+### [`gff_exp_time_translated_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L125) — Lemma
 
 **Statement**: The time-translated exponential $\omega \mapsto \exp\langle T_s\omega, f\rangle$ lies in
 $L^2(\mu_{\mathrm{GFF}})$, since $\lVert\exp z\rVert^2 = e^{2\mathrm{Re}\, z} \le e^{2\lvert\mathrm{Re}\, z\rvert}$
@@ -85,59 +85,59 @@ is integrable (Fernique).
 
 ## GFF Time Translation Invariance
 
-### [`timeTranslationSchwartzℂ_conj_comm`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L180) — Lemma
+### [`timeTranslationSchwartzℂ_conj_comm`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L179) — Lemma
 
 **Statement**: Time translation commutes with pointwise conjugation:
 $T_t(\overline{f}) = \overline{T_t f}$.
 
 ---
 
-### [`gff_exp_product_time_shift_invariant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L188) — Lemma
+### [`gff_exp_product_time_shift_invariant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L187) — Lemma
 
 **Statement**: The product integral is invariant under a common time shift:
 $$\int \exp\langle\omega, T_t g_1\rangle\;\overline{\exp\langle\omega, T_t g_2\rangle}\,d\mu =
 \int \exp\langle\omega, g_1\rangle\;\overline{\exp\langle\omega, g_2\rangle}\,d\mu.$$
 
 **Proof uses**: `distributionPairingℂ_real_conj`,
-[`timeTranslationSchwartzℂ_conj_comm`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L180),
+[`timeTranslationSchwartzℂ_conj_comm`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L179),
 `gff_generating_time_invariant`
 
 ---
 
-### [`gff_exp_L2_norm_constant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L222) — Lemma
+### [`gff_exp_L2_norm_constant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L221) — Lemma
 
 **Statement**: The $L^2$ norm of $A_s = \exp\langle T_s\omega, f\rangle$ is constant in $s$ (stationarity):
 $\int \lVert A_s\rVert^2\,d\mu = \int \lVert A_0\rVert^2\,d\mu$.
 
 **Proof uses**: `timeTranslationDistribution_pairingℂ`,
-[`gff_exp_product_time_shift_invariant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L188), `integral_complex_ofReal`
+[`gff_exp_product_time_shift_invariant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L187), `integral_complex_ofReal`
 
 ---
 
-### [`time_average_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L270) — Lemma
+### [`time_average_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L269) — Lemma
 
 **Statement**: The time average $\omega \mapsto (1/T)\int_0^T A_s\,ds$ lies in $L^2(\mu_{\mathrm{GFF}})$ for
 $T > 0$.
 
 **Proof uses**: `OSforGFF.time_average_memLp_two`,
-[`gff_exp_time_translated_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L126),
-[`gff_exp_L2_norm_constant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L222), joint measurability
+[`gff_exp_time_translated_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L125),
+[`gff_exp_L2_norm_constant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L221), joint measurability
 
 ---
 
-### [`gff_err_sq_integrable`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L316) — Lemma
+### [`gff_err_sq_integrable`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L315) — Lemma
 
 **Statement**: For $T > 0$ the squared error
 $\bigl\lVert (1/T)\int_0^T A_s\,ds - \mathbb{E}[A]\bigr\rVert^2$ is integrable over $\mu_{\mathrm{GFF}}$.
 
-**Proof uses**: [`time_average_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L270),
+**Proof uses**: [`time_average_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L269),
 `memLp_two_iff_integrable_sq_norm`, `memLp_const`
 
 ---
 
 ## Decay Integral Bounds
 
-### [`double_integral_decay_bound`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L366) — Lemma
+### [`double_integral_decay_bound`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L365) — Lemma
 
 **Statement**: There is $C > 0$ with
 $\iint_{[0,T]^2}(1+\lvert s-u\rvert)^{-3}\,du\,ds \le 2TC$ for all $T > 0$.
@@ -146,19 +146,19 @@ $\iint_{[0,T]^2}(1+\lvert s-u\rvert)^{-3}\,du\,ds \le 2TC$ for all $T > 0$.
 
 ---
 
-### [`gff_product_expectation_stationarity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L379) — Lemma
+### [`gff_product_expectation_stationarity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L378) — Lemma
 
 **Statement**: Product-expectation stationarity — the covariance depends only on the time difference:
 $$\int A_s\,\overline{A_u}\,d\mu = \int A_{s-u}\,\overline{A_0}\,d\mu.$$
 
 **Proof uses**: `timeTranslationDistribution_pairingℂ`, `timeTranslationSchwartzℂ_add`,
-[`gff_exp_product_time_shift_invariant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L188)
+[`gff_exp_product_time_shift_invariant`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L187)
 
 ---
 
 ## GFF Covariance Continuity
 
-### [`gff_covariance_timeTranslation_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L419) — Lemma
+### [`gff_covariance_timeTranslation_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L418) — Lemma
 
 **Statement**: The two-point function is continuous in the time shift:
 $s \mapsto S_2\bigl(T_s f,\, g\bigr)$ is continuous.
@@ -168,21 +168,21 @@ $s \mapsto S_2\bigl(T_s f,\, g\bigr)$ is continuous.
 
 ---
 
-### [`gff_covariance_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L503) — Lemma
+### [`gff_covariance_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L502) — Lemma
 
 **Statement**: The GFF covariance is jointly continuous:
 $(s,u) \mapsto \int A_s\,\overline{A_u}\,d\mu - \mathbb{E}[A]\,\overline{\mathbb{E}[A]}$ is continuous,
 factoring through $s - u$ by stationarity and the Gaussian MGF formula.
 
-**Proof uses**: [`gff_product_expectation_stationarity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L379),
+**Proof uses**: [`gff_product_expectation_stationarity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L378),
 `gff_joint_mgf_factorization`, `gff_generating_time_invariant`,
-[`gff_covariance_timeTranslation_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L419)
+[`gff_covariance_timeTranslation_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L418)
 
 ---
 
 ## Variance Bounds
 
-### [`L2_time_average_variance_bound`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L583) — Lemma
+### [`L2_time_average_variance_bound`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L582) — Lemma
 
 **Statement**: The $L^2$ variance of the time average is controlled by the double integral of the covariance norm:
 $$\int \bigl\lVert (1/T)\textstyle\int_0^T A_s\,ds - \mathbb{E}[A]\bigr\rVert^2\,d\mu \le
@@ -190,52 +190,52 @@ $$\int \bigl\lVert (1/T)\textstyle\int_0^T A_s\,ds - \mathbb{E}[A]\bigr\rVert^2\
 
 **Proof uses**: `OSforGFF.L2_variance_time_average_bound`,
 `OSforGFF.L2_process_covariance_fubini_integrable`,
-[`gff_covariance_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L503),
-[`gff_exp_time_translated_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L126), `norm_integral_le_integral_norm`
+[`gff_covariance_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L502),
+[`gff_exp_time_translated_memLp_two`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L125), `norm_integral_le_integral_norm`
 
 ---
 
 ## Clustering Implies Covariance Decay
 
-### [`clustering_implies_covariance_decay`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L727) — Lemma
+### [`clustering_implies_covariance_decay`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L726) — Lemma
 
 **Statement**: OS4″ clustering ($\alpha = 6$) implies covariance decay with exponent $-3$: there is
 $c \ge 0$ with $\lVert \mathrm{Cov}(s,u)\rVert \le c\,(1+\lvert s-u\rvert)^{-3}$ for all $s, u \ge 0$,
 where $\mathrm{Cov}(s,u) = \int A_s\,\overline{A_u}\,d\mu - \mathbb{E}[A]\,\overline{\mathbb{E}[A]}$.
 
-**Proof uses**: [`gff_product_expectation_stationarity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L379),
+**Proof uses**: [`gff_product_expectation_stationarity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L378),
 `Real.rpow_le_rpow_of_exponent_le`, `distributionPairingℂ_real_conj`
 
 ---
 
-### [`gff_covariance_norm_integrableOn_slice`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L879) — Lemma
+### [`gff_covariance_norm_integrableOn_slice`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L878) — Lemma
 
 **Statement**: For each fixed $s$, the covariance norm $u \mapsto \lVert \mathrm{Cov}(s,u)\rVert$ is
 integrable on $[0,T]$.
 
 **Proof uses**: `OSforGFF.covariance_norm_integrableOn_slice`,
-[`gff_covariance_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L503)
+[`gff_covariance_continuous`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L502)
 
 ---
 
 ## Variance Decay from Clustering
 
-### [`variance_decay_from_clustering`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L895) — Lemma
+### [`variance_decay_from_clustering`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L894) — Lemma
 
 **Statement**: Covariance decay with exponent $-3$ implies the $L^2$ variance tends to zero: the time
 average of $\exp\langle T_s\varphi, f\rangle$ converges to $\mathbb{E}[e^{\langle\varphi,f\rangle}]$ in
 $L^2$ as $T \to \infty$ (via the bound $\le 2cC/T$ and a squeeze).
 
-**Proof uses**: [`double_integral_decay_bound`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L366),
-[`L2_time_average_variance_bound`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L583),
-[`gff_covariance_norm_integrableOn_slice`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L879),
+**Proof uses**: [`double_integral_decay_bound`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L365),
+[`L2_time_average_variance_bound`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L582),
+[`gff_covariance_norm_integrableOn_slice`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L878),
 `tendsto_of_tendsto_of_tendsto_of_le_of_le'`
 
 ---
 
 ## Main Theorem Chain
 
-### [`norm_sq_weighted_sum_le`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1061) — Lemma
+### [`norm_sq_weighted_sum_le`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1060) — Lemma
 
 **Statement**: Cauchy–Schwarz bound for a weighted sum:
 $\bigl\lVert \sum_j w_j\,a_j\bigr\rVert^2 \le \bigl(\sum_j \lVert w_j\rVert^2\bigr)\bigl(\sum_j \lVert a_j\rVert^2\bigr)$.
@@ -244,44 +244,44 @@ $\bigl\lVert \sum_j w_j\,a_j\bigr\rVert^2 \le \bigl(\sum_j \lVert w_j\rVert^2\bi
 
 ---
 
-### [`OS4'_implies_OS4`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1077) — Theorem
+### [`OS4'_implies_OS4`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1076) — Theorem
 
 **Statement**: Generating-function ergodicity implies full ergodicity:
 `OS4'_Ergodicity_generating (d := d) m → OS4_Ergodicity (gaussianFreeField_free (d := d) m)`.
 
-**Proof uses**: [`norm_sq_weighted_sum_le`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1061) (Cauchy–Schwarz over
+**Proof uses**: [`norm_sq_weighted_sum_le`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1060) (Cauchy–Schwarz over
 the finite family $\sum_j z_j e^{\langle\omega,f_j\rangle}$),
-[`gff_err_sq_integrable`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L316),
+[`gff_err_sq_integrable`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L315),
 [`gff_exp_pairing_integrable`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L102), squeeze
 
 ---
 
-### [`OS4''_implies_OS4'`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1280) — Theorem
+### [`OS4''_implies_OS4'`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1279) — Theorem
 
 **Statement**: Polynomial clustering at $\alpha = 6$ implies generating-function ergodicity:
 `OS4''_Clustering (d := d) m → OS4'_Ergodicity_generating (d := d) m`.
 
-**Proof uses**: [`clustering_implies_covariance_decay`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L727),
-[`variance_decay_from_clustering`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L895)
+**Proof uses**: [`clustering_implies_covariance_decay`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L726),
+[`variance_decay_from_clustering`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L894)
 
 ---
 
-### [`OS4''_implies_OS4_Ergodicity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1292) — Theorem
+### [`OS4''_implies_OS4_Ergodicity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1291) — Theorem
 
 **Statement**: The full chain — clustering to ergodicity:
 `OS4''_Clustering (d := d) m → OS4_Ergodicity (gaussianFreeField_free (d := d) m)`.
 
-**Proof uses**: [`OS4'_implies_OS4`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1077),
-[`OS4''_implies_OS4'`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1280)
+**Proof uses**: [`OS4'_implies_OS4`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1076),
+[`OS4''_implies_OS4'`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1279)
 
 ---
 
-### [`OS4_PolynomialClustering_implies_OS4_Ergodicity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1301) — Theorem
+### [`OS4_PolynomialClustering_implies_OS4_Ergodicity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1300) — Theorem
 
 **Statement**: Main theorem: polynomial clustering at $\alpha = 6$ implies OS4 ergodicity for the GFF,
 `OS4_PolynomialClustering (gaussianFreeField_free (d := d) m) 6 (by norm_num) → OS4_Ergodicity (gaussianFreeField_free (d := d) m)`.
 
-**Proof uses**: [`OS4''_implies_OS4_Ergodicity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1292)
+**Proof uses**: [`OS4''_implies_OS4_Ergodicity`](../../../OSforGFF/OS/OS4_Ergodicity.lean#L1291)
 
 ---
 

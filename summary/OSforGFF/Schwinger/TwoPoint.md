@@ -22,13 +22,13 @@ kernel $C$, the limit-based definition recovers $C(x)$ for $x \neq 0$.
 
 **Major gaps**: None — file is sorry-free.
 
-**Length**: 232 lines, 5 definition(s) + 5 theorem(s)/lemma(s) (one private helper)
+**Length**: 233 lines, 5 definition(s) + 5 theorem(s)/lemma(s) (one private helper)
 
 ---
 
 ## Two-Point Schwinger Function Infrastructure
 
-### [`bumpToSchwartz`](../../../OSforGFF/Schwinger/TwoPoint.lean#L47) — Definition
+### [`bumpToSchwartz`](../../../OSforGFF/Schwinger/TwoPoint.lean#L48) — Definition
 
 **Lean signature**
 ```lean
@@ -38,7 +38,7 @@ noncomputable def bumpToSchwartz (φ : ContDiffBump (0 : SpaceTime d)) : Schwart
 
 ---
 
-### [`bumpToSchwartz_apply`](../../../OSforGFF/Schwinger/TwoPoint.lean#L54) — Theorem
+### [`bumpToSchwartz_apply`](../../../OSforGFF/Schwinger/TwoPoint.lean#L55) — Theorem
 
 **Statement**: `bumpToSchwartz φ x = φ.normed volume x`, i.e., the Schwartz function produced by `bumpToSchwartz` evaluates pointwise to the $L^1$-normalized bump.
 
@@ -46,7 +46,7 @@ noncomputable def bumpToSchwartz (φ : ContDiffBump (0 : SpaceTime d)) : Schwart
 
 ---
 
-### [`translateSchwartz`](../../../OSforGFF/Schwinger/TwoPoint.lean#L62) — Definition
+### [`translateSchwartz`](../../../OSforGFF/Schwinger/TwoPoint.lean#L63) — Definition
 
 **Lean signature**
 ```lean
@@ -56,7 +56,7 @@ noncomputable def translateSchwartz (f : SchwartzTestFunction d) (a : SpaceTime 
 
 ---
 
-### [`SmearedTwoPointFunction`](../../../OSforGFF/Schwinger/TwoPoint.lean#L70) — Definition
+### [`SmearedTwoPointFunction`](../../../OSforGFF/Schwinger/TwoPoint.lean#L71) — Definition
 
 **Lean signature**
 ```lean
@@ -69,7 +69,7 @@ obtained by evaluating the two-point Schwinger function $S_2$ on the translated 
 
 ---
 
-### [`standardBumpSequence`](../../../OSforGFF/Schwinger/TwoPoint.lean#L78) — Definition
+### [`standardBumpSequence`](../../../OSforGFF/Schwinger/TwoPoint.lean#L79) — Definition
 
 **Lean signature**
 ```lean
@@ -79,7 +79,7 @@ noncomputable def standardBumpSequence (n : ℕ) (hn : n ≠ 0) : ContDiffBump (
 
 ---
 
-### [`SchwingerTwoPointFunction`](../../../OSforGFF/Schwinger/TwoPoint.lean#L102) — Definition
+### [`SchwingerTwoPointFunction`](../../../OSforGFF/Schwinger/TwoPoint.lean#L103) — Definition
 
 **Lean signature**
 ```lean
@@ -90,7 +90,7 @@ noncomputable def SchwingerTwoPointFunction
 
 ---
 
-### [`schwingerTwoPointFunction_zero`](../../../OSforGFF/Schwinger/TwoPoint.lean#L115) — Theorem
+### [`schwingerTwoPointFunction_zero`](../../../OSforGFF/Schwinger/TwoPoint.lean#L116) — Theorem
 
 **Statement**: The two-point Schwinger function vanishes at coincident points: $S_2(0) = 0$.
 
@@ -98,21 +98,21 @@ noncomputable def SchwingerTwoPointFunction
 
 ---
 
-### [`smearedTwoPoint_tendsto_schwingerTwoPoint`](../../../OSforGFF/Schwinger/TwoPoint.lean#L132) — Theorem
+### [`smearedTwoPoint_tendsto_schwingerTwoPoint`](../../../OSforGFF/Schwinger/TwoPoint.lean#L133) — Theorem
 
 **Statement**: For any net of bump functions $\phi_i$ with $r_{\mathrm{out},i} \to 0$, if the two-point Schwinger function is given by integration against a continuous kernel $C$ (continuous away from $0$), then the smeared two-point functions converge to $C(x)$ for $x \neq 0$:
 $$\text{SmearedTwoPointFunction}(\phi_i, x) \xrightarrow{i} C(x).$$
 
-**Proof uses**: [`double_mollifier_convergence`](../../../OSforGFF/General/FunctionalAnalysis.lean#L699), [`bumpToSchwartz_apply`](../../../OSforGFF/Schwinger/TwoPoint.lean#L54), [`translateSchwartz`](../../../OSforGFF/Schwinger/TwoPoint.lean#L62), [`SchwartzMap.translate`](../../../OSforGFF/General/FunctionalAnalysis.lean#L512)
+**Proof uses**: [`double_mollifier_convergence`](../../../OSforGFF/General/FunctionalAnalysis.lean#L700), [`bumpToSchwartz_apply`](../../../OSforGFF/Schwinger/TwoPoint.lean#L55), [`translateSchwartz`](../../../OSforGFF/Schwinger/TwoPoint.lean#L63), [`SchwartzMap.translate`](../../../OSforGFF/General/FunctionalAnalysis.lean#L513)
 
 ---
 
-### [`schwingerTwoPointFunction_eq_kernel`](../../../OSforGFF/Schwinger/TwoPoint.lean#L168) — Theorem
+### [`schwingerTwoPointFunction_eq_kernel`](../../../OSforGFF/Schwinger/TwoPoint.lean#L169) — Theorem
 
 **Statement**: For $x \neq 0$, if the measure $\mu$ has a two-point Schwinger function of the form $S_2(f,g) = \int\!\int f(u)\,C(u-v)\,g(v)\,du\,dv$ for a kernel $C$ continuous away from $0$, then the limit-based definition recovers the kernel:
 $\text{SchwingerTwoPointFunction}_\mu(x) = C(x)$.
 
-**Proof uses**: [`smearedTwoPoint_tendsto_schwingerTwoPoint`](../../../OSforGFF/Schwinger/TwoPoint.lean#L132), [`standardBumpSequence`](../../../OSforGFF/Schwinger/TwoPoint.lean#L78), `tendsto_one_div_add_atTop_nhds_zero_nat`, `Filter.Tendsto.limUnder_eq`, `tendsto_of_tendsto_succ`
+**Proof uses**: [`smearedTwoPoint_tendsto_schwingerTwoPoint`](../../../OSforGFF/Schwinger/TwoPoint.lean#L133), [`standardBumpSequence`](../../../OSforGFF/Schwinger/TwoPoint.lean#L79), `tendsto_one_div_add_atTop_nhds_zero_nat`, `Filter.Tendsto.limUnder_eq`, `tendsto_of_tendsto_succ`
 
 ---
 

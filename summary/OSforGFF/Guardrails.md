@@ -34,7 +34,7 @@ guard freezes reality and will fail if any of them ever creeps back onto the imp
 **Main result**: Build-enforced freeze of the axiom footprint and statement type of all six
 headline theorems; `lake build` fails on any drift.
 
-**Length**: 86 lines, 12 guard commands (6 `#print axioms` axiom-footprint guards + 6 `#check`
+**Length**: 85 lines, 12 guard commands (6 `#print axioms` axiom-footprint guards + 6 `#check`
 statement-type guards), 0 declarations, 0 sorries.
 
 ---

@@ -18,7 +18,7 @@ $\int_0^\infty e^{-(c/u - u)^2}\, du = \sqrt{\pi}/2$ via the Cauchy-Schlömilch 
 
 **Main result**: Fully proven — file is sorry-free.
 
-**Length**: 587 lines, 0 definition(s) + 22 theorem(s)/lemma(s)
+**Length**: 590 lines, 0 definition(s) + 22 theorem(s)/lemma(s)
 
 ---
 
@@ -58,7 +58,7 @@ $\int_0^\infty e^{-(c/u - u)^2}\, du = \sqrt{\pi}/2$ via the Cauchy-Schlömilch 
 
 ## Part 3: The core Glasser integral
 
-### [`glasser_integral_substitution_identity`](../../../OSforGFF/General/LaplaceIntegral.lean#L100) — Lemma
+### [`glasser_integral_substitution_identity`](../../../OSforGFF/General/LaplaceIntegral.lean#L102) — Lemma
 
 **Statement**: For $c > 0$, the substitution $u \mapsto c/u$ shows that
 $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^2}\, du.$$
@@ -67,7 +67,7 @@ $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^
 
 ---
 
-### [`glasser_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L139) — Theorem
+### [`glasser_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L141) — Theorem
 
 **Statement**: For $c > 0$, the function $u \mapsto e^{-(c/u-u)^2}$ is integrable on $(0, \infty)$.
 
@@ -75,23 +75,23 @@ $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^
 
 ---
 
-### [`glasser_weighted_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L186) — Theorem
+### [`glasser_weighted_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L188) — Theorem
 
 **Statement**: For $c > 0$, the function $u \mapsto (c/u^2) e^{-(c/u-u)^2}$ is integrable on $(0, \infty)$.
 
-**Proof uses**: [`glasser_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L139), `integrableOn_image_iff_integrableOn_deriv_smul_of_antitoneOn`, `integrableOn_Ioi_exp_neg_mul_sq_iff`
+**Proof uses**: [`glasser_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L141), `integrableOn_image_iff_integrableOn_deriv_smul_of_antitoneOn`, `integrableOn_Ioi_exp_neg_mul_sq_iff`
 
 ---
 
-### [`glasser_integral_double`](../../../OSforGFF/General/LaplaceIntegral.lean#L298) — Lemma
+### [`glasser_integral_double`](../../../OSforGFF/General/LaplaceIntegral.lean#L301) — Lemma
 
 **Statement**: $2 \int_0^\infty e^{-(c/u-u)^2}\, du = \int_0^\infty (1 + c/u^2)\, e^{-(c/u-u)^2}\, du$.
 
-**Proof uses**: [`glasser_integral_substitution_identity`](../../../OSforGFF/General/LaplaceIntegral.lean#L100), [`glasser_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L139), [`glasser_weighted_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L186)
+**Proof uses**: [`glasser_integral_substitution_identity`](../../../OSforGFF/General/LaplaceIntegral.lean#L102), [`glasser_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L141), [`glasser_weighted_integrable`](../../../OSforGFF/General/LaplaceIntegral.lean#L188)
 
 ---
 
-### [`glasser_tendsto_atTop_at_zero`](../../../OSforGFF/General/LaplaceIntegral.lean#L306) — Lemma
+### [`glasser_tendsto_atTop_at_zero`](../../../OSforGFF/General/LaplaceIntegral.lean#L309) — Lemma
 
 **Statement**: For $c > 0$, the map $u \mapsto c/u - u$ tends to $+\infty$ as $u \to 0^+$.
 
@@ -99,7 +99,7 @@ $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^
 
 ---
 
-### [`glasser_tendsto_atBot_at_top`](../../../OSforGFF/General/LaplaceIntegral.lean#L329) — Lemma
+### [`glasser_tendsto_atBot_at_top`](../../../OSforGFF/General/LaplaceIntegral.lean#L332) — Lemma
 
 **Statement**: For $c > 0$, the map $u \mapsto c/u - u$ tends to $-\infty$ as $u \to +\infty$.
 
@@ -107,7 +107,7 @@ $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^
 
 ---
 
-### [`glasser_continuousOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L335) — Lemma
+### [`glasser_continuousOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L338) — Lemma
 
 **Statement**: The map $u \mapsto c/u - u$ is continuous on $(0, \infty)$.
 
@@ -115,7 +115,7 @@ $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^
 
 ---
 
-### [`glasser_strictAntiOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L339) — Lemma
+### [`glasser_strictAntiOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L342) — Lemma
 
 **Statement**: For $c > 0$, the map $u \mapsto c/u - u$ is strictly decreasing on $(0, \infty)$.
 
@@ -123,15 +123,15 @@ $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^
 
 ---
 
-### [`glasser_injOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L363) — Lemma
+### [`glasser_injOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L366) — Lemma
 
 **Statement**: For $c > 0$, the map $u \mapsto c/u - u$ is injective on $(0, \infty)$.
 
-**Proof uses**: [`glasser_strictAntiOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L339)
+**Proof uses**: [`glasser_strictAntiOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L342)
 
 ---
 
-### [`glasser_hasDerivWithinAt`](../../../OSforGFF/General/LaplaceIntegral.lean#L367) — Lemma
+### [`glasser_hasDerivWithinAt`](../../../OSforGFF/General/LaplaceIntegral.lean#L370) — Lemma
 
 **Statement**: For $u > 0$, the map $u \mapsto c/u - u$ has derivative $-c/u^2 - 1$ within $(0, \infty)$.
 
@@ -139,15 +139,15 @@ $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^
 
 ---
 
-### [`glasser_image_eq_univ`](../../../OSforGFF/General/LaplaceIntegral.lean#L372) — Lemma
+### [`glasser_image_eq_univ`](../../../OSforGFF/General/LaplaceIntegral.lean#L375) — Lemma
 
 **Statement**: For $c > 0$, the image of $(0, \infty)$ under $u \mapsto c/u - u$ is all of $\mathbb{R}$.
 
-**Proof uses**: [`glasser_continuousOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L335), [`glasser_tendsto_atTop_at_zero`](../../../OSforGFF/General/LaplaceIntegral.lean#L306), [`glasser_tendsto_atBot_at_top`](../../../OSforGFF/General/LaplaceIntegral.lean#L329), `IsPreconnected.intermediate_value_Iic`, `IsPreconnected.intermediate_value_Ici`
+**Proof uses**: [`glasser_continuousOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L338), [`glasser_tendsto_atTop_at_zero`](../../../OSforGFF/General/LaplaceIntegral.lean#L309), [`glasser_tendsto_atBot_at_top`](../../../OSforGFF/General/LaplaceIntegral.lean#L332), `IsPreconnected.intermediate_value_Iic`, `IsPreconnected.intermediate_value_Ici`
 
 ---
 
-### [`glasser_deriv_abs`](../../../OSforGFF/General/LaplaceIntegral.lean#L407) — Lemma
+### [`glasser_deriv_abs`](../../../OSforGFF/General/LaplaceIntegral.lean#L410) — Lemma
 
 **Statement**: For $c > 0$ and $u > 0$: $\lvert -c/u^2 - 1 \rvert = 1 + c/u^2$.
 
@@ -155,27 +155,27 @@ $$\int_0^\infty e^{-(c/u - u)^2}\, du = \int_0^\infty \frac{c}{u^2} e^{-(c/u-u)^
 
 ---
 
-### [`weighted_glasser_integral_eq_gaussian`](../../../OSforGFF/General/LaplaceIntegral.lean#L414) — Theorem
+### [`weighted_glasser_integral_eq_gaussian`](../../../OSforGFF/General/LaplaceIntegral.lean#L417) — Theorem
 
 **Statement**: For $c > 0$:
 $$\int_0^\infty (1 + c/u^2)\, e^{-(c/u - u)^2}\, du = \sqrt{\pi}.$$
 
-**Proof uses**: `integral_image_eq_integral_abs_deriv_smul`, [`glasser_hasDerivWithinAt`](../../../OSforGFF/General/LaplaceIntegral.lean#L367), [`glasser_injOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L363), [`glasser_image_eq_univ`](../../../OSforGFF/General/LaplaceIntegral.lean#L372), [`glasser_deriv_abs`](../../../OSforGFF/General/LaplaceIntegral.lean#L407), `integral_gaussian`
+**Proof uses**: `integral_image_eq_integral_abs_deriv_smul`, [`glasser_hasDerivWithinAt`](../../../OSforGFF/General/LaplaceIntegral.lean#L370), [`glasser_injOn`](../../../OSforGFF/General/LaplaceIntegral.lean#L366), [`glasser_image_eq_univ`](../../../OSforGFF/General/LaplaceIntegral.lean#L375), [`glasser_deriv_abs`](../../../OSforGFF/General/LaplaceIntegral.lean#L410), `integral_gaussian`
 
 ---
 
-### [`glasser_gaussian_integral`](../../../OSforGFF/General/LaplaceIntegral.lean#L447) — Theorem
+### [`glasser_gaussian_integral`](../../../OSforGFF/General/LaplaceIntegral.lean#L450) — Theorem
 
 **Statement**: For $c > 0$:
 $$\int_0^\infty e^{-(c/u - u)^2}\, du = \frac{\sqrt{\pi}}{2}.$$
 
-**Proof uses**: [`glasser_integral_double`](../../../OSforGFF/General/LaplaceIntegral.lean#L298), [`weighted_glasser_integral_eq_gaussian`](../../../OSforGFF/General/LaplaceIntegral.lean#L414)
+**Proof uses**: [`glasser_integral_double`](../../../OSforGFF/General/LaplaceIntegral.lean#L301), [`weighted_glasser_integral_eq_gaussian`](../../../OSforGFF/General/LaplaceIntegral.lean#L417)
 
 ---
 
 ## Part 4: Completing the square
 
-### [`complete_square`](../../../OSforGFF/General/LaplaceIntegral.lean#L454) — Lemma
+### [`complete_square`](../../../OSforGFF/General/LaplaceIntegral.lean#L457) — Lemma
 
 **Statement**: For $a, b, t > 0$:
 $$a/t^2 + b t^2 = \left(\sqrt{a}/t - \sqrt{b}\,t\right)^2 + 2\sqrt{ab}.$$
@@ -186,7 +186,7 @@ $$a/t^2 + b t^2 = \left(\sqrt{a}/t - \sqrt{b}\,t\right)^2 + 2\sqrt{ab}.$$
 
 ## Part 5: The main substitutions
 
-### [`laplace_integral_subst_sq`](../../../OSforGFF/General/LaplaceIntegral.lean#L463) — Lemma
+### [`laplace_integral_subst_sq`](../../../OSforGFF/General/LaplaceIntegral.lean#L466) — Lemma
 
 **Statement**: The substitution $s = t^2$ gives
 $$\int_0^\infty s^{-1/2} e^{-a/s - bs}\, ds = 2\int_0^\infty e^{-a/t^2 - bt^2}\, dt.$$
@@ -195,16 +195,16 @@ $$\int_0^\infty s^{-1/2} e^{-a/s - bs}\, ds = 2\int_0^\infty e^{-a/t^2 - bt^2}\,
 
 ---
 
-### [`laplace_integral_factor`](../../../OSforGFF/General/LaplaceIntegral.lean#L516) — Lemma
+### [`laplace_integral_factor`](../../../OSforGFF/General/LaplaceIntegral.lean#L519) — Lemma
 
 **Statement**: Factoring out the constant after completing the square:
 $$\int_0^\infty e^{-a/t^2 - bt^2}\, dt = e^{-2\sqrt{ab}} \int_0^\infty e^{-(\sqrt{a}/t - \sqrt{b}\,t)^2}\, dt.$$
 
-**Proof uses**: [`complete_square`](../../../OSforGFF/General/LaplaceIntegral.lean#L454)
+**Proof uses**: [`complete_square`](../../../OSforGFF/General/LaplaceIntegral.lean#L457)
 
 ---
 
-### [`laplace_integral_subst_scale`](../../../OSforGFF/General/LaplaceIntegral.lean#L525) — Lemma
+### [`laplace_integral_subst_scale`](../../../OSforGFF/General/LaplaceIntegral.lean#L528) — Lemma
 
 **Statement**: The substitution $u = \sqrt{b}\,t$ gives
 $$\int_0^\infty e^{-(\sqrt{a}/t - \sqrt{b}\,t)^2}\, dt = \frac{1}{\sqrt{b}} \int_0^\infty e^{-(\sqrt{ab}/u - u)^2}\, du.$$
@@ -215,21 +215,21 @@ $$\int_0^\infty e^{-(\sqrt{a}/t - \sqrt{b}\,t)^2}\, dt = \frac{1}{\sqrt{b}} \int
 
 ## Part 6: The main theorem
 
-### [`laplace_integral_half_power`](../../../OSforGFF/General/LaplaceIntegral.lean#L542) — Theorem
+### [`laplace_integral_half_power`](../../../OSforGFF/General/LaplaceIntegral.lean#L545) — Theorem
 
 **Statement**: For $a, b > 0$:
 $$\int_0^\infty s^{-1/2} e^{-a/s - bs}\, ds = \sqrt{\pi/b}\, e^{-2\sqrt{ab}}.$$
 
-**Proof uses**: [`laplace_integral_subst_sq`](../../../OSforGFF/General/LaplaceIntegral.lean#L463), [`laplace_integral_factor`](../../../OSforGFF/General/LaplaceIntegral.lean#L516), [`laplace_integral_subst_scale`](../../../OSforGFF/General/LaplaceIntegral.lean#L525), [`glasser_gaussian_integral`](../../../OSforGFF/General/LaplaceIntegral.lean#L447)
+**Proof uses**: [`laplace_integral_subst_sq`](../../../OSforGFF/General/LaplaceIntegral.lean#L466), [`laplace_integral_factor`](../../../OSforGFF/General/LaplaceIntegral.lean#L519), [`laplace_integral_subst_scale`](../../../OSforGFF/General/LaplaceIntegral.lean#L528), [`glasser_gaussian_integral`](../../../OSforGFF/General/LaplaceIntegral.lean#L450)
 
 ---
 
-### [`laplace_integral_half_power_nonneg`](../../../OSforGFF/General/LaplaceIntegral.lean#L558) — Theorem
+### [`laplace_integral_half_power_nonneg`](../../../OSforGFF/General/LaplaceIntegral.lean#L561) — Theorem
 
 **Statement**: For $a \geq 0$ and $b > 0$:
 $$\int_0^\infty s^{-1/2} e^{-a/s - bs}\, ds = \sqrt{\pi/b}\, e^{-2\sqrt{ab}}.$$
 
-**Proof uses**: [`laplace_integral_half_power`](../../../OSforGFF/General/LaplaceIntegral.lean#L542), `integral_rpow_mul_exp_neg_mul_Ioi`, `Real.Gamma_one_half_eq`
+**Proof uses**: [`laplace_integral_half_power`](../../../OSforGFF/General/LaplaceIntegral.lean#L545), `integral_rpow_mul_exp_neg_mul_Ioi`, `Real.Gamma_one_half_eq`
 
 ---
 

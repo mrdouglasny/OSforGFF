@@ -19,7 +19,7 @@ $C_0$ function is $C_0$, three times.
 
 **Main result**: Fully proven — file is sorry-free.
 
-**Length**: 1365 lines, 3 definition(s) + 10 theorem(s)/lemma(s)
+**Length**: 1364 lines, 3 definition(s) + 10 theorem(s)/lemma(s)
 
 ---
 

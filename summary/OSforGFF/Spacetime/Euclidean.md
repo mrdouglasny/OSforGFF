@@ -23,7 +23,7 @@ invariance) axiom.
 preservation of rigid motions, and the induced pullback action on complex test functions.
 Fully proven (0 sorries; no `sorry`/`admit`).
 
-**Length**: 360 lines, 14 definition(s) + 24 theorem(s)/lemma(s)
+**Length**: 358 lines, 14 definition(s) + 24 theorem(s)/lemma(s)
 
 ---
 
@@ -338,7 +338,7 @@ Schwartz-space action).
 
 ---
 
-### [`euclidean_pullback_polynomial_bounds`](../../../OSforGFF/Spacetime/Euclidean.lean#L332) — Lemma
+### [`euclidean_pullback_polynomial_bounds`](../../../OSforGFF/Spacetime/Euclidean.lean#L331) — Lemma
 
 **Statement**: The pullback map satisfies the reverse polynomial bound
 $$\lVert x\rVert \le (1 + \lVert g^{-1}_t\rVert)\,(1 + \lVert \mathrm{euclidean\_pullback}\, g\, x\rVert)^1,$$
@@ -346,7 +346,7 @@ using the isometry property of $g^{-1}_R$.
 
 ---
 
-### [`euclidean_action`](../../../OSforGFF/Spacetime/Euclidean.lean#L354) — Definition
+### [`euclidean_action`](../../../OSforGFF/Spacetime/Euclidean.lean#L352) — Definition
 
 **Lean signature**
 ```lean

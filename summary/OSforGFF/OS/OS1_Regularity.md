@@ -55,7 +55,7 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
   freeCovarianceKernel d m x
 ```
 
-**Informal**: The GFF two-point function, defined as the centered position-space covariance kernel $K(x) = C(0, x) = $ [`freeCovarianceKernel d m`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1021)$\,x$.
+**Informal**: The GFF two-point function, defined as the centered position-space covariance kernel $K(x) = C(0, x) = $ [`freeCovarianceKernel d m`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1022)$\,x$.
 
 ---
 
@@ -69,10 +69,10 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
 
 **Statement**: Away from the origin ($x \neq 0$), the abstract mollified two-point function of the GFF agrees with the concrete kernel: $\mathrm{SchwingerTwoPointFunction}(\mu_{\mathrm{GFF}})(x) = \mathrm{SchwingerTwoPointFunction\_GFF}\,m\,x$.
 
-**Proof uses**: [`schwingerTwoPointFunction_eq_kernel`](../../../OSforGFF/Schwinger/TwoPoint.lean#L168),
-[`freeCovarianceKernel_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1037),
+**Proof uses**: [`schwingerTwoPointFunction_eq_kernel`](../../../OSforGFF/Schwinger/TwoPoint.lean#L169),
+[`freeCovarianceKernel_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1038),
 `schwinger_eq_covariance`, `GFFIsGaussian.schwinger_eq_covariance_real`,
-[`freeCovariance_eq_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1030)
+[`freeCovariance_eq_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1031)
 
 ---
 
@@ -106,11 +106,11 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
 
 **Statement**: $\exp(-\tfrac12\,\mathrm{Re}\,C_\mathbb{C}(f,f)) \le \exp(\tfrac12\,\mathrm{Re}\,C_\mathbb{C}(\mathrm{Im}\,f, \mathrm{Im}\,f))$, obtained from the bilinear decomposition $\mathrm{Re}\,C_\mathbb{C}(f,f) = \mathrm{Re}\,C_\mathbb{C}(\mathrm{Re}\,f,\mathrm{Re}\,f) - \mathrm{Re}\,C_\mathbb{C}(\mathrm{Im}\,f,\mathrm{Im}\,f)$ together with positivity $\mathrm{Re}\,C_\mathbb{C}(\mathrm{Re}\,f,\mathrm{Re}\,f) \ge 0$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L162) add/smul lemmas,
-[`freeCovarianceℂ_bilinear_symm`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L893),
+**Proof uses**: [`freeCovarianceℂ_bilinear`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L163) add/smul lemmas,
+[`freeCovarianceℂ_bilinear_symm`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L894),
 [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../../OSforGFF/Covariance/RealForm.lean#L62),
 [`freeCovarianceℂ_eq_bilinear_on_reals`](../../../OSforGFF/Covariance/RealForm.lean#L253),
-[`freeCovarianceℂ_positive`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L584)
+[`freeCovarianceℂ_positive`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L585)
 
 ---
 
@@ -118,9 +118,9 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
 
 **Statement**: The covariance of the imaginary part is controlled by the $L^2$ norm: $\mathrm{Re}\,C_\mathbb{C}(\mathrm{Im}\,f,\mathrm{Im}\,f) \le \tfrac{1}{m^2}\int \lVert f(x)\rVert^2\,dx$, via the momentum-space representation, the propagator bound $P_d(k) = 1/((2\pi)^2\lVert k\rVert^2 + m^2) \le 1/m^2$ (proven inline), Plancherel, and $\lvert\mathrm{Im}(f\,x)\rvert \le \lVert f\,x\rVert$.
 
-**Proof uses**: [`parseval_covariance_schwartz`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L576),
+**Proof uses**: [`parseval_covariance_schwartz`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L577),
 [`freeCovarianceℂ_eq_bilinear_on_reals`](../../../OSforGFF/Covariance/RealForm.lean#L253),
-[`freePropagatorMom`](../../../OSforGFF/Covariance/Propagator.lean#L54),
+[`freePropagatorMom`](../../../OSforGFF/Covariance/Propagator.lean#L55),
 [`fourier_plancherel_schwartz`](../../../OSforGFF/OS/OS1_Regularity.lean#L62),
 `memLp_two_iff_integrable_sq_norm`, `real_integral_mono_of_le`
 
@@ -142,7 +142,7 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
 
 **Statement**: `TwoPointIntegrable (gaussianFreeField_free (d := d) m)` — the two-point function is locally integrable, because it agrees a.e. with the globally integrable covariance kernel.
 
-**Proof uses**: [`freeCovarianceKernel_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1050),
+**Proof uses**: [`freeCovarianceKernel_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1051),
 [`schwingerTwoPoint_ae_eq_kernel`](../../../OSforGFF/OS/OS1_Regularity.lean#L127)
 
 ---

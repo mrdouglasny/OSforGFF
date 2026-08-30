@@ -18,11 +18,11 @@ the definition.
 
 **Main result**: Defines `besselK0` (0 sorries).
 
-**Length**: 32 lines, 1 definition + 0 theorem(s)/lemma(s)
+**Length**: 33 lines, 1 definition + 0 theorem(s)/lemma(s)
 
 ---
 
-### [`besselK0`](../../../OSforGFF/General/BesselK0.lean#L31) — Definition
+### [`besselK0`](../../../OSforGFF/General/BesselK0.lean#L32) — Definition
 
 **Lean signature**
 ```lean

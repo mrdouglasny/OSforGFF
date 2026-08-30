@@ -25,7 +25,7 @@ covariance bilinear form `freeCovarianceℂ_bilinear` from `Covariance/ParsevalG
 
 **Main result**: Fully proven
 **Sorry count**: 0
-**Length**: 676 lines, 0 definition(s) + 15 theorem(s)/lemma(s) (4 private)
+**Length**: 673 lines, 0 definition(s) + 15 theorem(s)/lemma(s) (4 private)
 
 ---
 
@@ -70,7 +70,7 @@ $$\lVert \exp(i \langle \omega, f \rangle_\mathbb{C}) \rVert = \exp(-\omega(f_{\
 
 ---
 
-### [`gff_exp_abs_pairing_integrable`](../../../OSforGFF/OS/OS0_Analyticity.lean#L294) — Lemma
+### [`gff_exp_abs_pairing_integrable`](../../../OSforGFF/OS/OS0_Analyticity.lean#L291) — Lemma
 
 **Statement**: For any real test function $f$, the function $\omega \mapsto \exp(\lvert \omega(f) \rvert)$ is integrable under $\mu_{\mathrm{GFF}}$. ($L^1$ special case of `gff_exp_abs_pairing_memLp`.)
 
@@ -79,31 +79,31 @@ $$\lVert \exp(i \langle \omega, f \rangle_\mathbb{C}) \rVert = \exp(-\omega(f_{\
 
 ---
 
-### [`gff_cf_slice_entire`](../../../OSforGFF/OS/OS0_Analyticity.lean#L318) — Lemma
+### [`gff_cf_slice_entire`](../../../OSforGFF/OS/OS0_Analyticity.lean#L315) — Lemma
 
 **Statement**: For fixed real test functions $f_{\mathrm{re}}, f_{\mathrm{im}}$, the one-parameter family $t \mapsto Z[\mathrm{toComplex}\, f_{\mathrm{re}} + t \cdot \mathrm{toComplex}\, f_{\mathrm{im}}]$ is entire (analytic on all of $\mathbb{C}$). Proved via Fernique integrability and parameter-dependent holomorphy (`hasFDerivAt_integral_of_dominated_of_fderiv_le`).
 
 **Proof uses**: [`gaussianFreeField_pairing_expSq_integrable`](../../../OSforGFF/Measure/Construct.lean#L398),
-[`pairing_linear_combo`](../../../OSforGFF/Spacetime/ComplexTestFunction.lean#L134),
-[`distributionPairingℂ_real_toComplex`](../../../OSforGFF/Spacetime/ComplexTestFunction.lean#L288),
+[`pairing_linear_combo`](../../../OSforGFF/Spacetime/ComplexTestFunction.lean#L135),
+[`distributionPairingℂ_real_toComplex`](../../../OSforGFF/Spacetime/ComplexTestFunction.lean#L289),
 [`GJGeneratingFunctionalℂ`](../../../OSforGFF/Spacetime/Basic.lean#L241),
 `hasFDerivAt_integral_of_dominated_of_fderiv_le`
 
 ---
 
-### [`gff_complex_CF_covariance`](../../../OSforGFF/OS/OS0_Analyticity.lean#L486) — Theorem
+### [`gff_complex_CF_covariance`](../../../OSforGFF/OS/OS0_Analyticity.lean#L483) — Theorem
 
 **Statement**: The complex characteristic functional of the GFF equals
 $$Z[f] = \mathbb{E}[\exp(i\langle\omega,f\rangle_\mathbb{C})] = \exp\!\bigl(-\tfrac{1}{2}\, C_\mathbb{C}(f,f)\bigr)$$
 for any complex test function $f$. Proved by one-parameter analytic continuation: decompose $f = f_{\mathrm{re}} + i\, f_{\mathrm{im}}$, show the generating functional and the Gaussian formula agree on $\mathbb{R}$ (from `gff_real_characteristic`), and extend to $\mathbb{C}$ via the identity theorem.
 
-**Proof uses**: [`gff_cf_slice_entire`](../../../OSforGFF/OS/OS0_Analyticity.lean#L318),
+**Proof uses**: [`gff_cf_slice_entire`](../../../OSforGFF/OS/OS0_Analyticity.lean#L315),
 [`gff_real_characteristic`](../../../OSforGFF/Measure/Construct.lean#L147),
-[`GJGeneratingFunctionalℂ_toComplex`](../../../OSforGFF/Spacetime/ComplexTestFunction.lean#L295),
+[`GJGeneratingFunctionalℂ_toComplex`](../../../OSforGFF/Spacetime/ComplexTestFunction.lean#L296),
 [`complex_testfunction_decompose_recompose`](../../../OSforGFF/Spacetime/Basic.lean#L219),
 [`freeCovarianceFormR_add_left`](../../../OSforGFF/Covariance/RealForm.lean#L564),
 [`freeCovarianceFormR_symm`](../../../OSforGFF/Covariance/RealForm.lean#L552),
-[`freeCovarianceℂ_bilinear_add_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L866),
+[`freeCovarianceℂ_bilinear_add_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L867),
 [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../../OSforGFF/Covariance/RealForm.lean#L62),
 `AnalyticOnNhd.eq_of_frequently_eq`
 
@@ -111,31 +111,31 @@ for any complex test function $f$. Proved by one-parameter analytic continuation
 
 ## Bilinear Expansion for Finite Sums
 
-### [`freeCovarianceℂ_bilinear_sum_expansion`](../../../OSforGFF/OS/OS0_Analyticity.lean#L618) — Theorem
+### [`freeCovarianceℂ_bilinear_sum_expansion`](../../../OSforGFF/OS/OS0_Analyticity.lean#L615) — Theorem
 
 **Statement**: The complexified covariance expands over finite sums as
 $$C_\mathbb{C}\!\Bigl(\sum_i z_i J_i,\; \sum_j z_j J_j\Bigr) = \sum_i \sum_j z_i\, z_j\, C_\mathbb{C}(J_i, J_j).$$
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_add_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L866),
-[`freeCovarianceℂ_bilinear_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L874),
-[`freeCovarianceℂ_bilinear_add_right`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L914),
-[`freeCovarianceℂ_bilinear_smul_right`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L907)
+**Proof uses**: [`freeCovarianceℂ_bilinear_add_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L867),
+[`freeCovarianceℂ_bilinear_smul_left`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L875),
+[`freeCovarianceℂ_bilinear_add_right`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L915),
+[`freeCovarianceℂ_bilinear_smul_right`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L908)
 
 ---
 
-### [`gff_generating_eq_exp_quadratic`](../../../OSforGFF/OS/OS0_Analyticity.lean#L629) — Theorem
+### [`gff_generating_eq_exp_quadratic`](../../../OSforGFF/OS/OS0_Analyticity.lean#L626) — Theorem
 
 **Statement**: The generating functional for a finite linear combination equals
 $$Z\!\Bigl[\sum_i z_i J_i\Bigr] = \exp\!\Bigl(-\tfrac{1}{2}\sum_{i,j} z_i\, z_j\, C_\mathbb{C}(J_i, J_j)\Bigr).$$
 
-**Proof uses**: [`gff_complex_CF_covariance`](../../../OSforGFF/OS/OS0_Analyticity.lean#L486),
-[`freeCovarianceℂ_bilinear_sum_expansion`](../../../OSforGFF/OS/OS0_Analyticity.lean#L618)
+**Proof uses**: [`gff_complex_CF_covariance`](../../../OSforGFF/OS/OS0_Analyticity.lean#L483),
+[`freeCovarianceℂ_bilinear_sum_expansion`](../../../OSforGFF/OS/OS0_Analyticity.lean#L615)
 
 ---
 
 ## Analyticity of exp(finite quadratic form)
 
-### [`analyticOn_finite_quadratic`](../../../OSforGFF/OS/OS0_Analyticity.lean#L642) — Theorem
+### [`analyticOn_finite_quadratic`](../../../OSforGFF/OS/OS0_Analyticity.lean#L639) — Theorem
 
 **Statement**: A finite quadratic form $z \mapsto \sum_{i,j} A_{ij}\, z_i\, z_j$ is analytic on all of $\mathbb{C}^n$ (it is a polynomial).
 
@@ -143,13 +143,13 @@ $$Z\!\Bigl[\sum_i z_i J_i\Bigr] = \exp\!\Bigl(-\tfrac{1}{2}\sum_{i,j} z_i\, z_j\
 
 ---
 
-### [`gaussianFreeField_satisfies_OS0`](../../../OSforGFF/OS/OS0_Analyticity.lean#L659) — Theorem
+### [`gaussianFreeField_satisfies_OS0`](../../../OSforGFF/OS/OS0_Analyticity.lean#L656) — Theorem
 
 **Statement**: `gaussianFreeField_satisfies_OS0 : OS0_Analyticity (gaussianFreeField_free (d := d) m)` — for any $d \geq 2$ and any mass $m > 0$ (with `[GFFPropagator d m]`), the Gaussian Free Field measure satisfies the OS-0 Analyticity axiom: $z \mapsto Z[\sum_i z_i J_i]$ is analytic on $\mathbb{C}^n$ for every $n$ and every $n$-tuple of complex test functions $J_i$.
 
-**Proof uses**: [`gff_generating_eq_exp_quadratic`](../../../OSforGFF/OS/OS0_Analyticity.lean#L629),
-[`analyticOn_finite_quadratic`](../../../OSforGFF/OS/OS0_Analyticity.lean#L642),
-[`freeCovarianceℂ_bilinear`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L162),
+**Proof uses**: [`gff_generating_eq_exp_quadratic`](../../../OSforGFF/OS/OS0_Analyticity.lean#L626),
+[`analyticOn_finite_quadratic`](../../../OSforGFF/OS/OS0_Analyticity.lean#L639),
+[`freeCovarianceℂ_bilinear`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L163),
 [`OS0_Analyticity`](../../../OSforGFF/OS/Axioms.lean#L76)
 
 ---

@@ -21,7 +21,7 @@ a single predicate.
 
 **Main result**: Fully proven (pure definitions, no proofs needed)
 
-**Length**: 200 lines, 10 definition(s) + 0 theorem(s)/lemma(s)
+**Length**: 201 lines, 10 definition(s) + 0 theorem(s)/lemma(s)
 
 ---
 

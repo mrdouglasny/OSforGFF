@@ -18,13 +18,13 @@ the momentum-space propagator `freePropagatorMom` in mathlib's unitary Fourier c
 
 **Major gaps**: None — file is sorry-free.
 
-**Length**: 466 lines, 5 definition(s) (including the `GFFPropagator` class) + 16 theorem(s)/lemma(s)
+**Length**: 491 lines, 5 definition(s) (including the `GFFPropagator` class) + 15 theorem(s)/lemma(s)
 
 ---
 
 ## The Generic Heat Kernel, Proper-Time Covariance, and Momentum Propagator
 
-### [`heatKernelProfile`](../../../OSforGFF/Covariance/Propagator.lean#L41) — Definition
+### [`heatKernelProfile`](../../../OSforGFF/Covariance/Propagator.lean#L42) — Definition
 
 **Lean signature**
 ```lean
@@ -34,7 +34,7 @@ def heatKernelProfile (d : ℕ) (t r : ℝ) : ℝ
 
 ---
 
-### [`properTimeCovariance`](../../../OSforGFF/Covariance/Propagator.lean#L48) — Definition
+### [`properTimeCovariance`](../../../OSforGFF/Covariance/Propagator.lean#L49) — Definition
 
 **Lean signature**
 ```lean
@@ -44,7 +44,7 @@ def properTimeCovariance (d : ℕ) (m r : ℝ) : ℝ
 
 ---
 
-### [`freePropagatorMom`](../../../OSforGFF/Covariance/Propagator.lean#L54) — Definition
+### [`freePropagatorMom`](../../../OSforGFF/Covariance/Propagator.lean#L55) — Definition
 
 **Lean signature**
 ```lean
@@ -56,7 +56,7 @@ def freePropagatorMom (d : ℕ) (m : ℝ) (k : EuclideanSpace ℝ (Fin d)) : ℝ
 
 ## Derived Facts about the Heat Kernel and Proper-Time Covariance
 
-### [`heatKernelProfile_integral_eq_one`](../../../OSforGFF/Covariance/Propagator.lean#L61) — Lemma
+### [`heatKernelProfile_integral_eq_one`](../../../OSforGFF/Covariance/Propagator.lean#L84) — Lemma
 
 **Statement**: For every $d$ and $t > 0$, the heat kernel has unit mass: $\int_{\mathbb{R}^d} H_d(t, \lVert z\rVert)\,dz = 1$ — the $(4\pi t)^{-d/2}$ prefactor cancels the Gaussian-integral normalization $(4\pi t)^{d/2}$.
 
@@ -64,7 +64,7 @@ def freePropagatorMom (d : ℕ) (m : ℝ) (k : EuclideanSpace ℝ (Fin d)) : ℝ
 
 ---
 
-### [`heatKernelProfile_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L81) — Lemma
+### [`heatKernelProfile_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L104) — Lemma
 
 **Statement**: The $d$-dimensional Fourier transform of the heat kernel is the momentum Gaussian: $\mathcal{F}\bigl[x \mapsto H_d(t,\lVert x\rVert)\bigr](k) = e^{-4\pi^2 t\lVert k\rVert^2}$, for $t > 0$; the dimension cancels between the prefactor and the Gaussian-FT normalization.
 
@@ -72,7 +72,7 @@ def freePropagatorMom (d : ℕ) (m : ℝ) (k : EuclideanSpace ℝ (Fin d)) : ℝ
 
 ---
 
-### [`heatKernelProfile_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L124) — Lemma
+### [`heatKernelProfile_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L147) — Lemma
 
 **Statement**: $0 \le H_d(t,r)$ for $t > 0$.
 
@@ -80,7 +80,7 @@ def freePropagatorMom (d : ℕ) (m : ℝ) (k : EuclideanSpace ℝ (Fin d)) : ℝ
 
 ---
 
-### [`heatKernelProfile_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L130) — Lemma
+### [`heatKernelProfile_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L153) — Lemma
 
 **Statement**: For $t > 0$, the function $x \mapsto H_d(t,\lVert x\rVert)$ is integrable on $\mathbb{R}^d$ (a constant times a Gaussian).
 
@@ -88,31 +88,31 @@ def freePropagatorMom (d : ℕ) (m : ℝ) (k : EuclideanSpace ℝ (Fin d)) : ℝ
 
 ---
 
-### [`properTimeCovariance_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L145) — Lemma
+### [`properTimeCovariance_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L168) — Lemma
 
 **Statement**: $0 \le C_S(r)$ for all $m, r$.
 
-**Proof uses**: `setIntegral_nonneg`, [`heatKernelProfile_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L124)
+**Proof uses**: `setIntegral_nonneg`, [`heatKernelProfile_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L147)
 
 ---
 
-### [`schwinger_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L153) — Lemma
+### [`schwinger_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L176) — Lemma
 
 **Statement**: For $m > 0$, the Schwinger integrand $(t,x) \mapsto e^{-tm^2}\,H_d(t,\lVert x\rVert)$ is jointly integrable over $(\mathrm{vol}|_{(0,\infty)}) \times \mathrm{vol}$.
 
-**Proof uses**: `integrable_prod_iff`, [`heatKernelProfile_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L130), `integrableOn_exp_mul_Ioi`, [`heatKernelProfile_integral_eq_one`](../../../OSforGFF/Covariance/Propagator.lean#L61)
+**Proof uses**: `integrable_prod_iff`, [`heatKernelProfile_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L153), `integrableOn_exp_mul_Ioi`, [`heatKernelProfile_integral_eq_one`](../../../OSforGFF/Covariance/Propagator.lean#L84)
 
 ---
 
-### [`properTimeCovariance_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L184) — Lemma
+### [`properTimeCovariance_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L207) — Lemma
 
 **Statement**: For $m > 0$, the function $x \mapsto C_S(\lVert x\rVert)$ is integrable ($\in L^1(\mathbb{R}^d)$).
 
-**Proof uses**: [`schwinger_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L153), `Integrable.integral_prod_left`
+**Proof uses**: [`schwinger_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L176), `Integrable.integral_prod_left`
 
 ---
 
-### [`decayDominator_integrableOn`](../../../OSforGFF/Covariance/Propagator.lean#L193) — Lemma
+### [`decayDominator_integrableOn`](../../../OSforGFF/Covariance/Propagator.lean#L216) — Lemma
 
 **Statement**: The dominator $t \mapsto (4\pi t)^{-d/2}\,e^{-(m^2/2)t}\,e^{-1/(8t)}$ is integrable on $(0,\infty)$ (the $e^{-1/(8t)}$ factor tames the $t^{-d/2}$ singularity at $t = 0$).
 
@@ -120,35 +120,35 @@ def freePropagatorMom (d : ℕ) (m : ℝ) (k : EuclideanSpace ℝ (Fin d)) : ℝ
 
 ---
 
-### [`properTimeCovariance_decay`](../../../OSforGFF/Covariance/Propagator.lean#L235) — Lemma
+### [`properTimeCovariance_decay`](../../../OSforGFF/Covariance/Propagator.lean#L258) — Lemma
 
 **Statement**: Pointwise exponential decay: for $m > 0$ there is $A \ge 0$ with $C_S(r) \le A\,e^{-(m/2)r}$ for all $r \ge 1$ (decay rate $m/2$).
 
-**Proof uses**: [`decayDominator_integrableOn`](../../../OSforGFF/Covariance/Propagator.lean#L193), `integral_mono_of_nonneg`, and the pointwise inequality $\tfrac{m}{2}r + \tfrac{m^2}{2}t + \tfrac{1}{8t} \le tm^2 + \tfrac{r^2}{4t}$ for $r \ge 1$
+**Proof uses**: [`decayDominator_integrableOn`](../../../OSforGFF/Covariance/Propagator.lean#L216), `integral_mono_of_nonneg`, and the pointwise inequality $\tfrac{m}{2}r + \tfrac{m^2}{2}t + \tfrac{1}{8t} \le tm^2 + \tfrac{r^2}{4t}$ for $r \ge 1$
 
 ---
 
-### [`schwinger_fourier_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L281) — Lemma
+### [`schwinger_fourier_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L304) — Lemma
 
 **Statement**: For $m > 0$ and any $k$, the Fourier–Schwinger integrand $(x,t) \mapsto \mathbf{e}(-\langle x,k\rangle)\,e^{-tm^2}\,H_d(t,\lVert x\rVert)$ is jointly integrable over $\mathrm{vol} \times (\mathrm{vol}|_{(0,\infty)})$.
 
-**Proof uses**: [`schwinger_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L153), [`heatKernelProfile_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L124)
+**Proof uses**: [`schwinger_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L176), [`heatKernelProfile_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L147)
 
 ---
 
-### [`properTimeCovariance_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L319) — Lemma
+### [`properTimeCovariance_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L342) — Lemma
 
 **Statement**: The forward Fourier transform of the proper-time covariance is the momentum propagator, uniformly in $d$:
 $$\mathcal{F}\bigl[x \mapsto C_S(\lVert x\rVert)\bigr](k) = \frac{1}{(2\pi)^2\lVert k\rVert^2 + m^2}.$$
 (Fubini over the proper-time integral, the heat-kernel Fourier transform, then the Laplace integral in $t$.)
 
-**Proof uses**: [`schwinger_fourier_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L281), `MeasureTheory.integral_integral_swap`, [`heatKernelProfile_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L81), `integral_exp_mul_Ioi`
+**Proof uses**: [`schwinger_fourier_prod_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L304), `MeasureTheory.integral_integral_swap`, [`heatKernelProfile_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L104), `integral_exp_mul_Ioi`
 
 ---
 
 ## The `GFFPropagator` Typeclass and Its Engine Lemmas
 
-### [`GFFPropagator`](../../../OSforGFF/Covariance/Propagator.lean#L383) — Definition (typeclass)
+### [`GFFPropagator`](../../../OSforGFF/Covariance/Propagator.lean#L406) — Definition (typeclass)
 
 **Lean signature**
 ```lean
@@ -160,33 +160,33 @@ class GFFPropagator (d : ℕ) (m : ℝ) [Fact (0 < m)] [Fact (2 ≤ d)] where
 
 ---
 
-### [`GFFPropagator.integrable`](../../../OSforGFF/Covariance/Propagator.lean#L395) — Lemma
+### [`GFFPropagator.integrable`](../../../OSforGFF/Covariance/Propagator.lean#L429) — Lemma
 
 **Statement**: $x \mapsto \mathrm{Cprofile}\,\lVert x\rVert$ is integrable ($\in L^1(\mathbb{R}^d)$) — the local-integrability input for OS1.
 
-**Proof uses**: [`properTimeCovariance_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L184), `GFFPropagator.schwinger_eq` (a.e., off the null origin)
+**Proof uses**: [`properTimeCovariance_integrable`](../../../OSforGFF/Covariance/Propagator.lean#L207), `GFFPropagator.schwinger_eq` (a.e., off the null origin)
 
 ---
 
-### [`GFFPropagator.decayBound`](../../../OSforGFF/Covariance/Propagator.lean#L407) — Lemma
+### [`GFFPropagator.decayBound`](../../../OSforGFF/Covariance/Propagator.lean#L441) — Lemma
 
 **Statement**: There is $A \ge 0$ with $\lvert \mathrm{Cprofile}\,r\rvert \le A\,e^{-(m/2)r}$ for all $r \ge 1$ — the decay input for OS4 clustering.
 
-**Proof uses**: [`properTimeCovariance_decay`](../../../OSforGFF/Covariance/Propagator.lean#L235), `GFFPropagator.schwinger_eq`, [`properTimeCovariance_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L145)
+**Proof uses**: [`properTimeCovariance_decay`](../../../OSforGFF/Covariance/Propagator.lean#L258), `GFFPropagator.schwinger_eq`, [`properTimeCovariance_nonneg`](../../../OSforGFF/Covariance/Propagator.lean#L168)
 
 ---
 
-### [`GFFPropagator.fourier_eq`](../../../OSforGFF/Covariance/Propagator.lean#L417) — Lemma
+### [`GFFPropagator.fourier_eq`](../../../OSforGFF/Covariance/Propagator.lean#L451) — Lemma
 
 **Statement**: The forward Fourier transform of $x \mapsto \mathrm{Cprofile}\,\lVert x\rVert$ is the momentum-space propagator $k \mapsto 1/\bigl((2\pi)^2\lVert k\rVert^2 + m^2\bigr)$ — the momentum-space input for the Parseval/OS1/OS3 chain.
 
-**Proof uses**: `Real.fourier_congr_ae`, [`properTimeCovariance_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L319), `GFFPropagator.schwinger_eq`
+**Proof uses**: `Real.fourier_congr_ae`, [`properTimeCovariance_fourier`](../../../OSforGFF/Covariance/Propagator.lean#L342), `GFFPropagator.schwinger_eq`
 
 ---
 
 ## The Position-Space Covariance Kernel
 
-### [`freeCovariance`](../../../OSforGFF/Covariance/Propagator.lean#L445) — Definition
+### [`freeCovariance`](../../../OSforGFF/Covariance/Propagator.lean#L479) — Definition
 
 **Lean signature**
 ```lean
@@ -197,7 +197,7 @@ def freeCovariance (d : ℕ) (m : ℝ) [Fact (0 < m)] [Fact (2 ≤ d)] [GFFPropa
 
 ---
 
-### [`freeCovariance_symm`](../../../OSforGFF/Covariance/Propagator.lean#L452) — Lemma
+### [`freeCovariance_symm`](../../../OSforGFF/Covariance/Propagator.lean#L486) — Lemma
 
 **Statement**: The covariance kernel is symmetric: $C(x,y) = C(y,x)$.
 
@@ -205,12 +205,4 @@ def freeCovariance (d : ℕ) (m : ℝ) [Fact (0 < m)] [Fact (2 ≤ d)] [GFFPropa
 
 ---
 
-### [`freeCovariance_isometry_invariant`](../../../OSforGFF/Covariance/Propagator.lean#L459) — Lemma
-
-**Statement**: The kernel is invariant under simultaneous isometric moves of both points: for a linear isometry $R$ and translation $t$, $C(Rx + t,\, Ry + t) = C(x,y)$.
-
-**Proof uses**: `LinearIsometry.norm_map`, `map_sub`
-
----
-
-*This file has **5** definitions (including the `GFFPropagator` class) and **16** theorems/lemmas (0 with sorry).*
+*This file has **5** definitions (including the `GFFPropagator` class) and **15** theorems/lemmas (0 with sorry).*

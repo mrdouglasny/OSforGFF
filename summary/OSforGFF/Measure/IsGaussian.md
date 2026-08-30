@@ -32,25 +32,13 @@ $C_m$ is `freeCovarianceFormR m` (real form), and $C_\mathbb{C}$ is `freeCovaria
 
 None — file is sorry-free.
 
-**Length**: 544 lines, 0 definition(s) + 15 theorem(s)/lemma(s)
-
----
-
-## Main Results
-
-### [`gaussian_pairing_product_integrable_free_core`](../../../OSforGFF/Measure/IsGaussian.lean#L41) — Lemma
-
-**Statement**: For the free GFF measure, the product of two complex pairings
-$\omega \mapsto \langle\omega, \varphi\rangle_\mathbb{C}\, \langle\omega, \psi\rangle_\mathbb{C}$
-is integrable, for all complex test functions $\varphi, \psi$.
-
-**Proof uses**: `gaussian_pairing_product_integrable_free_2point`
+**Length**: 537 lines, 0 definition(s) + 14 theorem(s)/lemma(s)
 
 ---
 
 ## Core Theorems
 
-### [`freeCovarianceFormR_bilinear_expand`](../../../OSforGFF/Measure/IsGaussian.lean#L58) — Lemma
+### [`freeCovarianceFormR_bilinear_expand`](../../../OSforGFF/Measure/IsGaussian.lean#L51) — Lemma
 
 **Statement**: Bilinear expansion of the real covariance form on a two-parameter combination:
 $$C_m(t f + s g,\ t f + s g) = t^2\, C_m(f, f) + 2 t s\, C_m(f, g) + s^2\, C_m(g, g).$$
@@ -63,7 +51,7 @@ $$C_m(t f + s g,\ t f + s g) = t^2\, C_m(f, f) + 2 t s\, C_m(f, g) + s^2\, C_m(g
 
 ---
 
-### [`gff_cf_two_testfunctions`](../../../OSforGFF/Measure/IsGaussian.lean#L84) — Lemma
+### [`gff_cf_two_testfunctions`](../../../OSforGFF/Measure/IsGaussian.lean#L77) — Lemma
 
 **Statement**: The GFF generating functional on a two-parameter real combination is the Gaussian
 formula:
@@ -71,13 +59,13 @@ $$Z\bigl[t f + s g\bigr] = \exp\!\Bigl(-\tfrac12\bigl(t^2 C_m(f,f) + 2 t s\, C_m
   + s^2 C_m(g,g)\bigr)\Bigr).$$
 
 **Proof uses**: [`gff_real_characteristic`](../../../OSforGFF/Measure/Construct.lean#L147),
-[`freeCovarianceFormR_bilinear_expand`](../../../OSforGFF/Measure/IsGaussian.lean#L58)
+[`freeCovarianceFormR_bilinear_expand`](../../../OSforGFF/Measure/IsGaussian.lean#L51)
 
 ---
 
 ## OS0-Based Derivative Machinery
 
-### [`gff_two_param_analytic`](../../../OSforGFF/Measure/IsGaussian.lean#L98) — Lemma
+### [`gff_two_param_analytic`](../../../OSforGFF/Measure/IsGaussian.lean#L91) — Lemma
 
 **Statement**: OS0 specialized to two test functions: the map
 $z \mapsto Z\bigl[z_0 \cdot \mathrm{toComplex}\,f + z_1 \cdot \mathrm{toComplex}\,g\bigr]$ is
@@ -90,28 +78,28 @@ analytic on all of $\mathbb{C}^2$ (`AnalyticOn ℂ … Set.univ`, indexed by `Fi
 
 ## OS0-Based Complex Extension via Identity Theorem
 
-### [`gff_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L125) — Lemma
+### [`gff_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L117) — Lemma
 
 **Statement**: For fixed $t \in \mathbb{C}$, the slice
 $z_0 \mapsto Z\bigl[z_0 \cdot \mathrm{toComplex}\,f + t \cdot \mathrm{toComplex}\,g\bigr]$ is entire
 (`AnalyticOnNhd ℂ … Set.univ`).
 
-**Proof uses**: [`gff_two_param_analytic`](../../../OSforGFF/Measure/IsGaussian.lean#L98),
+**Proof uses**: [`gff_two_param_analytic`](../../../OSforGFF/Measure/IsGaussian.lean#L91),
 `AnalyticOn.comp`, `AnalyticAt.pi`
 
 ---
 
-### [`gff_slice_analytic_z1`](../../../OSforGFF/Measure/IsGaussian.lean#L151) — Lemma
+### [`gff_slice_analytic_z1`](../../../OSforGFF/Measure/IsGaussian.lean#L144) — Lemma
 
 **Statement**: For fixed $z_0 \in \mathbb{C}$, the slice
 $z_1 \mapsto Z\bigl[z_0 \cdot \mathrm{toComplex}\,f + z_1 \cdot \mathrm{toComplex}\,g\bigr]$ is
 entire; obtained from `gff_slice_analytic_z0` by swapping $f \leftrightarrow g$.
 
-**Proof uses**: [`gff_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L125)
+**Proof uses**: [`gff_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L117)
 
 ---
 
-### [`gaussian_rhs_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L160) — Lemma
+### [`gaussian_rhs_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L153) — Lemma
 
 **Statement**: The $z_0$-slice of the Gaussian right-hand side
 $z_0 \mapsto \exp\!\bigl(-\tfrac12(z_0^2 C_m(f,f) + 2 z_0 t\, C_m(f,g) + t^2 C_m(g,g))\bigr)$ is
@@ -121,7 +109,7 @@ entire (exponential of a polynomial).
 
 ---
 
-### [`gaussian_rhs_slice_analytic_z1`](../../../OSforGFF/Measure/IsGaussian.lean#L181) — Lemma
+### [`gaussian_rhs_slice_analytic_z1`](../../../OSforGFF/Measure/IsGaussian.lean#L174) — Lemma
 
 **Statement**: The $z_1$-slice of the Gaussian right-hand side
 $z_1 \mapsto \exp\!\bigl(-\tfrac12(z_0^2 C_m(f,f) + 2 z_0 z_1\, C_m(f,g) + z_1^2 C_m(g,g))\bigr)$ is
@@ -131,19 +119,19 @@ entire.
 
 ---
 
-### [`gff_cf_agrees_on_reals_OS0`](../../../OSforGFF/Measure/IsGaussian.lean#L203) — Lemma
+### [`gff_cf_agrees_on_reals_OS0`](../../../OSforGFF/Measure/IsGaussian.lean#L196) — Lemma
 
 **Statement**: On real parameters $t, s$, the complex generating functional agrees with the
 Gaussian formula:
 $$Z\bigl[t \cdot \mathrm{toComplex}\,f + s \cdot \mathrm{toComplex}\,g\bigr]
   = \exp\!\Bigl(-\tfrac12\bigl(t^2 C_m(f,f) + 2 t s\, C_m(f,g) + s^2 C_m(g,g)\bigr)\Bigr).$$
 
-**Proof uses**: [`gff_cf_two_testfunctions`](../../../OSforGFF/Measure/IsGaussian.lean#L84),
+**Proof uses**: [`gff_cf_two_testfunctions`](../../../OSforGFF/Measure/IsGaussian.lean#L77),
 `GJGeneratingFunctionalℂ_toComplex`
 
 ---
 
-### [`gff_complex_characteristic_OS0`](../../../OSforGFF/Measure/IsGaussian.lean#L219) — Theorem
+### [`gff_complex_characteristic_OS0`](../../../OSforGFF/Measure/IsGaussian.lean#L211) — Theorem
 
 **Statement**: For every complex test function $J$,
 $$Z[J] = \exp\!\Bigl(-\tfrac12\, C_\mathbb{C}(J, J)\Bigr),$$
@@ -151,11 +139,11 @@ proved by decomposing $J = f + \mathrm{i} g$, showing the two-parameter GFF and 
 agree on $\mathbb{R}^2$, and matching them everywhere by the 1-D identity theorem applied twice
 (no dependency on `twoD_line_from_realCF`).
 
-**Proof uses**: [`gff_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L125),
-[`gff_slice_analytic_z1`](../../../OSforGFF/Measure/IsGaussian.lean#L151),
-[`gaussian_rhs_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L160),
-[`gaussian_rhs_slice_analytic_z1`](../../../OSforGFF/Measure/IsGaussian.lean#L181),
-[`gff_cf_agrees_on_reals_OS0`](../../../OSforGFF/Measure/IsGaussian.lean#L203),
+**Proof uses**: [`gff_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L117),
+[`gff_slice_analytic_z1`](../../../OSforGFF/Measure/IsGaussian.lean#L144),
+[`gaussian_rhs_slice_analytic_z0`](../../../OSforGFF/Measure/IsGaussian.lean#L153),
+[`gaussian_rhs_slice_analytic_z1`](../../../OSforGFF/Measure/IsGaussian.lean#L174),
+[`gff_cf_agrees_on_reals_OS0`](../../../OSforGFF/Measure/IsGaussian.lean#L196),
 `AnalyticOnNhd.eq_of_frequently_eq`,
 [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../../OSforGFF/Covariance/RealForm.lean#L62)
 
@@ -163,7 +151,7 @@ agree on $\mathbb{R}^2$, and matching them everywhere by the 1-D identity theore
 
 ## Polarization-Based Proof
 
-### [`schwinger_eq_covariance_real`](../../../OSforGFF/Measure/IsGaussian.lean#L370) — Theorem
+### [`schwinger_eq_covariance_real`](../../../OSforGFF/Measure/IsGaussian.lean#L362) — Theorem
 
 **Statement**: For real test functions $f, g$, the second moment of the pairing equals the real
 covariance form:
@@ -177,14 +165,14 @@ via the polarization identity $XY = \tfrac14((X+Y)^2 - (X-Y)^2)$.
 
 ---
 
-### [`schwinger_eq_covarianceℂ_on_reals`](../../../OSforGFF/Measure/IsGaussian.lean#L423) — Lemma
+### [`schwinger_eq_covarianceℂ_on_reals`](../../../OSforGFF/Measure/IsGaussian.lean#L415) — Lemma
 
 **Statement**: For real test functions embedded into complex, the complex two-point function equals
 the complex covariance:
 $$S_2^{\mathbb{C}}\bigl(\mathrm{toComplex}\,f,\ \mathrm{toComplex}\,g\bigr)
   = C_\mathbb{C}\bigl(\mathrm{toComplex}\,f,\ \mathrm{toComplex}\,g\bigr).$$
 
-**Proof uses**: [`schwinger_eq_covariance_real`](../../../OSforGFF/Measure/IsGaussian.lean#L370),
+**Proof uses**: [`schwinger_eq_covariance_real`](../../../OSforGFF/Measure/IsGaussian.lean#L362),
 [`gaussianFreeField_pairing_memLp`](../../../OSforGFF/Measure/Construct.lean#L263),
 [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../../OSforGFF/Covariance/RealForm.lean#L62),
 `integral_ofReal_eq`, `MemLp.integrable_mul`
@@ -193,7 +181,7 @@ $$S_2^{\mathbb{C}}\bigl(\mathrm{toComplex}\,f,\ \mathrm{toComplex}\,g\bigr)
 
 ## Main Theorems (at root level for compatibility)
 
-### [`gff_two_point_equals_covarianceℂ_free`](../../../OSforGFF/Measure/IsGaussian.lean#L461) — Theorem
+### [`gff_two_point_equals_covarianceℂ_free`](../../../OSforGFF/Measure/IsGaussian.lean#L454) — Theorem
 
 **Statement**: For all complex test functions $f, g$, the two-point Schwinger function equals the
 complex covariance:
@@ -202,31 +190,31 @@ Proved by decomposing $f = f_{\mathrm{Re}} + \mathrm{i} f_{\mathrm{Im}}$,
 $g = g_{\mathrm{Re}} + \mathrm{i} g_{\mathrm{Im}}$ and expanding both bilinear forms, which agree on
 real arguments.
 
-**Proof uses**: [`schwinger_eq_covarianceℂ_on_reals`](../../../OSforGFF/Measure/IsGaussian.lean#L423),
+**Proof uses**: [`schwinger_eq_covarianceℂ_on_reals`](../../../OSforGFF/Measure/IsGaussian.lean#L415),
 `covariance_bilinear_from_general`,
 `freeCovarianceℂ_bilinear_add_left`, `freeCovarianceℂ_bilinear_smul_left`
 
 ---
 
-### [`gff_complex_generating`](../../../OSforGFF/Measure/IsGaussian.lean#L522) — Theorem
+### [`gff_complex_generating`](../../../OSforGFF/Measure/IsGaussian.lean#L515) — Theorem
 
 **Statement**: The complex generating functional of the free GFF is Gaussian:
 $$Z[J] = \exp\!\Bigl(-\tfrac12\, S_2^{\mathbb{C}}(J, J)\Bigr) \qquad \text{for all } J.$$
 
-**Proof uses**: [`gff_two_point_equals_covarianceℂ_free`](../../../OSforGFF/Measure/IsGaussian.lean#L461),
-[`gff_complex_characteristic_OS0`](../../../OSforGFF/Measure/IsGaussian.lean#L219)
+**Proof uses**: [`gff_two_point_equals_covarianceℂ_free`](../../../OSforGFF/Measure/IsGaussian.lean#L454),
+[`gff_complex_characteristic_OS0`](../../../OSforGFF/Measure/IsGaussian.lean#L211)
 
 ---
 
-### [`isGaussianGJ_gaussianFreeField_free`](../../../OSforGFF/Measure/IsGaussian.lean#L539) — Theorem
+### [`isGaussianGJ_gaussianFreeField_free`](../../../OSforGFF/Measure/IsGaussian.lean#L532) — Theorem
 
 **Statement**: The free Gaussian Free Field measure `gaussianFreeField_free (d := d) m` is Gaussian
 in the Glimm–Jaffe sense (`isGaussianGJ`): it is centered and its generating functional satisfies
 $Z[J] = \exp\!\bigl(-\tfrac12 S_2^{\mathbb{C}}(J, J)\bigr)$.
 
 **Proof uses**: [`gaussianFreeField_free_centered`](../../../OSforGFF/Measure/Construct.lean#L359),
-[`gff_complex_generating`](../../../OSforGFF/Measure/IsGaussian.lean#L522)
+[`gff_complex_generating`](../../../OSforGFF/Measure/IsGaussian.lean#L515)
 
 ---
 
-*This file has **0** definitions and **15** theorems/lemmas (0 with sorry).*
+*This file has **0** definitions and **14** theorems/lemmas (0 with sorry).*

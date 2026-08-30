@@ -18,7 +18,7 @@ taken using continuity of the entrywise exponential.
 
 **Main result**: Fully proven — file is sorry-free.
 
-**Length**: 546 lines, 4 definition(s) + 14 theorem(s)/lemma(s)
+**Length**: 545 lines, 4 definition(s) + 14 theorem(s)/lemma(s)
 
 ---
 
@@ -167,7 +167,7 @@ $$x^\top \bigl(\mathrm{entrywiseExp\_hadamardSeries}(R)\bigr) x = \sum_{n=0}^\in
 
 ---
 
-### [`posSemidef_entrywiseExp_hadamardSeries_of_posSemidef`](../../../OSforGFF/General/HadamardExp.lean#L416) — Lemma
+### [`posSemidef_entrywiseExp_hadamardSeries_of_posSemidef`](../../../OSforGFF/General/HadamardExp.lean#L415) — Lemma
 
 **Statement**: If $R$ is positive semidefinite, then $\mathrm{entrywiseExp\_hadamardSeries}(R)$ is positive semidefinite.
 

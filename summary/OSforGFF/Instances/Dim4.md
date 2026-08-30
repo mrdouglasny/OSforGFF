@@ -11,18 +11,18 @@ core work is evaluating the generic proper-time (Schwinger) integral
 [`properTimeCovariance`](../../../OSforGFF/Covariance/Propagator.lean) in closed form as the order
 $\nu = -1$ case of the master identity
 [`schwingerIntegral_eq_besselK1`](../../../OSforGFF/General/BesselK.lean). The file packages the
-closed form as [`instGFFPropagatorDim4`](../../../OSforGFF/Instances/Dim4.lean#L50) and supplies the
+closed form as [`instGFFPropagatorDim4`](../../../OSforGFF/Instances/Dim4.lean#L51) and supplies the
 `Fact` order bound $2 \le 4$ (time/space split).
 
 ## Status
 
 **Main result**: Fully proven (0 sorries).
 
-**Length**: 56 lines, 2 definition(s) + 1 theorem(s)/lemma(s)
+**Length**: 57 lines, 2 definition(s) + 1 theorem(s)/lemma(s)
 
 ---
 
-### [`properTimeCovariance_dim4_eq`](../../../OSforGFF/Instances/Dim4.lean#L26) — Theorem
+### [`properTimeCovariance_dim4_eq`](../../../OSforGFF/Instances/Dim4.lean#L27) — Theorem
 
 **Statement**: For mass $m > 0$ and separation $r > 0$, the generic proper-time covariance in four
 dimensions collapses to the Bessel-$K_1$ profile:
@@ -38,7 +38,7 @@ finishes with `field_simp`.
 
 ---
 
-### [`instFactTwoLeFour`](../../../OSforGFF/Instances/Dim4.lean#L46) — Definition *(instance)*
+### [`instFactTwoLeFour`](../../../OSforGFF/Instances/Dim4.lean#L47) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -50,7 +50,7 @@ construction.
 
 ---
 
-### [`instGFFPropagatorDim4`](../../../OSforGFF/Instances/Dim4.lean#L50) — Definition *(instance)*
+### [`instGFFPropagatorDim4`](../../../OSforGFF/Instances/Dim4.lean#L51) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -64,11 +64,11 @@ noncomputable instance instGFFPropagatorDim4 (m : ℝ) [Fact (0 < m)] :
 closed form $(m/(4\pi^2 r))\,K_1(mr)$, regularized to $0$ at $r = 0$; the required `schwinger_eq`
 bridge identifies it with the generic
 [`properTimeCovariance`](../../../OSforGFF/Covariance/Propagator.lean) for $r > 0$ via
-[`properTimeCovariance_dim4_eq`](../../../OSforGFF/Instances/Dim4.lean#L26).
+[`properTimeCovariance_dim4_eq`](../../../OSforGFF/Instances/Dim4.lean#L27).
 
-**Proof uses**: [`properTimeCovariance_dim4_eq`](../../../OSforGFF/Instances/Dim4.lean#L26),
+**Proof uses**: [`properTimeCovariance_dim4_eq`](../../../OSforGFF/Instances/Dim4.lean#L27),
 [`GFFPropagator`](../../../OSforGFF/Covariance/Propagator.lean),
-[`besselK1`](../../../OSforGFF/General/BesselFunction.lean#L27)
+[`besselK1`](../../../OSforGFF/General/BesselFunction.lean#L28)
 
 ---
 

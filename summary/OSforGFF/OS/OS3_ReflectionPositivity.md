@@ -36,13 +36,13 @@ inside namespace `QFT`.
 
 None — file is sorry-free.
 
-**Length**: 1017 lines, 2 definition(s) + 29 theorem(s)/lemma(s)
+**Length**: 998 lines, 2 definition(s) + 28 theorem(s)/lemma(s)
 
 ---
 
 ## Real setting: reflection-matrix PSD and entry factorisation
 
-### [`freeCovarianceFormR_reflection_nonneg`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L59) — Lemma (private)
+### [`freeCovarianceFormR_reflection_nonneg`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L60) — Lemma (private)
 
 **Statement**: For a single positive-time real test function $f$, the reflected real covariance
 form is nonnegative: $0 \le C_R(\Theta f,\, f)$.
@@ -52,7 +52,7 @@ form is nonnegative: $0 \le C_R(\Theta f,\, f)$.
 
 ---
 
-### [`entrywiseExp_posSemidef_of_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L73) — Lemma (private)
+### [`entrywiseExp_posSemidef_of_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L74) — Lemma (private)
 
 **Statement**: The entrywise (Hadamard) exponential of a real PSD matrix is PSD: if $R$ is PSD
 then $(\exp R_{ij})_{ij}$ is PSD (real Schur/Hadamard exponential).
@@ -62,7 +62,7 @@ then $(\exp R_{ij})_{ij}$ is PSD (real Schur/Hadamard exponential).
 
 ---
 
-### [`freeCovarianceFormR_reflection_matrix_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L92) — Lemma
+### [`freeCovarianceFormR_reflection_matrix_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L93) — Lemma
 
 **Statement**: For positive-time real test functions $f_1,\dots,f_n$, the reflection matrix
 $R_{ij} = C_R(\Theta f_i,\, f_j)$ is positive semidefinite.
@@ -70,11 +70,11 @@ $R_{ij} = C_R(\Theta f_i,\, f_j)$ is positive semidefinite.
 **Proof uses**: symmetry `freeCovarianceFormR_reflection_cross`, the bilinearity lemmas
 (`freeCovarianceFormR_left_linear_any_right`, `_add_right`, `_smul_right`, `_zero_right`),
 `compTimeReflectionReal_linear_combination`, `PositiveTimeTestFunction.sum_smul_mem`, and
-[`freeCovarianceFormR_reflection_nonneg`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L59)
+[`freeCovarianceFormR_reflection_nonneg`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L60)
 
 ---
 
-### [`freeCovarianceFormR_reflection_expansion`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L208) — Lemma
+### [`freeCovarianceFormR_reflection_expansion`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L207) — Lemma
 
 **Statement**: Quadratic expansion for reflected arguments:
 $$C_R(f - \Theta g,\, f - \Theta g) = C_R(f, f) + C_R(g, g) - 2\,C_R(\Theta f,\, g).$$
@@ -85,7 +85,7 @@ $$C_R(f - \Theta g,\, f - \Theta g) = C_R(f, f) + C_R(g, g) - 2\,C_R(\Theta f,\,
 
 ---
 
-### [`gaussianFreeField_real_generating_re`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L322) — Lemma
+### [`gaussianFreeField_real_generating_re`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L321) — Lemma
 
 **Statement**: The real part of the GFF generating functional on a real test function $h$ is
 $\mathrm{Re}\, Z[h] = \exp\bigl(-\tfrac12\, C_R(h, h)\bigr)$.
@@ -94,44 +94,44 @@ $\mathrm{Re}\, Z[h] = \exp\bigl(-\tfrac12\, C_R(h, h)\bigr)$.
 
 ---
 
-### [`gaussianFreeField_real_entry_factor`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L342) — Lemma
+### [`gaussianFreeField_real_entry_factor`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L341) — Lemma
 
 **Statement**: Factorisation of a real OS3 matrix entry, for positive-time $f, g$:
 $$\mathrm{Re}\, Z[f - \Theta g] = \mathrm{Re}\, Z[f]\cdot \mathrm{Re}\, Z[g]\cdot \exp\bigl(C_R(\Theta f,\, g)\bigr).$$
 
-**Proof uses**: [`gaussianFreeField_real_generating_re`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L322),
-[`freeCovarianceFormR_reflection_expansion`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L208),
+**Proof uses**: [`gaussianFreeField_real_generating_re`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L321),
+[`freeCovarianceFormR_reflection_expansion`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L207),
 `Real.exp_add`
 
 ---
 
 ## Gaussian free field: real reflection positivity
 
-### [`gaussianFreeField_OS3_matrix_real`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L433) — Lemma
+### [`gaussianFreeField_OS3_matrix_real`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L432) — Lemma
 
 **Statement**: The real OS3 quadratic form is nonnegative:
 $$0 \le \sum_{i,j} c_i c_j\, \mathrm{Re}\, Z\bigl[f_i - \Theta f_j\bigr]$$
 for positive-time real test functions $f_i$ and real coefficients $c_i$.
 
-**Proof uses**: [`gaussianFreeField_real_entry_factor`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L342),
-[`freeCovarianceFormR_reflection_matrix_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L92),
-[`entrywiseExp_posSemidef_of_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L73),
+**Proof uses**: [`gaussianFreeField_real_entry_factor`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L341),
+[`freeCovarianceFormR_reflection_matrix_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L93),
+[`entrywiseExp_posSemidef_of_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L74),
 `Matrix.PosSemidef.dotProduct_mulVec_nonneg`
 
 ---
 
-### [`gaussianFreeField_OS3_real`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L501) — Theorem
+### [`gaussianFreeField_OS3_real`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L500) — Theorem
 
 **Statement**: The free GFF measure satisfies real reflection positivity, stated as
 `OS3_ReflectionPositivity_real (gaussianFreeField_free (d := d) m)`.
 
-**Proof uses**: [`gaussianFreeField_OS3_matrix_real`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L433)
+**Proof uses**: [`gaussianFreeField_OS3_matrix_real`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L432)
 
 ---
 
 ## Helper lemmas for the complex OS3 proof
 
-### [`freeCovarianceℂ_bilinear_sub_sub`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L517) — Lemma (private)
+### [`freeCovarianceℂ_bilinear_sub_sub`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L515) — Lemma (private)
 
 **Statement**: Bilinear expansion of a difference:
 $$C_\mathbb{C}(f - g,\, f - g) = C_\mathbb{C}(f, f) - C_\mathbb{C}(f, g) - C_\mathbb{C}(g, f) + C_\mathbb{C}(g, g).$$
@@ -140,7 +140,7 @@ $$C_\mathbb{C}(f - g,\, f - g) = C_\mathbb{C}(f, f) - C_\mathbb{C}(f, g) - C_\ma
 
 ---
 
-### [`freeCovarianceℂ_bilinear_star_star_conj`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L537) — Lemma (private)
+### [`freeCovarianceℂ_bilinear_star_star_conj`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L534) — Lemma (private)
 
 **Statement**: Conjugation identity for the covariance under `star` (with the kernel real-valued):
 $C_\mathbb{C}(\mathrm{star}\,f,\, \mathrm{star}\,g) = \overline{C_\mathbb{C}(f, g)}$, where
@@ -152,7 +152,7 @@ variables $x \mapsto \Theta x$, $y \mapsto \Theta y$.
 
 ---
 
-### [`IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L620) — Definition (private)
+### [`IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L617) — Definition (private)
 
 **Lean signature**
 ```lean
@@ -164,7 +164,7 @@ private def IsRePSD {n : ℕ} (M : Fin n → Fin n → ℂ) : Prop :=
 
 ---
 
-### [`IsHermitianMatrix`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L624) — Definition (private)
+### [`IsHermitianMatrix`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L621) — Definition (private)
 
 **Lean signature**
 ```lean
@@ -176,7 +176,7 @@ private def IsHermitianMatrix {n : ℕ} (M : Fin n → Fin n → ℂ) : Prop :=
 
 ---
 
-### [`star_star_testFunctionℂ`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L629) — Lemma (private)
+### [`star_star_testFunctionℂ`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L625) — Lemma (private)
 
 **Statement**: `star` is involutive on complex test functions: $\mathrm{star}(\mathrm{star}\,f) = f$.
 
@@ -184,18 +184,18 @@ private def IsHermitianMatrix {n : ℕ} (M : Fin n → Fin n → ℂ) : Prop :=
 
 ---
 
-### [`reflection_matrix_IsHermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L638) — Lemma (private)
+### [`reflection_matrix_IsHermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L633) — Lemma (private)
 
 **Statement**: The reflection matrix $R_{ij} = C_\mathbb{C}(f_i,\, \mathrm{star}\,f_j)$ is
 Hermitian (satisfies `IsHermitianMatrix`).
 
 **Proof uses**: `freeCovarianceℂ_bilinear_symm`,
-[`star_star_testFunctionℂ`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L629),
-[`freeCovarianceℂ_bilinear_star_star_conj`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L537)
+[`star_star_testFunctionℂ`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L625),
+[`freeCovarianceℂ_bilinear_star_star_conj`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L534)
 
 ---
 
-### [`isHermitian_of_isHermitianMatrix`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L657) — Lemma (private)
+### [`isHermitian_of_isHermitianMatrix`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L652) — Lemma (private)
 
 **Statement**: `IsHermitianMatrix M` implies the mathlib predicate `(Matrix.of M).IsHermitian`.
 
@@ -203,7 +203,7 @@ Hermitian (satisfies `IsHermitianMatrix`).
 
 ---
 
-### [`quadForm_eq_double_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L668) — Lemma (private)
+### [`quadForm_eq_double_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L663) — Lemma (private)
 
 **Statement**: The matrix quadratic form is the double sum:
 $\mathrm{star}\,v \cdot (\mathrm{of}\,M \cdot v) = \sum_{i,j}\overline{v_i}\,v_j\,M_{ij}$.
@@ -212,7 +212,7 @@ $\mathrm{star}\,v \cdot (\mathrm{of}\,M \cdot v) = \sum_{i,j}\overline{v_i}\,v_j
 
 ---
 
-### [`quadForm_conj_self_of_hermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L678) — Lemma (private)
+### [`quadForm_conj_self_of_hermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L673) — Lemma (private)
 
 **Statement**: For a Hermitian $M$, the quadratic form is self-conjugate:
 $\overline{\sum_{i,j}\overline{v_i}\,v_j\,M_{ij}} = \sum_{i,j}\overline{v_i}\,v_j\,M_{ij}$.
@@ -221,38 +221,29 @@ $\overline{\sum_{i,j}\overline{v_i}\,v_j\,M_{ij}} = \sum_{i,j}\overline{v_i}\,v_
 
 ---
 
-### [`quadForm_im_eq_zero_of_hermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L693) — Lemma (private)
+### [`quadForm_im_eq_zero_of_hermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L688) — Lemma (private)
 
 **Statement**: For a Hermitian $M$, the quadratic form is real:
 $\mathrm{Im}\sum_{i,j}\overline{v_i}\,v_j\,M_{ij} = 0$.
 
-**Proof uses**: [`quadForm_conj_self_of_hermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L678),
+**Proof uses**: [`quadForm_conj_self_of_hermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L673),
 `Complex.conj_eq_iff_im`
 
 ---
 
-### [`posSemidef_of_isRePSD_isHermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L700) — Lemma (private)
+### [`posSemidef_of_isRePSD_isHermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L695) — Lemma (private)
 
 **Statement**: `IsHermitianMatrix M` together with `IsRePSD M` implies `(Matrix.of M).PosSemidef`
 over $\mathbb{C}$.
 
 **Proof uses**: `Matrix.PosSemidef.of_dotProduct_mulVec_nonneg`,
-[`quadForm_eq_double_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L668),
+[`quadForm_eq_double_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L663),
 `Complex.nonneg_iff`,
-[`quadForm_im_eq_zero_of_hermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L693)
+[`quadForm_im_eq_zero_of_hermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L688)
 
 ---
 
-### [`isRePSD_of_posSemidef`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L710) — Lemma (private)
-
-**Statement**: Conversely, `(Matrix.of M).PosSemidef` over $\mathbb{C}$ implies `IsRePSD M`.
-
-**Proof uses**: `Matrix.PosSemidef.dotProduct_mulVec_nonneg`,
-[`quadForm_eq_double_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L668), `Complex.nonneg_iff`
-
----
-
-### [`posSemidef_hadamard_complex`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L721) — Lemma (private)
+### [`posSemidef_hadamard_complex`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L707) — Lemma (private)
 
 **Statement**: Complex Schur product theorem: the Hadamard (entrywise) product of two PSD
 complex matrices is PSD.
@@ -262,32 +253,32 @@ is the diagonal submatrix of the Kronecker product)
 
 ---
 
-### [`entrywiseExp_IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L738) — Lemma (private)
+### [`entrywiseExp_IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L724) — Lemma (private)
 
 **Statement**: The entrywise complex exponential preserves `IsRePSD` on Hermitian matrices: if
 $M$ is Hermitian and `IsRePSD`, then $(\exp M_{ij})_{ij}$ is `IsRePSD`.
 
-**Proof uses**: [`posSemidef_of_isRePSD_isHermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L700),
+**Proof uses**: [`posSemidef_of_isRePSD_isHermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L695),
 the Hadamard power series $\exp M_{ij} = \sum_k M_{ij}^k/k!$,
-[`posSemidef_hadamard_complex`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L721),
+[`posSemidef_hadamard_complex`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L707),
 `posSemidef_sum`, `NormedSpace.exp_series_hasSum_exp'`, and taking limits of nonnegative reals
 
 ---
 
-### [`gff_complexZ_entry_factor`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L842) — Lemma (private)
+### [`gff_complexZ_entry_factor`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L828) — Lemma (private)
 
 **Statement**: Complex entry factorisation for the GFF:
 $$\exp\bigl(-\tfrac12\, C_\mathbb{C}(f_i - \mathrm{star}\,f_j,\, f_i - \mathrm{star}\,f_j)\bigr) = A_i\,\overline{A_j}\,\exp\bigl(C_\mathbb{C}(f_i,\, \mathrm{star}\,f_j)\bigr),$$
 with $A_i = \exp\bigl(-\tfrac12\, C_\mathbb{C}(f_i, f_i)\bigr)$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_sub_sub`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L517),
+**Proof uses**: [`freeCovarianceℂ_bilinear_sub_sub`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L515),
 `freeCovarianceℂ_bilinear_symm`,
-[`freeCovarianceℂ_bilinear_star_star_conj`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L537),
+[`freeCovarianceℂ_bilinear_star_star_conj`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L534),
 `Complex.exp_conj`, `Complex.exp_add`
 
 ---
 
-### [`star_apply`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L874) — Lemma (private)
+### [`star_apply`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L859) — Lemma (private)
 
 **Statement**: Pointwise formula for `star`: $(\mathrm{star}\,f)(x) = \overline{f(\Theta x)}$ (definitionally).
 
@@ -295,16 +286,16 @@ with $A_i = \exp\bigl(-\tfrac12\, C_\mathbb{C}(f_i, f_i)\bigr)$.
 
 ---
 
-### [`star_sum_antilinear`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L879) — Lemma (private)
+### [`star_sum_antilinear`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L863) — Lemma (private)
 
 **Statement**: `star` is antilinear on finite sums:
 $\mathrm{star}\bigl(\sum_j \overline{v_j}\, g_j\bigr) = \sum_j v_j\,\mathrm{star}(g_j)$.
 
-**Proof uses**: [`star_apply`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L874), `RCLike.conj_conj`
+**Proof uses**: [`star_apply`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L859), `RCLike.conj_conj`
 
 ---
 
-### [`freeCovarianceℂ_bilinear_sum_left`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L890) — Lemma (private)
+### [`freeCovarianceℂ_bilinear_sum_left`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L873) — Lemma (private)
 
 **Statement**: Left-sum expansion:
 $C_\mathbb{C}\bigl(\sum_i u_i\, a_i,\, g\bigr) = \sum_i u_i\, C_\mathbb{C}(a_i, g)$.
@@ -313,7 +304,7 @@ $C_\mathbb{C}\bigl(\sum_i u_i\, a_i,\, g\bigr) = \sum_i u_i\, C_\mathbb{C}(a_i, 
 
 ---
 
-### [`freeCovarianceℂ_bilinear_sum_right`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L904) — Lemma (private)
+### [`freeCovarianceℂ_bilinear_sum_right`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L886) — Lemma (private)
 
 **Statement**: Right-sum expansion:
 $C_\mathbb{C}\bigl(f,\, \sum_j w_j\, b_j\bigr) = \sum_j w_j\, C_\mathbb{C}(f, b_j)$.
@@ -322,24 +313,24 @@ $C_\mathbb{C}\bigl(f,\, \sum_j w_j\, b_j\bigr) = \sum_j w_j\, C_\mathbb{C}(f, b_
 
 ---
 
-### [`freeCovarianceℂ_bilinear_sum_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L918) — Lemma (private)
+### [`freeCovarianceℂ_bilinear_sum_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L899) — Lemma (private)
 
 **Statement**: Full bilinear expansion over two finite sums:
 $C_\mathbb{C}\bigl(\sum_i u_i\, a_i,\, \sum_j w_j\, b_j\bigr) = \sum_i \sum_j u_i\, w_j\, C_\mathbb{C}(a_i, b_j)$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_sum_left`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L890),
-[`freeCovarianceℂ_bilinear_sum_right`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L904)
+**Proof uses**: [`freeCovarianceℂ_bilinear_sum_left`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L873),
+[`freeCovarianceℂ_bilinear_sum_right`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L886)
 
 ---
 
-### [`reflection_matrix_IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L933) — Lemma (private)
+### [`reflection_matrix_IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L914) — Lemma (private)
 
 **Statement**: The reflection matrix $R_{ij} = C_\mathbb{C}(f_i,\, \mathrm{star}\,f_j)$ is
 `IsRePSD` for positive-time complex test functions $f_i$; via $h = \sum_j \overline{v_j}\, f_j$
 (positive-time) and $\mathrm{Re}\, C_\mathbb{C}(\mathrm{star}\,h,\, h) \ge 0$.
 
-**Proof uses**: [`star_sum_antilinear`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L879),
-[`freeCovarianceℂ_bilinear_sum_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L918),
+**Proof uses**: [`star_sum_antilinear`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L863),
+[`freeCovarianceℂ_bilinear_sum_sum`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L899),
 `freeCovarianceℂ_bilinear_symm`, `freeCovariance_reflection_positive_bilinear`,
 `PositiveTimeTestFunctionℂ.zero_on_nonpositive`
 
@@ -347,29 +338,29 @@ $C_\mathbb{C}\bigl(\sum_i u_i\, a_i,\, \sum_j w_j\, b_j\bigr) = \sum_i \sum_j u_
 
 ## Gaussian free field: complex reflection positivity
 
-### [`gff_complexOS3_matrix`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L979) — Lemma (private)
+### [`gff_complexOS3_matrix`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L960) — Lemma (private)
 
 **Statement**: The complex OS3 quadratic form is nonnegative:
 $$0 \le \mathrm{Re}\sum_{i,j}\overline{c_i}\,c_j\, Z_\mathbb{C}\bigl[f_i - \mathrm{star}\,f_j\bigr]$$
 for positive-time complex test functions $f_i$ and complex coefficients $c_i$.
 
 **Proof uses**: `GFFIsGaussian.gff_complex_characteristic_OS0`,
-[`gff_complexZ_entry_factor`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L842),
-[`entrywiseExp_IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L738),
-[`reflection_matrix_IsHermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L638),
-[`reflection_matrix_IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L933)
+[`gff_complexZ_entry_factor`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L828),
+[`entrywiseExp_IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L724),
+[`reflection_matrix_IsHermitian`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L633),
+[`reflection_matrix_IsRePSD`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L914)
 
 ---
 
-### [`gaussianFreeField_OS3`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L1008) — Theorem
+### [`gaussianFreeField_OS3`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L989) — Theorem
 
 **Statement**: The free GFF measure satisfies complex (star) reflection positivity, stated as
 `OS3_ReflectionPositivity (gaussianFreeField_free (d := d) m)`. This is the standard
 Osterwalder–Schrader formulation with complex test functions and complex coefficients, using
 $(\mathrm{star}\,f)(x) = \overline{f(\Theta x)}$.
 
-**Proof uses**: [`gff_complexOS3_matrix`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L979)
+**Proof uses**: [`gff_complexOS3_matrix`](../../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L960)
 
 ---
 
-*This file has **2** definition(s) and **29** theorems/lemmas (0 with sorry).*
+*This file has **2** definition(s) and **28** theorems/lemmas (0 with sorry).*

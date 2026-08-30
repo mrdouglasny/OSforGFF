@@ -30,13 +30,13 @@ space — follows by reduction to continuity at $s = 0$.
 
 None — file is sorry-free.
 
-**Length**: 934 lines, 10 definition(s) + 27 theorem(s)/lemma(s)
+**Length**: 935 lines, 10 definition(s) + 27 theorem(s)/lemma(s)
 
 ---
 
 ## Time Translation on Spacetime Points
 
-### [`timeIndex`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L64) — Definition
+### [`timeIndex`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L65) — Definition
 
 **Lean signature**
 ```lean
@@ -46,7 +46,7 @@ def timeIndex : Fin d
 
 ---
 
-### [`getTime`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L67) — Definition
+### [`getTime`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L68) — Definition
 
 **Lean signature**
 ```lean
@@ -56,7 +56,7 @@ def getTime (u : (SpaceTime d)) : ℝ := u timeIndex
 
 ---
 
-### [`timeShift`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L71) — Definition
+### [`timeShift`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L72) — Definition
 
 **Lean signature**
 ```lean
@@ -66,7 +66,7 @@ def timeShift (s : ℝ) (u : (SpaceTime d)) : (SpaceTime d)
 
 ---
 
-### [`timeShift_time`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L75) — Lemma
+### [`timeShift_time`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L76) — Lemma
 
 **Statement**: The shift adds $s$ to the time component: $\mathrm{getTime}(\mathrm{timeShift}\,s\,u) = \mathrm{getTime}\,u + s$.
 
@@ -74,7 +74,7 @@ def timeShift (s : ℝ) (u : (SpaceTime d)) : (SpaceTime d)
 
 ---
 
-### [`timeShift_spatial`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L82) — Lemma
+### [`timeShift_spatial`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L83) — Lemma
 
 **Statement**: The shift leaves spatial coordinates unchanged: for $i \ne 0$, $(\mathrm{timeShift}\,s\,u)_i = u_i$.
 
@@ -82,7 +82,7 @@ def timeShift (s : ℝ) (u : (SpaceTime d)) : (SpaceTime d)
 
 ---
 
-### [`timeShift_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L89) — Lemma
+### [`timeShift_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L90) — Lemma
 
 **Statement**: Group action in the parameter: $\mathrm{timeShift}(s + t) = \mathrm{timeShift}\,s \circ \mathrm{timeShift}\,t$.
 
@@ -90,7 +90,7 @@ def timeShift (s : ℝ) (u : (SpaceTime d)) : (SpaceTime d)
 
 ---
 
-### [`timeShift_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L101) — Lemma
+### [`timeShift_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L102) — Lemma
 
 **Statement**: The zero shift is the identity: $\mathrm{timeShift}\,0\,u = u$.
 
@@ -98,15 +98,15 @@ def timeShift (s : ℝ) (u : (SpaceTime d)) : (SpaceTime d)
 
 ---
 
-### [`timeShift_comm`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L109) — Lemma
+### [`timeShift_comm`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L110) — Lemma
 
 **Statement**: Time shifts commute: $\mathrm{timeShift}\,s\,(\mathrm{timeShift}\,t\,u) = \mathrm{timeShift}\,t\,(\mathrm{timeShift}\,s\,u)$.
 
-**Proof uses**: [`timeShift_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L89), `add_comm`
+**Proof uses**: [`timeShift_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L90), `add_comm`
 
 ---
 
-### [`timeShift_contDiff`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L116) — Lemma
+### [`timeShift_contDiff`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L117) — Lemma
 
 **Statement**: $\mathrm{timeShift}\,s$ is smooth ($C^\infty$), being an affine (linear + constant) map.
 
@@ -114,7 +114,7 @@ def timeShift (s : ℝ) (u : (SpaceTime d)) : (SpaceTime d)
 
 ---
 
-### [`timeShift_dist`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L129) — Lemma
+### [`timeShift_dist`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L130) — Lemma
 
 **Statement**: The shift preserves Euclidean distance: $\mathrm{dist}(\mathrm{timeShift}\,s\,u,\, \mathrm{timeShift}\,s\,v) = \mathrm{dist}(u, v)$.
 
@@ -122,23 +122,23 @@ def timeShift (s : ℝ) (u : (SpaceTime d)) : (SpaceTime d)
 
 ---
 
-### [`timeShift_isometry`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L141) — Lemma
+### [`timeShift_isometry`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L142) — Lemma
 
 **Statement**: $\mathrm{timeShift}\,s$ is an isometry.
 
-**Proof uses**: `isometry_iff_dist_eq`, [`timeShift_dist`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L129)
+**Proof uses**: `isometry_iff_dist_eq`, [`timeShift_dist`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L130)
 
 ---
 
-### [`timeShift_antilipschitz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L147) — Lemma
+### [`timeShift_antilipschitz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L148) — Lemma
 
 **Statement**: $\mathrm{timeShift}\,s$ is antilipschitz with constant $1$ (from being an isometry).
 
-**Proof uses**: [`timeShift_isometry`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L141), `Isometry.antilipschitz`
+**Proof uses**: [`timeShift_isometry`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L142), `Isometry.antilipschitz`
 
 ---
 
-### [`timeShiftConst`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L151) — Definition
+### [`timeShiftConst`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L152) — Definition
 
 **Lean signature**
 ```lean
@@ -148,7 +148,7 @@ def timeShiftConst (s : ℝ) : (SpaceTime d)
 
 ---
 
-### [`timeShift_eq_add_const`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L156) — Lemma
+### [`timeShift_eq_add_const`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L157) — Lemma
 
 **Statement**: `timeShift` is addition of a constant: $\mathrm{timeShift}\,s\,u = u + \mathrm{timeShiftConst}\,s$.
 
@@ -156,17 +156,17 @@ def timeShiftConst (s : ℝ) : (SpaceTime d)
 
 ---
 
-### [`timeShift_hasTemperateGrowth`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L166) — Lemma
+### [`timeShift_hasTemperateGrowth`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L167) — Lemma
 
 **Statement**: $\mathrm{timeShift}\,s$ has temperate growth — its Fréchet derivative is the constant identity map and it obeys a linear polynomial bound $\lVert \mathrm{timeShift}\,s\,x\rVert \le C\,(1 + \lVert x\rVert)$ — the hypothesis needed for Schwartz composition.
 
-**Proof uses**: `Function.HasTemperateGrowth.of_fderiv`, [`timeShift_eq_add_const`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L156)
+**Proof uses**: `Function.HasTemperateGrowth.of_fderiv`, [`timeShift_eq_add_const`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L157)
 
 ---
 
 ## Time Translation on Schwartz Functions
 
-### [`timeTranslationSchwartzCLM`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L210) — Definition
+### [`timeTranslationSchwartzCLM`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L211) — Definition
 
 **Lean signature**
 ```lean
@@ -176,7 +176,7 @@ def timeTranslationSchwartzCLM (s : ℝ) : (SchwartzTestFunction d) →L[ℝ] (S
 
 ---
 
-### [`timeTranslationSchwartz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L224) — Definition
+### [`timeTranslationSchwartz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L225) — Definition
 
 **Lean signature**
 ```lean
@@ -186,7 +186,7 @@ def timeTranslationSchwartz (s : ℝ) (f : (SchwartzTestFunction d)) : (Schwartz
 
 ---
 
-### [`timeTranslationSchwartzℂCLM`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L228) — Definition
+### [`timeTranslationSchwartzℂCLM`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L229) — Definition
 
 **Lean signature**
 ```lean
@@ -196,7 +196,7 @@ def timeTranslationSchwartzℂCLM (s : ℝ) : (SchwartzTestFunctionℂ d) →L[�
 
 ---
 
-### [`timeTranslationSchwartzℂ`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L232) — Definition
+### [`timeTranslationSchwartzℂ`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L233) — Definition
 
 **Lean signature**
 ```lean
@@ -206,7 +206,7 @@ def timeTranslationSchwartzℂ (s : ℝ) (f : (SchwartzTestFunctionℂ d)) : (Sc
 
 ---
 
-### [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L238) — Lemma
+### [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L239) — Lemma
 
 **Statement**: Pointwise formula (real): $(T_s f)(u) = f(\mathrm{timeShift}\,s\,u)$.
 
@@ -214,7 +214,7 @@ def timeTranslationSchwartzℂ (s : ℝ) (f : (SchwartzTestFunctionℂ d)) : (Sc
 
 ---
 
-### [`timeTranslationSchwartzℂ_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L246) — Lemma
+### [`timeTranslationSchwartzℂ_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L247) — Lemma
 
 **Statement**: Pointwise formula (complex): $(T_s f)(u) = f(\mathrm{timeShift}\,s\,u)$.
 
@@ -222,57 +222,57 @@ def timeTranslationSchwartzℂ (s : ℝ) (f : (SchwartzTestFunctionℂ d)) : (Sc
 
 ---
 
-### [`timeTranslationSchwartz_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L253) — Lemma
+### [`timeTranslationSchwartz_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L254) — Lemma
 
 **Statement**: Group homomorphism in $s$ (real): $T_{s+t} f = T_s(T_t f)$.
 
-**Proof uses**: [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L238), [`timeShift_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L89)
+**Proof uses**: [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L239), [`timeShift_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L90)
 
 ---
 
-### [`timeTranslationSchwartzℂ_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L260) — Lemma
+### [`timeTranslationSchwartzℂ_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L261) — Lemma
 
 **Statement**: Group homomorphism in $s$ (complex): $T_{s+t} f = T_s(T_t f)$.
 
-**Proof uses**: [`timeTranslationSchwartzℂ_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L246), [`timeShift_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L89)
+**Proof uses**: [`timeTranslationSchwartzℂ_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L247), [`timeShift_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L90)
 
 ---
 
-### [`timeTranslationSchwartz_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L268) — Lemma
+### [`timeTranslationSchwartz_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L269) — Lemma
 
 **Statement**: Zero shift is the identity (real): $T_0 f = f$.
 
-**Proof uses**: [`timeShift_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L101)
+**Proof uses**: [`timeShift_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L102)
 
 ---
 
-### [`timeTranslationSchwartzℂ_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L276) — Lemma
+### [`timeTranslationSchwartzℂ_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L277) — Lemma
 
 **Statement**: Zero shift is the identity (complex): $T_0 f = f$.
 
-**Proof uses**: [`timeShift_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L101)
+**Proof uses**: [`timeShift_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L102)
 
 ---
 
-### [`timeTranslationSchwartz_add_fun`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L283) — Lemma
+### [`timeTranslationSchwartz_add_fun`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L284) — Lemma
 
 **Statement**: Additivity in the function argument: $T_s(f + g) = T_s f + T_s g$.
 
-**Proof uses**: [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L238), `SchwartzMap.add_apply`
+**Proof uses**: [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L239), `SchwartzMap.add_apply`
 
 ---
 
-### [`timeTranslationSchwartz_smul`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L290) — Lemma
+### [`timeTranslationSchwartz_smul`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L291) — Lemma
 
 **Statement**: Homogeneity in the function argument: $T_s(c \cdot f) = c \cdot T_s f$ for $c \in \mathbb{R}$.
 
-**Proof uses**: [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L238), `SchwartzMap.smul_apply`
+**Proof uses**: [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L239), `SchwartzMap.smul_apply`
 
 ---
 
 ## Fundamental Theorem of Calculus for Time Translation
 
-### [`unitTimeDir`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L304) — Definition
+### [`unitTimeDir`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L305) — Definition
 
 **Lean signature**
 ```lean
@@ -282,15 +282,15 @@ def unitTimeDir : (SpaceTime d)
 
 ---
 
-### [`continuous_timeShift_param`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L307) — Lemma
+### [`continuous_timeShift_param`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L308) — Lemma
 
 **Statement**: The shift is continuous in the time parameter: $s \mapsto \mathrm{timeShift}\,s\,x$ is continuous (it equals $s \mapsto x + s \cdot e_0$).
 
-**Proof uses**: [`unitTimeDir`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L304), `Continuous.add`, `Continuous.smul`
+**Proof uses**: [`unitTimeDir`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L305), `Continuous.add`, `Continuous.smul`
 
 ---
 
-### [`peetre_weight_bound`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L321) — Lemma
+### [`peetre_weight_bound`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L322) — Lemma
 
 **Statement**: Peetre-type weight inequality for shifting polynomial weights between base points:
 $$(1 + \lVert x\rVert)^k \le (1 + \lVert x + y\rVert)^k\,(1 + \lVert y\rVert)^k.$$
@@ -299,35 +299,35 @@ $$(1 + \lVert x\rVert)^k \le (1 + \lVert x + y\rVert)^k\,(1 + \lVert y\rVert)^k.
 
 ---
 
-### [`iteratedFDeriv_timeTranslationSchwartz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L337) — Lemma
+### [`iteratedFDeriv_timeTranslationSchwartz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L338) — Lemma
 
 **Statement**: The iterated derivative commutes with time translation: $D^n(T_h f)(x) = D^n f(x + h \cdot e_0)$.
 
-**Proof uses**: [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L238), [`timeShift_eq_add_const`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L156), `iteratedFDeriv_comp_add_right`
+**Proof uses**: [`timeTranslationSchwartz_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L239), [`timeShift_eq_add_const`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L157), `iteratedFDeriv_comp_add_right`
 
 ---
 
-### [`schwartz_timeTranslation_lipschitz_seminorm`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L378) — Theorem
+### [`schwartz_timeTranslation_lipschitz_seminorm`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L379) — Theorem
 
 **Statement**: Locally uniform Lipschitz bound for time translation on the Schwartz seminorms:
 $$\lVert T_h f - f\rVert_{k,n} \le \lvert h\rvert\,(1 + \lvert h\rvert)^k\,2^k\,\bigl(\lVert f\rVert_{k,n+1} + \lVert f\rVert_{0,n+1} + 1\bigr).$$
 The $2^k$ factor comes from Peetre's inequality; for $\lvert h\rvert \le 1$ the prefactor is at most $4^k$, which suffices for continuity at $h = 0$.
 
-**Proof uses**: `SchwartzMap.seminorm_le_bound`, [`iteratedFDeriv_timeTranslationSchwartz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L337), the mean value theorem, [`peetre_weight_bound`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L321), `continuousMultilinearCurryLeftEquiv`
+**Proof uses**: `SchwartzMap.seminorm_le_bound`, [`iteratedFDeriv_timeTranslationSchwartz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L338), the mean value theorem, [`peetre_weight_bound`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L322), `continuousMultilinearCurryLeftEquiv`
 
 ---
 
-### [`continuous_timeTranslationSchwartz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L766) — Lemma
+### [`continuous_timeTranslationSchwartz`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L767) — Lemma
 
 **Statement**: Time translation acts continuously on Schwartz space: $s \mapsto T_s f$ is continuous. By the group action $T_{s_0 + h} f = T_{s_0}(T_h f)$ and continuity of the linear operator $T_{s_0}$, this reduces to continuity at $h = 0$, established from the Lipschitz seminorm bound.
 
-**Proof uses**: [`schwartz_timeTranslation_lipschitz_seminorm`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L378), `schwartz_withSeminorms`, [`timeTranslationSchwartzCLM`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L210)
+**Proof uses**: [`schwartz_timeTranslation_lipschitz_seminorm`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L379), `schwartz_withSeminorms`, [`timeTranslationSchwartzCLM`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L211)
 
 ---
 
 ## Time Translation on Tempered Distributions
 
-### [`timeTranslationDistribution`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L898) — Definition
+### [`timeTranslationDistribution`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L899) — Definition
 
 **Lean signature**
 ```lean
@@ -337,7 +337,7 @@ def timeTranslationDistribution (s : ℝ) (ω : (FieldConfiguration d)) : (Field
 
 ---
 
-### [`timeTranslationDistribution_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L904) — Lemma
+### [`timeTranslationDistribution_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L905) — Lemma
 
 **Statement**: Defining pairing: $(T_s \omega)(f) = \omega(T_{-s} f)$.
 
@@ -345,19 +345,19 @@ def timeTranslationDistribution (s : ℝ) (ω : (FieldConfiguration d)) : (Field
 
 ---
 
-### [`timeTranslationDistribution_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L909) — Lemma
+### [`timeTranslationDistribution_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L910) — Lemma
 
 **Statement**: Group homomorphism in $s$: $T_{s+t}\,\omega = T_s(T_t\,\omega)$.
 
-**Proof uses**: [`timeTranslationDistribution_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L904), [`timeTranslationSchwartz_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L253)
+**Proof uses**: [`timeTranslationDistribution_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L905), [`timeTranslationSchwartz_add`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L254)
 
 ---
 
-### [`timeTranslationDistribution_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L928) — Lemma
+### [`timeTranslationDistribution_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L929) — Lemma
 
 **Statement**: Zero shift is the identity on distributions: $T_0\,\omega = \omega$.
 
-**Proof uses**: [`timeTranslationDistribution_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L904), [`timeTranslationSchwartz_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L268)
+**Proof uses**: [`timeTranslationDistribution_apply`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L905), [`timeTranslationSchwartz_zero`](../../../OSforGFF/Spacetime/TimeTranslation.lean#L269)
 
 ---
 

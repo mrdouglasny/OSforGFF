@@ -7,8 +7,8 @@
 ## Overview
 
 This file applies the proven Minlos theorem (imported from the `bochner` library) to construct
-Gaussian measures on the weak dual of a nuclear space. It bridges between the GFF4D project's
-nonneg-only positive definiteness (`GFF4D.IsPositiveDefinite`) and the bochner library's
+Gaussian measures on the weak dual of a nuclear space. It bridges between the library's
+nonneg-only positive definiteness (`GFF.IsPositiveDefinite`) and the bochner library's
 hermitian+nonneg version (`IsPositiveDefinite`), then shows that whenever the covariance form
 is realized as a squared norm via a linear map into a Hilbert space, the Minlos hypotheses are
 satisfied and a Gaussian probability measure exists.
@@ -23,32 +23,32 @@ from the `bochner` library (`Minlos.Main`), and `gaussian_rbf_pd_innerProduct` f
 
 ---
 
-## GFF4D Positive Definiteness Lemmas
+## GFF Positive Definiteness Lemmas
 
 ### [`gaussian_positive_definite_via_embedding`](../../../OSforGFF/Measure/Minlos.lean#L57) — Lemma
 
 **Statement**: If a covariance form $C : E \times E \to \mathbb{R}$ satisfies
 $C(f,f) = \lVert T f \rVert^2$ for a linear map $T : E \to H$ into a real inner product space $H$,
 then the Gaussian characteristic functional $f \mapsto \exp\!\bigl(-\tfrac{1}{2} C(f,f)\bigr)$
-is positive definite on $E$ in the GFF4D sense.
+is positive definite on $E$ in the GFF sense.
 
-**Proof uses**: [`gaussian_rbf_pd_innerProduct`](../../../OSforGFF/General/GaussianRBF.lean#L232), [`GFF4D.isPositiveDefinite_precomp_linear`](../../../OSforGFF/General/PositiveDefinite.lean)
+**Proof uses**: [`gaussian_rbf_pd_innerProduct`](../../../OSforGFF/General/GaussianRBF.lean#L232), [`GFF.isPositiveDefinite_precomp_linear`](../../../OSforGFF/General/PositiveDefinite.lean)
 
 ---
 
-## Bridge Lemmas: GFF4D PD to Bochner PD
+## Bridge Lemmas: GFF PD to Bochner PD
 
-### [`gff4d_to_bochner_pd`](../../../OSforGFF/Measure/Minlos.lean#L97) — Definition
+### [`gff_to_bochner_pd`](../../../OSforGFF/Measure/Minlos.lean#L97) — Definition
 
 **Lean signature**
 ```lean
-def gff4d_to_bochner_pd {α : Type*} [AddGroup α] {φ : α → ℂ}
-    (h_nonneg : GFF4D.IsPositiveDefinite φ)
+def gff_to_bochner_pd {α : Type*} [AddGroup α] {φ : α → ℂ}
+    (h_nonneg : GFF.IsPositiveDefinite φ)
     (h_symm : ∀ x, φ (-x) = starRingEnd ℂ (φ x)) :
     IsPositiveDefinite φ
 ```
 
-**Informal**: Promotes a GFF4D nonneg-only positive definite function $\varphi$ to the bochner library's full positive definiteness (hermitian + nonneg), given an explicit symmetry proof $\varphi(-x) = \overline{\varphi(x)}$.
+**Informal**: Promotes a GFF nonneg-only positive definite function $\varphi$ to the bochner library's full positive definiteness (hermitian + nonneg), given an explicit symmetry proof $\varphi(-x) = \overline{\varphi(x)}$.
 
 ---
 
@@ -67,7 +67,7 @@ if $\mathrm{Im}(z) = 0$ then $\overline{\exp(z)} = \exp(z)$.
 and $C(-f,-f) = C(f,f)$ for all $f$, then the Gaussian characteristic functional
 $f \mapsto \exp\!\bigl(-\tfrac{1}{2} C(f,f)\bigr)$ is positive definite in the bochner sense.
 
-**Proof uses**: [`gff4d_to_bochner_pd`](../../../OSforGFF/Measure/Minlos.lean#L97), [`gaussian_positive_definite_via_embedding`](../../../OSforGFF/Measure/Minlos.lean#L57), [`conj_cexp_real`](../../../OSforGFF/Measure/Minlos.lean#L105)
+**Proof uses**: [`gff_to_bochner_pd`](../../../OSforGFF/Measure/Minlos.lean#L97), [`gaussian_positive_definite_via_embedding`](../../../OSforGFF/Measure/Minlos.lean#L57), [`conj_cexp_real`](../../../OSforGFF/Measure/Minlos.lean#L105)
 
 ---
 

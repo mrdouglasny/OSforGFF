@@ -30,11 +30,11 @@ proven mathematics.
 culminate in `radial_besselK1_integrable`, the $L^1$-integrability of the radial profile
 $r \mapsto r^2 K_1(mr)$ that underpins the 4D free-covariance kernel's integrability.
 
-**Length**: 844 lines, 0 definitions + 6 theorems/lemmas.
+**Length**: 856 lines, 0 definitions + 6 theorems/lemmas.
 
 ---
 
-### [`besselK1_pos`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L35) — Lemma
+### [`besselK1_pos`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L36) — Lemma
 
 **Statement**: For $z > 0$, the Bessel function is strictly positive:
 $$0 < K_1(z).$$
@@ -49,7 +49,7 @@ $\tfrac{1}{2}e^t \le \cosh t \le e^t$ and $t/e^t \to 0$);
 
 ---
 
-### [`besselK1_continuousOn`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L195) — Lemma
+### [`besselK1_continuousOn`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L196) — Lemma
 
 **Statement**: $K_1$ is continuous on the open half-line:
 $$\mathrm{ContinuousOn}\; K_1\; (0, \infty).$$
@@ -63,7 +63,7 @@ $[1,\infty)$).
 
 ---
 
-### [`besselK1_asymptotic`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L294) — Lemma
+### [`besselK1_asymptotic`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L295) — Lemma
 
 **Statement**: For $z \ge 1$, $K_1$ decays exponentially:
 $$K_1(z) \le (\sinh 1 + 2)\, e^{-z}.$$
@@ -77,7 +77,7 @@ antiderivative $F(t) = -\tfrac{2}{z}e^{-z e^t/2}$ gives $\le 2 e^{-z}$.
 
 ---
 
-### [`besselK1_mul_self_le`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L473) — Lemma
+### [`besselK1_mul_self_le`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L482) — Lemma
 
 **Statement**: For $0 < z \le 1$, the product $z\,K_1(z)$ is uniformly bounded:
 $$z \cdot K_1(z) \le \cosh 1 + 2.$$
@@ -91,19 +91,19 @@ gives $z\int_1^\infty f \le 2$.
 
 ---
 
-### [`besselK1_near_origin_bound`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L689) — Lemma
+### [`besselK1_near_origin_bound`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L702) — Lemma
 
 **Statement**: For $0 < z \le 1$, the near-origin singularity is at most $1/z$:
 $$K_1(z) \le \frac{\cosh 1 + 2}{z}.$$
 
 **Informal**: Immediate rearrangement of `besselK1_mul_self_le`.
 
-**Proof uses**: [`besselK1_mul_self_le`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L473),
+**Proof uses**: [`besselK1_mul_self_le`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L482),
 `le_div_iff₀'`.
 
 ---
 
-### [`radial_besselK1_integrable`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L702) — Lemma
+### [`radial_besselK1_integrable`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L715) — Lemma
 
 **Statement**: For $m > 0$, the radial integrand is integrable on $(0,\infty)$:
 $$r \mapsto r^2\, K_1(mr) \in L^1\bigl((0,\infty)\bigr).$$
@@ -114,10 +114,10 @@ integrable linear function. Far out ($mr > 1$) the asymptotic bound gives
 $r^2 K_1(mr) \le C' r^2 e^{-mr}$ with $C' = \sinh 1 + 2$, integrable by polynomial-times-exponential
 decay. This is the key ingredient for showing the 4D free covariance kernel is $L^1$.
 
-**Proof uses**: [`besselK1_near_origin_bound`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L689),
-[`besselK1_asymptotic`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L294),
-[`besselK1_pos`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L35),
-[`besselK1_continuousOn`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L195);
+**Proof uses**: [`besselK1_near_origin_bound`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L702),
+[`besselK1_asymptotic`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L295),
+[`besselK1_pos`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L36),
+[`besselK1_continuousOn`](../../../OSforGFF/Legacy/BesselK1Analytics.lean#L196);
 `Integrable.mono'`, `integrable_of_isBigO_exp_neg`, `IntegrableOn.union`.
 
 ---
