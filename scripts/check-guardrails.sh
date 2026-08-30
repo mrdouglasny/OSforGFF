@@ -13,6 +13,10 @@
 # `OSforGFF/Legacy/` is excluded: it is deliberately off the import graph, preserved for reference
 # and never compiled by `lake build`. It is reported separately, for information only.
 #
+# `OSforGFF/OS/NonTrivial.lean` is also deliberately off the import graph but, unlike Legacy,
+# is live mathematics: it is compiled here via `lake env lean` (needs a built library; skipped
+# with a warning when `lake` is unavailable, or when GUARDRAIL_SKIP_OFFGRAPH=1).
+#
 #   exit 0  → clean
 #   exit 2  → violation; intended to BLOCK when used as a CI step or a Stop hook.
 #
@@ -113,6 +117,21 @@ legacy=$(grep -rlE '(^|[^[:alnum:]_])(sorry|admit)([^[:alnum:]_]|$)|^[[:space:]]
 if [ -n "$legacy" ]; then
   echo "ℹ note: off-graph OSforGFF/Legacy/ mentions sorry/axiom (not compiled, not a violation):"
   printf '%s\n' "$legacy" | sed 's/^/    /'
+fi
+
+# Off-graph verification: OS/NonTrivial.lean is deliberately not imported by the root, so
+# `lake build` never compiles it. The source scan above already covers it (it is under
+# OSforGFF/, outside Legacy/); this step additionally checks that its proofs still compile.
+if [ -n "${GUARDRAIL_SKIP_OFFGRAPH:-}" ]; then
+  echo "ℹ note: off-graph compile of OS/NonTrivial.lean skipped (GUARDRAIL_SKIP_OFFGRAPH set)"
+elif ! command -v lake >/dev/null 2>&1; then
+  echo "⚠ warning: 'lake' not found — off-graph OS/NonTrivial.lean NOT compiled" >&2
+else
+  if ! lake env lean OSforGFF/OS/NonTrivial.lean; then
+    echo "✗ BLOCK: off-graph OSforGFF/OS/NonTrivial.lean fails to compile" >&2
+    exit 2
+  fi
+  echo "✓ off-graph OS/NonTrivial.lean compiles"
 fi
 
 echo "✓ guardrails: clean — ${#FILES[@]} modules, no axiom/sorry/escape-hatch in the build graph"
