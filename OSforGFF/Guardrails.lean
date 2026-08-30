@@ -22,7 +22,7 @@ the concrete instances `d = 4`, `d = 3`, `d = 2`, and `d = 5`.
 -/
 import «OSforGFF».OS.Master
 
--- ── Axiom-footprint guard (ACTIVATED) ────────────────────────────────────────
+-- ── Axiom-footprint guard for the four-dimensional instance ──────────────────
 /-- info: 'OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4
@@ -38,7 +38,7 @@ import «OSforGFF».OS.Master
 #guard_msgs in
 #check @OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic
 
--- ── Goal-type guard: pins the master theorem's statement (ACTIVATED) ──────────
+-- ── Goal-type guard: pins the four-dimensional headline's statement ───────────
 /-- info: OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4 : ∀ (m : ℝ) [inst : Fact (0 < m)], SatisfiesAllOS (μ_GFF 4 m) -/
 #guard_msgs in
 #check @OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4
