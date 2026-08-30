@@ -602,7 +602,6 @@ private lemma memLp_two_lintegral_nnnorm_sq {α ε : Type*} [MeasurableSpace α]
   rw [enorm_eq_nnnorm, ← rpow_natCast (↑‖f x‖₊) 2]
   norm_cast
 
-set_option maxHeartbeats 800000 in
 theorem L2_process_covariance_fubini_integrable {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (A : ℝ → Ω → ℂ) (c : ℂ) (T : ℝ) (_hT : T > 0)
@@ -658,7 +657,8 @@ theorem L2_process_covariance_fubini_integrable {Ω : Type*} [MeasurableSpace Ω
   have hg_meas : ∀ ω, Measurable (fun s : ℝ => (↑‖A s ω - c‖₊ : ℝ≥0∞) ^ 2) := fun ω =>
     ((h_cont_s ω).sub continuous_const).measurable.nnnorm.coe_nnreal_ennreal.pow_const _
   have hF_meas_swap : Measurable (fun p : Ω × ℝ => (↑‖A p.2 p.1 - c‖₊ : ℝ≥0∞) ^ 2) :=
-    hF_meas.comp (Measurable.prodMk measurable_snd measurable_fst)
+    (((hF_sm.comp_measurable
+      (Measurable.prodMk measurable_snd measurable_fst)).measurable).nnnorm.coe_nnreal_ennreal).pow_const _
   have h_inner_fst : ∀ ω, ∫⁻ p : ℝ × ℝ, (↑‖A p.1 ω - c‖₊ : ℝ≥0∞) ^ 2 ∂(ν.prod ν)
       = (∫⁻ s, (↑‖A s ω - c‖₊ : ℝ≥0∞) ^ 2 ∂ν) * ν Set.univ := by
     intro ω
