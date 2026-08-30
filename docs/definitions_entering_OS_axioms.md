@@ -86,17 +86,18 @@ def OS3_ReflectionPositivity (dμ_config : ProbabilityMeasure FieldConfiguration
   ∀ (n : ℕ) (f : Fin n → PositiveTimeTestFunctionℂ) (c : Fin n → ℂ),
     0 ≤ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
       GJGeneratingFunctionalℂ dμ_config
-        ((f i).val - QFT.compTimeReflection ((f j).val))).re
+        ((f i).val - star ((f j).val))).re
 ```
 
 **Used in**: SatisfiesAllOS.
 
 **Assessment**: Three points to check.
 
-**(a) Matrix entry `Z_ℂ[fᵢ − Θfⱼ]`**: The standard GJ formulation (p. 90) uses the matrix
-M_{ij} = Z[fᵢ − θfⱼ] where fᵢ are supported in {t > 0}. This matches, now using the
-complex generating functional `GJGeneratingFunctionalℂ` and complex time reflection
-`compTimeReflection`.
+**(a) Matrix entry `Z_ℂ[fᵢ − star fⱼ]`**: The standard GJ formulation (p. 90) uses the
+matrix M_{ij} = Z[fᵢ − θfⱼ] where fᵢ are supported in {t > 0}. This matches, now using
+the complex generating functional `GJGeneratingFunctionalℂ` and the OS star operation
+`star f = conj ∘ f ∘ Θ` (the `Star` instance `starTestFunction` on complex test
+functions).
 
 **(b) Complex coefficients and test functions**: This formulation now uses complex-valued
 test functions (`PositiveTimeTestFunctionℂ = Submodule ℂ SchwartzTestFunctionℂ`) with complex
@@ -121,10 +122,12 @@ E2_reflection_positive : ∀ (F : BorchersSequence d),
 The real-coefficient version is retained as `OS3_ReflectionPositivity_real` for
 compatibility and as a stepping stone in the GFF proof.
 
-**(c) `compTimeReflection`**: This is the complex version `(Θf)(x) = f(Θx) = f(−t, x̄)`
-acting on complex-valued test functions. It is an ℝ-linear (not ℂ-linear) map on
-`SchwartzTestFunctionℂ`. For the OS star operation f★ = conj(Θf), complex conjugation is
-handled separately via `starRingEnd ℂ` in the coefficients.  **Correct.**
+**(c) The OS star `star f`**: this is `f★ = conj(Θf)`, i.e. `(star f)(x) = conj (f (Θx))`
+(`starTestFunction`, `Spacetime/PositiveTimeTestFunction.lean`): time reflection and
+complex conjugation folded into one antilinear operation, as in Osterwalder–Schrader's
+axiom E2. On real test functions embedded via `toComplex` it reduces to the plain complex
+time reflection `compTimeReflection` (`star_toComplex_eq_compTimeReflection`).
+**Correct.**
 
 ---
 
@@ -310,7 +313,7 @@ the standard formulation of Euclidean invariance for the generating functional. 
 | 1 | `GJGeneratingFunctional` (sign of i) | ✓ Correct, matches GJ |
 | 2 | `distributionPairingℂ_real` (ℂ-linearity) | ✓ Correct, unique ℂ-linear extension |
 | 3 | `distributionPairing` (evaluation) | ✓ Trivially correct |
-| 4 | `OS3_ReflectionPositivity` (complex coeff + test fns) | ✓ Correct. Now uses complex test functions (`PositiveTimeTestFunctionℂ`), complex coefficients with conjugation (`starRingEnd`), and the complex generating functional (`GJGeneratingFunctionalℂ`). Compatible with OS reconstruction. Real version retained as `OS3_ReflectionPositivity_real`. |
+| 4 | `OS3_ReflectionPositivity` (complex coeff + test fns) | ✓ Correct. Uses complex test functions (`PositiveTimeTestFunctionℂ`), complex coefficients with conjugation (`starRingEnd`), the OS star `star f = conj(Θf)`, and the complex generating functional (`GJGeneratingFunctionalℂ`). Compatible with OS reconstruction. Real version retained as `OS3_ReflectionPositivity_real`. |
 | 5 | `timeReflection` (negates coord 0) | ✓ Correct and consistent |
 | 6 | `euclidean_action` (pullback by g⁻¹) | ✓ Correct, standard left-action |
 | 7 | `QFT.E` (semidirect product) | ✓ Correct group structure, proved in Lean |

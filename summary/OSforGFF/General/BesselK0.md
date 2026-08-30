@@ -1,6 +1,6 @@
 # `BesselK0.lean` — Informal Summary
 
-> **Source**: [`OSforGFF/General/BesselK0.lean`](../../OSforGFF/General/BesselK0.lean)
+> **Source**: [`OSforGFF/General/BesselK0.lean`](../../../OSforGFF/General/BesselK0.lean)
 > **Generated**: 2026-07-05 (regenerated from current source)
 
 ## Overview
@@ -22,7 +22,7 @@ the definition.
 
 ---
 
-### [`besselK0`](../../OSforGFF/General/BesselK0.lean#L31) — Definition
+### [`besselK0`](../../../OSforGFF/General/BesselK0.lean#L31) — Definition
 
 **Lean signature**
 ```lean

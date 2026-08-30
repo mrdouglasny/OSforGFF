@@ -100,7 +100,8 @@ The ingredients live in mathlib, but the packaged estimate does not; the work is
    order-`N` dominator (`integrableOn_rpow_mul_exp_neg_mul_rpow` at exponent `s^{N+1−d/2}`).
 4. **[mechanical] Rethread.** Remove `[Fact (d ≤ 5)]` from `integrable_dominate_G`,
    `fubini_s_ksp_swap`, `OS3_MixedRep` (`heatKernel_bilinear_to_mixed_rep`,
-   `bessel_bilinear_eq_mixed_representation`, `bilinear_to_k0_inside`), `OS3_CovarianceRP`
+   `bessel_bilinear_eq_mixed_representation`, `bilinear_to_k0_inside` — the last has since
+   moved to `Legacy/UnusedOS.lean`), `OS3_CovarianceRP`
    (`mixed_representation`, `freeCovariance_reflection_positive_*`), `OS3_ReflectionPositivity`, and
    `OS/Master.lean` (`..._generic`, `..._of_dim`). Delete the per-instance `Fact (n ≤ 5)` instances
    and update `Guardrails.lean` accordingly.

@@ -122,7 +122,7 @@ quantum norm (final section).
 
 ## The shape of the whole argument
 
-The four files form a **strict linear pipeline**, each importing only the one below it and
+The four files form a **linear pipeline** (each building on the layers below it) and
 handing one theorem up. You can read the ideas top to bottom without ever opening the Lean;
 the anchors are here for when you do.
 
@@ -131,7 +131,7 @@ the anchors are here for when you do.
           │                              (heat kernel, Schwinger rep, Fubini swaps)
           │   integrable_dominate_G · fubini_s_ksp_swap
           ▼
-  OS3_MixedRep            (1664 lines)   the MIXED REPRESENTATION of ⟨θf, C f⟩
+  OS3_MixedRep            (1488 lines)   the MIXED REPRESENTATION of ⟨θf, C f⟩
           │                              (spatial Fourier transform, time kept)
           │   bessel_bilinear_eq_mixed_representation
           ▼

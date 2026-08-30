@@ -99,7 +99,7 @@ sorts them the other way, by how much genuine mathematics each one needs.
 
 ## OS3 — Reflection positivity
 
-**The most elaborate axiom by a wide margin: $\approx 6750$ lines across four files** — more
+**The most elaborate axiom by a wide margin: $\approx 6600$ lines across four files** — more
 than the other four combined.
 
 **What it says (physics).** Reflection positivity is the Euclidean shadow of unitarity: it
@@ -249,7 +249,7 @@ is the most useful thing to know before you dive in.
 
 | Axiom | Lines | Genuine mathematical idea? | Where the difficulty really lives |
 |---|---|---|---|
-| **OS3** | $\approx 6750$ | **Yes — the deep one.** Mixed (proper-time) representation; entrywise-exponential positivity (Schur–Hadamard); it *is* the Osterwalder–Schrader reconstruction positivity. | Split between real ideas (`MixedRep`, `CovarianceRP`, `ReflectionPositivity`) and a large, technical Fubini/integrability layer (`MixedRepInfra`, $\approx 3620$ lines). |
+| **OS3** | $\approx 6600$ | **Yes — the deep one.** Mixed (proper-time) representation; entrywise-exponential positivity (Schur–Hadamard); it *is* the Osterwalder–Schrader reconstruction positivity. | Split between real ideas (`MixedRep`, `CovarianceRP`, `ReflectionPositivity`) and a large, technical Fubini/integrability layer (`MixedRepInfra`, $\approx 3620$ lines). |
 | **OS4 (clustering)** | part of $2300$ | **Yes — one elegant idea.** All correlation collapses into $e^{C(f,g)}$; the mass gap forces exponential decay. | Short and conceptual once you have the Gaussian MGF factorization. |
 | **OS4 (ergodicity)** | part of $2300$ | **Moderate — a standard template.** A quantitative $L^2$ ergodic theorem; no new idea, but the rigorous variance/decay estimate is long. | The length is the estimate, not the concept. |
 | **OS1** | $\approx 460$ | **Light — one estimate.** Plancherel + a multiplier bound. | Elementary given the mass gap. |

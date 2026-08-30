@@ -1,6 +1,6 @@
 # `Defs.lean` — Informal Summary
 
-> **Source**: [`OSforGFF/Schwinger/Defs.lean`](../../OSforGFF/Schwinger/Defs.lean)
+> **Source**: [`OSforGFF/Schwinger/Defs.lean`](../../../OSforGFF/Schwinger/Defs.lean)
 > **Generated**: 2026-07-05 (regenerated from current source)
 
 ## Overview
@@ -27,7 +27,7 @@ declared here.
 
 ## Schwinger Functions
 
-### [`SchwingerFunction`](../../OSforGFF/Schwinger/Defs.lean#L59) — Definition
+### [`SchwingerFunction`](../../../OSforGFF/Schwinger/Defs.lean#L59) — Definition
 
 **Lean signature**
 ```lean
@@ -42,7 +42,7 @@ the fundamental object of constructive QFT.
 
 ---
 
-### [`SchwingerFunction₁`](../../OSforGFF/Schwinger/Defs.lean#L64) — Definition
+### [`SchwingerFunction₁`](../../../OSforGFF/Schwinger/Defs.lean#L64) — Definition
 
 **Lean signature**
 ```lean
@@ -55,7 +55,7 @@ def SchwingerFunction₁ (dμ_config : ProbabilityMeasure (FieldConfiguration d)
 
 ---
 
-### [`SchwingerFunction₂`](../../OSforGFF/Schwinger/Defs.lean#L69) — Definition
+### [`SchwingerFunction₂`](../../../OSforGFF/Schwinger/Defs.lean#L69) — Definition
 
 **Lean signature**
 ```lean
@@ -68,7 +68,7 @@ def SchwingerFunction₂ (dμ_config : ProbabilityMeasure (FieldConfiguration d)
 
 ---
 
-### [`schwinger_eq_covariance`](../../OSforGFF/Schwinger/Defs.lean#L75) — Lemma
+### [`schwinger_eq_covariance`](../../../OSforGFF/Schwinger/Defs.lean#L75) — Lemma
 
 **Statement**: The 2-point Schwinger function equals the direct covariance integral:
 $$S_2(f, g) = \int \langle \omega, f\rangle\, \langle \omega, g\rangle \; d\mu(\omega).$$
@@ -77,7 +77,7 @@ $$S_2(f, g) = \int \langle \omega, f\rangle\, \langle \omega, g\rangle \; d\mu(\
 
 ---
 
-### [`SchwingerFunctionℂ`](../../OSforGFF/Schwinger/Defs.lean#L83) — Definition
+### [`SchwingerFunctionℂ`](../../../OSforGFF/Schwinger/Defs.lean#L83) — Definition
 
 **Lean signature**
 ```lean
@@ -91,7 +91,7 @@ complex-linear real pairing $\mathrm{distributionPairingℂ\_real}$ in place of 
 
 ---
 
-### [`SchwingerFunctionℂ₂`](../../OSforGFF/Schwinger/Defs.lean#L89) — Definition
+### [`SchwingerFunctionℂ₂`](../../../OSforGFF/Schwinger/Defs.lean#L89) — Definition
 
 **Lean signature**
 ```lean
@@ -105,7 +105,7 @@ extension of `SchwingerFunction₂` to complex test functions.
 
 ---
 
-### [`CovarianceBilinear`](../../OSforGFF/Schwinger/Defs.lean#L95) — Definition
+### [`CovarianceBilinear`](../../../OSforGFF/Schwinger/Defs.lean#L95) — Definition
 
 **Lean signature**
 ```lean
@@ -123,7 +123,7 @@ analyticity.
 
 ---
 
-### [`CovarianceBilinear_of_integrable`](../../OSforGFF/Schwinger/Defs.lean#L104) — Lemma
+### [`CovarianceBilinear_of_integrable`](../../../OSforGFF/Schwinger/Defs.lean#L104) — Lemma
 
 **Statement**: If for all complex test functions $\varphi, \psi$ the product pairing
 $\omega \mapsto \mathrm{distributionPairingℂ\_real}(\omega, \varphi)\,\mathrm{distributionPairingℂ\_real}(\omega, \psi)$

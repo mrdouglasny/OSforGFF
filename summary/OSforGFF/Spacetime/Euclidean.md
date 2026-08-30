@@ -1,6 +1,6 @@
 # `Euclidean.lean` — Informal Summary
 
-> **Source**: [`OSforGFF/Spacetime/Euclidean.lean`](../../OSforGFF/Spacetime/Euclidean.lean)
+> **Source**: [`OSforGFF/Spacetime/Euclidean.lean`](../../../OSforGFF/Spacetime/Euclidean.lean)
 > **Generated**: 2026-07-05 (regenerated from current source)
 
 ## Overview
@@ -27,7 +27,7 @@ Fully proven (0 sorries; no `sorry`/`admit`).
 
 ---
 
-### [`O`](../../OSforGFF/Spacetime/Euclidean.lean#L54) — Definition *(abbrev)*
+### [`O`](../../../OSforGFF/Spacetime/Euclidean.lean#L54) — Definition *(abbrev)*
 
 **Lean signature**
 ```lean
@@ -39,7 +39,7 @@ abbrev O (d : ℕ) : Type :=
 
 ---
 
-### [`E`](../../OSforGFF/Spacetime/Euclidean.lean#L59) — Definition *(structure)*
+### [`E`](../../../OSforGFF/Spacetime/Euclidean.lean#L59) — Definition *(structure)*
 
 **Lean signature**
 ```lean
@@ -53,7 +53,7 @@ $E(d) = \mathbb{R}^d \rtimes O(d)$.
 
 ---
 
-### [`act`](../../OSforGFF/Spacetime/Euclidean.lean#L65) — Definition
+### [`act`](../../../OSforGFF/Spacetime/Euclidean.lean#L65) — Definition
 
 **Lean signature**
 ```lean
@@ -64,25 +64,25 @@ def act (g : (E d)) (x : (SpaceTime d)) : (SpaceTime d) := g.R x + g.t
 
 ---
 
-### [`act_one`](../../OSforGFF/Spacetime/Euclidean.lean#L70) — Lemma *(simp)*
+### [`act_one`](../../../OSforGFF/Spacetime/Euclidean.lean#L70) — Lemma *(simp)*
 
 **Statement**: $\mathrm{act}\,\langle 1, 0\rangle\, x = x$.
 
 ---
 
-### [`act_mul`](../../OSforGFF/Spacetime/Euclidean.lean#L73) — Lemma *(simp)*
+### [`act_mul`](../../../OSforGFF/Spacetime/Euclidean.lean#L73) — Lemma *(simp)*
 
 **Statement**: $\mathrm{act}\,\langle g_R \circ h_R,\, g_R h_t + g_t\rangle\, x = g_R(h_R x + h_t) + g_t$.
 
 ---
 
-### [`act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L77) — Lemma *(simp)*
+### [`act_inv`](../../../OSforGFF/Spacetime/Euclidean.lean#L77) — Lemma *(simp)*
 
 **Statement**: $\mathrm{act}\,\langle g_R,\, -g_R g_t\rangle\, x = g_R(x - g_t)$.
 
 ---
 
-### [`LinearIsometry.inv`](../../OSforGFF/Spacetime/Euclidean.lean#L89) — Definition
+### [`LinearIsometry.inv`](../../../OSforGFF/Spacetime/Euclidean.lean#L89) — Definition
 
 **Lean signature**
 ```lean
@@ -95,56 +95,56 @@ finite-dimensional equivalence and taking its `symm` back to a `LinearIsometry`.
 
 ---
 
-### [`LinearIsometry.comp_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L92) — Lemma *(simp)*
+### [`LinearIsometry.comp_apply`](../../../OSforGFF/Spacetime/Euclidean.lean#L92) — Lemma *(simp)*
 
 **Statement**: $(g \circ h)(x) = g(h(x))$ (by `rfl`).
 
 ---
 
-### [`LinearIsometry.inv_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L95) — Lemma *(simp)*
+### [`LinearIsometry.inv_apply`](../../../OSforGFF/Spacetime/Euclidean.lean#L95) — Lemma *(simp)*
 
 **Statement**: $(\mathrm{inv}\, g)(g(x)) = x$.
 
 ---
 
-### [`LinearIsometry.one_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L101) — Lemma *(simp)*
+### [`LinearIsometry.one_apply`](../../../OSforGFF/Spacetime/Euclidean.lean#L101) — Lemma *(simp)*
 
 **Statement**: $(1 : O(d))(x) = x$ (by `rfl`).
 
 ---
 
-### [`LinearIsometry.one_comp`](../../OSforGFF/Spacetime/Euclidean.lean#L103) — Lemma *(simp)*
+### [`LinearIsometry.one_comp`](../../../OSforGFF/Spacetime/Euclidean.lean#L103) — Lemma *(simp)*
 
 **Statement**: $1 \circ R = R$.
 
 ---
 
-### [`LinearIsometry.comp_one`](../../OSforGFF/Spacetime/Euclidean.lean#L106) — Lemma *(simp)*
+### [`LinearIsometry.comp_one`](../../../OSforGFF/Spacetime/Euclidean.lean#L106) — Lemma *(simp)*
 
 **Statement**: $R \circ 1 = R$.
 
 ---
 
-### [`LinearIsometry.inv_comp`](../../OSforGFF/Spacetime/Euclidean.lean#L109) — Lemma *(simp)*
+### [`LinearIsometry.inv_comp`](../../../OSforGFF/Spacetime/Euclidean.lean#L109) — Lemma *(simp)*
 
 **Statement**: $(\mathrm{inv}\, R) \circ R = 1$.
 
 ---
 
-### [`LinearIsometry.comp_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L113) — Lemma *(simp)*
+### [`LinearIsometry.comp_inv`](../../../OSforGFF/Spacetime/Euclidean.lean#L113) — Lemma *(simp)*
 
 **Statement**: $R \circ (\mathrm{inv}\, R) = 1$.
 
 ---
 
-### [`E.ext`](../../OSforGFF/Spacetime/Euclidean.lean#L125) — Lemma *(ext)*
+### [`E.ext`](../../../OSforGFF/Spacetime/Euclidean.lean#L125) — Lemma *(ext)*
 
 **Statement**: Two Euclidean motions are equal when their rotation and translation components
 agree: $g_R = h_R$ and $g_t = h_t$ imply $g = h$.
 
 ---
 
-### [`instance : Mul (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L133) — Definition *(instance)*
+### [`instance : Mul (E d)`](../../../OSforGFF/Spacetime/Euclidean.lean#L133) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -157,7 +157,7 @@ translation by the first rotation.
 
 ---
 
-### [`instance : One (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L136) — Definition *(instance)*
+### [`instance : One (E d)`](../../../OSforGFF/Spacetime/Euclidean.lean#L136) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -169,7 +169,7 @@ instance : One (E d) where
 
 ---
 
-### [`instance : Inv (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L139) — Definition *(instance)*
+### [`instance : Inv (E d)`](../../../OSforGFF/Spacetime/Euclidean.lean#L139) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -182,7 +182,7 @@ translation.
 
 ---
 
-### [`instance : Div (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L143) — Definition *(instance)*
+### [`instance : Div (E d)`](../../../OSforGFF/Spacetime/Euclidean.lean#L143) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -194,43 +194,43 @@ instance : Div (E d) where
 
 ---
 
-### [`mul_R`](../../OSforGFF/Spacetime/Euclidean.lean#L149) — Lemma *(simp)*
+### [`mul_R`](../../../OSforGFF/Spacetime/Euclidean.lean#L149) — Lemma *(simp)*
 
 **Statement**: $(g \cdot h)_R = g_R \circ h_R$ (by `rfl`).
 
 ---
 
-### [`mul_t`](../../OSforGFF/Spacetime/Euclidean.lean#L150) — Lemma *(simp)*
+### [`mul_t`](../../../OSforGFF/Spacetime/Euclidean.lean#L150) — Lemma *(simp)*
 
 **Statement**: $(g \cdot h)_t = g_R h_t + g_t$ (by `rfl`).
 
 ---
 
-### [`one_R`](../../OSforGFF/Spacetime/Euclidean.lean#L151) — Lemma *(simp)*
+### [`one_R`](../../../OSforGFF/Spacetime/Euclidean.lean#L151) — Lemma *(simp)*
 
 **Statement**: $(1)_R = 1$ (by `rfl`).
 
 ---
 
-### [`one_t`](../../OSforGFF/Spacetime/Euclidean.lean#L152) — Lemma *(simp)*
+### [`one_t`](../../../OSforGFF/Spacetime/Euclidean.lean#L152) — Lemma *(simp)*
 
 **Statement**: $(1)_t = 0$ (by `rfl`).
 
 ---
 
-### [`inv_R`](../../OSforGFF/Spacetime/Euclidean.lean#L153) — Lemma *(simp)*
+### [`inv_R`](../../../OSforGFF/Spacetime/Euclidean.lean#L153) — Lemma *(simp)*
 
 **Statement**: $(g^{-1})_R = \mathrm{inv}\, g_R$ (by `rfl`).
 
 ---
 
-### [`inv_t`](../../OSforGFF/Spacetime/Euclidean.lean#L154) — Lemma *(simp)*
+### [`inv_t`](../../../OSforGFF/Spacetime/Euclidean.lean#L154) — Lemma *(simp)*
 
 **Statement**: $(g^{-1})_t = -(\mathrm{inv}\, g_R)\, g_t$ (by `rfl`).
 
 ---
 
-### [`instance : Group (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L158) — Definition *(instance)*
+### [`instance : Group (E d)`](../../../OSforGFF/Spacetime/Euclidean.lean#L158) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -242,21 +242,21 @@ left-inverse cancellation proved component-wise via `E.ext`.
 
 ---
 
-### [`act_mul_general`](../../OSforGFF/Spacetime/Euclidean.lean#L198) — Lemma *(simp)*
+### [`act_mul_general`](../../../OSforGFF/Spacetime/Euclidean.lean#L198) — Lemma *(simp)*
 
 **Statement**: `act` is a left group action:
 $$\mathrm{act}(g \cdot h)\, x = \mathrm{act}\, g\,(\mathrm{act}\, h\, x).$$
 
 ---
 
-### [`act_inv_general`](../../OSforGFF/Spacetime/Euclidean.lean#L224) — Lemma *(simp)*
+### [`act_inv_general`](../../../OSforGFF/Spacetime/Euclidean.lean#L224) — Lemma *(simp)*
 
 **Statement**: The inverse law of the action:
 $$\mathrm{act}\, g^{-1}\,(\mathrm{act}\, g\, x) = x.$$
 
 ---
 
-### [`measurePreserving_act`](../../OSforGFF/Spacetime/Euclidean.lean#L241) — Lemma
+### [`measurePreserving_act`](../../../OSforGFF/Spacetime/Euclidean.lean#L241) — Lemma
 
 **Statement**: Every rigid motion preserves Lebesgue measure: `act g` is measure-preserving for
 `volume` on `SpaceTime d` (the push-forward of $\mu$ by $x \mapsto g \cdot x$ is $\mu$).
@@ -265,14 +265,14 @@ $$\mathrm{act}\, g^{-1}\,(\mathrm{act}\, g\, x) = x.$$
 
 ---
 
-### [`contDiff_act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L253) — Lemma *(private)*
+### [`contDiff_act_inv`](../../../OSforGFF/Spacetime/Euclidean.lean#L253) — Lemma *(private)*
 
 **Statement**: The map `act g⁻¹` is smooth ($C^\infty$), as a sum of a linear isometry and a
 constant.
 
 ---
 
-### [`fderiv_linear_add_const`](../../OSforGFF/Spacetime/Euclidean.lean#L260) — Lemma *(private)*
+### [`fderiv_linear_add_const`](../../../OSforGFF/Spacetime/Euclidean.lean#L260) — Lemma *(private)*
 
 **Statement**: $D(y \mapsto L y + c)(x) = D L(x)$ for a continuous linear map $L$ and constant $c$.
 
@@ -280,7 +280,7 @@ constant.
 
 ---
 
-### [`fderiv_act_inv_eq_linear`](../../OSforGFF/Spacetime/Euclidean.lean#L265) — Definition *(private)*
+### [`fderiv_act_inv_eq_linear`](../../../OSforGFF/Spacetime/Euclidean.lean#L265) — Definition *(private)*
 
 **Lean signature**
 ```lean
@@ -293,7 +293,7 @@ $g^{-1}_R$ everywhere.
 
 ---
 
-### [`fderiv_has_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L275) — Definition *(private)*
+### [`fderiv_has_temperate_growth`](../../../OSforGFF/Spacetime/Euclidean.lean#L275) — Definition *(private)*
 
 **Lean signature**
 ```lean
@@ -305,7 +305,7 @@ private def fderiv_has_temperate_growth (g : (E d)) :
 
 ---
 
-### [`act_inv_poly_bound`](../../OSforGFF/Spacetime/Euclidean.lean#L280) — Definition *(private)*
+### [`act_inv_poly_bound`](../../../OSforGFF/Spacetime/Euclidean.lean#L280) — Definition *(private)*
 
 **Lean signature**
 ```lean
@@ -317,7 +317,7 @@ private def act_inv_poly_bound (g : (E d)) :
 
 ---
 
-### [`euclidean_pullback`](../../OSforGFF/Spacetime/Euclidean.lean#L317) — Definition
+### [`euclidean_pullback`](../../../OSforGFF/Spacetime/Euclidean.lean#L317) — Definition
 
 **Lean signature**
 ```lean
@@ -329,16 +329,16 @@ actions on function spaces.
 
 ---
 
-### [`euclidean_pullback_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L320) — Lemma
+### [`euclidean_pullback_temperate_growth`](../../../OSforGFF/Spacetime/Euclidean.lean#L320) — Lemma
 
 **Statement**: The pullback map `euclidean_pullback g` has temperate growth (needed for the
 Schwartz-space action).
 
-**Proof uses**: [`fderiv_has_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L275), [`contDiff_act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L253), [`act_inv_poly_bound`](../../OSforGFF/Spacetime/Euclidean.lean#L280)
+**Proof uses**: [`fderiv_has_temperate_growth`](../../../OSforGFF/Spacetime/Euclidean.lean#L275), [`contDiff_act_inv`](../../../OSforGFF/Spacetime/Euclidean.lean#L253), [`act_inv_poly_bound`](../../../OSforGFF/Spacetime/Euclidean.lean#L280)
 
 ---
 
-### [`euclidean_pullback_polynomial_bounds`](../../OSforGFF/Spacetime/Euclidean.lean#L332) — Lemma
+### [`euclidean_pullback_polynomial_bounds`](../../../OSforGFF/Spacetime/Euclidean.lean#L332) — Lemma
 
 **Statement**: The pullback map satisfies the reverse polynomial bound
 $$\lVert x\rVert \le (1 + \lVert g^{-1}_t\rVert)\,(1 + \lVert \mathrm{euclidean\_pullback}\, g\, x\rVert)^1,$$
@@ -346,7 +346,7 @@ using the isometry property of $g^{-1}_R$.
 
 ---
 
-### [`euclidean_action`](../../OSforGFF/Spacetime/Euclidean.lean#L354) — Definition
+### [`euclidean_action`](../../../OSforGFF/Spacetime/Euclidean.lean#L354) — Definition
 
 **Lean signature**
 ```lean

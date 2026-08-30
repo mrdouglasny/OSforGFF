@@ -33,14 +33,16 @@ dead-code sweeps. Each Legacy file carries a supersession map and is verified in
 with `lake env lean`. `OS/NonTrivial.lean` (the non-degeneracy results) is also off the
 import graph, but is live mathematics: `scripts/check-guardrails.sh` compiles it.
 
-Imports flow left to right with two cross-cutting edges:
+Imports flow left to right with three cross-cutting edges:
 
 - `Measure/IsGaussian` imports `OS/OS0_Analyticity` to use the proved
   analyticity for the identity-theorem argument S₂ = C.
 - `Schwinger/GaussianMoments` imports `Measure/Construct`: the moment bounds are
   stated for the constructed free-field measure.
+- `Measure/GaussianFreeField` imports `OS/Axioms`: the OS2 statement it proves
+  lives in the axioms module.
 
-Neither is circular: OS0 depends on `Measure/Construct` (the measure must
+None is circular: OS0 depends on `Measure/Construct` (the measure must
 exist before we can prove analyticity), and `IsGaussian` feeds back into
 the later OS proofs (OS1–OS4 need S₂ = C).
 

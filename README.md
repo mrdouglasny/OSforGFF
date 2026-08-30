@@ -57,8 +57,8 @@ The Minlos proof uses the external library [kolmogorov_extension4](https://githu
 
 The 52 on-graph library files (plus the off-graph `OS/NonTrivial.lean` and 6 off-graph
 `Legacy/` files, below) are organized into 7 layers, with imports flowing from
-earlier to later sections (one exception: `Schwinger/GaussianMoments.lean` imports
-`Measure/Construct.lean`). See [docs/architecture.md](docs/architecture.md) for dependency structure,
+earlier to later sections (three exceptions, listed under "Cross-cutting dependencies"
+below). See [docs/architecture.md](docs/architecture.md) for dependency structure,
 design choices, and proof outlines, and [docs/dimension_generic.md](docs/dimension_generic.md)
 for the dimension-generic design. For a pedagogical, axiom-by-axiom walkthrough of the
 OS proofs — ordered by complexity, with pointers into the code — see
@@ -234,13 +234,15 @@ All are axiom-free.
 
 ## Dependencies and Cross-Cutting Concerns
 
-The import graph (`dependency/import_graph.dot`) is mostly layered, with two
+The import graph (`dependency/import_graph.dot`) is mostly layered, with three
 cross-cutting dependencies:
 
 1. **IsGaussian → OS0_Analyticity**: Gaussianity verification uses the OS0 analyticity result
    to identify S₂(f,g) = C(f,g) via the identity theorem (see Section 5 note)
 2. **GaussianMoments → Measure/Construct**: the moment bounds are stated for the
    constructed free-field measure
+3. **Measure/GaussianFreeField → OS/Axioms**: the OS2 statement it proves lives in the
+   axioms module
 
 These prevent a perfectly linear ordering but do not create a circular dependency.
 
@@ -290,7 +292,7 @@ Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 
 ### Coding Assistance
 
-Claude Opus 4.6, Gemini 3 Pro, GPT-5.2 Codex
+Claude Opus 4.6, Claude Fable 5, Gemini 3 Pro, GPT-5.2 Codex
 
 ## License
 
