@@ -1376,7 +1376,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : (Schwartz
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) :=
     heatKernel_bilinear_fourier_form m f
 
-  -- Stage 5: Apply fubini_s_ksp_swap to exchange s and k_sp
+  -- Fubini: exchange the s and k_sp integrals (fubini_s_ksp_swap)
   have h_after_fubini : (1 / (2 * π) ^ d : ℝ) *
       ∫ s in Set.Ioi 0, ∫ k_sp : (SpatialCoords d), ∫ x : (SpaceTime d), ∫ y : (SpaceTime d),
         (starRingEnd ℂ (f x)) * f y *
@@ -1392,7 +1392,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : (Schwartz
     congr 1
     exact fubini_s_ksp_swap (d := d) m f hf_supp
 
-  -- Stage 6-7: Apply laplace_integral_half_power and normalize
+  -- Laplace evaluation of the s-integral and normalization
   -- The s-integral evaluates to (π/ω) exp(-ω|t|)
   -- Combined with normalization: (1/(2π)^d) × π = 1/(2(2π)^{d−1})
   have h_stage67 : (1 / (2 * π) ^ d : ℝ) *
