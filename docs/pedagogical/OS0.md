@@ -35,7 +35,7 @@ skim.
 - **The measure** $\mu \equiv \mu_{\mathrm{GFF}}$ — the mean-zero **Gaussian** probability
   measure on $\mathscr{S}'(\mathbb{R}^d)$ with covariance $C$; expectations $\mathbb{E}$
   are against $\mu$. In Lean it is `gaussianFreeField_free m`, aliased `μ_GFF d m`
-  ([OS/Measure/Construct.lean:134](../../OSforGFF/Measure/Construct.lean#L134)).
+  ([OS/Measure/Construct.lean:142](../../OSforGFF/Measure/Construct.lean#L142)).
 - **Covariance / propagator** $C = (-\Delta + m^2)^{-1}$ — the two-point function,
   $\mathbb{E}\big[\varphi(f)\,\varphi(g)\big] = \langle f, C g\rangle$, with momentum-space
   symbol $\widehat{C}(k) = 1/(\lvert k\rvert^2 + m^2)$. The mass $m > 0$ is the whole
@@ -48,7 +48,7 @@ skim.
   through $(\star)$."
 
 In Lean the functional (GF) is `GJGeneratingFunctionalℂ`
-([OS/Spacetime/Basic.lean:247](../../OSforGFF/Spacetime/Basic.lean#L247)); the smeared
+([OS/Spacetime/Basic.lean:241](../../OSforGFF/Spacetime/Basic.lean#L241)); the smeared
 field $\langle\omega, f\rangle$ for complex $f$ is `distributionPairingℂ_real`.
 
 ---
@@ -66,7 +66,7 @@ be **entire** — complex-analytic on *all* of $\mathbb{C}^n$, no radius limit.
 In Lean this is the predicate `OS0_Analyticity`
 ([OS/Axioms.lean:76](../../OSforGFF/OS/Axioms.lean#L76)); the free-field instance is the
 headline theorem `gaussianFreeField_satisfies_OS0`
-([OS/OS0_Analyticity.lean:679](../../OSforGFF/OS/OS0_Analyticity.lean#L679)), harvested as
+([OS/OS0_Analyticity.lean:659](../../OSforGFF/OS/OS0_Analyticity.lean#L659)), harvested as
 the `os0` field of the bundled `SatisfiesAllOS (μ_GFF d m)`
 ([OS/Axioms.lean:195](../../OSforGFF/OS/Axioms.lean#L195)). The analyticity is in the
 **complex parameters $z$**, with the test functions held fixed — *not* in the field
@@ -155,7 +155,7 @@ Everything that follows runs under the section variables `{d : ℕ} [Fact (2 ≤
 ## 4. Halves A and B — the mathematics (short)
 
 **Half A: the closed form for complex sources.** The target
-([OS/OS0_Analyticity.lean:506](../../OSforGFF/OS/OS0_Analyticity.lean#L506)) is
+([OS/OS0_Analyticity.lean:486](../../OSforGFF/OS/OS0_Analyticity.lean#L486)) is
 
 $$Z[f] \;=\; \exp\!\Big(-\tfrac12\, C_{\mathbb C}(f,f)\Big), \qquad C_{\mathbb C}(f,g) = \langle f, C g\rangle, \quad C = (-\Delta + m^2)^{-1}, \tag{A}$$
 
@@ -167,7 +167,7 @@ polynomial in $z$ in Half B.
 
 The wrinkle: the measure is constructed with a known characteristic functional only for
 **real** $f$ (`gff_real_characteristic`,
-[OS/Measure/Construct.lean:144](../../OSforGFF/Measure/Construct.lean#L144)), namely
+[OS/Measure/Construct.lean:147](../../OSforGFF/Measure/Construct.lean#L147)), namely
 $Z[f] = \exp(-\tfrac12 C(f,f))$. OS0 needs complex $f$. Promote real $\to$ complex by an
 identity-theorem argument on a one-parameter slice. Decompose $f = f_{\mathrm{re}} + i\,
 f_{\mathrm{im}}$ and, for $t \in \mathbb{C}$, compare
@@ -184,20 +184,20 @@ argument — a foreshadowing of the axiom itself.
 
 **Half B: the quadratic, and the punchline.** Expand (A) using $\mathbb{C}$-bilinearity
 (`freeCovarianceℂ_bilinear_sum_expansion`,
-[OS/OS0_Analyticity.lean:638](../../OSforGFF/OS/OS0_Analyticity.lean#L638)):
+[OS/OS0_Analyticity.lean:618](../../OSforGFF/OS/OS0_Analyticity.lean#L618)):
 
 $$C_{\mathbb C}\!\Big(\textstyle\sum_i z_i J_i,\ \sum_j z_j J_j\Big) = \sum_{i,j} z_i z_j\, C_{\mathbb C}(J_i, J_j),$$
 
 so the closed form for a finite source (`gff_generating_eq_exp_quadratic`,
-[OS/OS0_Analyticity.lean:649](../../OSforGFF/OS/OS0_Analyticity.lean#L649)) is
+[OS/OS0_Analyticity.lean:629](../../OSforGFF/OS/OS0_Analyticity.lean#L629)) is
 
 $$Z\!\Big[\textstyle\sum_i z_i J_i\Big] = \exp\!\Big(-\tfrac12 \sum_{i,j} z_i z_j\, C_{\mathbb C}(J_i, J_j)\Big). \tag{B}$$
 
 The exponent is a finite quadratic polynomial in $z$; `analyticOn_finite_quadratic`
-([OS/OS0_Analyticity.lean:662](../../OSforGFF/OS/OS0_Analyticity.lean#L662)) certifies it
+([OS/OS0_Analyticity.lean:642](../../OSforGFF/OS/OS0_Analyticity.lean#L642)) certifies it
 is analytic (each $z_i$ is a coordinate projection; finite sums and products of analytic
 maps are analytic), and the headline `gaussianFreeField_satisfies_OS0`
-([OS/OS0_Analyticity.lean:679](../../OSforGFF/OS/OS0_Analyticity.lean#L679)) composes with
+([OS/OS0_Analyticity.lean:659](../../OSforGFF/OS/OS0_Analyticity.lean#L659)) composes with
 $\exp$ in three lines. *This* is the trivial core idea.
 
 > **One line:** the real functional plus the identity theorem give (A); bilinear
@@ -210,7 +210,7 @@ $\exp$ in three lines. *This* is the trivial core idea.
 The hard part is not "exp of a quadratic is entire." It is proving that $Z$ — *an
 integral* — is even differentiable in its parameter, so that Half A's step (2) is
 legitimate. This is `gff_cf_slice_entire`
-([OS/OS0_Analyticity.lean:338](../../OSforGFF/OS/OS0_Analyticity.lean#L338)), and it rests
+([OS/OS0_Analyticity.lean:318](../../OSforGFF/OS/OS0_Analyticity.lean#L318)), and it rests
 on Mathlib's **Leibniz rule** (`hasFDerivAt_integral_of_dominated_of_fderiv_le`):
 
 $$\frac{d}{dt}\int F(t,\omega)\, d\mu(\omega) \;=\; \int \frac{\partial F}{\partial t}(t,\omega)\, d\mu(\omega),$$
@@ -226,7 +226,7 @@ entire difficulty. (Goursat's theorem then upgrades "complex-differentiable" to
 $$\big\lVert e^{\,i\langle \omega, f\rangle}\big\rVert = e^{-\varphi(f_{\mathrm{im}})} \tag{C}$$
 
 (`norm_exp_I_distributionPairingℂ_real`,
-[OS/OS0_Analyticity.lean:112](../../OSforGFF/OS/OS0_Analyticity.lean#L112)), so over a
+[OS/OS0_Analyticity.lean:102](../../OSforGFF/OS/OS0_Analyticity.lean#L102)), so over a
 ball in $t$ the derivative norm grows like
 
 $$\lvert \varphi(f_{\mathrm{im}})\rvert \; e^{\,\lvert t_{\mathrm{im}}\rvert\, \lvert \varphi(f_{\mathrm{im}})\rvert},$$
@@ -237,7 +237,7 @@ $\varphi(f_{\mathrm{im}})$. No uniform constant can dominate this.
 **The rescue** stitches two classical facts:
 
 - **Fernique's theorem** (`gaussianFreeField_pairing_expSq_integrable`,
-  [OS/Measure/Construct.lean:395](../../OSforGFF/Measure/Construct.lean#L395)): for the
+  [OS/Measure/Construct.lean:398](../../OSforGFF/Measure/Construct.lean#L398)): for the
   Gaussian GFF measure there is $\alpha > 0$ with $\mathbb{E}[e^{\alpha \varphi(f)^2}] <
   \infty$ — Gaussian tails beat a *quadratic* exponential. This is the one nontrivial
   input, and it is precisely the physical fact (c) of §2.
@@ -248,11 +248,9 @@ Together $e^{\,c\lvert x\rvert} \le (\mathrm{const})\cdot e^{\alpha x^2} \in L^1
 and $\lvert x\rvert \le e^{\lvert x\rvert}$ soaks up the polynomial prefactor. A short chain
 of lemmas exists solely to assemble this one dominator —
 `gff_exp_neg_pairing_integrable`
-([:130](../../OSforGFF/OS/OS0_Analyticity.lean#L130)),
-`gff_exp_abs_pairing_memLp`
-([:171](../../OSforGFF/OS/OS0_Analyticity.lean#L171)), and
-`gff_integrand_norm_integrable`
-([:310](../../OSforGFF/OS/OS0_Analyticity.lean#L310)) — consumed inside
+([:120](../../OSforGFF/OS/OS0_Analyticity.lean#L120)),
+and `gff_exp_abs_pairing_memLp`
+([:161](../../OSforGFF/OS/OS0_Analyticity.lean#L161)) — consumed inside
 `gff_cf_slice_entire`'s differentiation under the integral. Unglamorous — and the reason
 analyticity holds. *The Gaussian tails of the free field are exactly what make its
 generating functional entire.*
@@ -317,7 +315,6 @@ proof covers every $d \ge 2$.
 | $\lVert e^{i\langle\omega,f\rangle}\rVert = e^{-\varphi(f_{\mathrm{im}})}$ (C) | `OS/OS0_Analyticity.lean` | `norm_exp_I_distributionPairingℂ_real` (112) |
 | $e^{-\varphi(f)}$ integrable (Fernique) | `OS/OS0_Analyticity.lean` | `gff_exp_neg_pairing_integrable` (130) |
 | $e^{\lvert\varphi(f)\rvert} \in L^p$ (Young + Fernique) | `OS/OS0_Analyticity.lean` | `gff_exp_abs_pairing_memLp` (171) |
-| integrand norm integrable | `OS/OS0_Analyticity.lean` | `gff_integrand_norm_integrable` (310) |
 | slice is entire (Leibniz / diff. under $\int$) | `OS/OS0_Analyticity.lean` | `gff_cf_slice_entire` (338) |
 | $Z[f] = \exp(-\tfrac12 C_{\mathbb C}(f,f))$ (A) | `OS/OS0_Analyticity.lean` | `gff_complex_CF_covariance` (506) |
 | bilinear expansion | `OS/OS0_Analyticity.lean` | `freeCovarianceℂ_bilinear_sum_expansion` (638) |

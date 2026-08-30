@@ -1,18 +1,22 @@
 # Architecture
 
-How the 54 on-graph files fit together (plus 2 off-graph `Legacy/` files — see below).
+How the 52 on-graph files fit together (plus the off-graph `OS/NonTrivial.lean` and 6
+off-graph `Legacy/` files — see below).
 For proof details see the paper (§4); for the dimension-generic design (the `GFFPropagator`
 typeclass and where the dimension enters each axiom) see `dimension_generic.md`.
 
 ## Dependency layers
 
 ```
-General ──→ Spacetime ──→ Covariance ──→ Schwinger ──→ Measure ──→ OS
-  (14)        (9)           (3)           (3)           (6)       (13)
+General ──→ Spacetime ──→ Covariance ──→ Measure ──→ OS
+  (13)        (9)  │        (3)     ↑      (6)      (12)
+                   └────→ Schwinger ┘
+                            (3)
                                ↑
-                          Instances (5): the per-dimension closed forms
-                          (d = 2, 3, 4, 5), consumed by the per-dimension
-                          headline theorems and OS/NonTrivial's UV statement
+                          Instances (4): the per-dimension closed forms
+                          (d = 2, 3, 4, 5) on top of Covariance/Propagator,
+                          consumed by the per-dimension headline theorems
+                          and OS/NonTrivial's UV statement
 ```
 
 All proof files are parameterized by the spacetime dimension `d` and consume the
@@ -21,17 +25,24 @@ covariance only through the `GFFPropagator d m` typeclass
 identified with the generic proper-time integral; the modified Bessel function of arbitrary
 order and the master Schwinger identity live in `General/BesselK.lean`.
 
-The `Legacy/` directory (off the root import graph, not built by `lake build`) preserves the
-original four-dimensional Bessel/momentum development — the regulated-covariance program and the
-K₁ analytic lemmas — that the dimension-generic machinery superseded. Each Legacy file carries a
-supersession map and is verified in isolation with `lake env lean`.
+The `Legacy/` directory (off the root import graph, not built by `lake build`) preserves
+superseded proven mathematics: the original four-dimensional Bessel/momentum development
+(`Dim4Bessel`, `BesselK1Analytics` — the regulated-covariance program and the K₁ analytic
+lemmas) and the four `Unused*.lean` files holding declarations retired by the library-wide
+dead-code sweeps. Each Legacy file carries a supersession map and is verified in isolation
+with `lake env lean`. `OS/NonTrivial.lean` (the non-degeneracy results) is also off the
+import graph, but is live mathematics: `scripts/check-guardrails.sh` compiles it.
 
-Imports flow left to right with one cross-cutting edge:
+Imports flow left to right with three cross-cutting edges:
 
 - `Measure/IsGaussian` imports `OS/OS0_Analyticity` to use the proved
   analyticity for the identity-theorem argument S₂ = C.
+- `Schwinger/GaussianMoments` imports `Measure/Construct`: the moment bounds are
+  stated for the constructed free-field measure.
+- `Measure/GaussianFreeField` imports `OS/Axioms`: the OS2 statement it proves
+  lives in the axioms module.
 
-This is not circular: OS0 depends on `Measure/Construct` (the measure must
+None is circular: OS0 depends on `Measure/Construct` (the measure must
 exist before we can prove analyticity), and `IsGaussian` feeds back into
 the later OS proofs (OS1–OS4 need S₂ = C).
 
@@ -46,15 +57,15 @@ the build, so any regression fails `lake build`.
 ## OS3: the longest proof chain
 
 OS3 (reflection positivity) is the most technically involved axiom, spanning
-4 files and ~7100 lines. The logical chain:
+4 files and ~6600 lines. The logical chain:
 
-1. **MixedRepInfra** (~3800 lines): Schwinger parametrization makes all
+1. **MixedRepInfra** (~3600 lines): Schwinger parametrization makes all
    integrals absolutely convergent (the naive momentum-space approach fails
    because 1/√(k²+m²) is not L¹ in the spatial momentum space). Proves ~36
    Fubini exchange and integrability lemmas, with the dominating function built
    from order-`d` boundary vanishing (see `dimension_generic.md`).
 
-2. **MixedRep** (~1900 lines): Chains the exchanges to reach the mixed
+2. **MixedRep** (~1500 lines): Chains the exchanges to reach the mixed
    representation ⟨Θf, Cf⟩ = ∫ (1/ω)|F_ω(k̄)|² dk̄, going through
    heat kernel → Fourier → Gaussian k₀ integral → Laplace transform.
 
@@ -65,13 +76,13 @@ OS3 (reflection positivity) is the most technically involved axiom, spanning
    perfect square.  Bridges to real test functions via
    `star (toComplex f) = compTimeReflection (toComplex f)`.
 
-4. **ReflectionPositivity** (~1020 lines): Two independent proofs.
+4. **ReflectionPositivity** (~1000 lines): Two independent proofs.
 
-   **Real version** (lines 52–530): Schur–Hadamard lift for real coefficients:
+   **Real version**: Schur–Hadamard lift for real coefficients:
    R_ij = ⟨Θfᵢ, Cfⱼ⟩ is PSD → exp(R) is PSD (Hadamard series) →
    ∑ cᵢcⱼ Z[fᵢ−Θfⱼ] ≥ 0.
 
-   **Complex version** (lines 532–1023): Full Osterwalder–Schrader formulation
+   **Complex version**: Full Osterwalder–Schrader formulation
    with complex test functions and complex coefficients.  The matrix entry
    factorizes as Z_ℂ[fᵢ − star fⱼ] = Aᵢ · conj(Aⱼ) · exp(Rᵢⱼ) where
    Rᵢⱼ = C(fᵢ, star fⱼ) is Hermitian PSD.  Key ingredients:

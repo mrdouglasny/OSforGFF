@@ -34,8 +34,9 @@ Lean formalization of one uniform Taylor-type estimate plus mechanical rethreadi
 The reflection-positive bilinear form is written in a mixed representation over proper time
 `s ∈ (0, ∞)` and spatial momentum `k ∈ ℝ^{d−1}`; justifying the integration-order exchange
 (`OS3_MixedRepInfra.fubini_s_ksp_swap`, whose domination is `integrable_dominate_G`) requires an
-`s`-integrable dominator near `s = 0`. The `OS3_MixedRepInfra` module header flags this as *the only
-place* `Fact (d ≤ 5)` is used.
+`s`-integrable dominator near `s = 0`. The `OS3_MixedRepInfra` module header flagged this, at the
+time, as *the only place* `Fact (d ≤ 5)` was used (the hypothesis is gone from the library — see
+"Implementation notes" below).
 
 Positive-time test functions satisfy `tsupport f ⊆ {x | getTimeComponent x > 0}`, hence vanish on
 the closed complement `{x₀ ≤ 0}` (in code: the "`getTimeComponent x ≤ 0 → f x = 0`" lemmas in
@@ -99,7 +100,8 @@ The ingredients live in mathlib, but the packaged estimate does not; the work is
    order-`N` dominator (`integrableOn_rpow_mul_exp_neg_mul_rpow` at exponent `s^{N+1−d/2}`).
 4. **[mechanical] Rethread.** Remove `[Fact (d ≤ 5)]` from `integrable_dominate_G`,
    `fubini_s_ksp_swap`, `OS3_MixedRep` (`heatKernel_bilinear_to_mixed_rep`,
-   `bessel_bilinear_eq_mixed_representation`, `bilinear_to_k0_inside`), `OS3_CovarianceRP`
+   `bessel_bilinear_eq_mixed_representation`, `bilinear_to_k0_inside` — the last has since
+   moved to `Legacy/UnusedOS.lean`), `OS3_CovarianceRP`
    (`mixed_representation`, `freeCovariance_reflection_positive_*`), `OS3_ReflectionPositivity`, and
    `OS/Master.lean` (`..._generic`, `..._of_dim`). Delete the per-instance `Fact (n ≤ 5)` instances
    and update `Guardrails.lean` accordingly.
@@ -150,4 +152,4 @@ follows for general `d` (order `ν = d/2 − 1`); but `_of_dim` needs none of it
   hyperplane factors through `x₀^N`; only the resulting inequality is used here.
 - The time-boundary moment is the Euler Beta function `B(N+1, N+1)`.
 - The OS3 mixed-representation / reflection-positivity argument: the `OS3_MixedRepInfra.lean` module
-  header and [`dimension_generic.md`](dimension_generic.md) ("OS3 and the bound `d ≤ 5`").
+  header and [`dimension_generic.md`](dimension_generic.md) ("OS3 and the order-`d` domination").

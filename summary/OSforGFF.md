@@ -7,16 +7,17 @@
 
 Root import aggregator for the `OSforGFF` library. It contains no declarations of its own;
 it simply `import`s every on-graph module of the library in dependency order, so that building
-this file (the package's `@[default_target]` `lean_lib`) builds the whole development. The two
-off-graph `Legacy/` modules (`Legacy/BesselK1Analytics`, `Legacy/Dim4Bessel`) are deliberately
-**not** imported here — they are the superseded 4D-era program and are verified in isolation with
-`lake env lean`.
+this file (the package's `@[default_target]` `lean_lib`) builds the whole development. The six
+off-graph `Legacy/` modules (`BesselK1Analytics`, `Dim4Bessel`, and the four `Unused*` files)
+are deliberately **not** imported here — they preserve superseded proven mathematics and are
+verified in isolation with `lake env lean`. `OS/NonTrivial.lean` is likewise off-graph but
+live (non-degeneracy results), compiled by `scripts/check-guardrails.sh`.
 
 ## Status
 
 **Main result**: N/A — import-only root module (no definitions or theorems).
 
-**Length**: 75 lines, 0 definition(s) + 0 theorem(s)/lemma(s).
+**Length**: 76 lines, 0 definition(s) + 0 theorem(s)/lemma(s).
 
 ---
 
@@ -24,7 +25,6 @@ off-graph `Legacy/` modules (`Legacy/BesselK1Analytics`, `Legacy/Dim4Bessel`) ar
 
 **General mathematics** — pure Mathlib extensions, no project imports:
 [`FunctionalAnalysis`](../OSforGFF/General/FunctionalAnalysis.lean),
-[`FrobeniusPositivity`](../OSforGFF/General/FrobeniusPositivity.lean),
 [`SchurProduct`](../OSforGFF/General/SchurProduct.lean),
 [`HadamardExp`](../OSforGFF/General/HadamardExp.lean),
 [`PositiveDefinite`](../OSforGFF/General/PositiveDefinite.lean),

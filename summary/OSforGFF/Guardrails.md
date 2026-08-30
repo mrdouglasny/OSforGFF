@@ -1,6 +1,6 @@
 # `Guardrails.lean` — Informal Summary
 
-> **Source**: [`OSforGFF/Guardrails.lean`](../OSforGFF/Guardrails.lean)
+> **Source**: [`OSforGFF/Guardrails.lean`](../../OSforGFF/Guardrails.lean)
 > **Generated**: 2026-07-05 (regenerated from current source)
 
 ## Overview
@@ -20,9 +20,9 @@ enforces two invariants for all six headline theorems at once:
 2. **Statement type.** Each `#check` guard freezes the elaborated type of a headline theorem,
    so a change to its statement (measure, hypotheses, or conclusion) breaks the guard.
 
-The single `import «OSforGFF».OS.Master` ([`OS/Master.lean`](../OSforGFF/OS/Master.lean)) brings
+The single `import «OSforGFF».OS.Master` ([`OS/Master.lean`](../../OSforGFF/OS/Master.lean)) brings
 all six headlines into scope: the concrete `d = 4` master theorem, the dimension-generic master
-theorem `_generic`, the all-dimensions corollary `_of_dim` (every `2 ≤ d ≤ 5`), and the concrete
+theorem `_generic`, the all-dimensions corollary `_of_dim` (every `d ≥ 2`), and the concrete
 `_dim3`, `_dim2`, `_dim5` instances. The opening comment records that the footprint being frozen
 is the *actual* footprint of the pristine baseline, cleaner than earlier docs anticipated: the
 previously-expected inherited axioms (`schwartz_nuclear`, `minlos_theorem`,
@@ -34,12 +34,12 @@ guard freezes reality and will fail if any of them ever creeps back onto the imp
 **Main result**: Build-enforced freeze of the axiom footprint and statement type of all six
 headline theorems; `lake build` fails on any drift.
 
-**Length**: 85 lines, 11 guard commands (6 `#print axioms` axiom-footprint guards + 5 `#check`
+**Length**: 85 lines, 12 guard commands (6 `#print axioms` axiom-footprint guards + 6 `#check`
 statement-type guards), 0 declarations, 0 sorries.
 
 ---
 
-### [Axiom-footprint guard — `d = 4` master theorem](../OSforGFF/Guardrails.lean#L32)
+### [Axiom-footprint guard — `d = 4` master theorem](../../OSforGFF/Guardrails.lean#L28)
 
 Freezes the reachable-axiom list of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4` (the
 concrete `d = 4` headline) to Lean's three core axioms:
@@ -52,16 +52,29 @@ Any additional axiom or a leaked `sorryAx` breaks the `#guard_msgs`.
 
 ---
 
-### [Axiom-footprint guard — dimension-generic master theorem](../OSforGFF/Guardrails.lean#L37)
+### [Axiom-footprint guard — dimension-generic master theorem](../../OSforGFF/Guardrails.lean#L33)
 
 Freezes the reachable-axiom list of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic`
 (the dimension-generic master theorem) to the same three core axioms
-`[propext, Classical.choice, Quot.sound]`. This is the only headline with an axiom-footprint
-guard but no separate `#check` type guard.
+`[propext, Classical.choice, Quot.sound]`.
 
 ---
 
-### [Goal-type guard — `d = 4` master theorem](../OSforGFF/Guardrails.lean#L42)
+### [Goal-type guard — dimension-generic master theorem](../../OSforGFF/Guardrails.lean#L39)
+
+Pins the elaborated statement type of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic`:
+
+```lean
+/-- info: @OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic : ∀ {d : ℕ} [inst : Fact (2 ≤ d)] (m : ℝ)
+  [inst_1 : Fact (0 < m)] [inst_2 : OSforGFF.GFFPropagator d m], SatisfiesAllOS (gaussianFreeField_free m) -/
+```
+
+The frozen statement is fully dimension-generic: only `Fact (2 ≤ d)` and a `GFFPropagator d m`
+instance are assumed.
+
+---
+
+### [Goal-type guard — `d = 4` master theorem](../../OSforGFF/Guardrails.lean#L44)
 
 Pins the elaborated statement type of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4`:
 
@@ -73,14 +86,14 @@ The frozen conclusion is `SatisfiesAllOS (μ_GFF 4 m)` — the unified `μ_GFF d
 
 ---
 
-### [Axiom-footprint guard — three-dimensional instance](../OSforGFF/Guardrails.lean#L47)
+### [Axiom-footprint guard — three-dimensional instance](../../OSforGFF/Guardrails.lean#L49)
 
 Freezes the reachable-axiom list of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim3` to
 `[propext, Classical.choice, Quot.sound]`.
 
 ---
 
-### [Goal-type guard — three-dimensional headline](../OSforGFF/Guardrails.lean#L52)
+### [Goal-type guard — three-dimensional headline](../../OSforGFF/Guardrails.lean#L54)
 
 Pins the statement type of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim3`:
 
@@ -92,14 +105,14 @@ Frozen conclusion: `SatisfiesAllOS (μ_GFF 3 m)`.
 
 ---
 
-### [Axiom-footprint guard — two-dimensional instance](../OSforGFF/Guardrails.lean#L57)
+### [Axiom-footprint guard — two-dimensional instance](../../OSforGFF/Guardrails.lean#L59)
 
 Freezes the reachable-axiom list of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim2` to
 `[propext, Classical.choice, Quot.sound]`.
 
 ---
 
-### [Goal-type guard — two-dimensional headline](../OSforGFF/Guardrails.lean#L62)
+### [Goal-type guard — two-dimensional headline](../../OSforGFF/Guardrails.lean#L64)
 
 Pins the statement type of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim2`:
 
@@ -111,14 +124,14 @@ Frozen conclusion: `SatisfiesAllOS (μ_GFF 2 m)`.
 
 ---
 
-### [Axiom-footprint guard — five-dimensional instance](../OSforGFF/Guardrails.lean#L67)
+### [Axiom-footprint guard — five-dimensional instance](../../OSforGFF/Guardrails.lean#L69)
 
 Freezes the reachable-axiom list of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim5` to
 `[propext, Classical.choice, Quot.sound]`.
 
 ---
 
-### [Goal-type guard — five-dimensional headline](../OSforGFF/Guardrails.lean#L72)
+### [Goal-type guard — five-dimensional headline](../../OSforGFF/Guardrails.lean#L74)
 
 Pins the statement type of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim5`:
 
@@ -130,28 +143,28 @@ Frozen conclusion: `SatisfiesAllOS (μ_GFF 5 m)`.
 
 ---
 
-### [Axiom-footprint guard — all-dimensions corollary](../OSforGFF/Guardrails.lean#L77)
+### [Axiom-footprint guard — all-dimensions corollary](../../OSforGFF/Guardrails.lean#L79)
 
 Freezes the reachable-axiom list of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_of_dim`
-(the corollary covering every `2 ≤ d ≤ 5`) to `[propext, Classical.choice, Quot.sound]`.
+(the corollary covering every `d ≥ 2`) to `[propext, Classical.choice, Quot.sound]`.
 
 ---
 
-### [Goal-type guard — all-dimensions corollary](../OSforGFF/Guardrails.lean#L82)
+### [Goal-type guard — all-dimensions corollary](../../OSforGFF/Guardrails.lean#L85)
 
 Pins the statement type of `OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_of_dim`, the only
 headline quantified over the dimension `d`:
 
 ```lean
 /-- info: OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_of_dim : ∀ (d : ℕ) [inst : Fact (2 ≤ d)] (m : ℝ)
-  [inst_1 : Fact (0 < m)] [Fact (d ≤ 5)], SatisfiesAllOS (gaussianFreeField_free m) -/
+  [inst_1 : Fact (0 < m)], SatisfiesAllOS (gaussianFreeField_free m) -/
 ```
 
 The frozen conclusion is stated with the underlying `gaussianFreeField_free m` (the `μ_GFF`
-simp-alias unfolded), under the dimension hypotheses `Fact (2 ≤ d)` and `Fact (d ≤ 5)`.
+simp-alias unfolded), under the sole dimension hypothesis `Fact (2 ≤ d)`.
 
 ---
 
-*This file has **0** definitions and **0** theorems/lemmas; it is **11** `#guard_msgs` guard
-blocks (6 `#print axioms` + 5 `#check`) enforcing the axiom footprint and statement type of the
+*This file has **0** definitions and **0** theorems/lemmas; it is **12** `#guard_msgs` guard
+blocks (6 `#print axioms` + 6 `#check`) enforcing the axiom footprint and statement type of the
 six headline theorems (0 with sorry).*

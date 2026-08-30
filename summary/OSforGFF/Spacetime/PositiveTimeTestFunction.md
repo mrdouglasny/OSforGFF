@@ -1,16 +1,16 @@
 # `PositiveTimeTestFunction.lean` — Informal Summary
 
-> **Source**: [`OSforGFF/Spacetime/PositiveTimeTestFunction.lean`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean)
+> **Source**: [`OSforGFF/Spacetime/PositiveTimeTestFunction.lean`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean)
 > **Generated**: 2026-07-05 (regenerated from current source)
 
 ## Overview
 
 This file (generic in `d : ℕ` with `[Fact (2 ≤ d)]`) defines test functions supported in the
 positive-time region and the star operation on complex test functions. It introduces the predicate
-`HasPositiveTime` (positive time component), the open set `positiveTimeSet`, and the real and
-complex submodules of Schwartz functions whose (topological) support lies in that region
-(`PositiveTimeTestFunction d` / `PositiveTimeTestFunctionℂ d`), together with their additive group
-structure and the fact that such functions vanish where the time component is $\le 0$. It then
+`HasPositiveTime` (positive time component), the positive-time region `positiveTimeSet`, and the
+real and complex submodules of Schwartz functions whose (topological) support lies in that region
+(`PositiveTimeTestFunction d` / `PositiveTimeTestFunctionℂ d`), together with the fact that such
+functions vanish where the time component is $\le 0$. It then
 defines the star operation `starTestFunction` — time reflection (`compTimeReflection`, from
 `DiscreteSymmetry`) followed by pointwise complex conjugation — and registers it as a `Star`
 instance on `SchwartzTestFunctionℂ d`, using a helper lemma that conjugation preserves iterated-derivative
@@ -22,11 +22,11 @@ norms. These are the building blocks for the OS3 (reflection positivity) axiom.
 operation (time reflection composed with conjugation) on complex test functions. Fully proven
 (0 sorries; no `sorry`/`admit`).
 
-**Length**: 181 lines, 12 definition(s) + 5 theorem(s)/lemma(s)
+**Length**: 170 lines, 8 definition(s) + 4 theorem(s)/lemma(s)
 
 ---
 
-### [`HasPositiveTime`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L44) — Definition
+### [`HasPositiveTime`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L44) — Definition
 
 **Lean signature**
 ```lean
@@ -37,7 +37,7 @@ def HasPositiveTime (x : (SpaceTime d)) : Prop := getTimeComponent x > 0
 
 ---
 
-### [`positiveTimeSet`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L47) — Definition
+### [`positiveTimeSet`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L47) — Definition
 
 **Lean signature**
 ```lean
@@ -48,16 +48,7 @@ def positiveTimeSet : Set (SpaceTime d) := {x | HasPositiveTime x}
 
 ---
 
-### [`is_open_positiveTimeSet`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L50) — Lemma
-
-**Statement**: The positive-time set is open (as the preimage of $(0, \infty)$ under the
-continuous time-coordinate projection).
-
-**Proof uses**: `isOpen_lt`, `PiLp.continuous_apply`
-
----
-
-### [`PositiveTimeTestFunctions.submodule`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L55) — Definition
+### [`PositiveTimeTestFunctions.submodule`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L50) — Definition
 
 **Lean signature**
 ```lean
@@ -70,7 +61,7 @@ behaves subadditively.
 
 ---
 
-### [`PositiveTimeTestFunction`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L70) — Definition *(abbrev)*
+### [`PositiveTimeTestFunction`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L65) — Definition *(abbrev)*
 
 **Lean signature**
 ```lean
@@ -82,29 +73,7 @@ abbrev PositiveTimeTestFunction (d : ℕ) [Fact (2 ≤ d)] : Type :=
 
 ---
 
-### [`instance : AddCommMonoid (PositiveTimeTestFunction d)`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L73) — Definition *(instance)*
-
-**Lean signature**
-```lean
-instance : AddCommMonoid (PositiveTimeTestFunction d)
-```
-
-**Informal**: Additive commutative monoid structure, inherited from the submodule.
-
----
-
-### [`instance : AddCommGroup (PositiveTimeTestFunction d)`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L74) — Definition *(instance)*
-
-**Lean signature**
-```lean
-instance : AddCommGroup (PositiveTimeTestFunction d)
-```
-
-**Informal**: Additive commutative group structure, inherited from the submodule.
-
----
-
-### [`PositiveTimeTestFunction.sum_smul_mem`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L77) — Lemma
+### [`PositiveTimeTestFunction.sum_smul_mem`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L69) — Lemma
 
 **Statement**: Finite linear combinations of positive-time test functions stay in the submodule:
 for $f : \mathrm{Fin}\, n \to$ positive-time functions and coefficients $c$, there is a $g$ with
@@ -112,7 +81,7 @@ $g = \sum_i c_i\, f_i$ (as underlying test functions).
 
 ---
 
-### [`PositiveTimeTestFunctionsℂ.submodule`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L87) — Definition
+### [`PositiveTimeTestFunctionsℂ.submodule`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L79) — Definition
 
 **Lean signature**
 ```lean
@@ -125,7 +94,7 @@ support.
 
 ---
 
-### [`PositiveTimeTestFunctionℂ`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L102) — Definition *(abbrev)*
+### [`PositiveTimeTestFunctionℂ`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L94) — Definition *(abbrev)*
 
 **Lean signature**
 ```lean
@@ -137,29 +106,7 @@ abbrev PositiveTimeTestFunctionℂ (d : ℕ) [Fact (2 ≤ d)] : Type :=
 
 ---
 
-### [`instance : AddCommMonoid (PositiveTimeTestFunctionℂ d)`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L105) — Definition *(instance)*
-
-**Lean signature**
-```lean
-instance : AddCommMonoid (PositiveTimeTestFunctionℂ d)
-```
-
-**Informal**: Additive commutative monoid structure, inherited from the complex submodule.
-
----
-
-### [`instance : AddCommGroup (PositiveTimeTestFunctionℂ d)`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L106) — Definition *(instance)*
-
-**Lean signature**
-```lean
-instance : AddCommGroup (PositiveTimeTestFunctionℂ d)
-```
-
-**Informal**: Additive commutative group structure, inherited from the complex submodule.
-
----
-
-### [`PositiveTimeTestFunctionℂ.zero_on_nonpositive`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L108) — Lemma
+### [`PositiveTimeTestFunctionℂ.zero_on_nonpositive`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L97) — Lemma
 
 **Statement**: A complex positive-time test function vanishes off its support: if
 $\mathrm{getTimeComponent}\, x \le 0$ then $f(x) = 0$.
@@ -168,7 +115,7 @@ $\mathrm{getTimeComponent}\, x \le 0$ then $f(x) = 0$.
 
 ---
 
-### [`starRingEnd_iteratedFDeriv_norm_eq`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L123) — Lemma
+### [`starRingEnd_iteratedFDeriv_norm_eq`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L112) — Lemma
 
 **Statement**: Complex conjugation commutes through iterated derivatives and preserves their norms
 (the hypothesis `[Fact (2 ≤ d)]` is `omit`ted here):
@@ -178,7 +125,7 @@ $$\lVert D^n\bigl(x \mapsto \overline{g(x)}\bigr)(x)\rVert = \lVert D^n g(x)\rVe
 
 ---
 
-### [`starTestFunction`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L136) — Definition
+### [`starTestFunction`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L125) — Definition
 
 **Lean signature**
 ```lean
@@ -186,13 +133,13 @@ noncomputable def starTestFunction (f : (SchwartzTestFunctionℂ d)) : (Schwartz
 ```
 
 **Informal**: The star operation on complex test functions: apply time reflection
-([`compTimeReflection`](../../OSforGFF/Spacetime/DiscreteSymmetry.lean#L177)) and then pointwise
+([`compTimeReflection`](../../../OSforGFF/Spacetime/DiscreteSymmetry.lean#L165)) and then pointwise
 complex conjugation, $x \mapsto \overline{(\theta f)(x)}$. Smoothness and Schwartz decay are
 preserved because conjugation is a linear isometry.
 
 ---
 
-### [`instance : Star (SchwartzTestFunctionℂ d)`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L165) — Definition *(instance)*
+### [`instance : Star (SchwartzTestFunctionℂ d)`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L154) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -204,7 +151,7 @@ noncomputable instance : Star (SchwartzTestFunctionℂ d) where
 
 ---
 
-### [`PositiveTimeTestFunction.zero_on_nonpositive`](../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L168) — Lemma
+### [`PositiveTimeTestFunction.zero_on_nonpositive`](../../../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L157) — Lemma
 
 **Statement**: A real positive-time test function vanishes off its support: if
 $\mathrm{getTimeComponent}\, x \le 0$ then $f(x) = 0$.
@@ -213,4 +160,4 @@ $\mathrm{getTimeComponent}\, x \le 0$ then $f(x) = 0$.
 
 ---
 
-*This file has **12** definitions and **5** theorems/lemmas (0 with sorry).*
+*This file has **8** definitions and **4** theorems/lemmas (0 with sorry).*

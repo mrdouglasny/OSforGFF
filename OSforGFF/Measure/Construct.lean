@@ -56,6 +56,9 @@ then using Mathlib's `memLp_id_gaussianReal`.
 
 - `isGaussianGJ`: characteristic functional Z[J] = exp(−½⟨J,CJ⟩)
 - `constructGaussianMeasureMinlos_free`: the GFF measure for mass m > 0
+- `gaussianFreeField_free`: the free GFF as a `ProbabilityMeasure` — the measure the
+  headline theorems are about
+- `μ_GFF d m`: notation-level abbreviation for `gaussianFreeField_free` at dimension `d`
 -/
 
 open MeasureTheory Complex QFT ProbabilityTheory OSforGFF

@@ -122,7 +122,7 @@ quantum norm (final section).
 
 ## The shape of the whole argument
 
-The four files form a **strict linear pipeline**, each importing only the one below it and
+The four files form a **linear pipeline** (each building on the layers below it) and
 handing one theorem up. You can read the ideas top to bottom without ever opening the Lean;
 the anchors are here for when you do.
 
@@ -131,7 +131,7 @@ the anchors are here for when you do.
           │                              (heat kernel, Schwinger rep, Fubini swaps)
           │   integrable_dominate_G · fubini_s_ksp_swap
           ▼
-  OS3_MixedRep            (1664 lines)   the MIXED REPRESENTATION of ⟨θf, C f⟩
+  OS3_MixedRep            (1488 lines)   the MIXED REPRESENTATION of ⟨θf, C f⟩
           │                              (spatial Fourier transform, time kept)
           │   bessel_bilinear_eq_mixed_representation
           ▼
@@ -236,7 +236,7 @@ $\int e^{-i k_0 t}\, e^{-s k_0^2}\, dk_0 = \sqrt{\pi/s}\; e^{-t^2/4s}$, and the 
 Laplace integral** then collapses to
 $\int_0^\infty \sqrt{\pi/s}\; e^{-t^2/4s}\, e^{-s\omega^2}\, ds = \tfrac{\pi}{\omega}\, e^{-\omega\lvert t\rvert}$.
 The clean end result
-([`bessel_bilinear_eq_mixed_representation`](../../OSforGFF/OS/OS3_MixedRep.lean#L1643)) is
+([`bessel_bilinear_eq_mixed_representation`](../../OSforGFF/OS/OS3_MixedRep.lean#L1467)) is
 
 $$\langle \theta f, C f\rangle = \frac{1}{2(2\pi)^{d-1}} \int_{\bar k} \iint
 \overline{f(x)}\, f(y)\; \frac{1}{\omega}\, e^{-\omega\lvert x_0 + y_0\rvert}\;
@@ -565,7 +565,7 @@ Optional — for when you open the Lean. Every visible `:NNN` label matches its 
 | Heat-kernel / Schwinger rep of the propagator | [OS/OS3_MixedRepInfra.lean:186](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L186) | `heatKernel_eq_gaussianFT` |
 | Fubini domination (order-$d$ dominator) | [OS/OS3_MixedRepInfra.lean:858](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L858) | `integrable_dominate_G` |
 | Proper-time / spatial-momentum swap | [OS/OS3_MixedRepInfra.lean:2650](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2650) | `fubini_s_ksp_swap` |
-| Mixed representation (MR) | [OS/OS3_MixedRep.lean:1643](../../OSforGFF/OS/OS3_MixedRep.lean#L1643) | `bessel_bilinear_eq_mixed_representation` |
+| Mixed representation (MR) | [OS/OS3_MixedRep.lean:1467](../../OSforGFF/OS/OS3_MixedRep.lean#L1467) | `bessel_bilinear_eq_mixed_representation` |
 | Covariance reflection positivity (complex) | [OS/OS3_CovarianceRP.lean:412](../../OSforGFF/OS/OS3_CovarianceRP.lean#L412) | `freeCovariance_reflection_positive_bilinear` |
 | Covariance reflection positivity (real) | [OS/OS3_CovarianceRP.lean:463](../../OSforGFF/OS/OS3_CovarianceRP.lean#L463) | `freeCovariance_reflection_positive_real` |
 | Reflected covariance matrix is PSD | [OS/OS3_ReflectionPositivity.lean:93](../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L93) | `freeCovarianceFormR_reflection_matrix_posSemidef` |

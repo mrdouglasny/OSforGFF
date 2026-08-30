@@ -14,7 +14,7 @@ pinned.
 
 **Main result**: N/A — build configuration (no definitions or theorems).
 
-**Length**: 25 lines, 0 definition(s) + 0 theorem(s)/lemma(s).
+**Length**: 22 lines, 0 definition(s) + 0 theorem(s)/lemma(s).
 
 ---
 
@@ -41,13 +41,6 @@ Three dependencies fetched from git (never edited by this project):
 
 The library itself, marked `@[default_target]`. Its root module is
 [`OSforGFF.lean`](../OSforGFF.lean).
-
----
-
-### [`lean_lib «DependencyExtractor»`](../lakefile.lean#L24) — Metaprogram library
-
-A separate library for the dependency-extraction metaprogram (used to generate the import graph
-/ per-declaration dependency data).
 
 ---
 

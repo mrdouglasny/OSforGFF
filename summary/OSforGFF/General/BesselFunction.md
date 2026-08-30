@@ -1,6 +1,6 @@
 # `BesselFunction.lean` — Informal Summary
 
-> **Source**: [`OSforGFF/General/BesselFunction.lean`](../../OSforGFF/General/BesselFunction.lean)
+> **Source**: [`OSforGFF/General/BesselFunction.lean`](../../../OSforGFF/General/BesselFunction.lean)
 > **Generated**: 2026-07-05 (regenerated from current source)
 
 ## Overview
@@ -21,11 +21,11 @@ file itself contains only the definition.
 
 **Main result**: Defines `besselK1` (0 sorries).
 
-**Length**: 28 lines, 1 definition + 0 theorem(s)/lemma(s)
+**Length**: 29 lines, 1 definition + 0 theorem(s)/lemma(s)
 
 ---
 
-### [`besselK1`](../../OSforGFF/General/BesselFunction.lean#L27) — Definition
+### [`besselK1`](../../../OSforGFF/General/BesselFunction.lean#L28) — Definition
 
 **Lean signature**
 ```lean

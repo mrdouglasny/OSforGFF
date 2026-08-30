@@ -232,7 +232,7 @@ generous rate $\alpha = 6$ (`OS4''_Clustering`,
 [`OS/OS4_Ergodicity.lean:96`](../../OSforGFF/OS/OS4_Ergodicity.lean#L96)), packaged
 as the master implication
 `OS4_PolynomialClustering_implies_OS4_Ergodicity`
-([`OS/OS4_Ergodicity.lean:1304`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1304)) that
+([`OS/OS4_Ergodicity.lean:1301`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1301)) that
 the assembly feeds into `os4_ergodicity`. Four steps:
 
 **Step 1 — variance is a double integral of covariances.** Expand the squared norm
@@ -288,9 +288,9 @@ reduction.")
 A general observable is a finite combination $A = \sum_j z_j A^{(j)}$. Its
 time-average error is the sum of the per-term errors, and Cauchy–Schwarz in the
 finite index $j$ bounds the $L^2$ norm of the sum by the per-term norms, each
-$\to 0$ by Step 4 ([`OS/OS4_Ergodicity.lean:1080`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1080),
+$\to 0$ by Step 4 ([`OS/OS4_Ergodicity.lean:1077`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1077),
 using the elementary
-[`OS/OS4_Ergodicity.lean:1064`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1064)). Hence
+[`OS/OS4_Ergodicity.lean:1061`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1061)). Hence
 (ERG) holds for every finite combination — the full `OS4_Ergodicity`.
 
 > **One line:** variance $=$ double integral of covariances; clustering makes the
@@ -413,9 +413,9 @@ $d$.
 | Clustering ⇒ covariance decay (COV) | [`clustering_implies_covariance_decay`](../../OSforGFF/OS/OS4_Ergodicity.lean#L727) — `OS/OS4_Ergodicity.lean:727` |
 | Double integral $O(T)$ (DI) | [`double_integral_decay_bound`](../../OSforGFF/OS/OS4_Ergodicity.lean#L366) — `OS/OS4_Ergodicity.lean:366` |
 | Variance $\to 0$ | [`variance_decay_from_clustering`](../../OSforGFF/OS/OS4_Ergodicity.lean#L895) — `OS/OS4_Ergodicity.lean:895` |
-| Cauchy–Schwarz in $j$ | [`norm_sq_weighted_sum_le`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1064) — `OS/OS4_Ergodicity.lean:1064` |
-| Generators ⇒ all observables | [`OS4'_implies_OS4`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1080) — `OS/OS4_Ergodicity.lean:1080` |
-| Clustering ⇒ ergodicity (master) | [`OS4_PolynomialClustering_implies_OS4_Ergodicity`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1304) — `OS/OS4_Ergodicity.lean:1304` |
+| Cauchy–Schwarz in $j$ | [`norm_sq_weighted_sum_le`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1061) — `OS/OS4_Ergodicity.lean:1061` |
+| Generators ⇒ all observables | [`OS4'_implies_OS4`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1077) — `OS/OS4_Ergodicity.lean:1077` |
+| Clustering ⇒ ergodicity (master) | [`OS4_PolynomialClustering_implies_OS4_Ergodicity`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1301) — `OS/OS4_Ergodicity.lean:1301` |
 | Mass-gap kernel decay (GAP) | [`freeCovarianceKernel_exp_decay`](../../OSforGFF/Covariance/ParsevalGeneric.lean#L1058) — `Covariance/ParsevalGeneric.lean:1058` |
 
 The master assembly ([`OS/Master.lean:61`](../../OSforGFF/OS/Master.lean#L61),

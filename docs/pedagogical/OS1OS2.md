@@ -118,7 +118,7 @@ def OS1_Regularity (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Pr
 ```
 
 For the GFF the witnesses are the cleanest possible, $p = 2$ and $c = 1/(2m^2)$
-(`gaussianFreeField_satisfies_OS1_revised`), giving the sharp bound
+(`gaussianFreeField_satisfies_OS1`), giving the sharp bound
 
 $$\big\lvert Z[f]\big\rvert \;\le\; \exp\!\Big(\tfrac{1}{2m^2}\,\lVert f\rVert_{L^2}^2\Big),$$
 
@@ -222,7 +222,7 @@ $c = 1/(2m^2)$. Both proofs are identical across $d \ge 2$.
 | OS1 axiom (statement) | `OS/Axioms.lean` | [`OS1_Regularity`](../../OSforGFF/OS/Axioms.lean#L86) (86) |
 | two-point integrability (side condition) | `OS/Axioms.lean` | [`TwoPointIntegrable`](../../OSforGFF/OS/Axioms.lean#L82) (82) |
 | OS2 axiom (statement) | `OS/Axioms.lean` | [`OS2_EuclideanInvariance`](../../OSforGFF/OS/Axioms.lean#L94) (94) |
-| **OS1 for the GFF (main)** | `OS/OS1_Regularity.lean` | [`gaussianFreeField_satisfies_OS1_revised`](../../OSforGFF/OS/OS1_Regularity.lean#L407) (407) |
+| **OS1 for the GFF (main)** | `OS/OS1_Regularity.lean` | [`gaussianFreeField_satisfies_OS1`](../../OSforGFF/OS/OS1_Regularity.lean#L404) (404) |
 | modulus $\lvert Z\rvert = \exp(-\tfrac12\mathrm{Re}\langle f, C f\rangle)$ | `OS/OS1_Regularity.lean` | [`gff_generating_norm_eq`](../../OSforGFF/OS/OS1_Regularity.lean#L150) (150) |
 | drop the positive real part | `OS/OS1_Regularity.lean` | [`gff_generating_bound_by_imaginary`](../../OSforGFF/OS/OS1_Regularity.lean#L160) (160) |
 | imaginary form $\le \tfrac{1}{m^2}\lVert f\rVert_{L^2}^2$ | `OS/OS1_Regularity.lean` | [`covariance_imaginary_L2_bound`](../../OSforGFF/OS/OS1_Regularity.lean#L236) (236) |
@@ -235,7 +235,7 @@ $c = 1/(2m^2)$. Both proofs are identical across $d \ge 2$.
 | bilinear-form invariance | `OS/OS2_Invariance.lean` | [`freeCovarianceℂ_bilinear_euclidean_invariant`](../../OSforGFF/OS/OS2_Invariance.lean#L112) (112) |
 | kernel invariance $C(gx, gy) = C(x, y)$ | `Covariance/ParsevalGeneric.lean` | [`freeCovariance_euclidean_invariant`](../../OSforGFF/Covariance/ParsevalGeneric.lean#L654) (654) |
 | Lebesgue-preserving Euclidean action | `Spacetime/Euclidean.lean` | [`measurePreserving_act`](../../OSforGFF/Spacetime/Euclidean.lean#L241) (241) |
-| Gaussian + invariant covariance ⇒ OS2 (general) | `Measure/GaussianFreeField.lean` | [`gaussian_satisfies_OS2`](../../OSforGFF/Measure/GaussianFreeField.lean#L69) (69) |
+| Gaussian + invariant covariance ⇒ OS2 (general) | `Measure/GaussianFreeField.lean` | [`gaussian_satisfies_OS2`](../../OSforGFF/Measure/GaussianFreeField.lean#L62) (62) |
 | GFF is Gaussian (feeds the wrapper) | `Measure/IsGaussian.lean` | [`isGaussianGJ_gaussianFreeField_free`](../../OSforGFF/Measure/IsGaussian.lean#L534) (534) |
 | master theorem (bundles all six) | `OS/Master.lean` | [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L61) (61) |
 
