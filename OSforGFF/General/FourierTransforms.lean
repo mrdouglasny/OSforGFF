@@ -32,7 +32,7 @@ particularly for proving reflection positivity of the free covariance.
 
 The key identity for reflection positivity is:
 
-  C(x - y) = ∫ d⁴k / (2π)⁴ · e^{ik·(x-y)} / (k² + m²)
+  C(x - y) = ∫ dᵈk / (2π)ᵈ · e^{ik·(x-y)} / (k² + m²)
 
 For the time direction k₀, we need:
 
@@ -57,34 +57,6 @@ open MeasureTheory Complex Real
 open scoped BigOperators FourierTransform
 
 noncomputable section
-
-/-! ## Dependencies
-
-No axioms declared in this file. -/
-
-
-variable {α : Type*} [MeasureSpace α] [SigmaFinite (volume : Measure α)]
-
-/-- The permutation map (x, (y, k)) ↦ (k, (x, y)) as a measurable equivalence.
-    Constructed by composing prodAssoc.symm (reassociating) with prodComm (swapping). -/
-private def tripleReorder : α × (α × α) ≃ᵐ α × (α × α) :=
-  MeasurableEquiv.prodAssoc.symm.trans MeasurableEquiv.prodComm
-
-/-- The tripleReorder map is measure-preserving on product Lebesgue measures. -/
-private lemma measurePreserving_tripleReorder :
-    MeasurePreserving (tripleReorder (α := α))
-      ((volume : Measure α).prod (volume.prod volume))
-      ((volume : Measure α).prod (volume.prod volume)) := by
-  unfold tripleReorder
-  have h1 : MeasurePreserving (MeasurableEquiv.prodAssoc (α := α) (β := α) (γ := α)).symm
-      ((volume : Measure α).prod (volume.prod volume))
-      ((volume.prod volume).prod volume) :=
-    (measurePreserving_prodAssoc volume volume volume).symm MeasurableEquiv.prodAssoc
-  have h2 : MeasurePreserving (MeasurableEquiv.prodComm (α := α × α) (β := α))
-      (((volume : Measure α).prod volume).prod volume)
-      ((volume : Measure α).prod (volume.prod volume)) :=
-    MeasureTheory.Measure.measurePreserving_swap
-  exact h2.comp h1
 
 /-- The exponential decay function is integrable when μ > 0.
     Proof: Split ℝ into (-∞, 0] ∪ (0, ∞) and use:
@@ -658,9 +630,9 @@ theorem fourier_lorentzian_1d_neg (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
 
 /-! ## Application to Free Field Propagator
 
-The free field propagator in d=4 Euclidean dimensions is:
+The free field propagator in d Euclidean dimensions is:
 
-  C(x) = ∫ d⁴k/(2π)⁴ · e^{ik·x} / (k² + m²)
+  C(x) = ∫ dᵈk/(2π)ᵈ · e^{ik·x} / (k² + m²)
 
 We can split this into time and spatial parts. After integrating over the
 time component k₀, we get an exponential factor e^{-μ|x₀|} where
@@ -691,20 +663,9 @@ The main result `fourier_lorentzian_1d` is derived via Fourier inversion:
 2. `integrableOn_exp_decay_Ioi`, `integrableOn_exp_growth_Iic`: Integrability
 3. `fourier_exp_decay_positive_halfline`, `fourier_exp_decay_negative_halfline`: Half-line integrals
 4. `fourier_exponential_decay_split`: Sum to get 2μ/(k² + μ²)
-6. `fourier_inversion_exp_decay`: Inversion gives e^{-μ|x|}
-7. `fourier_lorentzian_1d`: Main result
-
-### Bridge to OS3
-
-The lemma `contour_integral_propagator` in OS3 has a negative phase convention.
-To prove it, use `fourier_lorentzian_1d` with substitution k ↦ -k:
-
-```lean
-theorem fourier_lorentzian_1d_neg (μ : ℝ) (hμ : 0 < μ) (x : ℝ) :
-    ∫ k : ℝ, Complex.exp (-Complex.I * k * x) / (k^2 + μ^2) = (π / μ) * Real.exp (-μ * |x|)
-```
-
-Then coerce to complex exponential and instantiate with μ = omega m k.
+5. `fourier_inversion_exp_decay`: Inversion gives e^{-μ|x|}
+6. `fourier_lorentzian_1d`: Main result; `fourier_lorentzian_1d_neg` is its negative
+   phase-convention variant (substitution k ↦ -k), the form the OS3 layer consumes.
 -/
 /-! ## Integrability Lemmas -/
 

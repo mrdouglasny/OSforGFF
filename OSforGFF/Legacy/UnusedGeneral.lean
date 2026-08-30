@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
 import OSforGFF.General.FourierTransforms
+import OSforGFF.Spacetime.Basic
 import OSforGFF.General.FunctionalAnalysis
 import OSforGFF.General.HadamardExp
 import OSforGFF.General.L2TimeIntegral
@@ -43,6 +44,10 @@ representation instead):
   `fourier_exponential_decay'`.
 - `exp_factorization_reflection` — pointwise exponential factorization; the factorization
   enters the library through the mixed representation (`OS/OS3_MixedRepInfra.lean`) instead.
+- `tripleReorder`, `measurePreserving_tripleReorder` (both formerly `private`; moved
+  2026-08-30) — a measure-preserving reordering `(x,(y,k)) ↦ (k,(x,y))` of a triple
+  product; the Fubini swaps on the graph use `fubini_s_ksp_swap`/`fubini_ksp_xy_swap`
+  (`OS/OS3_MixedRepInfra.lean`) instead.
 
 From `General/FunctionalAnalysis.lean`:
 - `schwartzToL2'` — type-representation variant of the used `schwartzToL2`.
@@ -54,6 +59,15 @@ From `General/FunctionalAnalysis.lean`:
   `section SchwartzBounded`) — Fourier-type integrability helpers; the generic library uses
   mathlib's Schwartz integrability API directly.
 - `norm_exp_I_mul_real` — the `neg` twin is live; this sign is not.
+- `Complex.ofRealCLM_continuous_compLp`, `composed_function`, `embedding_real_to_complex`,
+  `liftMeasure_real_to_complex` (moved 2026-08-30) — the real→complex Lp measure-lifting
+  chain; the construction works on `WeakDual` field configurations via Minlos, never
+  through an Lp lift.
+
+From `Covariance/RealForm.lean`:
+- `QFT.momentumWeightMeasure` (moved 2026-08-30) — the weighted momentum-space measure
+  with density `(‖k‖² + m²)⁻¹`; the covariance embedding works with explicit weighted
+  integrands rather than a weighted measure.
 
 From `General/HadamardExp.lean`:
 - `entrywiseExpSeriesTerm` — packaged series term; the entrywise-exponential development uses
@@ -769,3 +783,99 @@ end
 end OSforGFF
 
 end L2TimeIntegral
+
+/-! ### From `General/FourierTransforms.lean` (moved 2026-08-30) -/
+
+section FourierTransformsTripleReorder
+
+open MeasureTheory MeasureTheory.Measure
+
+variable {α : Type*} [MeasureSpace α] [SigmaFinite (volume : Measure α)]
+
+/-- The permutation map (x, (y, k)) ↦ (k, (x, y)) as a measurable equivalence.
+    Constructed by composing prodAssoc.symm (reassociating) with prodComm (swapping). -/
+noncomputable def tripleReorder : α × (α × α) ≃ᵐ α × (α × α) :=
+  MeasurableEquiv.prodAssoc.symm.trans MeasurableEquiv.prodComm
+
+/-- The tripleReorder map is measure-preserving on product Lebesgue measures. -/
+lemma measurePreserving_tripleReorder :
+    MeasurePreserving (tripleReorder (α := α))
+      ((volume : Measure α).prod (volume.prod volume))
+      ((volume : Measure α).prod (volume.prod volume)) := by
+  unfold tripleReorder
+  have h1 : MeasurePreserving (MeasurableEquiv.prodAssoc (α := α) (β := α) (γ := α)).symm
+      ((volume : Measure α).prod (volume.prod volume))
+      ((volume.prod volume).prod volume) :=
+    (measurePreserving_prodAssoc volume volume volume).symm MeasurableEquiv.prodAssoc
+  have h2 : MeasurePreserving (MeasurableEquiv.prodComm (α := α × α) (β := α))
+      (((volume : Measure α).prod volume).prod volume)
+      ((volume : Measure α).prod (volume.prod volume)) :=
+    MeasureTheory.Measure.measurePreserving_swap
+  exact h2.comp h1
+
+end FourierTransformsTripleReorder
+
+/-! ### From `General/FunctionalAnalysis.lean` (moved 2026-08-30): the Lp measure-lifting
+chain -/
+
+section LiftMeasure
+
+open MeasureTheory MeasureTheory.Measure
+
+variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
+
+/-- Postcomposition with `Complex.ofRealCLM` is continuous `Lp ℝ 2 μ → Lp ℂ 2 μ`. -/
+lemma Complex.ofRealCLM_continuous_compLp :
+  Continuous (fun φ : Lp ℝ 2 μ => Complex.ofRealCLM.compLp φ : Lp ℝ 2 μ → Lp ℂ 2 μ) :=
+  (ContinuousLinearMap.compLpL 2 μ Complex.ofRealCLM).continuous
+
+/--
+Compose an Lp function with a continuous linear map.
+This should be the canonical way to lift real Lp functions to complex Lp functions.
+-/
+noncomputable def composed_function (f : Lp ℝ 2 μ) (A : ℝ →L[ℝ] ℂ) : Lp ℂ 2 μ :=
+  A.compLp f
+
+/--
+Embedding from real Lp functions to complex Lp functions using the canonical embedding ℝ → ℂ.
+-/
+noncomputable def embedding_real_to_complex (φ : Lp ℝ 2 μ) : Lp ℂ 2 μ :=
+  composed_function φ (Complex.ofRealCLM)
+
+/--
+Lifts a probability measure from the space of real Lp functions to the space of
+complex Lp functions, with support on the real subspace.
+-/
+noncomputable def liftMeasure_real_to_complex
+    (dμ_real : ProbabilityMeasure (Lp ℝ 2 μ)) :
+    ProbabilityMeasure (Lp ℂ 2 μ) :=
+  let dμ_complex_measure : Measure (Lp ℂ 2 μ) :=
+    Measure.map embedding_real_to_complex dμ_real
+  have h_ae : AEMeasurable embedding_real_to_complex dμ_real := by
+    apply Continuous.aemeasurable
+    unfold embedding_real_to_complex composed_function
+    have : Continuous (fun φ : Lp ℝ 2 μ => Complex.ofRealCLM.compLp φ : Lp ℝ 2 μ → Lp ℂ 2 μ) :=
+      Complex.ofRealCLM_continuous_compLp
+    exact this
+  have h_is_prob := isProbabilityMeasure_map h_ae
+  ⟨dμ_complex_measure, h_is_prob⟩
+
+end LiftMeasure
+
+/-! ### From `Covariance/RealForm.lean` (moved 2026-08-30) -/
+
+section CovarianceRealForm
+
+open MeasureTheory MeasureTheory.Measure
+
+namespace QFT
+
+variable {d : ℕ}
+
+/-- The weighted measure on momentum space with density (‖k‖² + m²)⁻¹. -/
+noncomputable def momentumWeightMeasure (m : ℝ) : Measure (SpaceTime d) :=
+  volume.withDensity (fun k => ENNReal.ofReal (1 / (‖k‖ ^ 2 + m ^ 2)))
+
+end QFT
+
+end CovarianceRealForm

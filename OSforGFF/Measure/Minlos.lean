@@ -33,7 +33,7 @@ The bochner library provides:
 - `minlos_uniqueness`: derived from minlos_theorem
 - `IsPositiveDefinite`: hermitian + nonneg PD structure (in `Bochner.PositiveDefinite`)
 
-This file bridges between the GFF4D project's `GFF4D.IsPositiveDefinite` (nonneg only)
+This file bridges between the GFF project's `GFF.IsPositiveDefinite` (nonneg only)
 and the bochner library's `IsPositiveDefinite` (hermitian + nonneg), then applies
 the proven Minlos theorem.
 
@@ -47,26 +47,20 @@ open BigOperators
 
 noncomputable section
 
-/-! ## GFF4D Positive Definiteness Lemmas
+/-! ## GFF Positive Definiteness Lemmas
 
-These use the GFF4D (nonneg-only) notion of positive definiteness. -/
-
-/-- **Gaussian RBF kernel is positive definite on inner product spaces** (GFF4D version). -/
-theorem gaussian_rbf_pd_innerProduct
-  {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] :
-  GFF4D.IsPositiveDefinite (fun h : H => Complex.exp (-(1/2 : ℂ) * (‖h‖^2 : ℝ))) :=
-  gaussian_rbf_pd_innerProduct_proof
+These use the GFF (nonneg-only) notion of positive definiteness. -/
 
 /-- If covariance is realized as a squared norm via a linear embedding T into
     a real inner product space H, then the Gaussian characteristic functional
-    is positive definite (GFF4D sense). -/
+    is positive definite (GFF sense). -/
 lemma gaussian_positive_definite_via_embedding
   {E H : Type*} [AddCommGroup E] [Module ℝ E]
   [NormedAddCommGroup H] [InnerProductSpace ℝ H]
   (T : E →ₗ[ℝ] H)
   (covariance_form : E → E → ℝ)
   (h_eq : ∀ f, covariance_form f f = (‖T f‖^2 : ℝ)) :
-  GFF4D.IsPositiveDefinite (fun f => Complex.exp (-(1/2 : ℂ) * (covariance_form f f))) := by
+  GFF.IsPositiveDefinite (fun f => Complex.exp (-(1/2 : ℂ) * (covariance_form f f))) := by
   have hPD_H := gaussian_rbf_pd_innerProduct (H := H)
   intro m x c
   have repl : ∀ i j,
@@ -77,7 +71,7 @@ lemma gaussian_positive_definite_via_embedding
     0 ≤ (∑ i, ∑ j,
       (starRingEnd ℂ) (c i) * c j *
         Complex.exp (-(1/2 : ℂ) * ((‖T (x i) - T (x j)‖^2 : ℝ)))).re := by
-    simpa using (GFF4D.isPositiveDefinite_precomp_linear
+    simpa using (GFF.isPositiveDefinite_precomp_linear
       (ψ := fun h : H => Complex.exp (-(1/2 : ℂ) * (‖h‖^2 : ℝ))) hPD_H T) m x c
   have hPD_comp1 :
     0 ≤ (∑ i, ∑ j,
@@ -89,19 +83,19 @@ lemma gaussian_positive_definite_via_embedding
     simpa [repl] using hPD_comp1
   exact this
 
-/-! ## Bridge lemmas: GFF4D PD → Bochner PD
+/-! ## Bridge lemmas: GFF PD → Bochner PD
 
 The bochner library's `IsPositiveDefinite` requires both:
 1. `hermitian`: φ(-x) = conj(φ(x))
 2. `nonneg`: Re(∑ᵢⱼ c̄ᵢ cⱼ φ(xᵢ - xⱼ)) ≥ 0
 
-The GFF4D version only requires (2). For the Gaussian CF exp(-½Q(f,f)),
+The GFF version only requires (2). For the Gaussian CF exp(-½Q(f,f)),
 hermiticity follows from Q(-f,-f) = Q(f,f) (which must be supplied). -/
 
-/-- Promote GFF4D's nonneg-only PD to bochner's hermitian+nonneg PD,
+/-- Promote GFF's nonneg-only PD to bochner's hermitian+nonneg PD,
     given an explicit symmetry proof φ(-x) = conj(φ(x)). -/
-def gff4d_to_bochner_pd {α : Type*} [AddGroup α] {φ : α → ℂ}
-    (h_nonneg : GFF4D.IsPositiveDefinite φ)
+def gff_to_bochner_pd {α : Type*} [AddGroup α] {φ : α → ℂ}
+    (h_nonneg : GFF.IsPositiveDefinite φ)
     (h_symm : ∀ x, φ (-x) = starRingEnd ℂ (φ x)) :
     IsPositiveDefinite φ where
   hermitian := h_symm
@@ -123,7 +117,7 @@ lemma gaussian_positive_definite_bochner
     (h_symm : ∀ f, covariance_form (-f) (-f) = covariance_form f f) :
     IsPositiveDefinite
       (fun f => Complex.exp (-(1/2 : ℂ) * (covariance_form f f))) :=
-  gff4d_to_bochner_pd
+  gff_to_bochner_pd
     (gaussian_positive_definite_via_embedding T covariance_form h_eq)
     (fun f => by
       simp [h_symm]

@@ -137,7 +137,8 @@ The key step in the reflection positivity proof is to convert the Bessel bilinea
 to a momentum representation where the k₀ integral is innermost.
 
 **Important mathematical point**: The naive dᵈk momentum integral does NOT converge
-as a Lebesgue integral (it decays like 1/k² which is not integrable in 4D).
+as a Lebesgue integral (the integrand decays like 1/k², which is not integrable at
+large k in any dimension d ≥ 2).
 The correct procedure uses the "mixed representation" of the Bessel kernel:
 
     C(x,y) = (1/(2(2π)^{d-1})) ∫_{k_sp} (1/ω) exp(-ω|x₀-y₀|) exp(-i k_sp·(x_sp-y_sp))
@@ -2637,13 +2638,11 @@ lemma F_norm_bound_via_vanishing (m : ℝ) [Fact (0 < m)] (f : (SchwartzTestFunc
     **Justification:** Fubini applies because:
     1. The p̄-dependence is Schwartz (Fourier transform of Schwartz test functions)
     2. The s-integrand decays as exp(-s·ω²) where ω² = |p̄|² + m² > 0
-    3. Combined integrability on (0,∞) × ℝ^{d−1} follows from `Integrable.prod_mul`
+    3. these combine to joint integrability on (0,∞) × ℝ^{d−1}
 
     **Note:** This is the most delicate step. Requires splitting the region into
-    "small s" (UV, controlling 1/r² singularity) and "large s" (IR, using mass m).
-
-    **Validation:** Reviewed by Gemini 3 Pro - confirmed mathematically valid,
-    assuming m > 0 which ensures exponential decay at large s for all k_sp.
+    "small s" (UV, controlling 1/r² singularity) and "large s" (IR, using mass m —
+    the m > 0 hypothesis is what gives exponential decay at large s for all k_sp).
 
     **Key integrability lemma:** Uses `integrable_s_inv_sq_exp_neg_inv_s` to
     handle the s^{-1/2} * exp(-t²/(4s)) term via substitution z = 1/s. -/

@@ -21,7 +21,7 @@ exponentially decaying kernel have polynomial decay at any rate.
 
 ## Main Result
 
-`schwartz_bilinear_translation_decay_polynomial_proof`: For Schwartz functions f, g
+`schwartz_bilinear_translation_decay_polynomial`: For Schwartz functions f, g
 and a kernel K with exponential decay |K(z)| ≤ C_K * exp(-m‖z‖), the bilinear
 integral decays polynomially:
 
@@ -752,7 +752,7 @@ The proof structure:
 2. Show H(y) = ∫ f(x) K(x-y) dx = H_sing(y) + H_tail(y) has polynomial decay
 3. The integral I(a) = ∫ H(y) g(y-a) dy = (H ⋆ ǧ)(a) where ǧ(z) = g(-z)
 4. Apply convolution_polynomial_decay to get the result -/
-theorem schwartz_bilinear_translation_decay_polynomial_proof
+theorem schwartz_bilinear_translation_decay_polynomial
     (f g : SchwartzMap E ℂ)
     (K : E → ℝ)
     (hK_meas : Measurable K)

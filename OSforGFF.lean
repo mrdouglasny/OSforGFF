@@ -39,10 +39,13 @@ import «OSforGFF».Schwinger.GaussianMoments
 -- Covariance (free propagator)
 import «OSforGFF».Covariance.Propagator
 import «OSforGFF».Covariance.ParsevalGeneric
+
+-- Instances (per-dimension propagator closed forms)
 import «OSforGFF».Instances.Dim4
 import «OSforGFF».Instances.Dim3
 import «OSforGFF».Instances.Dim2
 import «OSforGFF».Instances.Dim5
+
 import «OSforGFF».Covariance.RealForm
 
 -- Measure (Minlos + GFF construction)

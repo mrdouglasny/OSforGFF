@@ -45,7 +45,7 @@ integrability of the radial covariance profile (`GFFPropagator.integrable`).
 
 ## Main result
 
-- `gaussianFreeField_satisfies_OS1_revised`
+- `gaussianFreeField_satisfies_OS1`
 -/
 
 open MeasureTheory Complex BigOperators SchwartzMap Real QFT OSforGFF
@@ -393,18 +393,15 @@ lemma gff_two_point_locally_integrable (m : ℝ) [Fact (0 < m)] [GFFPropagator d
 
 Using the exponential L²-bound for the generating functional and local
 integrability of the two-point function, we verify OS1 as stated in
-`OS_Axioms.lean` (with the p-th power appearing inside the exponential).
+`OS/Axioms.lean` (with the p-th power appearing inside the exponential).
 -/
 
 open MeasureTheory
 
 /-- The Gaussian free field satisfies OS1 regularity with `p = 2` and
     `c = 1/(2 m^2)`. This uses `gff_generating_L2_bound` and
-    `gff_two_point_locally_integrable` established above.
-
-    Note: Named `_revised` because the alternative OS0 proof in `GaussianFreeField.lean`
-    uses the same module; both are valid, and `OS.Master` uses this one. -/
-theorem gaussianFreeField_satisfies_OS1_revised (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
+    `gff_two_point_locally_integrable` established above. -/
+theorem gaussianFreeField_satisfies_OS1 (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
   OS1_Regularity (gaussianFreeField_free (d := d) m) := by
   -- Choose parameters p = 2 and c = 1/(2 m^2)
   refine ⟨(2 : ℝ), (1 / (2 * m^2)), by norm_num, by norm_num, ?cpos, ?bound, ?tpInt⟩

@@ -17,6 +17,7 @@ by performing the Fubini exchanges justified in `OS3_MixedRepInfra`. The chain i
 2. Fourier representation of heat kernel introduces spatial momenta k̄
 3. k₀ Gaussian integral: ∫ e^{ik₀(x₀+y₀)} e^{−sk₀²} dk₀ = √(π/s) e^{−(x₀+y₀)²/4s}
 4. Laplace transform in s: ∫₀^∞ s^{−1/2} e^{−(x₀+y₀)²/4s − sω²} ds = √(π/ω²) e^{−ω|x₀+y₀|}
+5. Fubini theorems (from `OS3_MixedRepInfra`) justify every change of integration order.
 
 The final result (Bessel K_{1/2} identity) is:
 
@@ -27,9 +28,6 @@ This is the integration order exchange from eq. (4.19) that the naive approach c
 not justify due to the non-absolute-integrability of 1/√(k²+m²) in the spatial
 momentum space. The entry point is `GFFPropagator.schwinger_eq`, so the derivation
 holds for every dimension d ≥ 2.
-
-5. **Fubini Theorems** (from `OS3_MixedRepInfra`): Justify all changes in integration order
-   using the integrability bounds.
 
 ## Physical Interpretation
 
@@ -366,7 +364,7 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) [Fact (0 < m)] (f : (Schwartz
     congr 1
     exact fubini_ksp_xy_swap s hs_pos f
 
-  -- Step 6: Factor out (1/(2π)^4) from the s-integral
+  -- Step 6: Factor out (1/(2π)^d) from the s-integral
   have h_step5 : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
       ((1 / (2 * π) ^ d : ℝ) *
        ∫ k_sp : (SpatialCoords d), ∫ x : (SpaceTime d), ∫ y : (SpaceTime d),
@@ -770,14 +768,14 @@ theorem laplace_s_integral_with_norm (m : ℝ) [Fact (0 < m)] (f : (SchwartzTest
     exact h_s_eval k_sp x y
   rw [h_inner_eval]
   -- Step 4: Apply normalization constant identity
-  -- LHS: (1/(2π)^4) * ∫ [... (π/ω) ...]
+  -- LHS: (1/(2π)^d) * ∫ [... (π/ω) ...]
   -- RHS: (1/(2(2π)^3)) * ∫ [... (1/ω) ...]
   --
-  -- Key identity: (1/(2π)^4) * π = 1/(2(2π)^3)
+  -- Key identity: (1/(2π)^d) * π = 1/(2(2π)^{d−1})
   --
   -- The mathematical content is proven:
   -- - s_integral_eval: Laplace transform identity ✓
-  -- - the normalization identity (1/(2π)^4) * π = 1/(2(2π)^3) ✓
+  -- - the normalization identity (1/(2π)^d) * π = 1/(2(2π)^{d−1}) ✓
   -- - fubini_s_xy_swap: Integral order swap
   --
   -- The remaining work is purely algebraic: pulling π from π/ω into the front
@@ -1353,12 +1351,6 @@ theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] [GFFPropagator
     5. Do s-integral using `laplace_integral_half_power` with a = t²/4, b = |k_sp|² + m²:
        √π ∫₀^∞ s^{-1/2} exp(-t²/(4s) - (|k_sp|²+m²)s) ds = (π/ω) exp(-ω|t|)
     6. Normalize: (1/(2π)^d) × π = 1/(2(2π)^{d−1})
-
-    **Dependencies:**
-    - `heatKernel_eq_gaussianFT` (PROVEN, line 153)
-    - `gaussian_fourier_1d` (PROVEN, line 814)
-    - `laplace_integral_half_power` (THEOREM, line 135)
-    - Fubini applications (require integrability - uses Schwartz decay)
 -/
 theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : (SchwartzTestFunctionℂ d))
     (hf_supp : ∀ x, x 0 ≤ 0 → f x = 0) :
@@ -1371,178 +1363,8 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : (Schwartz
         (starRingEnd ℂ (f x)) * f y * (1 / ω : ℝ) *
           Complex.exp (-(|-(x 0) - y 0| : ℝ) * ω) *
           Complex.exp (-Complex.I * spatialDot k_spatial (spatialPart x - spatialPart y)) := by
-  -- Step 1: Substitute heat kernel with Gaussian Fourier transform
-  -- By heatKernel_eq_gaussianFT:
-  --   H(s, |z|) = (1/(2π)^d) ∫_k exp(-ik·z) exp(-s|k|²)
-  -- Key proven lemmas:
-  have h_hk_eq : ∀ s : ℝ, 0 < s → ∀ z : (SpaceTime d),
-      (heatKernelProfile d s ‖z‖ : ℂ) =
-      (1 / (2 * π) ^ d : ℝ) *
-      ∫ k : (SpaceTime d), Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-(s : ℂ) * ‖k‖^2) :=
-    fun s hs z => heatKernel_eq_gaussianFT s hs z
-  -- `gaussian_fourier_1d` (line 847): ∫ e^{-ik₀t} e^{-sk₀²} dk₀ = √(π/s) e^{-t²/(4s)}
-  -- `laplace_integral_half_power` (line 135): ∫ s^{-1/2} e^{-a/s-bs} ds = √(π/b) e^{-2√(ab)}
-
-  /-
-  PROOF OUTLINE:
-
-  Step 1: Substitute `heatKernel_eq_gaussianFT` for H(s, |z|)
-    LHS becomes: ∫_s e^{-sm²} ∫_x ∫_y f̄(x) f(y) · (1/(2π)^4) · ∫_k e^{-ik·z} e^{-s|k|²}
-    where z = Θx - y = (-x₀-y₀, x_sp - y_sp)
-
-  Step 2: Decompose k = (k₀, k_sp) ∈ ℝ × ℝ^{d−1}
-    k·z = k₀·(-x₀-y₀) + k_sp·(x_sp - y_sp) = -k₀·t + k_sp·r_sp
-    where t = x₀ + y₀, r_sp = x_sp - y_sp
-    This requires: lemma integral_spacetime_split
-
-  Step 3: Evaluate k₀ integral using `gaussian_fourier_1d`
-    ∫_{k₀} e^{ik₀t} e^{-sk₀²} dk₀ = √(π/s) e^{-t²/(4s)}
-
-  Step 4: Fubini swap s ↔ k_sp integrals
-    This requires: lemma fubini_schwinger_momentum
-    Integrability follows from Schwartz decay of f
-
-  Step 5: Evaluate s-integral using `laplace_integral_half_power`
-    √π ∫_0^∞ s^{-1/2} e^{-ω²s} e^{-t²/(4s)} ds = (π/ω) e^{-ω|t|}
-    where ω = √(|k_sp|² + m²)
-
-  Step 6: Normalize constants
-    (1/(2π)^d) × π = 1/(2(2π)^{d−1}) ✓
-
-  INFRASTRUCTURE (complete):
-  - `spacetime_inner_decompose` (PROVEN): ⟪k, z⟫ = k₀z₀ + spatialDot(k_sp, z_sp)
-  - `integral_spacetime_prod_split` (PROVEN): Product-type integrands decompose
-  - `fubini_s_ksp_swap`: Fubini for the s ↔ k_sp swap (line 519)
-  - `gaussian_fourier_1d` (PROVEN): 1D Gaussian FT for k₀ integral (line 1080)
-  - `laplace_integral_half_power` (THEOREM): Bessel K_{1/2} identity for s integral (line 283)
-  -/
-
-  -- Apply inner product decomposition to rewrite the phase
-  have h_inner : ∀ k z : (SpaceTime d),
-      ⟪k, z⟫_ℝ = k 0 * z 0 + spatialDot (spatialPart k) (spatialPart z) :=
-    fun k z => spacetime_inner_decompose k z
-
-  -- Key factorization: exp(-I⟪k,z⟫) = exp(-I k₀z₀) × exp(-I k_sp·z_sp)
-  have h_exp_factor : ∀ k z : (SpaceTime d),
-      Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) =
-      Complex.exp (-Complex.I * (k 0 * z 0)) *
-      Complex.exp (-Complex.I * spatialDot (spatialPart k) (spatialPart z)) := by
-    intro k z
-    rw [h_inner k z]
-    rw [← Complex.exp_add]
-    congr 1
-    -- -I * (a + b) = -I*a + (-I*b) = -I*a - I*b
-    push_cast
-    ring
-
-  -- Norm decomposition: ‖k‖² = k₀² + ‖k_sp‖²
-  have h_norm : ∀ k : (SpaceTime d), ‖k‖^2 = (k 0)^2 + ‖spatialPart k‖^2 :=
-    fun k => spacetime_norm_sq_decompose k
-
-  -- The full proof proceeds in stages. All mathematical ingredients are available.
-  -- Full Lean formalization requires connecting the lemmas with integral manipulations.
-
-  /-
-  **PROOF STRUCTURE:**
-
-  **Stage 1:** Substitute h_hk_eq to get:
-    LHS = ∫_s e^{-sm²} ∫_x ∫_y f̄(x)f(y) · (1/(2π)^4) · ∫_k e^{-ik·z} e^{-s|k|²}
-    where z = Θx - y
-
-  **Stage 2:** Apply h_exp_factor and h_norm to decompose:
-    e^{-ik·z} = e^{-ik₀z₀} · e^{-ik_sp·z_sp}
-    e^{-s|k|²} = e^{-sk₀²} · e^{-s‖k_sp‖²}
-
-  **Stage 3:** Use integral_spacetime_prod_split to separate k integral:
-    ∫_k F(k₀) G(k_sp) = (∫_{k₀} F(k₀)) · (∫_{k_sp} G(k_sp))
-
-  **Stage 4:** Apply gaussian_fourier_1d to evaluate k₀ integral:
-    ∫_{k₀} e^{-ik₀t} e^{-sk₀²} dk₀ = √(π/s) e^{-t²/(4s)}
-    where t = -(x₀) - y₀
-
-  **Stage 5:** Apply fubini_s_ksp_swap to exchange s and k_sp:
-    ∫_s ∫_{k_sp} F = ∫_{k_sp} ∫_s F
-
-  **Stage 6:** Apply laplace_integral_half_power to evaluate s integral:
-    √π ∫_0^∞ s^{-1/2} e^{-ω²s} e^{-t²/(4s)} ds = (π/ω) e^{-ω|t|}
-    where ω = √(‖k_sp‖² + m²)
-
-  **Stage 7:** Verify normalization:
-    (1/(2π)^d) × π = 1/(2(2π)^{d−1}) ✓
-  -/
-
-  -- The complete proof requires careful tracking of integral domains and
-  -- measure-theoretic arguments. The key lemmas are all in place:
-  -- - h_hk_eq (heat kernel Fourier representation)
-  -- - h_exp_factor, h_norm (decomposition lemmas)
-  -- - integral_spacetime_prod_split (k decomposition)
-  -- - gaussian_fourier_1d (k₀ integral)
-  -- - fubini_s_ksp_swap (integral swap)
-  -- - laplace_integral_half_power (s integral)
-
-  -- Step 1: Substitute heat kernel FT representation
-  -- For s > 0: H(s, |z|) = (1/(2π)^4) ∫_k e^{-ik·z} e^{-s|k|²}
-  -- This requires rewriting under the integral over Set.Ioi 0.
-  have h_step1 : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-      ∫ x : (SpaceTime d), ∫ y : (SpaceTime d),
-        (starRingEnd ℂ (f x)) * f y * heatKernelProfile d s ‖timeReflection x - y‖ =
-      ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
-        ∫ x : (SpaceTime d), ∫ y : (SpaceTime d),
-          (starRingEnd ℂ (f x)) * f y *
-          ((1 / (2 * π) ^ d : ℝ) *
-           ∫ k : (SpaceTime d), Complex.exp (-Complex.I * ⟪k, timeReflection x - y⟫_ℝ) *
-                            Complex.exp (-(s : ℂ) * ‖k‖^2)) := by
-    apply setIntegral_congr_ae measurableSet_Ioi
-    -- For almost all s, prove s ∈ Ioi 0 → LHS = RHS
-    filter_upwards with s hs
-    congr 1
-    apply integral_congr_ae
-    filter_upwards with x
-    apply integral_congr_ae
-    filter_upwards with y
-    congr 1
-    exact h_hk_eq s hs (timeReflection x - y)
-
-  -- Stage 2: Decompose exponentials using h_exp_factor and gaussian_exp_factorize
-  -- For each k, z: exp(-I⟪k,z⟫) × exp(-s‖k‖²) factors into time × spatial parts
-  have h_k_decomp : ∀ (s : ℂ) (k z : (SpaceTime d)),
-      Complex.exp (-Complex.I * ⟪k, z⟫_ℝ) * Complex.exp (-s * ‖k‖^2) =
-      (Complex.exp (-Complex.I * (k 0 * z 0)) * Complex.exp (-s * (k 0)^2)) *
-      (Complex.exp (-Complex.I * spatialDot (spatialPart k) (spatialPart z)) *
-       Complex.exp (-s * ‖spatialPart k‖^2)) := by
-    intro s k z
-    rw [h_exp_factor k z, gaussian_exp_factorize s k]
-    ring
-
-  -- Stage 3: For fixed s, x, y, we can split the k-integral using h_k_decomp
-  -- The integrand becomes a product of f(k₀) × g(k_sp)
-  -- Note: z = timeReflection x - y, so z₀ = -x₀ - y₀
-  have h_time_component : ∀ (x y : (SpaceTime d)),
-      (timeReflection x - y) 0 = -(x 0) - y 0 := by
-    intro x y
-    unfold timeReflection
-    rfl
-
-  -- **Remaining Stages (4-7):**
-  -- Main dependencies: laplace_integral_half_power, fubini_s_ksp_swap
-  --
-  -- Stage 4: Apply gaussian_fourier_1d to evaluate k₀ integral:
-  --   For z₀ = -x₀ - y₀:
-  --   ∫_{k₀} exp(-Ik₀z₀) exp(-sk₀²) = √(π/s) exp(-z₀²/(4s))
-  --
-  -- Stage 5: Apply fubini_s_ksp_swap to exchange s and k_sp:
-  --   ∫_s ∫_{k_sp} F = ∫_{k_sp} ∫_s F
-  --
-  -- Stage 6: Apply laplace_integral_half_power to evaluate s integral:
-  --   √π ∫_0^∞ s^{-1/2} exp(-ω²s) exp(-t²/(4s)) ds = (π/ω) exp(-ω|t|)
-  --   where ω = √(‖k_sp‖² + m²), t = -x₀ - y₀
-  --
-  -- Stage 7: Verify normalization constants:
-  --   (1/(2π)^d) × π = 1/(2(2π)^{d−1}) ✓
-
-  -- Stage 4: After splitting k and applying gaussian_fourier_1d
-  -- The form after k₀ integration matches fubini_s_ksp_swap LHS
-  -- Uses: h_step1, h_k_decomp, integral_spacetime_prod_split, gaussian_fourier_1d
+  -- Substitute the Gaussian Fourier representation of the heat kernel, split
+  -- k = (k₀, k_sp), and evaluate the k₀ integral (`heatKernel_bilinear_fourier_form`).
   have h_stage4_form : ∫ s in Set.Ioi 0, (Real.exp (-s * m^2) : ℂ) *
       ∫ x : (SpaceTime d), ∫ y : (SpaceTime d),
         (starRingEnd ℂ (f x)) * f y * heatKernelProfile d s ‖timeReflection x - y‖ =
@@ -1554,7 +1376,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : (Schwartz
           Complex.exp (-Complex.I * spatialDot k_sp (spatialPart x - spatialPart y)) :=
     heatKernel_bilinear_fourier_form m f
 
-  -- Stage 5: Apply fubini_s_ksp_swap to exchange s and k_sp
+  -- Fubini: exchange the s and k_sp integrals (fubini_s_ksp_swap)
   have h_after_fubini : (1 / (2 * π) ^ d : ℝ) *
       ∫ s in Set.Ioi 0, ∫ k_sp : (SpatialCoords d), ∫ x : (SpaceTime d), ∫ y : (SpaceTime d),
         (starRingEnd ℂ (f x)) * f y *
@@ -1570,7 +1392,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : (Schwartz
     congr 1
     exact fubini_s_ksp_swap (d := d) m f hf_supp
 
-  -- Stage 6-7: Apply laplace_integral_half_power and normalize
+  -- Laplace evaluation of the s-integral and normalization
   -- The s-integral evaluates to (π/ω) exp(-ω|t|)
   -- Combined with normalization: (1/(2π)^d) × π = 1/(2(2π)^{d−1})
   have h_stage67 : (1 / (2 * π) ^ d : ℝ) *
@@ -1626,7 +1448,7 @@ theorem heatKernel_bilinear_to_mixed_rep (m : ℝ) [Fact (0 < m)] (f : (Schwartz
     2. **Heat kernel as Gaussian FT**: By `heatKernel_eq_gaussianFT`,
        H(s,r) = (1/(2π)^d) ∫_k exp(-ik·z) exp(-s|k|²) d^d k
 
-    3. **Decompose k = (k₀, k_sp)**: The 4D k-integral becomes product of 1D and 3D integrals
+    3. **Decompose k = (k₀, k_sp)**: The k-integral becomes a product of 1D (time) and (d−1)-dimensional (spatial) integrals
 
     4. **Do k₀ integral**: By `gaussian_fourier_1d` (PROVEN),
        ∫ exp(-ik₀t) exp(-sk₀²) dk₀ = √(π/s) exp(-t²/(4s))

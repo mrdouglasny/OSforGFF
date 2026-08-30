@@ -98,10 +98,10 @@ lemma freeCovariance_dim4_eq (m : ℝ) [Fact (0 < m)] (x y : SpaceTime 4) :
     freeCovariance 4 m x y = freeCovariance4 m x y := rfl
 
 /-- Private four-dimensional shorthands local to this off-graph legacy file:
-    `SpaceTime 4`, `TestFunctionℂ 4`, and the dimension `4`. -/
+    `SpaceTime 4`, `SchwartzTestFunctionℂ 4`, and the dimension `4`. -/
 private abbrev STDimension : ℕ := 4
 private abbrev SpaceTime4 := SpaceTime 4
-private abbrev TestFunctionℂ4 := TestFunctionℂ 4
+private abbrev SchwartzTestFunctionℂ4 := SchwartzTestFunctionℂ 4
 
 /-! No axioms declared in this file. -/
 
@@ -110,7 +110,7 @@ noncomputable section
 
 
 /-- Helper lemma: Schwartz functions are L²-integrable. -/
-lemma schwartz_L2_integrable (f : TestFunctionℂ4) :
+lemma schwartz_L2_integrable (f : SchwartzTestFunctionℂ4) :
   Integrable (fun k => ‖f k‖^2) volume := by
   -- Using Mathlib's `SchwartzMap.memLp` we know any Schwartz function lies in every `L^p` space.
   have hf_memLp : MemLp f 2 volume :=
@@ -1616,7 +1616,7 @@ lemma aestronglyMeasurable_freeCovariance (m : ℝ) [Fact (0 < m)] :
     |f(x) * C_α(x,y) * g(y)| ≤ M * |f(x)| * |g(y)|
     The RHS is integrable since f, g ∈ L¹ (Schwartz functions are integrable). -/
 theorem freeCovariance_regulated_bilinear_integrable (α : ℝ) (hα : 0 < α) (m : ℝ) [Fact (0 < m)]
-    (f g : TestFunctionℂ4) :
+    (f g : SchwartzTestFunctionℂ4) :
     Integrable (fun p : SpaceTime4 × SpaceTime4 =>
       (f p.1) * (freeCovariance_regulated α m p.1 p.2 : ℂ) * (g p.2)) volume := by
   have hm : 0 < m := Fact.out
@@ -1986,7 +1986,7 @@ lemma freeCovarianceKernel4_continuousOn (m : ℝ) (hm : 0 < m) :
 
 /-- The bilinear form f(x) * C(x,y) * g(y) is integrable on product space for Schwartz f, g.
     This uses the L¹ integrability of the translation-invariant Bessel kernel. -/
-theorem freeCovarianceℂ_bilinear_integrable' (m : ℝ) [Fact (0 < m)] (f g : TestFunctionℂ4) :
+theorem freeCovarianceℂ_bilinear_integrable' (m : ℝ) [Fact (0 < m)] (f g : SchwartzTestFunctionℂ4) :
     Integrable (fun p : SpaceTime4 × SpaceTime4 =>
       (f p.1) * (freeCovariance4 m p.1 p.2 : ℂ) * (g p.2)) volume := by
   have h_transl_inv : ∀ x y, freeCovariance4 m x y = freeCovarianceKernel4 m (x - y) := by

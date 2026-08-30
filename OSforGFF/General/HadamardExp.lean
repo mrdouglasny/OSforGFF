@@ -24,7 +24,6 @@ coefficients `1/n!` yields a PD matrix. The PSD case follows by a continuity arg
 exponential.
 -/
 
-set_option linter.unusedSectionVars false
 
 open Complex
 open scoped BigOperators
@@ -42,6 +41,7 @@ variable {ι : Type u} [Fintype ι] [DecidableEq ι]
 noncomputable def entrywiseExp (R : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   fun i j => Real.exp (R i j)
 
+omit [Fintype ι] [DecidableEq ι] in
 @[simp] lemma entrywiseExp_apply (R : Matrix ι ι ℝ) (i j : ι) :
   entrywiseExp R i j = Real.exp (R i j) := rfl
 
@@ -57,6 +57,7 @@ lemma continuous_entrywiseExp (ι : Type u) [Fintype ι] [DecidableEq ι] :
     (continuous_apply j).comp (continuous_apply i)
   simpa [entrywiseExp, Function.comp_def] using (Real.continuous_exp.comp hcoord)
 
+omit [Fintype ι] [DecidableEq ι] in
 /-- Over `ℝ`, entrywise exponential preserves Hermitian symmetry. -/
 private lemma isHermitian_entrywiseExp_real (R : Matrix ι ι ℝ)
     (hR : R.IsHermitian) : (entrywiseExp R).IsHermitian := by
@@ -75,10 +76,13 @@ private lemma isHermitian_entrywiseExp_real (R : Matrix ι ι ℝ)
   | 0     => hadamardOne (ι := ι)
   | n+1   => hadamardPow R n ∘ₕ R
 
+omit [DecidableEq ι] in
 @[simp] lemma hadamardPow_zero (R : Matrix ι ι ℝ) : hadamardPow R 0 = hadamardOne (ι := ι) := rfl
+omit [DecidableEq ι] in
 @[simp] lemma hadamardPow_succ (R : Matrix ι ι ℝ) (n : ℕ) :
   hadamardPow R (n+1) = hadamardPow R n ∘ₕ R := rfl
 
+omit [Fintype ι] [DecidableEq ι] in
 /-- Over `ℝ`, the Hadamard product of Hermitian matrices is Hermitian. -/
 private lemma isHermitian_hadamard_real {A B : Matrix ι ι ℝ}
     (hA : A.IsHermitian) (hB : B.IsHermitian) : (A ∘ₕ B).IsHermitian := by
@@ -90,6 +94,7 @@ private lemma isHermitian_hadamard_real {A B : Matrix ι ι ℝ}
     simpa using (Matrix.IsHermitian.apply hB i j).symm
   simp [Matrix.conjTranspose, Matrix.hadamard, hAij, hBij]
 
+omit [DecidableEq ι] in
 /-- Hadamard powers act entrywise as usual scalar powers. -/
 lemma hadamardPow_apply (R : Matrix ι ι ℝ) (n : ℕ) (i j : ι) :
   hadamardPow R n i j = (R i j) ^ n := by
@@ -101,6 +106,7 @@ lemma hadamardPow_apply (R : Matrix ι ι ℝ) (n : ℕ) (i j : ι) :
 noncomputable def entrywiseExp_hadamardSeries (R : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   fun i j => tsum (fun n : ℕ => (1 / (Nat.factorial n : ℝ)) * (hadamardPow R n i j))
 
+omit [DecidableEq ι] in
 /-- The entrywise exponential agrees with its Hadamard series expansion.
     Uses the Taylor series for Complex.exp and converts to the real case. -/
 lemma entrywiseExp_eq_hadamardSeries (R : Matrix ι ι ℝ) :
@@ -152,6 +158,7 @@ lemma entrywiseExp_eq_hadamardSeries (R : Matrix ι ι ℝ) :
     simpa [fR, one_div, div_eq_mul_inv, mul_comm] using hx_sum.symm
   simpa [x, hadamardPow_apply, one_div, div_eq_mul_inv, mul_comm] using hx_sum'
 
+omit [DecidableEq ι] in
 /-- Ones is the identity for the Hadamard product. -/
 lemma hadamardOne_hMul_left (R : Matrix ι ι ℝ) : Matrix.hadamard (hadamardOne ι) R = R := by
   ext i j; simp [hadamardOne, Matrix.hadamard]
@@ -178,6 +185,7 @@ lemma hadamardPow_posDef_of_posDef
     simpa [hadamardPow_succ] using
       schur_product_posDef (A := hadamardPow R (k+1)) (B := R) hPD_k1 hR
 
+omit [DecidableEq ι] in
 /-- The quadratic form of the Hadamard series equals the sum of quadratic forms of individual terms.
     This lemma handles the complex interchange of summation and quadratic form evaluation. -/
 lemma quadratic_form_entrywiseExp_hadamardSeries
@@ -255,6 +263,7 @@ lemma quadratic_form_entrywiseExp_hadamardSeries
   rw [← hrhs_expand, ← htsum_eq]
   simp only [hlhs_identify]
 
+omit [DecidableEq ι] in
 /-- Summability of the scalar quadratic-form coefficients appearing in the
     Hadamard exponential series. -/
 lemma summable_hadamardQuadSeries
@@ -405,16 +414,12 @@ lemma posDef_entrywiseExp_hadamardSeries_of_posDef
   -- Conclude
   simpa [hq_tsum] using this
 
-set_option maxHeartbeats 1000000
---set_option diagnostics true
 
 /-- The Hadamard-series entrywise exponential preserves positive semidefiniteness.
     This follows from the positive definite case by continuity: if R is PSD, then
     R + εI is PD for ε > 0, so entrywiseExp_hadamardSeries(R + εI) is PD, and
     taking ε → 0⁺ with continuity of entrywiseExp_hadamardSeries gives that
-    entrywiseExp_hadamardSeries(R) is PSD.
-
-    NOTE: This proof is simplified to avoid matrix reduction timeouts. -/
+    entrywiseExp_hadamardSeries(R) is PSD. -/
 lemma posSemidef_entrywiseExp_hadamardSeries_of_posSemidef
   (R : Matrix ι ι ℝ) (hR : R.PosSemidef) :
   (entrywiseExp_hadamardSeries (ι:=ι) R).PosSemidef := by

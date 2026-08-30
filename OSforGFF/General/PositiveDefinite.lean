@@ -28,10 +28,10 @@ open BigOperators
 
 /-! ## Positive Definiteness
 
-Namespaced under `GFF4D` to avoid clash with `IsPositiveDefinite` from the
+Namespaced under `GFF` to avoid clash with `IsPositiveDefinite` from the
 bochner library (which requires both hermitian + nonneg). -/
 
-namespace GFF4D
+namespace GFF
 
 /-- A function φ : α → ℂ is positive definite if for any finite collection
     of points x₁, ..., xₘ and complex coefficients c₁, ..., cₘ, we have
@@ -51,4 +51,4 @@ lemma isPositiveDefinite_precomp_linear
   IsPositiveDefinite (fun f : E => ψ (T f)) := fun m x c => by
   simpa using hPD m (fun i => T (x i)) c
 
-end GFF4D
+end GFF

@@ -35,6 +35,9 @@ From `Measure/GaussianFreeField.lean` (the alternative OS0 program — the proof
 - `CovarianceContinuous` — a continuity predicate never consumed by any hypothesis.
 
 From `Measure/Construct.lean`:
+- `gaussian_pairing_square_integrable_real` (moved 2026-08-30) — the diagonal real case
+  of pairing-square integrability; the OS1 chain uses
+  `gaussian_pairing_product_integrable_free_2point` directly.
 - `structure CovarianceFunction` — abstract covariance packaging, never instantiated; the
   construction works with `freeCovarianceFormR`/`GFFPropagator` directly.
 
@@ -50,6 +53,8 @@ From `Measure/IsGaussian.lean`:
   `gaussian_pairing_product_integrable_free_2point`, which consumers use directly.
 
 From `Schwinger/Defs.lean`:
+- `schwinger_eq_mean` (moved 2026-08-30) — `S₁ = GJMean`; no consumer, the OS chain works
+  with `SchwingerFunction₂` and the generating functional.
 - `schwinger_vanishes_centered` — vanishing of the 1-point function for centered measures.
 - `IsGaussianMeasure` — a Gaussianity predicate superseded by `isGaussianGJ`
   (`Measure/Construct.lean`).
@@ -108,7 +113,7 @@ end OS0_alt
 
 /-- Assumption: The complex covariance is continuous bilinear -/
 def CovarianceContinuous (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
-  ∀ (J K : TestFunctionℂ d), Continuous (fun z : ℂ =>
+  ∀ (J K : SchwartzTestFunctionℂ d), Continuous (fun z : ℂ =>
     SchwingerFunctionℂ₂ dμ_config (z • J) K)
 
 /-! ## OS0: Analyticity for Gaussian Measures (OLD PROOF - in OS0_alt namespace)
@@ -123,7 +128,7 @@ Note: The primary proof is in `OSforGFF.OS.OS0_Analyticity`.
 namespace OS0_alt
 
 def GJcov_bilin (dμ_config : ProbabilityMeasure (FieldConfiguration d))
-  (h_bilinear : CovarianceBilinear dμ_config) : LinearMap.BilinMap ℂ (TestFunctionℂ d) ℂ :=
+  (h_bilinear : CovarianceBilinear dμ_config) : LinearMap.BilinMap ℂ (SchwartzTestFunctionℂ d) ℂ :=
   LinearMap.mk₂ ℂ
     (fun x y => SchwingerFunctionℂ₂ dμ_config x y)
     (by intro x x' y  -- additivity in the 1st arg
@@ -148,7 +153,7 @@ theorem gaussian_satisfies_OS0
   intro n J
 
   -- Extract the Gaussian form: Z[f] = exp(-½⟨f, Cf⟩)
-  have h_form : ∀ (f : TestFunctionℂ d),
+  have h_form : ∀ (f : SchwartzTestFunctionℂ d),
       GJGeneratingFunctionalℂ dμ_config f = Complex.exp (-(1/2 : ℂ) * SchwingerFunctionℂ₂ dμ_config f f) :=
     h_gaussian.2
 
@@ -241,7 +246,7 @@ noncomputable section
 
 /-- A covariance function on test functions that determines the Gaussian measure -/
 structure CovarianceFunction (d : ℕ) where
-  covar : TestFunctionℂ d → TestFunctionℂ d → ℂ
+  covar : SchwartzTestFunctionℂ d → SchwartzTestFunctionℂ d → ℂ
   symmetric : ∀ f g, covar f g = (starRingEnd ℂ) (covar g f)
   bilinear_left : ∀ c f₁ f₂ g, covar (c • f₁ + f₂) g = c * covar f₁ g + covar f₂ g
   bilinear_right : ∀ f c g₁ g₂, covar f (c • g₁ + g₂) = (starRingEnd ℂ) c * covar f g₁ + covar f g₂
@@ -279,7 +284,7 @@ lemma gaussian_cf_im_zero (r : ℝ) :
 theorem gaussian_rbf_pd_bochner
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] :
     IsPositiveDefinite (fun h : H => Complex.exp (-(1/2 : ℂ) * (‖h‖^2 : ℝ))) :=
-  gff4d_to_bochner_pd gaussian_rbf_pd_innerProduct_proof (fun h => by
+  gff_to_bochner_pd gaussian_rbf_pd_innerProduct (fun h => by
     simp only [norm_neg]; exact (conj_cexp_real _ (gaussian_cf_im_zero _)).symm)
 
 variable {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
@@ -329,7 +334,7 @@ variable {d : ℕ} [Fact (2 ≤ d)] (m : ℝ) [Fact (0 < m)] [GFFPropagator d m]
 /-- For the Gaussian Free Field measure, the product of two complex pairings with test functions
     is integrable. Uses the direct 2-point theorem from GaussianMoments. -/
 lemma gaussian_pairing_product_integrable_free_core
-    (φ ψ : TestFunctionℂ d) :
+    (φ ψ : SchwartzTestFunctionℂ d) :
     Integrable (fun ω => distributionPairingℂ_real ω φ * distributionPairingℂ_real ω ψ)
       (gaussianFreeField_free m).toMeasure :=
   gaussian_pairing_product_integrable_free_2point m φ ψ
@@ -352,9 +357,17 @@ noncomputable section
 variable {𝕜 : Type} [RCLike 𝕜]
 variable {d : ℕ}
 
+/-- The Schwinger function equals the GJ mean for n=1 (from `Schwinger/Defs.lean`,
+    moved 2026-08-30). -/
+lemma schwinger_eq_mean (dμ_config : ProbabilityMeasure (FieldConfiguration d)) (f : (SchwartzTestFunction d)) :
+  SchwingerFunction₁ dμ_config f = GJMean dμ_config f := by
+  unfold SchwingerFunction₁ SchwingerFunction GJMean
+  classical
+  simp
+
 /-- For centered measures (zero mean), the 1-point function vanishes -/
 lemma schwinger_vanishes_centered (dμ_config : ProbabilityMeasure (FieldConfiguration d))
-  (h_centered : ∀ f : (TestFunction d), GJMean dμ_config f = 0) (f : (TestFunction d)) :
+  (h_centered : ∀ f : (SchwartzTestFunction d), GJMean dμ_config f = 0) (f : (SchwartzTestFunction d)) :
   SchwingerFunction₁ dμ_config f = 0 := by
   rw [schwinger_eq_mean]
   exact h_centered f
@@ -368,8 +381,8 @@ This approach is more elementary and constructive than functional derivatives.
 -/
 /-- A (centered) Gaussian field measure: the generating functional is an exponential of a quadratic form. -/
 def IsGaussianMeasure (dμ : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
-  ∃ (Cov : (TestFunction d) → (TestFunction d) → ℝ),
-    ∀ J : (TestFunction d),
+  ∃ (Cov : (SchwartzTestFunction d) → (SchwartzTestFunction d) → ℝ),
+    ∀ J : (SchwartzTestFunction d),
       GJGeneratingFunctional dμ J = Complex.exp ((-(1 : ℂ) / 2) * (Cov J J : ℂ))
 
 
@@ -488,7 +501,7 @@ lemma prod_const_pow (x : ℝ) (n : ℕ) :
 
 /-- Identify `S_n(J,…,J)` as the integral of the n-th power of `⟨ω,J⟩`. -/
 lemma schwinger_eq_integral_pow
-  (dμ : ProbabilityMeasure (FieldConfiguration 4)) (J : TestFunction 4) (n : ℕ) :
+  (dμ : ProbabilityMeasure (FieldConfiguration 4)) (J : SchwartzTestFunction 4) (n : ℕ) :
   (SchwingerFunction dμ n (fun _ => J) : ℝ)
   = ∫ ω, (distributionPairing ω J) ^ n ∂ dμ.toMeasure := by
   -- Unfold `SchwingerFunction` and simplify the Finite product on `Fin n`
@@ -542,13 +555,13 @@ open MeasureTheory Complex
 This is the complex analogue of `gaussian_pairing_square_integrable_real` and will serve as the
 base estimate for higher Gaussian moments. -/
 lemma gaussian_complex_pairing_abs_sq_integrable
-    (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (φ : TestFunctionℂ d) :
+    (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (φ : SchwartzTestFunctionℂ d) :
   Integrable (fun ω => ‖distributionPairingℂ_real ω φ‖ ^ 2)
     (gaussianFreeField_free m).toMeasure := by
   classical
   -- Split the complex test function into real and imaginary parts
-  set φRe : TestFunction d := (complex_testfunction_decompose φ).1
-  set φIm : TestFunction d := (complex_testfunction_decompose φ).2
+  set φRe : SchwartzTestFunction d := (complex_testfunction_decompose φ).1
+  set φIm : SchwartzTestFunction d := (complex_testfunction_decompose φ).2
 
   -- Use the proven theorem from GFFbridge (derives from gff_pairing_is_gaussian)
   have hRe_mem :
@@ -602,3 +615,29 @@ end GaussianMoments
 end
 
 end SchwingerGaussianMoments
+
+/-! ### Moved 2026-08-30 -/
+
+section Moved20260830
+
+open MeasureTheory Complex QFT ProbabilityTheory OSforGFF
+
+noncomputable section
+
+variable {d : ℕ} [Fact (2 ≤ d)]
+
+/-- For real test functions, the square of the Gaussian pairing is integrable under the
+    free Gaussian Free Field measure. This is the diagonal (f = g) case of two-point
+    integrability (from `Measure/Construct.lean`). -/
+lemma gaussian_pairing_square_integrable_real
+    (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (φ : SchwartzTestFunction d) :
+  Integrable (fun ω => (distributionPairing ω φ) ^ 2)
+    (gaussianFreeField_free m).toMeasure := by
+  have h_memLp :=
+    gaussianFreeField_pairing_memLp m φ ((2 : ℕ) : ENNReal) (by simp)
+  have h_integrable_CLM := h_memLp.integrable_sq
+  exact h_integrable_CLM.congr (Filter.Eventually.of_forall fun ω => rfl)
+
+end
+
+end Moved20260830

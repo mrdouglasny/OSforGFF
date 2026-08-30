@@ -53,7 +53,7 @@ noncomputable section
     `d ≥ 2` and a `GFFPropagator d m` instance) satisfies all
     Osterwalder–Schrader axioms.
 - OS0 is supplied by `QFT.gaussianFreeField_satisfies_OS0` via the holomorphic integral theorem
-- OS1 is supplied by `gaussianFreeField_satisfies_OS1_revised` via Fourier/momentum space methods
+- OS1 is supplied by `gaussianFreeField_satisfies_OS1` via Fourier/momentum space methods
 - OS2 is supplied by `gaussian_satisfies_OS2` via Euclidean invariance of the free covariance
 - OS3 is supplied by `QFT.gaussianFreeField_OS3` via the Schur-Hadamard argument (complex star formulation)
 - OS4 Clustering is supplied by `QFT.gaussianFreeField_satisfies_OS4` via Gaussian factorization
@@ -62,7 +62,7 @@ theorem gaussianFreeField_satisfies_all_OS_axioms_generic
     {d : ℕ} [Fact (2 ≤ d)] (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
     SatisfiesAllOS (gaussianFreeField_free (d := d) m) where
   os0 := QFT.gaussianFreeField_satisfies_OS0 m
-  os1 := gaussianFreeField_satisfies_OS1_revised m
+  os1 := gaussianFreeField_satisfies_OS1 m
   os2 := gaussian_satisfies_OS2 (gaussianFreeField_free (d := d) m)
     (by exact isGaussianGJ_gaussianFreeField_free m)
     (QFT.CovarianceEuclideanInvariantℂ_μ_GFF m)

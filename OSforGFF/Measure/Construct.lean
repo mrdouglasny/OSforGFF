@@ -195,7 +195,6 @@ private lemma charFun_implies_gaussian
   rw [h t, charFun_gaussianReal]
   ring_nf
 
-set_option backward.isDefEq.respectTransparency false in
 omit [Fact (2 ≤ d)] in
 /-- The characteristic function of a pushforward measure by `distributionPairingCLM φ`
     equals the generating functional at a scaled test function. -/
@@ -210,7 +209,7 @@ private lemma charFun_eq_GJGeneratingFunctional
   congr 1
   ext ω
   congr 1
-  simp only [distributionPairingCLM, ContinuousLinearMap.coe_mk', real_inner_comm]
+  simp only [distributionPairingCLM, real_inner_comm]
   rw [mul_comm _ I]
   congr 1
   simp [distributionPairing]
@@ -418,20 +417,5 @@ theorem gaussianFreeField_pairing_expSq_integrable
   simp only [Function.comp_apply]
   congr 1
   rw [Real.norm_eq_abs, sq_abs]
-
-/-- For real test functions, the square of the Gaussian pairing is integrable under the
-    free Gaussian Free Field measure. This is the diagonal (f = g) case needed for
-    establishing two-point integrability. -/
-lemma gaussian_pairing_square_integrable_real
-    (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (φ : SchwartzTestFunction d) :
-  Integrable (fun ω => (distributionPairing ω φ) ^ 2)
-    (gaussianFreeField_free m).toMeasure := by
-  -- Invoke the Fernique-type result giving Lᵖ moments for the pairing
-  have h_memLp :=
-    gaussianFreeField_pairing_memLp m φ ((2 : ℕ) : ENNReal) (by simp)
-  -- L² membership directly implies integrability of the square
-  have h_integrable_CLM := h_memLp.integrable_sq
-  -- Translate the statement from the continuous linear map to the scalar pairing
-  exact h_integrable_CLM.congr (Filter.Eventually.of_forall fun ω => rfl)
 
 end

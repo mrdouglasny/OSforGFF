@@ -121,8 +121,7 @@ lemma gff_exp_pairing_integrable (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (f
   exact (Complex.continuous_exp.measurable.comp (QFT.distributionPairingℂ_real_measurable f)).aestronglyMeasurable
 
 /-- Time-translated complex exponential is in L² under the GFF measure.
-    This follows from |exp(z)|² = exp(2 Re z) ≤ exp(2|Re z|) which is integrable.
-    (Copied from OS4Ron.lean - needed for integrability proofs) -/
+    This follows from |exp(z)|² = exp(2 Re z) ≤ exp(2|Re z|) which is integrable. -/
 lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (s : ℝ) (f : (SchwartzTestFunctionℂ d)) :
     MemLp (fun ω : (FieldConfiguration d) =>
         Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) f))
@@ -368,7 +367,7 @@ lemma double_integral_decay_bound :
       ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T,
         (1 + |s - u|)^(-(3 : ℝ)) ≤ 2 * T * C := by
   -- Use the integral bound for α = 3 > 1
-  obtain ⟨C₀, hC₀_pos, hC₀_bound⟩ := OSforGFF.double_integral_polynomial_decay_bound_proved 3 (by norm_num : (3 : ℝ) > 1)
+  obtain ⟨C₀, hC₀_pos, hC₀_bound⟩ := OSforGFF.double_integral_polynomial_decay_bound 3 (by norm_num : (3 : ℝ) > 1)
   use C₀, hC₀_pos
   intro T hT
   calc ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T, (1 + |s - u|)^(-(3 : ℝ))
@@ -875,7 +874,7 @@ lemma clustering_implies_covariance_decay (m : ℝ) [Fact (0 < m)] [GFFPropagato
           exact Real.rpow_le_rpow_of_exponent_le h_base (by norm_num : (-6 : ℝ) ≤ -3)
 
 /-- The norm of the GFF covariance is integrable on [0,T] for each fixed first argument.
-    Uses gff_covariance_norm_integrableOn_slice_proved to avoid expensive type unification. -/
+    Uses covariance_norm_integrableOn_slice to avoid expensive type unification. -/
 lemma gff_covariance_norm_integrableOn_slice (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (f : (SchwartzTestFunctionℂ d))
     (s : ℝ) (T : ℝ) :
     let μ := (gaussianFreeField_free m).toMeasure
@@ -886,7 +885,7 @@ lemma gff_covariance_norm_integrableOn_slice (m : ℝ) [Fact (0 < m)] [GFFPropag
   intro μ A EA Cov
   haveI : IsProbabilityMeasure μ :=
     MeasureTheory.ProbabilityMeasure.instIsProbabilityMeasureToMeasure (gaussianFreeField_free m)
-  exact OSforGFF.gff_covariance_norm_integrableOn_slice_proved μ A EA s T
+  exact OSforGFF.covariance_norm_integrableOn_slice μ A EA s T
     (gff_covariance_continuous m f)
 
 /-! ## Variance Decay from Clustering -/
@@ -973,10 +972,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] [GFFPropagator d m
           exact continuous_parametric_integral_of_continuous h_DecayFn_cont isCompact_Icc
         · exact measurableSet_Icc
         · intro s hs
-          -- Technical integrability: ‖Cov s ·‖ and decay function are continuous hence integrable on [0,T]
-          -- These follow from gff_covariance_continuous and continuity of the decay function
-          -- Inner integrability follows from gff_covariance_continuous + Continuous.integrableOn_Icc
-          -- but Lean times out on the type unification with the Cov definition
+          -- ‖Cov s ·‖ and the decay function are continuous, hence integrable on [0,T]
           have h_inner_int1 : MeasureTheory.IntegrableOn (fun u => ‖Cov s u‖) (Set.Icc 0 T) :=
             gff_covariance_norm_integrableOn_slice m f s T
           have h_inner_int2 : MeasureTheory.IntegrableOn
@@ -1234,7 +1230,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
         show Measurable (A_j s)
         simp only [A_j]; rw [h_eq]
         exact Complex.continuous_exp.measurable.comp (QFT.distributionPairingℂ_real_measurable _)
-      exact OSforGFF.gff_time_integral_aestronglyMeasurable_proved μ A_j EA_j T h_cont h_meas_s
+      exact OSforGFF.time_integral_aestronglyMeasurable μ A_j EA_j T h_cont h_meas_s
     -- LHS integrability: ‖∑ z_j * Err_j‖² is bounded by Z * ∑ ‖Err_j‖² (via h_cs)
     have h_weighted_int : Integrable (fun ω => ‖∑ j, z j * Err j T ω‖^2) μ := by
       apply Integrable.mono' h_sum_int

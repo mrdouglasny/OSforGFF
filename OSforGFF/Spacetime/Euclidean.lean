@@ -40,8 +40,8 @@ open TopologicalSpace Measure
 
 noncomputable section
 
-/-OS2 R^d with d=4, where mu is the Lebegue measure.
-We know the OS2 dp must be Euclidean invariant -/
+/- The Euclidean group of `ℝ^d` and its pullback action on test functions, the
+symmetry underlying OS2 (Euclidean invariance) for the Lebesgue-measure spacetime. -/
 
 open scoped Real InnerProductSpace SchwartzMap
 
@@ -51,13 +51,13 @@ variable {d : ℕ}
 
 /-- Orthogonal linear isometries of `ℝ^d`: the group `O(d)`.
 LinearIsometry is an orthogonal linear map, ie an element of `O(d)`. -/
-abbrev O4 (d : ℕ) : Type :=
+abbrev O (d : ℕ) : Type :=
   LinearIsometry (RingHom.id ℝ) (SpaceTime d) (SpaceTime d)
 
 /-!  Euclidean group -/
 /-- Euclidean motion = rotation / reflection + translation. `(E d) = ℝ^d ⋊ O(d)`. -/
 structure E (d : ℕ) where
-  R : (O4 d)
+  R : (O d)
   t : (SpaceTime d)
 
 /-- Action of g : (E d) on a spacetime point x.
@@ -86,31 +86,31 @@ open LinearIsometryEquiv
 namespace LinearIsometry
 /-- Inverse of a linear isometry : we turn the canonical equivalence
     (available in finite dimension) back into a `LinearIsometry`. -/
-noncomputable def inv (g : (O4 d)) : (O4 d) :=
+noncomputable def inv (g : (O d)) : (O d) :=
   ((g.toLinearIsometryEquiv rfl).symm).toLinearIsometry
 
-@[simp] lemma comp_apply (g h : (O4 d)) (x : (SpaceTime d)) :
+@[simp] lemma comp_apply (g h : (O d)) (x : (SpaceTime d)) :
     (g.comp h) x = g (h x) := rfl
 
-@[simp] lemma inv_apply (g : (O4 d)) (x : (SpaceTime d)) :
+@[simp] lemma inv_apply (g : (O d)) (x : (SpaceTime d)) :
     (LinearIsometry.inv g) (g x) = x := by
   -- unfold `inv`, then use the standard `symm_apply_apply` lemma
   dsimp [LinearIsometry.inv]
   simpa using
     (LinearIsometryEquiv.symm_apply_apply (g.toLinearIsometryEquiv rfl) x)
-@[simp] lemma one_apply (x : (SpaceTime d)) : (1 : (O4 d)) x = x := rfl
+@[simp] lemma one_apply (x : (SpaceTime d)) : (1 : (O d)) x = x := rfl
 
-@[simp] lemma one_comp (R : (O4 d)) : (1 : (O4 d)).comp R = R := by
+@[simp] lemma one_comp (R : (O d)) : (1 : (O d)).comp R = R := by
   ext x; simp [comp_apply, one_apply]
 
-@[simp] lemma comp_one (R : (O4 d)) : R.comp (1 : (O4 d)) = R := by
+@[simp] lemma comp_one (R : (O d)) : R.comp (1 : (O d)) = R := by
   ext x; simp [comp_apply, one_apply]
 
-@[simp] lemma inv_comp (R : (O4 d)) :
+@[simp] lemma inv_comp (R : (O d)) :
     (LinearIsometry.inv R).comp R = 1 := by
   ext x i
   simp [comp_apply, inv_apply, one_apply]
-@[simp] lemma comp_inv (R : (O4 d)) :
+@[simp] lemma comp_inv (R : (O d)) :
     R.comp (LinearIsometry.inv R) = 1 := by
   -- equality of linear-isometries, proved coordinate-wise
   ext x i
@@ -199,7 +199,7 @@ This is precisely the group-action law(𝑔ℎ)⁣⋅𝑥=𝑔.(ℎ. 𝑥)(gh)�
     act (g * h) x = act g (act h x) := by
   -- destructure g and h so Lean can see their components
 /-cases on g/h: expands each motion into its components
-gR : (O4 d) the rotation, gt : ℝ^d the translation.
+gR : (O d) the rotation, gt : ℝ^d the translation.
 hR, ht likewise. That lets Lean see the literal structure of g*h.-/
   cases g with
   | mk gR gt =>
@@ -247,7 +247,7 @@ lemma measurePreserving_act (g : (E d)) :
     simpa using map_add_right_eq_self (volume : Measure (SpaceTime d)) g.t
   simpa [act, Function.comp_def] using trans.comp rot
 
--- Helper functions for temperate growth (adapted from OS2.lean)
+-- Temperate-growth helpers for the pullback map
 open Function
 
 private lemma contDiff_act_inv (g : (E d)) :
@@ -261,9 +261,8 @@ private lemma fderiv_linear_add_const (L : (SpaceTime d) →L[ℝ] (SpaceTime d)
     fderiv ℝ (fun y => L y + c) x = fderiv ℝ L x := by
   apply fderiv_add_const
 
-set_option linter.unusedVariables false in
 private theorem fderiv_act_inv_eq_linear (g : (E d)) :
-  (fun x => fderiv ℝ (act g⁻¹) x) = fun x => g⁻¹.R.toContinuousLinearMap := by
+  (fun x => fderiv ℝ (act g⁻¹) x) = fun _ => g⁻¹.R.toContinuousLinearMap := by
   ext x v i
   let L := g⁻¹.R.toContinuousLinearMap
   calc (fderiv ℝ (act g⁻¹) x v) i
@@ -320,7 +319,6 @@ noncomputable def euclidean_pullback (g : (E d)) : (SpaceTime d) → (SpaceTime 
 lemma euclidean_pullback_temperate_growth (g : (E d)) :
     Function.HasTemperateGrowth (euclidean_pullback g) := by
   -- The map x ↦ g⁻¹.R x + g⁻¹.t is affine (linear isometry + translation)
-  -- Use the complete implementation from OS2.lean's helper_htg
   unfold euclidean_pullback
   obtain ⟨k, C, hbound⟩ := act_inv_poly_bound g
   exact Function.HasTemperateGrowth.of_fderiv
@@ -332,7 +330,6 @@ lemma euclidean_pullback_temperate_growth (g : (E d)) :
 lemma euclidean_pullback_polynomial_bounds (g : (E d)) :
     ∃ (k : ℕ) (C : ℝ), ∀ (x : (SpaceTime d)), ‖x‖ ≤ C * (1 + ‖euclidean_pullback g x‖) ^ k := by
   -- Since euclidean_pullback g x = g⁻¹.R x + g⁻¹.t and g⁻¹.R is an isometry:
-  -- This follows the pattern from hg_up_nat in OS2.lean
   use 1, (1 + ‖g⁻¹.t‖)
   intro x
   simp only [pow_one, euclidean_pullback, act]
@@ -356,39 +353,5 @@ noncomputable def euclidean_action (g : (E d)) (f : (SchwartzTestFunctionℂ d))
     (hg := euclidean_pullback_temperate_growth g)
     (hg_upper := euclidean_pullback_polynomial_bounds g) f
 
-/-- Action of Euclidean group on real test functions via pullback.
-    For g ∈ (E d) and f ∈ (SchwartzTestFunction d), define (g • f)(x) = f(g⁻¹ • x).
-    This is the real version of euclidean_action for (SchwartzTestFunction d) = SchwartzMap (SpaceTime d) ℝ. -/
-noncomputable def euclidean_action_real (g : (E d)) (f : (SchwartzTestFunction d)) : (SchwartzTestFunction d) :=
-  SchwartzMap.compCLM (𝕜 := ℝ)
-    (hg := euclidean_pullback_temperate_growth g)
-    (hg_upper := euclidean_pullback_polynomial_bounds g) f
-
-/-- The measure preservation result enables both test function and L² actions.
-    This is the key unifying lemma that works specifically for the spacetime measure μ. -/
-lemma euclidean_action_unified_basis (g : (E d)) :
-    MeasurePreserving (euclidean_pullback g) (volume : Measure (SpaceTime d)) volume := by
-  -- This is just measurePreserving_act applied to g⁻¹
-  unfold euclidean_pullback
-  exact measurePreserving_act g⁻¹
-
-/-- Action of Euclidean group on L² functions via pullback.
-    For g ∈ (E d) and f ∈ Lp ℂ 2 (volume : Measure (SpaceTime d)), define (g • f)(x) = f(g⁻¹ • x).
-    This uses the same fundamental pullback transformation as the test function action,
-    but leverages measure preservation instead of temperate growth bounds.
-    Specialized for (SpaceTime d) with Lebesgue measure. -/
-noncomputable def euclidean_action_L2 (g : (E d))
-    (f : Lp ℂ 2 (volume : Measure (SpaceTime d))) : Lp ℂ 2 (volume : Measure (SpaceTime d)) :=
-  -- Use Lp.compMeasurePreserving for measure-preserving transformations
-  have h_meas_pres : MeasurePreserving (euclidean_pullback g) (volume : Measure (SpaceTime d)) volume :=
-    euclidean_action_unified_basis g
-  Lp.compMeasurePreserving (p := 2) (euclidean_pullback g) h_meas_pres f
-
-/-- The Euclidean action as a continuous linear map on test functions.
-    This leverages the Schwartz space structure and temperate growth bounds. -/
-noncomputable def euclidean_action_CLM (g : (E d)) : (SchwartzTestFunctionℂ d) →L[ℂ] (SchwartzTestFunctionℂ d) :=
-  SchwartzMap.compCLM (𝕜 := ℂ)
-    (hg := euclidean_pullback_temperate_growth g)
-    (hg_upper := euclidean_pullback_polynomial_bounds g)
 
 

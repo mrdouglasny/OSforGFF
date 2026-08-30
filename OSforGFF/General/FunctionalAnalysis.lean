@@ -68,15 +68,12 @@ focusing on integrability, Schwartz function properties, and L² embeddings.
 - `SchwartzMap.translate`: Translation of Schwartz functions
 - `schwartz_integrable_decay`: Decay bounds for Schwartz function integrals
 
-**Complex Embeddings:**
-- `Complex.ofRealCLM_continuous_compLp`: Continuous lifting to Lp spaces
-- `embedding_real_to_complex`: Canonical ℝ→ℂ embedding for Lp functions
-
 **Schwartz→L² Embedding:**
 - `schwartzToL2`: Embedding Schwartz functions into L² space
 
 **L∞·L² Multiplication:**
-- `linfty_mul_L2_CLM`: Continuous bilinear map L∞ × L² → L²
+- `linfty_mul_L2_CLM`: multiplication by a fixed essentially bounded function as a
+  continuous linear operator L² → L²
 
 **Integrability Results:**
 - `integrableOn_ball_of_radial`: Radial functions integrable on balls
@@ -101,13 +98,6 @@ open scoped FourierTransform
 
 noncomputable section
 
-/-! ## Proven theorems in this file
-
-The following L∞ × L² multiplication theorems are fully proven (2025-12-13):
-- `linfty_mul_L2_CLM`: L∞ × L² → L² bounded linear operator
-- `linfty_mul_L2_CLM_spec`: pointwise specification (g·f)(x) = g(x)·f(x) a.e.
--/
-
 open MeasureTheory.Measure
 
 
@@ -126,7 +116,7 @@ open scoped SchwartzMap
 variable {𝕜 : Type} [RCLike 𝕜]
 variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
--- General version that works for any normed space over ℝ
+/-- Schwartz functions have temperate growth, for any real normed domain and codomain. -/
 lemma SchwartzMap.hasTemperateGrowth_general
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
@@ -134,67 +124,14 @@ lemma SchwartzMap.hasTemperateGrowth_general
     Function.HasTemperateGrowth (⇑g) :=
   hasTemperateGrowth g
 
-/- Measure lifting from real to complex Lp spaces -/
+/- Borel measurable structure on Lp spaces -/
 
 variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
 
--- Add measurable space instances for Lp spaces
-instance [MeasurableSpace α] (μ : Measure α) : MeasurableSpace (Lp ℝ 2 μ) := borel _
-instance [MeasurableSpace α] (μ : Measure α) : BorelSpace (Lp ℝ 2 μ) := ⟨rfl⟩
-instance [MeasurableSpace α] (μ : Measure α) : MeasurableSpace (Lp ℂ 2 μ) := borel _
-instance [MeasurableSpace α] (μ : Measure α) : BorelSpace (Lp ℂ 2 μ) := ⟨rfl⟩
-
--- Use this to prove our specific case
-lemma Complex.ofRealCLM_continuous_compLp {α : Type*} [MeasurableSpace α] {μ : Measure α} :
-  Continuous (fun φ : Lp ℝ 2 μ => Complex.ofRealCLM.compLp φ : Lp ℝ 2 μ → Lp ℂ 2 μ) := by
-  -- The function φ ↦ L.compLp φ is the application of the continuous linear map
-  -- ContinuousLinearMap.compLpL p μ L, which is continuous
-  exact (ContinuousLinearMap.compLpL 2 μ Complex.ofRealCLM).continuous
-
-/--
-Compose an Lp function with a continuous linear map.
-This should be the canonical way to lift real Lp functions to complex Lp functions.
--/
-noncomputable def composed_function {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (f : Lp ℝ 2 μ) (A : ℝ →L[ℝ] ℂ): Lp ℂ 2 μ :=
-  A.compLp f
-
--- Check that we get the expected norm bound
-example {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (f : Lp ℝ 2 μ) (A : ℝ →L[ℝ] ℂ) : ‖A.compLp f‖ ≤ ‖A‖ * ‖f‖ :=
-  ContinuousLinearMap.norm_compLp_le A f
-
-/--
-Embedding from real Lp functions to complex Lp functions using the canonical embedding ℝ → ℂ.
--/
-noncomputable def embedding_real_to_complex {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (φ : Lp ℝ 2 μ) : Lp ℂ 2 μ :=
-  composed_function φ (Complex.ofRealCLM)
-
-section LiftMeasure
-  variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
-
-  /--
-  Lifts a probability measure from the space of real Lp functions to the space of
-  complex Lp functions, with support on the real subspace.
-  -/
-  noncomputable def liftMeasure_real_to_complex
-      (dμ_real : ProbabilityMeasure (Lp ℝ 2 μ)) :
-      ProbabilityMeasure (Lp ℂ 2 μ) :=
-    let dμ_complex_measure : Measure (Lp ℂ 2 μ) :=
-      Measure.map embedding_real_to_complex dμ_real
-    have h_ae : AEMeasurable embedding_real_to_complex dμ_real := by
-      apply Continuous.aemeasurable
-      unfold embedding_real_to_complex composed_function
-      have : Continuous (fun φ : Lp ℝ 2 μ => Complex.ofRealCLM.compLp φ : Lp ℝ 2 μ → Lp ℂ 2 μ) :=
-        Complex.ofRealCLM_continuous_compLp
-      exact this
-    have h_is_prob := isProbabilityMeasure_map h_ae
-    ⟨dμ_complex_measure, h_is_prob⟩
-
-end LiftMeasure
-
-
+instance (μ : Measure α) : MeasurableSpace (Lp ℝ 2 μ) := borel _
+instance (μ : Measure α) : BorelSpace (Lp ℝ 2 μ) := ⟨rfl⟩
+instance (μ : Measure α) : MeasurableSpace (Lp ℂ 2 μ) := borel _
+instance (μ : Measure α) : BorelSpace (Lp ℂ 2 μ) := ⟨rfl⟩
 
 /-! ## Fourier Transform as Linear Isometry on L² Spaces
 
@@ -236,7 +173,7 @@ Mathematical background:
 - The operator norm satisfies ‖Mg‖ ≤ C
 - The action is pointwise a.e.: (Mg f)(x) = g(x) · f(x) a.e.
 
-Proof method (2025-12-13):
+Proof method:
 - Uses Mathlib's `eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm` for the L∞ × Lp → Lp bound
 - For ℂ, multiplication equals scalar multiplication (g * f = g • f)
 - Hölder's inequality via `MemLp.mul` with HolderTriple ∞ 2 2
@@ -677,7 +614,7 @@ variable {E}
 noncomputable def bumpSelfConv (φ : ContDiffBump (0 : E)) : E → ℝ :=
   (φ.normed volume) ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] (φ.normed volume)
 
-set_option linter.unusedSectionVars false in
+omit [NullSingletonClass (volume : Measure E)] in
 /-- Self-convolution is nonnegative. -/
 lemma bumpSelfConv_nonneg (φ : ContDiffBump (0 : E)) (x : E) : 0 ≤ bumpSelfConv φ x := by
   unfold bumpSelfConv convolution
@@ -686,7 +623,7 @@ lemma bumpSelfConv_nonneg (φ : ContDiffBump (0 : E)) (x : E) : 0 ≤ bumpSelfCo
   simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul]
   exact mul_nonneg (φ.nonneg_normed _) (φ.nonneg_normed _)
 
-set_option linter.unusedSectionVars false in
+omit [NullSingletonClass (volume : Measure E)] in
 /-- Self-convolution has mass 1: ∫(φ ⋆ φ) = (∫φ)(∫φ) = 1·1 = 1. -/
 lemma bumpSelfConv_integral (φ : ContDiffBump (0 : E)) :
     ∫ x, bumpSelfConv φ x = 1 := by
@@ -699,7 +636,7 @@ lemma bumpSelfConv_integral (φ : ContDiffBump (0 : E)) :
   · exact φ.integrable_normed
   · exact φ.integrable_normed
 
-set_option linter.unusedSectionVars false in
+omit [NullSingletonClass (volume : Measure E)] in
 /-- Support of self-convolution is contained in ball of radius 2*rOut. -/
 lemma bumpSelfConv_support_subset (φ : ContDiffBump (0 : E)) :
     support (bumpSelfConv φ) ⊆ Metric.ball 0 (2 * φ.rOut) := by
@@ -726,6 +663,7 @@ lemma bumpSelfConv_support_subset (φ : ContDiffBump (0 : E)) :
     _ < φ.rOut + φ.rOut := add_lt_add hy_ball hz_ball
     _ = 2 * φ.rOut := by ring
 
+omit [NullSingletonClass (volume : Measure E)] in
 /-- Self-convolution support shrinks to {0} as rOut → 0. -/
 lemma bumpSelfConv_support_tendsto {ι : Type*} {l : Filter ι} [l.NeBot]
     (φ : ι → ContDiffBump (0 : E)) (hφ : Tendsto (fun i => (φ i).rOut) l (nhds 0)) :

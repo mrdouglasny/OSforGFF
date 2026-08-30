@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2025-2026 Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim. All rights reserved.
+Copyright (c) 2025 Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim. All rights reserved.
 Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
@@ -89,16 +89,6 @@ lemma distributionPairingℂ_real_measurable (f : SchwartzTestFunctionℂ d) :
   simp only [distributionPairingℂ_real, complex_testfunction_decompose]
   exact (continuous_ofReal.measurable.comp (WeakDual.eval_measurable _)).add
     (measurable_const.mul (continuous_ofReal.measurable.comp (WeakDual.eval_measurable _)))
-
-/-- The GFF integrand for the generating functional is measurable in ω for each z. -/
-theorem gff_integrand_measurable
-    (n : ℕ) (J : Fin n → SchwartzTestFunctionℂ d) (z : Fin n → ℂ) :
-    AEStronglyMeasurable
-      (fun ω : FieldConfiguration d =>
-        Complex.exp (Complex.I * distributionPairingℂ_real ω (∑ i, z i • J i)))
-      (gaussianFreeField_free (d := d) m).toMeasure := by
-  exact (Complex.continuous_exp.measurable.comp
-    (measurable_const.mul (distributionPairingℂ_real_measurable _))).aestronglyMeasurable
 
 omit [Fact (2 ≤ d)] in
 /-- The norm of exp(I * distributionPairingℂ_real ω f) equals exp(-(ω f_im))
@@ -190,12 +180,9 @@ lemma gff_exp_abs_pairing_memLp (f : SchwartzTestFunction d) (p : ENNReal) (hp :
   -- (exp |x|)^p = exp(p * |x|), and for p finite this is bounded by C * exp(α x²)
   -- The detailed proof uses Young's inequality: p|x| ≤ p²/(4α) + α x²
 
-  -- Here we use the fact that for any test function, linear functionals on Gaussian
-  -- measures have all moments finite, so any polynomial growth times exponential decay
-  -- is integrable. We axiomatize this as part of the Fernique condition.
-
-  -- For now, use the fact that we have L¹ integrability and the function is AE bounded
-  -- by a multiple of exp(α x²) which is integrable
+  -- Linear functionals on Gaussian measures have all moments finite (Fernique), so any
+  -- polynomial growth times exponential decay is integrable. Concretely: we have L¹
+  -- integrability, and the function is AE bounded by a multiple of the integrable exp(α x²).
   have h_aesm : AEStronglyMeasurable (fun ω => Real.exp |ω f|) (gaussianFreeField_free (d := d) m).toMeasure :=
     (Real.continuous_exp.measurable.comp (continuous_abs.measurable.comp (WeakDual.eval_measurable f))).aestronglyMeasurable
 
@@ -305,16 +292,6 @@ lemma gff_exp_abs_pairing_integrable (f : SchwartzTestFunction d) :
     Integrable (fun ω : FieldConfiguration d => Real.exp |ω f|) (gaussianFreeField_free (d := d) m).toMeasure :=
   memLp_one_iff_integrable.mp (gff_exp_abs_pairing_memLp m f 1 ENNReal.one_ne_top)
 
-/-- The integral of ‖exp(I * distributionPairingℂ_real ω f)‖ is finite for any complex test function.
-    This follows from the Gaussian exponential integrability applied to the imaginary part. -/
-lemma gff_integrand_norm_integrable (f : SchwartzTestFunctionℂ d) :
-    Integrable (fun ω : FieldConfiguration d =>
-        ‖Complex.exp (Complex.I * distributionPairingℂ_real ω f)‖)
-      (gaussianFreeField_free (d := d) m).toMeasure := by
-  -- Rewrite the norm using our lemma
-  simp_rw [norm_exp_I_distributionPairingℂ_real]
-  -- This is exp(-(ω f_im)) which is integrable by gff_exp_neg_pairing_integrable
-  exact gff_exp_neg_pairing_integrable m (complex_testfunction_decompose f).2
 
 
 

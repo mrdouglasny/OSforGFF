@@ -85,11 +85,6 @@ abbrev SchwartzTestFunctionℂ (d : ℕ) := SchwartzTestFunction𝕜 (𝕜 := �
 
 variable (x : (SpaceTime d))
 
-/- Probability distribution over field configurations (distributions) -/
-def pointwiseMulCLM : ℂ →L[ℂ] ℂ →L[ℂ] ℂ := ContinuousLinearMap.mul ℂ ℂ
-
-
-
 /-! ## Glimm-Jaffe Distribution Framework
 
 The proper mathematical foundation for quantum field theory uses

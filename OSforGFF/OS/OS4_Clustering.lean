@@ -14,7 +14,7 @@ import OSforGFF.OS.OS2_Invariance -- For CovarianceEuclideanInvariantℂ_μ_GFF
 import OSforGFF.OS.Axioms
 import OSforGFF.General.FunctionalAnalysis
 import OSforGFF.Spacetime.ComplexTestFunction
-import OSforGFF.General.QuantitativeDecay  -- For schwartz_bilinear_translation_decay_polynomial_proof
+import OSforGFF.General.QuantitativeDecay  -- For schwartz_bilinear_translation_decay_polynomial
 import OSforGFF.Spacetime.TimeTranslation  -- For time translation on distributions
 import OSforGFF.OS.OS4_MGF  -- For shared OS4 infrastructure (no sorries)
 
@@ -117,10 +117,10 @@ lemma gff_generating_sum_factorization (m : ℝ) [Fact (0 < m)] [GFFPropagator d
 
 omit [Fact (2 ≤ d)] in
 /-- The inverse of the identity linear isometry is itself. -/
-lemma LinearIsometry_inv_one : LinearIsometry.inv (1 : O4 d) = 1 := by
+lemma LinearIsometry_inv_one : LinearIsometry.inv (1 : O d) = 1 := by
   -- Use comp_inv: R.comp (inv R) = 1
   -- For R = 1: 1.comp (inv 1) = 1, so inv 1 = 1 (since 1.comp x = x)
-  have h := LinearIsometry.comp_inv (1 : O4 d)
+  have h := LinearIsometry.comp_inv (1 : O d)
   simp only [LinearIsometry.one_comp] at h
   exact h
 
@@ -340,7 +340,7 @@ theorem schwartz_cross_covariance_decay_real (m : ℝ) [Fact (0 < m)] [GFFPropag
         (toComplex f) x * (freeCovarianceKernel d m (x - y) : ℂ) * (toComplex g) (y - a))
       (Filter.cocompact (SpaceTime d))
       (nhds 0) :=
-    schwartz_bilinear_translation_decay_proof (toComplex f) (toComplex g)
+    schwartz_bilinear_translation_decay (toComplex f) (toComplex g)
       (freeCovarianceKernel d m) hK_meas hK_loc 2 (by norm_num) C 1 hC_pos (by norm_num) hK_cont hK_decay'
 
   -- Step 4: Convert Filter.Tendsto to ε-δ form
@@ -482,7 +482,7 @@ the underlying covariance has exponential decay (from the mass gap).
 The proof uses:
 1. Time translation duality: ⟨T_s ω, g⟩ = ⟨ω, T_{-s} g⟩
 2. Gaussian factorization: E[e^{⟨ω, f + T_{-s} g⟩}] = Z[f]·Z[g]·exp(-S₂(f, T_{-s} g))
-3. The proved theorem `schwartz_bilinear_translation_decay_polynomial_proof` for polynomial bounds
+3. The proved theorem `schwartz_bilinear_translation_decay_polynomial` for polynomial bounds
 -/
 
 /-! ### Time Translation Infrastructure for Polynomial Clustering
@@ -569,7 +569,7 @@ lemma schwinger2_time_translated_eq_bilinear (m : ℝ) [Fact (0 < m)] [GFFPropag
     1. Time duality: ⟨T_s ω, g⟩ = ⟨ω, T_{-s} g⟩
     2. Gaussian factorization: E[e^{⟨ω, f⟩ + ⟨T_s ω, g⟩}] = Z[f]·Z[g]·exp(-S₂(f, T_{-s} g))
     3. Exponential covariance decay: |S₂(f, T_{-s} g)| ≤ c·e^{-ms} from mass gap
-    4. Proved theorem: schwartz_bilinear_translation_decay_polynomial_proof for polynomial bound
+    4. Proved theorem: schwartz_bilinear_translation_decay_polynomial for polynomial bound
 
     The mass gap m > 0 ensures exponential decay, which is stronger than any polynomial.
     Therefore the GFF satisfies OS4_PolynomialClustering for all α > 0. -/
@@ -595,7 +595,7 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
       exact norm_ne_zero_iff.mp (by linarith)
 
   -- Step 3: Apply the quantitative decay lemma (rate m/2, radius 1)
-  have ⟨c_decay, hc_nonneg, hBound⟩ := schwartz_bilinear_translation_decay_polynomial_proof
+  have ⟨c_decay, hc_nonneg, hBound⟩ := schwartz_bilinear_translation_decay_polynomial
     f g (freeCovarianceKernel d m)
     hK_meas hK_loc
     (m / 2) (by positivity) C_exp 1 hC_exp_pos one_pos

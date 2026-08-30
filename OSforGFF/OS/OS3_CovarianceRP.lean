@@ -237,7 +237,8 @@ lemma yIntegralFactor_eq_neg (f : (SchwartzTestFunctionℂ d)) (k_sp : (SpatialC
     - `exp(-ω(x₀+y₀)) = exp(-ωx₀) · exp(-ωy₀)`
     - `exp(-ik_sp·r) = exp(-ik_sp·x_sp) · exp(+ik_sp·y_sp)`
 
-    This avoids the round-trip through k₀ space that the old proof used. -/
+    This avoids a round-trip through k₀ space (the superseded k₀-inside chain is
+    preserved in `Legacy/UnusedOS.lean`). -/
 theorem factorization_to_squared_norm_direct (f : (SchwartzTestFunctionℂ d)) (k_sp : (SpatialCoords d))
     (hf_support : ∀ x : (SpaceTime d), x 0 < 0 → f x = 0) :
     let ω := Real.sqrt (‖k_sp‖^2 + m^2)
