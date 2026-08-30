@@ -554,7 +554,7 @@ the bilinear integral tends to 0 as the translation parameter a → ∞.
 
 This version adds LocallyIntegrable hypothesis to handle kernel singularities.
 -/
-theorem schwartz_bilinear_translation_decay_proof
+theorem schwartz_bilinear_translation_decay
     (f g : SchwartzMap E ℂ)
     (K : E → ℝ)
     (hK_meas : Measurable K)

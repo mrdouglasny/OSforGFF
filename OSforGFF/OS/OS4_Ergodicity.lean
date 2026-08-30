@@ -368,7 +368,7 @@ lemma double_integral_decay_bound :
       ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T,
         (1 + |s - u|)^(-(3 : ℝ)) ≤ 2 * T * C := by
   -- Use the integral bound for α = 3 > 1
-  obtain ⟨C₀, hC₀_pos, hC₀_bound⟩ := OSforGFF.double_integral_polynomial_decay_bound_proved 3 (by norm_num : (3 : ℝ) > 1)
+  obtain ⟨C₀, hC₀_pos, hC₀_bound⟩ := OSforGFF.double_integral_polynomial_decay_bound 3 (by norm_num : (3 : ℝ) > 1)
   use C₀, hC₀_pos
   intro T hT
   calc ∫ s in Set.Icc (0 : ℝ) T, ∫ u in Set.Icc (0 : ℝ) T, (1 + |s - u|)^(-(3 : ℝ))
@@ -875,7 +875,7 @@ lemma clustering_implies_covariance_decay (m : ℝ) [Fact (0 < m)] [GFFPropagato
           exact Real.rpow_le_rpow_of_exponent_le h_base (by norm_num : (-6 : ℝ) ≤ -3)
 
 /-- The norm of the GFF covariance is integrable on [0,T] for each fixed first argument.
-    Uses gff_covariance_norm_integrableOn_slice_proved to avoid expensive type unification. -/
+    Uses covariance_norm_integrableOn_slice to avoid expensive type unification. -/
 lemma gff_covariance_norm_integrableOn_slice (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (f : (SchwartzTestFunctionℂ d))
     (s : ℝ) (T : ℝ) :
     let μ := (gaussianFreeField_free m).toMeasure
@@ -886,7 +886,7 @@ lemma gff_covariance_norm_integrableOn_slice (m : ℝ) [Fact (0 < m)] [GFFPropag
   intro μ A EA Cov
   haveI : IsProbabilityMeasure μ :=
     MeasureTheory.ProbabilityMeasure.instIsProbabilityMeasureToMeasure (gaussianFreeField_free m)
-  exact OSforGFF.gff_covariance_norm_integrableOn_slice_proved μ A EA s T
+  exact OSforGFF.covariance_norm_integrableOn_slice μ A EA s T
     (gff_covariance_continuous m f)
 
 /-! ## Variance Decay from Clustering -/
@@ -1234,7 +1234,7 @@ theorem OS4'_implies_OS4 (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
         show Measurable (A_j s)
         simp only [A_j]; rw [h_eq]
         exact Complex.continuous_exp.measurable.comp (QFT.distributionPairingℂ_real_measurable _)
-      exact OSforGFF.gff_time_integral_aestronglyMeasurable_proved μ A_j EA_j T h_cont h_meas_s
+      exact OSforGFF.time_integral_aestronglyMeasurable μ A_j EA_j T h_cont h_meas_s
     -- LHS integrability: ‖∑ z_j * Err_j‖² is bounded by Z * ∑ ‖Err_j‖² (via h_cs)
     have h_weighted_int : Integrable (fun ω => ‖∑ j, z j * Err j T ω‖^2) μ := by
       apply Integrable.mono' h_sum_int

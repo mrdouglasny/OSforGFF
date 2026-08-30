@@ -156,8 +156,8 @@ lemma euclidean_action_timeTranslationE (t : ℝ) (f : SchwartzTestFunctionℂ d
   simp only [timeTranslationSchwartzℂ_apply, timeShift_eq_add_const]
   congr 1
   simp only [QFT.inv_R, QFT.inv_t, QFT.LinearIsometry.inv]
-  have h1 : ∀ v, (LinearIsometry.toLinearIsometryEquiv (1 : QFT.O4 d) rfl).symm v = v := fun v => by
-    have hv : (LinearIsometry.toLinearIsometryEquiv (1 : QFT.O4 d) rfl) v = v := rfl
+  have h1 : ∀ v, (LinearIsometry.toLinearIsometryEquiv (1 : QFT.O d) rfl).symm v = v := fun v => by
+    have hv : (LinearIsometry.toLinearIsometryEquiv (1 : QFT.O d) rfl) v = v := rfl
     rw [← hv]; exact LinearIsometryEquiv.symm_apply_apply _ v
   simp only [LinearIsometryEquiv.coe_toLinearIsometry, h1, neg_neg]
 

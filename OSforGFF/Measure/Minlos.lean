@@ -51,12 +51,6 @@ noncomputable section
 
 These use the GFF4D (nonneg-only) notion of positive definiteness. -/
 
-/-- **Gaussian RBF kernel is positive definite on inner product spaces** (GFF4D version). -/
-theorem gaussian_rbf_pd_innerProduct
-  {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] :
-  GFF4D.IsPositiveDefinite (fun h : H => Complex.exp (-(1/2 : ℂ) * (‖h‖^2 : ℝ))) :=
-  gaussian_rbf_pd_innerProduct_proof
-
 /-- If covariance is realized as a squared norm via a linear embedding T into
     a real inner product space H, then the Gaussian characteristic functional
     is positive definite (GFF4D sense). -/

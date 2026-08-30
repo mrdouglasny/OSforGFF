@@ -51,13 +51,13 @@ variable {d : ℕ}
 
 /-- Orthogonal linear isometries of `ℝ^d`: the group `O(d)`.
 LinearIsometry is an orthogonal linear map, ie an element of `O(d)`. -/
-abbrev O4 (d : ℕ) : Type :=
+abbrev O (d : ℕ) : Type :=
   LinearIsometry (RingHom.id ℝ) (SpaceTime d) (SpaceTime d)
 
 /-!  Euclidean group -/
 /-- Euclidean motion = rotation / reflection + translation. `(E d) = ℝ^d ⋊ O(d)`. -/
 structure E (d : ℕ) where
-  R : (O4 d)
+  R : (O d)
   t : (SpaceTime d)
 
 /-- Action of g : (E d) on a spacetime point x.
@@ -86,31 +86,31 @@ open LinearIsometryEquiv
 namespace LinearIsometry
 /-- Inverse of a linear isometry : we turn the canonical equivalence
     (available in finite dimension) back into a `LinearIsometry`. -/
-noncomputable def inv (g : (O4 d)) : (O4 d) :=
+noncomputable def inv (g : (O d)) : (O d) :=
   ((g.toLinearIsometryEquiv rfl).symm).toLinearIsometry
 
-@[simp] lemma comp_apply (g h : (O4 d)) (x : (SpaceTime d)) :
+@[simp] lemma comp_apply (g h : (O d)) (x : (SpaceTime d)) :
     (g.comp h) x = g (h x) := rfl
 
-@[simp] lemma inv_apply (g : (O4 d)) (x : (SpaceTime d)) :
+@[simp] lemma inv_apply (g : (O d)) (x : (SpaceTime d)) :
     (LinearIsometry.inv g) (g x) = x := by
   -- unfold `inv`, then use the standard `symm_apply_apply` lemma
   dsimp [LinearIsometry.inv]
   simpa using
     (LinearIsometryEquiv.symm_apply_apply (g.toLinearIsometryEquiv rfl) x)
-@[simp] lemma one_apply (x : (SpaceTime d)) : (1 : (O4 d)) x = x := rfl
+@[simp] lemma one_apply (x : (SpaceTime d)) : (1 : (O d)) x = x := rfl
 
-@[simp] lemma one_comp (R : (O4 d)) : (1 : (O4 d)).comp R = R := by
+@[simp] lemma one_comp (R : (O d)) : (1 : (O d)).comp R = R := by
   ext x; simp [comp_apply, one_apply]
 
-@[simp] lemma comp_one (R : (O4 d)) : R.comp (1 : (O4 d)) = R := by
+@[simp] lemma comp_one (R : (O d)) : R.comp (1 : (O d)) = R := by
   ext x; simp [comp_apply, one_apply]
 
-@[simp] lemma inv_comp (R : (O4 d)) :
+@[simp] lemma inv_comp (R : (O d)) :
     (LinearIsometry.inv R).comp R = 1 := by
   ext x i
   simp [comp_apply, inv_apply, one_apply]
-@[simp] lemma comp_inv (R : (O4 d)) :
+@[simp] lemma comp_inv (R : (O d)) :
     R.comp (LinearIsometry.inv R) = 1 := by
   -- equality of linear-isometries, proved coordinate-wise
   ext x i
@@ -199,7 +199,7 @@ This is precisely the group-action law(𝑔ℎ)⁣⋅𝑥=𝑔.(ℎ. 𝑥)(gh)�
     act (g * h) x = act g (act h x) := by
   -- destructure g and h so Lean can see their components
 /-cases on g/h: expands each motion into its components
-gR : (O4 d) the rotation, gt : ℝ^d the translation.
+gR : (O d) the rotation, gt : ℝ^d the translation.
 hR, ht likewise. That lets Lean see the literal structure of g*h.-/
   cases g with
   | mk gR gt =>

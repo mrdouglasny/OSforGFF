@@ -10,12 +10,12 @@ This file proves L² bounds on time averages and parametric integrals.
 
 ## Main Results
 
-1. `sq_setIntegral_le_measure_mul_setIntegral_sq_proved` - Cauchy-Schwarz for set integrals (Hölder)
+1. `sq_setIntegral_le_measure_mul_setIntegral_sq` - Cauchy-Schwarz for set integrals (Hölder)
 2. `time_average_memLp_two` - Time average is in L² (Cauchy-Schwarz + Fubini)
 3. `memLp_prod_of_uniform_slicewise_bound` - L² on product from uniform slicewise bounds
-4. `gff_time_integral_aestronglyMeasurable_proved` - Parametric time integral is measurable
-5. `gff_covariance_norm_integrableOn_slice_proved` - Covariance norm integrable on slices
-6. `double_integral_polynomial_decay_bound_proved` - Double integral bound for polynomial decay kernels
+4. `time_integral_aestronglyMeasurable` - Parametric time integral is measurable
+5. `covariance_norm_integrableOn_slice` - Covariance norm integrable on slices
+6. `double_integral_polynomial_decay_bound` - Double integral bound for polynomial decay kernels
 
 ## Mathematical Background
 
@@ -79,7 +79,7 @@ For f : ℝ → ℂ with ‖f‖² integrable on [a,b]:
   ‖∫_[a,b] f(x) dx‖² ≤ (b-a) · ∫_[a,b] ‖f(x)‖² dx
 
 This is |⟨1, f⟩|² ≤ ‖1‖² · ‖f‖² in L². -/
-theorem sq_setIntegral_le_measure_mul_setIntegral_sq_proved
+theorem sq_setIntegral_le_measure_mul_setIntegral_sq
     {f : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
     (hf_sq : IntegrableOn (fun x => ‖f x‖^2) (Icc a b) volume) :
     ‖∫ x in Icc a b, f x‖^2 ≤ (b - a) * ∫ x in Icc a b, ‖f x‖^2 := by
@@ -122,7 +122,7 @@ lemma cauchy_schwarz_time_integral_pointwise (A : ℝ → Ω → ℂ) (T : ℝ) 
     (hf_sq : IntegrableOn (fun s => ‖A s ω‖^2) (Icc 0 T) volume) :
     ‖∫ s in Icc 0 T, A s ω‖^2 ≤ T * ∫ s in Icc 0 T, ‖A s ω‖^2 := by
   have hab : (0 : ℝ) ≤ T := le_of_lt hT
-  have h := sq_setIntegral_le_measure_mul_setIntegral_sq_proved hab hf_sq
+  have h := sq_setIntegral_le_measure_mul_setIntegral_sq hab hf_sq
   simp only [sub_zero] at h
   exact h
 
@@ -286,7 +286,7 @@ the time integral ω ↦ (1/T) * ∫ₛ (A s ω - EA) ds is AEStronglyMeasurable
 
 Proof: continuous-in-s + measurable-in-ω → jointly StronglyMeasurable (Mathlib),
 then swap product measure and integrate out s via `integral_prod_right'`. -/
-theorem gff_time_integral_aestronglyMeasurable_proved
+theorem time_integral_aestronglyMeasurable
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (A : ℝ → Ω → ℂ) (EA : ℂ) (T : ℝ)
     (h_cont_s : ∀ ω, Continuous (fun s => A s ω))
@@ -325,7 +325,7 @@ is integrable. This is immediate from continuity on compact sets.
 If the covariance (s,u) ↦ ∫ A_s · conj(A_u) - EA·conj(EA) is continuous,
 then u ↦ ‖Cov(s,u)‖ is integrable on [0,T] since continuous functions on
 compact sets are integrable. -/
-theorem gff_covariance_norm_integrableOn_slice_proved
+theorem covariance_norm_integrableOn_slice
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     (A : ℝ → Ω → ℂ) (EA : ℂ) (s T : ℝ)
     (h_cov_cont : Continuous (fun p : ℝ × ℝ =>
@@ -361,7 +361,7 @@ where C = ∫_ℝ (1+|t|)^{-α} dt is the integral of the kernel over all of ℝ
 **Key tools:** `integrableOn_add_rpow_Ioi_of_lt` (decay integral), `integral_sub_left_eq_self`
 (translation invariance), `setIntegral_le_integral` (set ≤ full for nonneg integrable functions),
 `MeasurePreserving.integrableOn_comp_preimage` (negation symmetry for even functions). -/
-theorem double_integral_polynomial_decay_bound_proved (α : ℝ) (hα : α > 1) :
+theorem double_integral_polynomial_decay_bound (α : ℝ) (hα : α > 1) :
     ∃ C : ℝ, C > 0 ∧ ∀ T : ℝ, T > 0 →
       ∫ s in Icc (0 : ℝ) T, ∫ u in Icc (0 : ℝ) T,
         (1 + |s - u|)^(-α) ≤ C * T := by
