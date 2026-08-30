@@ -13,7 +13,7 @@ tempered distributions $\mathscr{S}'(\mathbb{R}^d)$. On top of these it builds t
 distribution framework: the real and complex pairings $\langle \omega, f\rangle$, the generating
 functionals $Z[J] = \int \exp(i\langle\omega, J\rangle)\, d\mu(\omega)$, the mean field, a
 real/imaginary decomposition of complex test functions, and a small amount of spatial geometry
-(spatial coordinates $\mathbb{R}^{d-1}$, the spatial $L^2$ space, and the relativistic energy
+(spatial coordinates $\mathbb{R}^{d-1}$ and the relativistic energy
 $E(k) = \sqrt{\lVert k\rVert^2 + m^2}$). The time/space split relies on `[Fact (2 ≤ d)]` so that
 the time index `(0 : Fin d)` is available.
 
@@ -22,11 +22,11 @@ the time index `(0 : Fin d)` is available.
 **Main result**: Core spacetime / test-function / distribution definitions plus the Glimm-Jaffe
 pairing and generating-functional framework. Fully proven (0 sorries; no `sorry`/`admit`).
 
-**Length**: 276 lines, 22 definition(s) + 10 theorem(s)/lemma(s)
+**Length**: 264 lines, 18 definition(s) + 10 theorem(s)/lemma(s)
 
 ---
 
-### [`SpaceTime`](../../OSforGFF/Spacetime/Basic.lean#L56) — Definition *(abbrev)*
+### [`SpaceTime`](../../OSforGFF/Spacetime/Basic.lean#L57) — Definition *(abbrev)*
 
 **Lean signature**
 ```lean
@@ -38,7 +38,7 @@ inner-product structure.
 
 ---
 
-### [`instance : NeZero d`](../../OSforGFF/Spacetime/Basic.lean#L59) — Definition *(instance)*
+### [`instance : NeZero d`](../../OSforGFF/Spacetime/Basic.lean#L60) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -47,18 +47,6 @@ instance {d : ℕ} [Fact (2 ≤ d)] : NeZero d
 
 **Informal**: Dimensions admitting a time/space split ($d \geq 2$) are nonzero, so `(0 : Fin d)`
 is a valid index.
-
----
-
-### [`instance : InnerProductSpace ℝ (SpaceTime d)`](../../OSforGFF/Spacetime/Basic.lean#L61) — Definition *(instance)*
-
-**Lean signature**
-```lean
-noncomputable instance (d : ℕ) : InnerProductSpace ℝ (SpaceTime d)
-```
-
-**Informal**: The real inner-product-space structure on `SpaceTime d`, obtained by instance
-resolution.
 
 ---
 
@@ -108,31 +96,7 @@ abbrev SchwartzTestFunctionℂ (d : ℕ) := SchwartzTestFunction𝕜 (𝕜 := �
 
 ---
 
-### [`pointwiseMulCLM`](../../OSforGFF/Spacetime/Basic.lean#L89) — Definition
-
-**Lean signature**
-```lean
-def pointwiseMulCLM : ℂ →L[ℂ] ℂ →L[ℂ] ℂ := ContinuousLinearMap.mul ℂ ℂ
-```
-
-**Informal**: Complex multiplication as a continuous $\mathbb{C}$-bilinear map.
-
----
-
-### [`schwartzMul`](../../OSforGFF/Spacetime/Basic.lean#L92) — Definition
-
-**Lean signature**
-```lean
-def schwartzMul (g : (SchwartzTestFunctionℂ d)) : (SchwartzTestFunctionℂ d) →L[ℂ] (SchwartzTestFunctionℂ d) :=
-  (SchwartzMap.bilinLeftCLM pointwiseMulCLM (SchwartzMap.hasTemperateGrowth_general g))
-```
-
-**Informal**: Pointwise multiplication by a fixed complex test function $g$, lifted to a
-continuous linear operator on the complex Schwartz space via `SchwartzMap.bilinLeftCLM`.
-
----
-
-### [`FieldConfiguration`](../../OSforGFF/Spacetime/Basic.lean#L110) — Definition *(abbrev)*
+### [`FieldConfiguration`](../../OSforGFF/Spacetime/Basic.lean#L101) — Definition *(abbrev)*
 
 **Lean signature**
 ```lean
@@ -146,7 +110,7 @@ library, and the weak-* topology makes evaluation maps continuous.
 
 ---
 
-### [`distributionPairing`](../../OSforGFF/Spacetime/Basic.lean#L120) — Definition
+### [`distributionPairing`](../../OSforGFF/Spacetime/Basic.lean#L111) — Definition
 
 **Lean signature**
 ```lean
@@ -158,19 +122,19 @@ distribution and a real test function.
 
 ---
 
-### [`distributionPairing_add`](../../OSforGFF/Spacetime/Basic.lean#L122) — Lemma *(simp)*
+### [`distributionPairing_add`](../../OSforGFF/Spacetime/Basic.lean#L113) — Lemma *(simp)*
 
 **Statement**: $\langle \omega_1 + \omega_2, a\rangle = \langle \omega_1, a\rangle + \langle \omega_2, a\rangle$ (WeakDual addition is pointwise; by `rfl`).
 
 ---
 
-### [`distributionPairing_smul`](../../OSforGFF/Spacetime/Basic.lean#L125) — Lemma *(simp)*
+### [`distributionPairing_smul`](../../OSforGFF/Spacetime/Basic.lean#L116) — Lemma *(simp)*
 
 **Statement**: $\langle s \cdot \omega, a\rangle = s\,\langle \omega, a\rangle$ for $s \in \mathbb{R}$ (WeakDual scalar action is pointwise; by `rfl`).
 
 ---
 
-### [`pairing_smul_real`](../../OSforGFF/Spacetime/Basic.lean#L130) — Lemma *(simp)*
+### [`pairing_smul_real`](../../OSforGFF/Spacetime/Basic.lean#L121) — Lemma *(simp)*
 
 **Statement**: $\omega(s \cdot a) = s\,\omega(a)$, linearity of the pairing in the test-function argument.
 
@@ -178,7 +142,7 @@ distribution and a real test function.
 
 ---
 
-### [`distributionPairingCLM`](../../OSforGFF/Spacetime/Basic.lean#L135) — Definition *(simp)*
+### [`distributionPairingCLM`](../../OSforGFF/Spacetime/Basic.lean#L126) — Definition *(simp)*
 
 **Lean signature**
 ```lean
@@ -191,13 +155,13 @@ $\mathbb{R}$-linear functional $\omega \mapsto \langle \omega, a\rangle$; contin
 
 ---
 
-### [`distributionPairingCLM_apply`](../../OSforGFF/Spacetime/Basic.lean#L147) — Lemma *(simp)*
+### [`distributionPairingCLM_apply`](../../OSforGFF/Spacetime/Basic.lean#L138) — Lemma *(simp)*
 
 **Statement**: `distributionPairingCLM a ω = distributionPairing ω a` (by `rfl`).
 
 ---
 
-### [`GJGeneratingFunctional`](../../OSforGFF/Spacetime/Basic.lean#L159) — Definition
+### [`GJGeneratingFunctional`](../../OSforGFF/Spacetime/Basic.lean#L150) — Definition
 
 **Lean signature**
 ```lean
@@ -212,7 +176,7 @@ the fundamental object in constructive QFT.
 
 ---
 
-### [`schwartz_comp_clm`](../../OSforGFF/Spacetime/Basic.lean#L165) — Definition
+### [`schwartz_comp_clm`](../../OSforGFF/Spacetime/Basic.lean#L156) — Definition
 
 **Lean signature**
 ```lean
@@ -226,13 +190,13 @@ $\lVert L(z)\rVert \le \lVert L\rVert\,\lVert z\rVert$.
 
 ---
 
-### [`schwartz_comp_clm_apply`](../../OSforGFF/Spacetime/Basic.lean#L195) — Lemma *(simp)*
+### [`schwartz_comp_clm_apply`](../../OSforGFF/Spacetime/Basic.lean#L186) — Lemma *(simp)*
 
 **Statement**: $(\mathrm{schwartz\_comp\_clm}\, f\, L)(x) = L(f(x))$ (by `rfl`).
 
 ---
 
-### [`complex_testfunction_decompose`](../../OSforGFF/Spacetime/Basic.lean#L200) — Definition
+### [`complex_testfunction_decompose`](../../OSforGFF/Spacetime/Basic.lean#L191) — Definition
 
 **Lean signature**
 ```lean
@@ -245,31 +209,31 @@ real test functions, applying `schwartz_comp_clm` with `Complex.reCLM` / `Comple
 
 ---
 
-### [`complex_testfunction_decompose_fst_apply`](../../OSforGFF/Spacetime/Basic.lean#L204) — Lemma *(simp)*
+### [`complex_testfunction_decompose_fst_apply`](../../OSforGFF/Spacetime/Basic.lean#L195) — Lemma *(simp)*
 
 **Statement**: $(\mathrm{complex\_testfunction\_decompose}\, f).1\, x = \mathrm{Re}(f(x))$.
 
 ---
 
-### [`complex_testfunction_decompose_snd_apply`](../../OSforGFF/Spacetime/Basic.lean#L210) — Lemma *(simp)*
+### [`complex_testfunction_decompose_snd_apply`](../../OSforGFF/Spacetime/Basic.lean#L201) — Lemma *(simp)*
 
 **Statement**: $(\mathrm{complex\_testfunction\_decompose}\, f).2\, x = \mathrm{Im}(f(x))$.
 
 ---
 
-### [`complex_testfunction_decompose_fst_apply_coe`](../../OSforGFF/Spacetime/Basic.lean#L216) — Lemma *(simp)*
+### [`complex_testfunction_decompose_fst_apply_coe`](../../OSforGFF/Spacetime/Basic.lean#L207) — Lemma *(simp)*
 
 **Statement**: Coerced-to-$\mathbb{C}$ real part: $((\mathrm{decompose}\, f).1\, x : \mathbb{C}) = (\mathrm{Re}(f(x)) : \mathbb{C})$.
 
 ---
 
-### [`complex_testfunction_decompose_snd_apply_coe`](../../OSforGFF/Spacetime/Basic.lean#L222) — Lemma *(simp)*
+### [`complex_testfunction_decompose_snd_apply_coe`](../../OSforGFF/Spacetime/Basic.lean#L213) — Lemma *(simp)*
 
 **Statement**: Coerced-to-$\mathbb{C}$ imaginary part: $((\mathrm{decompose}\, f).2\, x : \mathbb{C}) = (\mathrm{Im}(f(x)) : \mathbb{C})$.
 
 ---
 
-### [`complex_testfunction_decompose_recompose`](../../OSforGFF/Spacetime/Basic.lean#L228) — Lemma
+### [`complex_testfunction_decompose_recompose`](../../OSforGFF/Spacetime/Basic.lean#L219) — Lemma
 
 **Statement**: Recomposition at a point via the decomposition:
 $$f(x) = \bigl((\mathrm{decompose}\, f).1\, x : \mathbb{C}\bigr) + i\,\bigl((\mathrm{decompose}\, f).2\, x : \mathbb{C}\bigr),$$
@@ -277,7 +241,7 @@ reducing to the identity $z = \mathrm{Re}\, z + i\,\mathrm{Im}\, z$.
 
 ---
 
-### [`distributionPairingℂ_real`](../../OSforGFF/Spacetime/Basic.lean#L243) — Definition
+### [`distributionPairingℂ_real`](../../OSforGFF/Spacetime/Basic.lean#L234) — Definition
 
 **Lean signature**
 ```lean
@@ -290,7 +254,7 @@ $\langle\omega, f\rangle = \langle\omega, f_{\mathrm{re}}\rangle + i\,\langle\om
 
 ---
 
-### [`GJGeneratingFunctionalℂ`](../../OSforGFF/Spacetime/Basic.lean#L250) — Definition
+### [`GJGeneratingFunctionalℂ`](../../OSforGFF/Spacetime/Basic.lean#L241) — Definition
 
 **Lean signature**
 ```lean
@@ -304,7 +268,7 @@ $\exp(i\langle\omega, J\rangle_{\mathbb{C}})$ over field configurations.
 
 ---
 
-### [`GJMean`](../../OSforGFF/Spacetime/Basic.lean#L255) — Definition
+### [`GJMean`](../../OSforGFF/Spacetime/Basic.lean#L246) — Definition
 
 **Lean signature**
 ```lean
@@ -318,7 +282,7 @@ Glimm-Jaffe framework.
 
 ---
 
-### [`SpatialCoords`](../../OSforGFF/Spacetime/Basic.lean#L262) — Definition *(abbrev)*
+### [`SpatialCoords`](../../OSforGFF/Spacetime/Basic.lean#L253) — Definition *(abbrev)*
 
 **Lean signature**
 ```lean
@@ -330,18 +294,7 @@ for the $L^2$ norm.
 
 ---
 
-### [`SpatialL2`](../../OSforGFF/Spacetime/Basic.lean#L265) — Definition *(abbrev)*
-
-**Lean signature**
-```lean
-abbrev SpatialL2 (d : ℕ) := Lp ℝ 2 (volume : Measure (SpatialCoords d))
-```
-
-**Informal**: The real-valued $L^2$ space on spatial slices $\mathbb{R}^{d-1}$.
-
----
-
-### [`spatialPart`](../../OSforGFF/Spacetime/Basic.lean#L268) — Definition
+### [`spatialPart`](../../OSforGFF/Spacetime/Basic.lean#L256) — Definition
 
 **Lean signature**
 ```lean
@@ -353,7 +306,7 @@ the Euclidean-space equivalence.
 
 ---
 
-### [`E`](../../OSforGFF/Spacetime/Basic.lean#L273) — Definition
+### [`E`](../../OSforGFF/Spacetime/Basic.lean#L261) — Definition
 
 **Lean signature**
 ```lean
@@ -366,4 +319,4 @@ momentum space.
 
 ---
 
-*This file has **22** definitions and **10** theorems/lemmas (0 with sorry).*
+*This file has **18** definitions and **10** theorems/lemmas (0 with sorry).*

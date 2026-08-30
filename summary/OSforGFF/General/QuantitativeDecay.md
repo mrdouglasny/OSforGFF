@@ -8,7 +8,7 @@
 
 This file proves that bilinear integrals of Schwartz functions against an exponentially decaying
 kernel decay polynomially at any prescribed rate. The main result is
-`schwartz_bilinear_translation_decay_polynomial_proof`: for Schwartz functions $f, g$ and a
+`schwartz_bilinear_translation_decay_polynomial`: for Schwartz functions $f, g$ and a
 kernel $K$ satisfying $|K(z)| \leq C_K e^{-m\lVert z \rVert}$ for large $\lVert z \rVert$, there
 exists $c \geq 0$ such that
 $$\Bigl\lVert \int\!\!\int f(x)\,K(x-y)\,g(y-a)\,dx\,dy \Bigr\rVert \leq c\,(1+\lVert a \rVert)^{-\alpha}$$
@@ -149,7 +149,7 @@ def convolution_expDecay_polynomial_decay (f : SchwartzMap E ℂ) (K : E → ℝ
 
 ## Phase 5: Main Theorem Assembly
 
-### [`schwartz_bilinear_translation_decay_polynomial_proof`](../../OSforGFF/General/QuantitativeDecay.lean#L755) — Theorem
+### [`schwartz_bilinear_translation_decay_polynomial`](../../OSforGFF/General/QuantitativeDecay.lean#L755) — Theorem
 
 **Statement**: Let $f, g$ be Schwartz functions on $E$, and let $K : E \to \mathbb{R}$ be locally integrable with exponential decay $|K(z)| \leq C_K e^{-m\lVert z \rVert}$ for $\lVert z \rVert \geq R_0$. Then for any $\alpha > 0$, there exists $c \geq 0$ such that for all $a \in E$,
 $$\Bigl\lVert \int\!\!\int f(x)\,K(x-y)\,g(y-a)\,dx\,dy \Bigr\rVert \leq c\,(1+\lVert a \rVert)^{-\alpha}.$$

@@ -8,7 +8,7 @@
 
 This file proves that bilinear integrals of Schwartz functions against a polynomially decaying
 kernel vanish at infinity under translation. The main result is
-`schwartz_bilinear_translation_decay_proof`: for Schwartz functions $f, g$ and a kernel $K$
+`schwartz_bilinear_translation_decay`: for Schwartz functions $f, g$ and a kernel $K$
 with polynomial decay $|K(z)| \leq C/\lVert z \rVert^\alpha$, the bilinear integral
 $\int\!\!\int f(x)\,K(x-y)\,g(y-a)\,dx\,dy \to 0$ as $\lVert a \rVert \to \infty$. The proof
 decomposes $K = K_{\mathrm{sing}} + K_{\mathrm{tail}}$ (compact support plus decaying part) and
@@ -130,7 +130,7 @@ def schwartzBilinearIntegral (f g : SchwartzMap E ℂ) (K : E → ℝ) (a : E) :
 
 ---
 
-### [`schwartz_bilinear_translation_decay_proof`](../../OSforGFF/General/SchwartzTranslationDecay.lean#L558) — Theorem
+### [`schwartz_bilinear_translation_decay`](../../OSforGFF/General/SchwartzTranslationDecay.lean#L557) — Theorem
 
 **Statement**: For Schwartz functions $f, g$ and a measurable, locally integrable kernel $K$ with polynomial decay $|K(z)| \leq C/\lVert z \rVert^\alpha$ for $\lVert z \rVert \geq R_0$,
 $$\mathrm{schwartzBilinearIntegral}(f, g, K, a) \to 0 \quad \text{as } \lVert a \rVert \to \infty.$$

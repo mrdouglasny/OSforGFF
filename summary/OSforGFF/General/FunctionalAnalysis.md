@@ -8,9 +8,8 @@
 
 This file assembles functional-analysis tools needed for Algebraic Quantum Field Theory,
 covering five main themes: (1) properties of Schwartz functions (integrability, decay,
-translation invariance, linear-vanishing bounds); (2) embeddings of real $L^p$ spaces
-into complex ones and the canonical Schwartz-to-$L^2$ map; (3) the $L^\infty \times L^2
-\to L^2$ multiplication operator and its norm bound; (4) double mollifier convergence,
+translation invariance); (2) the canonical Schwartz-to-$L^2$ map; (3) the $L^\infty \times L^2
+\to L^2$ multiplication operator; (4) double mollifier convergence,
 which shows that $\iint \varphi_\varepsilon(x-a)\, C(x-y)\, \varphi_\varepsilon(y)\, dx\,
 dy \to C(a)$ as $\varepsilon \to 0$ for any kernel $C$ continuous away from the origin;
 and (5) a small collection of elementary real-integral helpers.
@@ -26,16 +25,16 @@ Schwinger layers.
 
 **Main result**: Fully proven — file is sorry-free.
 
-**Length**: 1223 lines, 11 definition(s) + 29 theorem(s)/lemma(s)
+**Length**: 929 lines, 7 definition(s) + 20 theorem(s)/lemma(s)
 
-(In addition to the 11 named definitions/abbreviations, the file declares 4 unnamed
+(In addition to the 7 named definitions/abbreviations, the file declares 4 unnamed
 `MeasurableSpace`/`BorelSpace` instances on the $L^2$ spaces `Lp ℝ 2 μ` and `Lp ℂ 2 μ`.)
 
 ---
 
 ## Schwartz function properties
 
-### [`SchwartzMap.hasTemperateGrowth_general`](../../OSforGFF/General/FunctionalAnalysis.lean#L140) — Lemma
+### [`SchwartzMap.hasTemperateGrowth_general`](../../OSforGFF/General/FunctionalAnalysis.lean#L119) — Lemma
 
 **Statement**: Every Schwartz function $f \in \mathcal{S}(E, V)$ has temperate growth, i.e., $\lVert f(x) \rVert$ is bounded by a polynomial in $\lVert x \rVert$.
 
@@ -43,68 +42,19 @@ Schwinger layers.
 
 ---
 
-### [`Complex.ofRealCLM_isometry`](../../OSforGFF/General/FunctionalAnalysis.lean#L158) — Lemma
-
-**Statement**: The continuous linear map $\mathbb{R} \to \mathbb{C}$, $r \mapsto r$, is an isometry.
-
-**Proof uses**: `Complex.ofRealLI.isometry`
-
----
-
-### [`Complex.ofRealCLM_continuous_compLp`](../../OSforGFF/General/FunctionalAnalysis.lean#L167) — Lemma
-
-**Statement**: The map $\varphi \mapsto \mathrm{ofRealCLM} \circ \varphi$ from $L^2(\mu, \mathbb{R})$ to $L^2(\mu, \mathbb{C})$ is continuous.
-
-**Proof uses**: `ContinuousLinearMap.compLpL`
-
----
-
-### [`composed_function`](../../OSforGFF/General/FunctionalAnalysis.lean#L177) — Definition
-
-**Lean signature**
-```lean
-noncomputable def composed_function {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (f : Lp ℝ 2 μ) (A : ℝ →L[ℝ] ℂ) : Lp ℂ 2 μ
-```
-**Informal**: Applies a continuous linear map $A : \mathbb{R} \to \mathbb{C}$ to an $L^2(\mu,\mathbb{R})$ function $f$, producing the $L^2(\mu,\mathbb{C})$ element $A \circ f$.
-
----
-
-### [`embedding_real_to_complex`](../../OSforGFF/General/FunctionalAnalysis.lean#L189) — Definition
-
-**Lean signature**
-```lean
-noncomputable def embedding_real_to_complex {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (φ : Lp ℝ 2 μ) : Lp ℂ 2 μ
-```
-**Informal**: The canonical embedding of $L^2(\mu, \mathbb{R})$ into $L^2(\mu, \mathbb{C})$ via $\varphi \mapsto \mathrm{ofReal} \circ \varphi$.
-
----
-
-### [`liftMeasure_real_to_complex`](../../OSforGFF/General/FunctionalAnalysis.lean#L200) — Definition
-
-**Lean signature**
-```lean
-noncomputable def liftMeasure_real_to_complex
-    (dμ_real : ProbabilityMeasure (Lp ℝ 2 μ)) : ProbabilityMeasure (Lp ℂ 2 μ)
-```
-**Informal**: Pushes a probability measure on $L^2(\mu, \mathbb{R})$ forward along the real-to-complex embedding to obtain a probability measure on $L^2(\mu, \mathbb{C})$ supported on the real subspace.
-
----
-
 ## Fourier Transform as Linear Isometry on L² Spaces
 
 ### Type abbreviations
 
-[`EuclideanRd`](../../OSforGFF/General/FunctionalAnalysis.lean#L236) /
-[`SchwartzRd`](../../OSforGFF/General/FunctionalAnalysis.lean#L237) /
-[`L2Complex`](../../OSforGFF/General/FunctionalAnalysis.lean#L238) — Abbreviations
+[`EuclideanRd`](../../OSforGFF/General/FunctionalAnalysis.lean#L153) /
+[`SchwartzRd`](../../OSforGFF/General/FunctionalAnalysis.lean#L154) /
+[`L2Complex`](../../OSforGFF/General/FunctionalAnalysis.lean#L155) — Abbreviations
 
 **Informal**: Type aliases: $\mathbb{R}^d := \mathrm{EuclideanSpace}\,\mathbb{R}\,(\mathrm{Fin}\,d)$, $\mathcal{S}(\mathbb{R}^d) := \mathcal{S}(\mathbb{R}^d, \mathbb{C})$, and $L^2(\mathbb{R}^d, \mathbb{C})$.
 
 ---
 
-### [`schwartzToL2`](../../OSforGFF/General/FunctionalAnalysis.lean#L246) — Definition
+### [`schwartzToL2`](../../OSforGFF/General/FunctionalAnalysis.lean#L163) — Definition
 
 **Lean signature**
 ```lean
@@ -114,21 +64,9 @@ noncomputable def schwartzToL2 (d : ℕ) : SchwartzRd d →L[ℂ] L2Complex d
 
 ---
 
-### [`schwartzToL2'`](../../OSforGFF/General/FunctionalAnalysis.lean#L252) — Definition
-
-**Lean signature**
-```lean
-noncomputable def schwartzToL2' (d : ℕ) [NeZero d] [Fintype (Fin d)] :
-    SchwartzMap (EuclideanSpace ℝ (Fin d)) ℂ →L[ℂ]
-    Lp ℂ 2 (volume : Measure (EuclideanSpace ℝ (Fin d)))
-```
-**Informal**: An alternative spelling of the Schwartz-to-$L^2$ embedding with an unfolded type, identical to `schwartzToL2` in mathematical content.
-
----
-
 ## L∞ Multiplication on L² Spaces
 
-### [`linfty_mul_L2_CLM`](../../OSforGFF/General/FunctionalAnalysis.lean#L276) — Definition
+### [`linfty_mul_L2_CLM`](../../OSforGFF/General/FunctionalAnalysis.lean#L186) — Definition
 
 **Lean signature**
 ```lean
@@ -140,7 +78,7 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-### [`linfty_mul_L2_CLM_spec`](../../OSforGFF/General/FunctionalAnalysis.lean#L284) — Lemma
+### [`linfty_mul_L2_CLM_spec`](../../OSforGFF/General/FunctionalAnalysis.lean#L194) — Lemma
 
 **Statement**: The operator $M_g$ acts pointwise almost everywhere: $(M_g f)(x) = g(x) \cdot f(x)$ for $\mu$-a.e. $x$.
 
@@ -148,17 +86,9 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-### [`linfty_mul_L2_CLM_norm_bound`](../../OSforGFF/General/FunctionalAnalysis.lean#L297) — Theorem
-
-**Statement**: For all $f \in L^2(\mu)$, $\lVert M_g f \rVert_2 \leq C \cdot \lVert f \rVert_2$.
-
-**Proof uses**: `linfty_mul_L2_CLM`, `ContinuousLinearMap.norm_holder_apply_apply_le`, `eLpNormEssSup_le_of_ae_bound`
-
----
-
 ## Local Integrability of Power-Law Decay Functions
 
-### [`integrableOn_ball_of_radial`](../../OSforGFF/General/FunctionalAnalysis.lean#L325) — Lemma
+### [`integrableOn_ball_of_radial`](../../OSforGFF/General/FunctionalAnalysis.lean#L218) — Lemma
 
 **Statement**: If $f : \mathbb{R} \to F$ is such that $y \mapsto y^{d-1} f(y)$ is integrable on $(0, r)$, then the radial function $x \mapsto f(\lVert x \rVert)$ is integrable on the ball $B(0, r) \subset E$ (where $d = \dim E$).
 
@@ -166,7 +96,7 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-### [`integrableOn_ball_of_rpow_decay`](../../OSforGFF/General/FunctionalAnalysis.lean#L360) — Lemma
+### [`integrableOn_ball_of_rpow_decay`](../../OSforGFF/General/FunctionalAnalysis.lean#L253) — Lemma
 
 **Statement**: If $\lvert f(x) \rvert \leq C \lVert x \rVert^{-\alpha}$ with $\alpha < d$, then $f$ is integrable on any ball $B(0, r) \subset \mathbb{R}^d$.
 
@@ -174,7 +104,7 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-### [`integrableOn_compact_diff_ball`](../../OSforGFF/General/FunctionalAnalysis.lean#L407) — Lemma
+### [`integrableOn_compact_diff_ball`](../../OSforGFF/General/FunctionalAnalysis.lean#L300) — Lemma
 
 **Statement**: If $\lvert f(x) \rvert \leq C \lVert x \rVert^{-\alpha}$ and $K$ is compact, then $f$ is integrable on $K \setminus B(0, \delta)$ for any $\delta > 0$.
 
@@ -182,25 +112,9 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-### [`locallyIntegrable_of_rpow_decay_real`](../../OSforGFF/General/FunctionalAnalysis.lean#L465) — Theorem
-
-**Statement**: If $d \geq 3$, $\alpha < d$, and $\lvert f(x) \rvert \leq C \lVert x \rVert^{-\alpha}$, then $f$ is locally integrable on $\mathbb{R}^d$.
-
-**Proof uses**: `integrableOn_ball_of_rpow_decay`, `integrableOn_compact_diff_ball`
-
----
-
-### [`polynomial_decay_integrable_3d`](../../OSforGFF/General/FunctionalAnalysis.lean#L505) — Lemma
-
-**Statement**: The function $x \mapsto 1/(1 + \lVert x \rVert)^4$ is integrable over $\mathbb{R}^3$.
-
-**Proof uses**: `integrable_one_add_norm`, `finrank_euclideanSpace`
-
----
-
 ## Bilinear Integrability for L¹ Translation-Invariant Kernels
 
-### [`schwartz_bilinear_integrable_of_translationInvariant_L1`](../../OSforGFF/General/FunctionalAnalysis.lean#L537) — Theorem
+### [`schwartz_bilinear_integrable_of_translationInvariant_L1`](../../OSforGFF/General/FunctionalAnalysis.lean#L373) — Theorem
 
 **Statement**: If $K_0 \in L^1(\mathbb{R}^d, \mathbb{C})$ and $f, g \in \mathcal{S}(\mathbb{R}^d, \mathbb{C})$, then the function $(x, y) \mapsto f(x)\, K_0(x-y)\, g(y)$ is integrable on $\mathbb{R}^d \times \mathbb{R}^d$.
 
@@ -208,35 +122,9 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-## Schwartz Functions Times Bounded Functions
-
-### [`SchwartzMap.integrable_mul_bounded`](../../OSforGFF/General/FunctionalAnalysis.lean#L651) — Lemma
-
-**Statement**: If $f \in \mathcal{S}(E, \mathbb{C})$ and $g : E \to \mathbb{C}$ is measurable with $\lVert g(x) \rVert \leq 1$ for all $x$, then $x \mapsto f(x)\, g(x)$ is integrable.
-
-**Proof uses**: `SchwartzMap.integrable`, `Integrable.mul_bdd`
-
----
-
-### [`SchwartzMap.integrable_conj`](../../OSforGFF/General/FunctionalAnalysis.lean#L662) — Lemma
-
-**Statement**: For $f \in \mathcal{S}(E, \mathbb{C})$, the function $y \mapsto \overline{f(y)}$ is integrable.
-
-**Proof uses**: `SchwartzMap.integrable`, `AEStronglyMeasurable.star`, `RCLike.norm_conj`
-
----
-
 ## Phase Exponential Lemmas
 
-### [`norm_exp_I_mul_real`](../../OSforGFF/General/FunctionalAnalysis.lean#L680) — Lemma
-
-**Statement**: $\lVert e^{i r} \rVert = 1$ for all $r \in \mathbb{R}$.
-
-**Proof uses**: `norm_exp_I_mul_ofReal`
-
----
-
-### [`norm_exp_neg_I_mul_real`](../../OSforGFF/General/FunctionalAnalysis.lean#L684) — Lemma
+### [`norm_exp_neg_I_mul_real`](../../OSforGFF/General/FunctionalAnalysis.lean#L479) — Lemma
 
 **Statement**: $\lVert e^{-i r} \rVert = 1$ for all $r \in \mathbb{R}$.
 
@@ -244,19 +132,9 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-## Linear Vanishing Bound for Schwartz Functions
-
-### [`schwartz_vanishing_linear_bound_general`](../../OSforGFF/General/FunctionalAnalysis.lean#L705) — Theorem
-
-**Statement**: If $f \in \mathcal{S}(\mathbb{R} \times E, \mathbb{C})$ vanishes for $t \leq 0$, then there exists $C > 0$ such that $\lVert f(t, x) \rVert \leq C t$ for all $t \geq 0$ and all $x \in E$.
-
-**Proof uses**: `SchwartzMap.le_seminorm`, `Convex.norm_image_sub_le_of_norm_hasFDerivWithin_le`, `norm_iteratedFDerivWithin_one`
-
----
-
 ## Schwartz Translation Invariance
 
-### [`sub_const_hasTemperateGrowth`](../../OSforGFF/General/FunctionalAnalysis.lean#L791) — Lemma
+### [`sub_const_hasTemperateGrowth`](../../OSforGFF/General/FunctionalAnalysis.lean#L498) — Lemma
 
 **Statement**: The translation map $x \mapsto x - a$ has temperate growth for any $a \in E$.
 
@@ -264,7 +142,7 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-### [`sub_const_antilipschitz`](../../OSforGFF/General/FunctionalAnalysis.lean#L795) — Lemma
+### [`sub_const_antilipschitz`](../../OSforGFF/General/FunctionalAnalysis.lean#L502) — Lemma
 
 **Statement**: The translation map $x \mapsto x - a$ is antilipschitz with constant 1 (i.e., it is an isometry).
 
@@ -272,7 +150,7 @@ noncomputable def linfty_mul_L2_CLM {μ : Measure α}
 
 ---
 
-### [`SchwartzMap.translate`](../../OSforGFF/General/FunctionalAnalysis.lean#L805) — Definition
+### [`SchwartzMap.translate`](../../OSforGFF/General/FunctionalAnalysis.lean#L512) — Definition
 
 **Lean signature**
 ```lean
@@ -285,7 +163,7 @@ noncomputable def SchwartzMap.translate {E F : Type*}
 
 ---
 
-### [`SchwartzMap.translate_apply`](../../OSforGFF/General/FunctionalAnalysis.lean#L812) — Theorem
+### [`SchwartzMap.translate_apply`](../../OSforGFF/General/FunctionalAnalysis.lean#L519) — Theorem
 
 **Statement**: For all $x \in E$, $(f.\mathrm{translate}\,a)(x) = f(x - a)$.
 
@@ -295,7 +173,7 @@ noncomputable def SchwartzMap.translate {E F : Type*}
 
 ## Schwartz Integrable Decay
 
-### [`schwartz_integrable_decay`](../../OSforGFF/General/FunctionalAnalysis.lean#L834) — Theorem
+### [`schwartz_integrable_decay`](../../OSforGFF/General/FunctionalAnalysis.lean#L541) — Theorem
 
 **Statement**: For $f \in \mathcal{S}(V, \mathbb{C})$ and $N > \dim_\mathbb{R} V$, there exists $C > 0$ such that $\lVert f(x) \rVert \leq C / (1 + \lVert x \rVert)^N$ for all $x \in V$.
 
@@ -305,7 +183,7 @@ noncomputable def SchwartzMap.translate {E F : Type*}
 
 ## Double Mollifier Convergence
 
-### [`bumpSelfConv`](../../OSforGFF/General/FunctionalAnalysis.lean#L906) — Definition
+### [`bumpSelfConv`](../../OSforGFF/General/FunctionalAnalysis.lean#L613) — Definition
 
 **Lean signature**
 ```lean
@@ -315,7 +193,7 @@ noncomputable def bumpSelfConv (φ : ContDiffBump (0 : E)) : E → ℝ
 
 ---
 
-### [`bumpSelfConv_nonneg`](../../OSforGFF/General/FunctionalAnalysis.lean#L911) — Lemma
+### [`bumpSelfConv_nonneg`](../../OSforGFF/General/FunctionalAnalysis.lean#L618) — Lemma
 
 **Statement**: $\psi(x) = (\varphi \star \varphi)(x) \geq 0$ for all $x \in E$.
 
@@ -323,7 +201,7 @@ noncomputable def bumpSelfConv (φ : ContDiffBump (0 : E)) : E → ℝ
 
 ---
 
-### [`bumpSelfConv_integral`](../../OSforGFF/General/FunctionalAnalysis.lean#L920) — Lemma
+### [`bumpSelfConv_integral`](../../OSforGFF/General/FunctionalAnalysis.lean#L627) — Lemma
 
 **Statement**: $\int \psi\, dx = 1$.
 
@@ -331,7 +209,7 @@ noncomputable def bumpSelfConv (φ : ContDiffBump (0 : E)) : E → ℝ
 
 ---
 
-### [`bumpSelfConv_support_subset`](../../OSforGFF/General/FunctionalAnalysis.lean#L933) — Lemma
+### [`bumpSelfConv_support_subset`](../../OSforGFF/General/FunctionalAnalysis.lean#L640) — Lemma
 
 **Statement**: $\mathrm{supp}(\psi) \subseteq B(0,\, 2 r_{\mathrm{out}})$.
 
@@ -339,7 +217,7 @@ noncomputable def bumpSelfConv (φ : ContDiffBump (0 : E)) : E → ℝ
 
 ---
 
-### [`bumpSelfConv_support_tendsto`](../../OSforGFF/General/FunctionalAnalysis.lean#L959) — Lemma
+### [`bumpSelfConv_support_tendsto`](../../OSforGFF/General/FunctionalAnalysis.lean#L666) — Lemma
 
 **Statement**: If $r_{\mathrm{out}}(i) \to 0$ along a filter $l$, then the supports $\mathrm{supp}(\psi_i)$ converge to $\{0\}$ in the sense of small sets.
 
@@ -347,7 +225,7 @@ noncomputable def bumpSelfConv (φ : ContDiffBump (0 : E)) : E → ℝ
 
 ---
 
-### [`double_mollifier_convergence`](../../OSforGFF/General/FunctionalAnalysis.lean#L992) — Theorem
+### [`double_mollifier_convergence`](../../OSforGFF/General/FunctionalAnalysis.lean#L699) — Theorem
 
 **Statement**: If $C$ is continuous on $\{x \neq 0\}$ and $a \neq 0$, then
 $$\iint \varphi_i(x - a)\, C(x - y)\, \varphi_i(y)\, dx\, dy \;\longrightarrow\; C(a)$$
@@ -359,7 +237,7 @@ as $r_{\mathrm{out}}(i) \to 0$.
 
 ## Elementary real-integral helpers
 
-### [`integral_const_mul_eq`](../../OSforGFF/General/FunctionalAnalysis.lean#L1194) — Theorem
+### [`integral_const_mul_eq`](../../OSforGFF/General/FunctionalAnalysis.lean#L900) — Theorem
 
 **Statement**: For an integrable $f$ and a real constant $c$, the constant factors out of the integral: $\int c\, f(x)\, d\mu = c \int f(x)\, d\mu$.
 
@@ -367,7 +245,7 @@ as $r_{\mathrm{out}}(i) \to 0$.
 
 ---
 
-### [`real_integral_mono_of_le`](../../OSforGFF/General/FunctionalAnalysis.lean#L1203) — Theorem
+### [`real_integral_mono_of_le`](../../OSforGFF/General/FunctionalAnalysis.lean#L909) — Theorem
 
 **Statement**: If $0 \leq f(x) \leq g(x)$ pointwise and $g$ is integrable, then $\int f\, d\mu \leq \int g\, d\mu$.
 
@@ -375,7 +253,7 @@ as $r_{\mathrm{out}}(i) \to 0$.
 
 ---
 
-### [`integral_exp_neg_mul_Ioi_eq_inv`](../../OSforGFF/General/FunctionalAnalysis.lean#L1211) — Lemma
+### [`integral_exp_neg_mul_Ioi_eq_inv`](../../OSforGFF/General/FunctionalAnalysis.lean#L917) — Lemma
 
 **Statement**: For $a > 0$, $\displaystyle\int_0^\infty e^{-a t}\, dt = 1/a$ (the Laplace transform of the constant $1$ at parameter $a$).
 
@@ -383,7 +261,7 @@ as $r_{\mathrm{out}}(i) \to 0$.
 
 ---
 
-### [`integral_ofReal_eq`](../../OSforGFF/General/FunctionalAnalysis.lean#L1220) — Theorem
+### [`integral_ofReal_eq`](../../OSforGFF/General/FunctionalAnalysis.lean#L926) — Theorem
 
 **Statement**: For an integrable real-valued $h$, the integral of its complex coercion equals the coercion of its real integral: $\int (h(x) : \mathbb{C})\, d\mu = \mathrm{ofReal}\bigl(\int h(x)\, d\mu\bigr)$.
 
@@ -391,4 +269,4 @@ as $r_{\mathrm{out}}(i) \to 0$.
 
 ---
 
-*This file has **11** definitions and **29** theorems/lemmas (0 with sorry).*
+*This file has **7** definitions and **20** theorems/lemmas (0 with sorry).*

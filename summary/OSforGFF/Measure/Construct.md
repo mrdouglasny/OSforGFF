@@ -24,11 +24,11 @@ alias used by the headline theorems) is defined here alongside `gaussianFreeFiel
 
 **Main result**: Fully proven (0 sorries).
 
-**Length**: 441 lines, 9 definition(s) + 13 theorem(s)/lemma(s)
+**Length**: 425 lines, 8 definition(s) + 12 theorem(s)/lemma(s)
 
 ---
 
-### [`distributionPairingCLM_measurable`](../../OSforGFF/Measure/Construct.lean#L74) — Lemma *(private)*
+### [`distributionPairingCLM_measurable`](../../OSforGFF/Measure/Construct.lean#L77) — Lemma *(private)*
 
 **Statement**: The continuous linear map $\omega \mapsto \langle \omega, \varphi \rangle$ is measurable, as a consequence of `WeakDual.eval_measurable`.
 
@@ -38,25 +38,7 @@ alias used by the headline theorems) is defined here alongside `gaussianFreeFiel
 
 ## Gaussian Measures on Field Configurations
 
-### [`CovarianceFunction`](../../OSforGFF/Measure/Construct.lean#L82) — Definition
-
-**Lean signature**
-```lean
-structure CovarianceFunction (d : ℕ) where
-  covar : SchwartzTestFunctionℂ d → SchwartzTestFunctionℂ d → ℂ
-  symmetric : ∀ f g, covar f g = (starRingEnd ℂ) (covar g f)
-  bilinear_left : ∀ c f₁ f₂ g, covar (c • f₁ + f₂) g = c * covar f₁ g + covar f₂ g
-  bilinear_right : ∀ f c g₁ g₂, covar f (c • g₁ + g₂) = (starRingEnd ℂ) c * covar f g₁ + covar f g₂
-  positive_semidefinite : ∀ f, 0 ≤ (covar f f).re
-  bounded : ∃ M > 0, ∀ f, ‖covar f f‖ ≤ M * (∫ x, ‖f x‖ ∂volume) * (∫ x, ‖f x‖^2 ∂volume)^(1/2)
-```
-
-**Informal**: A Hermitian positive-semidefinite sesquilinear covariance form on complex test
-functions on $\mathbb{R}^d$, bounded by $L^1$-$L^2$ norms of the test function.
-
----
-
-### [`isCenteredGJ`](../../OSforGFF/Measure/Construct.lean#L91) — Definition
+### [`isCenteredGJ`](../../OSforGFF/Measure/Construct.lean#L85) — Definition
 
 **Lean signature**
 ```lean
@@ -68,7 +50,7 @@ $\mathrm{GJMean}(\mu, f) = 0$ for every real test function $f$.
 
 ---
 
-### [`isGaussianGJ`](../../OSforGFF/Measure/Construct.lean#L96) — Definition
+### [`isGaussianGJ`](../../OSforGFF/Measure/Construct.lean#L90) — Definition
 
 **Lean signature**
 ```lean
@@ -83,7 +65,7 @@ $Z[J] = \exp\!\bigl(-\tfrac{1}{2}\langle J, CJ\rangle\bigr)$ for all complex tes
 
 ## Construction via Minlos Theorem
 
-### [`instIsHilbertNuclear_SchwartzTestFunction`](../../OSforGFF/Measure/Construct.lean#L105) — Definition *(instance)*
+### [`instIsHilbertNuclear_SchwartzTestFunction`](../../OSforGFF/Measure/Construct.lean#L99) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -95,7 +77,7 @@ Hilbert-nuclear, derived from [`schwartz_isHilbertNuclear`](../../OSforGFF/Measu
 
 ---
 
-### [`instSeparableSpace_SchwartzTestFunction`](../../OSforGFF/Measure/Construct.lean#L108) — Definition *(instance)*
+### [`instSeparableSpace_SchwartzTestFunction`](../../OSforGFF/Measure/Construct.lean#L102) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -106,7 +88,7 @@ instance instSeparableSpace_SchwartzTestFunction : SeparableSpace (SchwartzTestF
 
 ---
 
-### [`instNonempty_SchwartzTestFunction`](../../OSforGFF/Measure/Construct.lean#L111) — Definition *(instance)*
+### [`instNonempty_SchwartzTestFunction`](../../OSforGFF/Measure/Construct.lean#L105) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -117,7 +99,7 @@ instance instNonempty_SchwartzTestFunction : Nonempty (SchwartzTestFunction d)
 
 ---
 
-### [`constructGaussianMeasureMinlos_free`](../../OSforGFF/Measure/Construct.lean#L114) — Definition
+### [`constructGaussianMeasureMinlos_free`](../../OSforGFF/Measure/Construct.lean#L108) — Definition
 
 **Lean signature**
 ```lean
@@ -133,7 +115,7 @@ form realized via the square-root propagator embedding into a Hilbert space.
 
 ---
 
-### [`gaussianFreeField_free`](../../OSforGFF/Measure/Construct.lean#L143) — Definition
+### [`gaussianFreeField_free`](../../OSforGFF/Measure/Construct.lean#L137) — Definition
 
 **Lean signature**
 ```lean
@@ -147,7 +129,7 @@ dimension $d$, defined as `constructGaussianMeasureMinlos_free m`. The dimension
 
 ---
 
-### [`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L148) — Theorem
+### [`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L147) — Theorem
 
 **Statement**: For mass $m > 0$ and any real test function $f$, the generating functional of
 the GFF measure `gaussianFreeField_free m` satisfies
@@ -164,7 +146,7 @@ where $C_m$ is the real free covariance form.
 
 ### Characteristic Function Bridge
 
-### [`charFun_implies_gaussian`](../../OSforGFF/Measure/Construct.lean#L192) — Lemma *(private)*
+### [`charFun_implies_gaussian`](../../OSforGFF/Measure/Construct.lean#L191) — Lemma *(private)*
 
 **Statement**: If a probability measure $\mu$ on $\mathbb{R}$ has characteristic function
 $t \mapsto \exp\!\bigl(i t\,\mu_0 - \tfrac{1}{2}\sigma^2 t^2\bigr)$ for some mean
@@ -175,7 +157,7 @@ $\mathrm{gaussianReal}(\mu_0, \sigma)$ (Levy uniqueness).
 
 ---
 
-### [`charFun_eq_GJGeneratingFunctional`](../../OSforGFF/Measure/Construct.lean#L206) — Lemma *(private)*
+### [`charFun_eq_GJGeneratingFunctional`](../../OSforGFF/Measure/Construct.lean#L205) — Lemma *(private)*
 
 **Statement**: For any probability measure $\mu$ on field configurations, test function
 $\varphi$, and $t \in \mathbb{R}$, the characteristic function of the pushforward of $\mu$
@@ -186,63 +168,63 @@ functional $Z_\mu[t\varphi]$.
 
 ---
 
-### [`gff_pushforward_charFun`](../../OSforGFF/Measure/Construct.lean#L225) — Lemma *(private)*
+### [`gff_pushforward_charFun`](../../OSforGFF/Measure/Construct.lean#L224) — Lemma *(private)*
 
 **Statement**: For mass $m > 0$, test function $\varphi$, and $t \in \mathbb{R}$, the
 characteristic function of the pushforward of `gaussianFreeField_free m` under the pairing
 $\omega \mapsto \langle \omega, \varphi \rangle$ at $t$ equals
 $\exp\!\bigl(-\tfrac{1}{2} t^2 C_m(\varphi,\varphi)\bigr)$.
 
-**Proof uses**: [`charFun_eq_GJGeneratingFunctional`](../../OSforGFF/Measure/Construct.lean#L206),
-[`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L148),
+**Proof uses**: [`charFun_eq_GJGeneratingFunctional`](../../OSforGFF/Measure/Construct.lean#L205),
+[`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L147),
 [`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean),
 [`freeCovarianceFormR_smul_right`](../../OSforGFF/Covariance/RealForm.lean)
 
 ---
 
-### [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L241) — Theorem
+### [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L240) — Theorem
 
 **Statement**: The pushforward of `gaussianFreeField_free m` under the pairing map
 $\omega \mapsto \langle \omega, \varphi \rangle$ is the centered Gaussian measure on $\mathbb{R}$
 with variance $C_m(\varphi, \varphi)$:
 $$\mu_*\langle \cdot,\varphi\rangle = \mathrm{gaussianReal}\bigl(0,\, C_m(\varphi,\varphi)\bigr).$$
 
-**Proof uses**: [`charFun_implies_gaussian`](../../OSforGFF/Measure/Construct.lean#L192),
-[`gff_pushforward_charFun`](../../OSforGFF/Measure/Construct.lean#L225),
+**Proof uses**: [`charFun_implies_gaussian`](../../OSforGFF/Measure/Construct.lean#L191),
+[`gff_pushforward_charFun`](../../OSforGFF/Measure/Construct.lean#L224),
 [`freeCovarianceFormR_pos`](../../OSforGFF/Covariance/RealForm.lean)
 
 ---
 
-### [`gaussianFreeField_pairing_memLp`](../../OSforGFF/Measure/Construct.lean#L264) — Theorem
+### [`gaussianFreeField_pairing_memLp`](../../OSforGFF/Measure/Construct.lean#L263) — Theorem
 
 **Statement**: For any $p < \infty$, the distribution pairing $\omega \mapsto \langle \omega, \varphi \rangle$ belongs to $L^p$ of the free GFF measure `gaussianFreeField_free m` (Fernique's theorem for the GFF).
 
-**Proof uses**: [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L241),
+**Proof uses**: [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L240),
 `memLp_id_gaussianReal`, `memLp_map_measure_iff`
 
 ---
 
-### [`gff_pairing_square_integrable`](../../OSforGFF/Measure/Construct.lean#L280) — Lemma
+### [`gff_pairing_square_integrable`](../../OSforGFF/Measure/Construct.lean#L279) — Lemma
 
 **Statement**: The square of the distribution pairing $\omega \mapsto \langle \omega, \varphi \rangle^2$ is integrable under `gaussianFreeField_free m`.
 
-**Proof uses**: [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L241),
+**Proof uses**: [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L240),
 `memLp_id_gaussianReal`, `memLp_map_measure_iff`
 
 ---
 
-### [`gff_second_moment_eq_covariance`](../../OSforGFF/Measure/Construct.lean#L298) — Lemma
+### [`gff_second_moment_eq_covariance`](../../OSforGFF/Measure/Construct.lean#L297) — Lemma
 
 **Statement**: The second moment of the pairing under `gaussianFreeField_free m` equals the covariance:
 $$\int \langle \omega, \varphi \rangle^2\, d\mu(\omega) = C_m(\varphi, \varphi).$$
 
-**Proof uses**: [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L241),
+**Proof uses**: [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L240),
 `integral_map`, `variance_of_integral_eq_zero`, `variance_fun_id_gaussianReal`,
 `integral_id_gaussianReal`
 
 ---
 
-### [`freeCovarianceFormR_gaussian_cf_pd`](../../OSforGFF/Measure/Construct.lean#L324) — Lemma
+### [`freeCovarianceFormR_gaussian_cf_pd`](../../OSforGFF/Measure/Construct.lean#L323) — Lemma
 
 **Statement**: The Gaussian characteristic functional
 $f \mapsto \exp\!\bigl(-\tfrac{1}{2} C_m(f,f)\bigr)$ is positive definite on test functions,
@@ -253,7 +235,7 @@ for any $m > 0$ with `[GFFPropagator d m]`.
 
 ---
 
-### [`freeCovarianceForm`](../../OSforGFF/Measure/Construct.lean#L343) — Definition
+### [`freeCovarianceForm`](../../OSforGFF/Measure/Construct.lean#L342) — Definition
 
 **Lean signature**
 ```lean
@@ -266,35 +248,26 @@ def freeCovarianceForm (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] : MinlosAnal
 
 ---
 
-### [`gaussianFreeField_free_centered`](../../OSforGFF/Measure/Construct.lean#L360) — Theorem
+### [`gaussianFreeField_free_centered`](../../OSforGFF/Measure/Construct.lean#L359) — Theorem
 
 **Statement**: The free GFF measure `gaussianFreeField_free (d := d) m` is centered: $\int \langle \omega, \varphi \rangle\, d\mu(\omega) = 0$ for every test function $\varphi$.
 
-**Proof uses**: [`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L148),
-[`gaussianFreeField_pairing_memLp`](../../OSforGFF/Measure/Construct.lean#L264),
+**Proof uses**: [`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L147),
+[`gaussianFreeField_pairing_memLp`](../../OSforGFF/Measure/Construct.lean#L263),
 [`MinlosAnalytic.moment_zero_from_realCF`](../../OSforGFF/Measure/MinlosAnalytic.lean),
-[`freeCovarianceForm`](../../OSforGFF/Measure/Construct.lean#L343),
+[`freeCovarianceForm`](../../OSforGFF/Measure/Construct.lean#L342),
 `integral_ofReal`, `Complex.ofReal_eq_zero`
 
 ---
 
-### [`gaussianFreeField_pairing_expSq_integrable`](../../OSforGFF/Measure/Construct.lean#L399) — Theorem
+### [`gaussianFreeField_pairing_expSq_integrable`](../../OSforGFF/Measure/Construct.lean#L398) — Theorem
 
 **Statement**: For every test function $\varphi$, there exists $\alpha > 0$ such that
 $\omega \mapsto \exp\!\bigl(\alpha\,\langle \omega, \varphi\rangle^2\bigr)$ is integrable under `gaussianFreeField_free m` (Fernique's theorem, exponential form).
 
-**Proof uses**: [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L241),
+**Proof uses**: [`gff_pairing_is_gaussian`](../../OSforGFF/Measure/Construct.lean#L240),
 `IsGaussian.exists_integrable_exp_sq`, `integrable_map_measure`
 
 ---
 
-### [`gaussian_pairing_square_integrable_real`](../../OSforGFF/Measure/Construct.lean#L429) — Lemma
-
-**Statement**: For any real test function $\varphi$, the function $\omega \mapsto \langle \omega, \varphi \rangle^2$ is integrable under `gaussianFreeField_free m` (stated in terms of `distributionPairing` rather than `distributionPairingCLM`).
-
-**Proof uses**: [`gaussianFreeField_pairing_memLp`](../../OSforGFF/Measure/Construct.lean#L264),
-`distributionPairingCLM_apply`
-
----
-
-*This file has **9** definitions and **13** theorems/lemmas (0 with sorry).*
+*This file has **8** definitions and **12** theorems/lemmas (0 with sorry).*

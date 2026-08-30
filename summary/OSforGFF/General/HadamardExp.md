@@ -18,7 +18,7 @@ taken using continuity of the entrywise exponential.
 
 **Main result**: Fully proven — file is sorry-free.
 
-**Length**: 552 lines, 5 definition(s) + 14 theorem(s)/lemma(s)
+**Length**: 546 lines, 4 definition(s) + 14 theorem(s)/lemma(s)
 
 ---
 
@@ -108,17 +108,7 @@ noncomputable def entrywiseExp (R : Matrix ι ι ℝ) : Matrix ι ι ℝ
 
 ---
 
-### [`entrywiseExpSeriesTerm`](../../OSforGFF/General/HadamardExp.lean#L101) — Definition
-
-**Lean signature**
-```lean
-noncomputable def entrywiseExpSeriesTerm (R : Matrix ι ι ℝ) (n : ℕ) : Matrix ι ι ℝ
-```
-**Informal**: The $n$-th term $\frac{1}{n!} \cdot \mathrm{hadamardPow}(R, n)$ of the Hadamard series expansion of the entrywise exponential.
-
----
-
-### [`entrywiseExp_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L105) — Definition
+### [`entrywiseExp_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L101) — Definition
 
 **Lean signature**
 ```lean
@@ -128,7 +118,7 @@ noncomputable def entrywiseExp_hadamardSeries (R : Matrix ι ι ℝ) : Matrix ι
 
 ---
 
-### [`entrywiseExp_eq_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L110) — Lemma
+### [`entrywiseExp_eq_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L106) — Lemma
 
 **Statement**: The entrywise exponential $\mathrm{entrywiseExp}(R)$ equals the Hadamard series $\mathrm{entrywiseExp\_hadamardSeries}(R)$.
 
@@ -136,7 +126,7 @@ noncomputable def entrywiseExp_hadamardSeries (R : Matrix ι ι ℝ) : Matrix ι
 
 ---
 
-### [`hadamardOne_hMul_left`](../../OSforGFF/General/HadamardExp.lean#L160) — Lemma
+### [`hadamardOne_hMul_left`](../../OSforGFF/General/HadamardExp.lean#L156) — Lemma
 
 **Statement**: The all-ones matrix is a left identity for the Hadamard product: $\mathbf{1} \circ R = R$.
 
@@ -144,7 +134,7 @@ noncomputable def entrywiseExp_hadamardSeries (R : Matrix ι ι ℝ) : Matrix ι
 
 ---
 
-### [`hadamardPow_posDef_of_posDef`](../../OSforGFF/General/HadamardExp.lean#L165) — Lemma
+### [`hadamardPow_posDef_of_posDef`](../../OSforGFF/General/HadamardExp.lean#L161) — Lemma
 
 **Statement**: If $R$ is positive definite, then $\mathrm{hadamardPow}(R, n)$ is positive definite for all $n \geq 1$.
 
@@ -152,7 +142,7 @@ noncomputable def entrywiseExp_hadamardSeries (R : Matrix ι ι ℝ) : Matrix ι
 
 ---
 
-### [`quadratic_form_entrywiseExp_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L187) — Lemma
+### [`quadratic_form_entrywiseExp_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L183) — Lemma
 
 **Statement**: The quadratic form of the Hadamard-series matrix equals the sum of quadratic forms of individual terms:
 $$x^\top \bigl(\mathrm{entrywiseExp\_hadamardSeries}(R)\bigr) x = \sum_{n=0}^\infty \frac{1}{n!} \bigl(x^\top \mathrm{hadamardPow}(R,n)\, x\bigr).$$
@@ -161,7 +151,7 @@ $$x^\top \bigl(\mathrm{entrywiseExp\_hadamardSeries}(R)\bigr) x = \sum_{n=0}^\in
 
 ---
 
-### [`summable_hadamardQuadSeries`](../../OSforGFF/General/HadamardExp.lean#L264) — Lemma
+### [`summable_hadamardQuadSeries`](../../OSforGFF/General/HadamardExp.lean#L260) — Lemma
 
 **Statement**: The scalar series $\sum_{n=0}^\infty \frac{1}{n!} \bigl(x^\top \mathrm{hadamardPow}(R,n)\, x\bigr)$ is summable.
 
@@ -169,20 +159,20 @@ $$x^\top \bigl(\mathrm{entrywiseExp\_hadamardSeries}(R)\bigr) x = \sum_{n=0}^\in
 
 ---
 
-### [`posDef_entrywiseExp_hadamardSeries_of_posDef`](../../OSforGFF/General/HadamardExp.lean#L324) — Lemma
+### [`posDef_entrywiseExp_hadamardSeries_of_posDef`](../../OSforGFF/General/HadamardExp.lean#L320) — Lemma
 
 **Statement**: If $R$ is positive definite, then $\mathrm{entrywiseExp\_hadamardSeries}(R)$ is positive definite.
 
-**Proof uses**: [`hadamardPow_posDef_of_posDef`](../../OSforGFF/General/HadamardExp.lean#L165), [`quadratic_form_entrywiseExp_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L187), [`summable_hadamardQuadSeries`](../../OSforGFF/General/HadamardExp.lean#L264), [`hadamardOne_hMul_left`](../../OSforGFF/General/HadamardExp.lean#L160), `Matrix.PosDef.posSemidef`, `Matrix.PosDef.dotProduct_mulVec_pos`, `Summable.sum_le_tsum`
+**Proof uses**: [`hadamardPow_posDef_of_posDef`](../../OSforGFF/General/HadamardExp.lean#L161), [`quadratic_form_entrywiseExp_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L183), [`summable_hadamardQuadSeries`](../../OSforGFF/General/HadamardExp.lean#L260), [`hadamardOne_hMul_left`](../../OSforGFF/General/HadamardExp.lean#L156), `Matrix.PosDef.posSemidef`, `Matrix.PosDef.dotProduct_mulVec_pos`, `Summable.sum_le_tsum`
 
 ---
 
-### [`posSemidef_entrywiseExp_hadamardSeries_of_posSemidef`](../../OSforGFF/General/HadamardExp.lean#L422) — Lemma
+### [`posSemidef_entrywiseExp_hadamardSeries_of_posSemidef`](../../OSforGFF/General/HadamardExp.lean#L416) — Lemma
 
 **Statement**: If $R$ is positive semidefinite, then $\mathrm{entrywiseExp\_hadamardSeries}(R)$ is positive semidefinite.
 
-**Proof uses**: [`posDef_entrywiseExp_hadamardSeries_of_posDef`](../../OSforGFF/General/HadamardExp.lean#L324), [`continuous_entrywiseExp`](../../OSforGFF/General/HadamardExp.lean#L49), [`entrywiseExp_eq_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L110), `Matrix.PosDef.posSemidef`, `ge_of_tendsto`, `tendsto_nhdsWithin_of_tendsto_nhds`
+**Proof uses**: [`posDef_entrywiseExp_hadamardSeries_of_posDef`](../../OSforGFF/General/HadamardExp.lean#L320), [`continuous_entrywiseExp`](../../OSforGFF/General/HadamardExp.lean#L49), [`entrywiseExp_eq_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L106), `Matrix.PosDef.posSemidef`, `ge_of_tendsto`, `tendsto_nhdsWithin_of_tendsto_nhds`
 
 ---
 
-*This file has **5** definitions and **14** theorems/lemmas (0 with sorry).*
+*This file has **4** definitions and **14** theorems/lemmas (0 with sorry).*

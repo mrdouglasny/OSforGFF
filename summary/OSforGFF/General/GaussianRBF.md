@@ -52,11 +52,11 @@ def IsPositiveDefiniteKernel {α : Type*} (K : α → α → ℂ) : Prop
 
 **Statement**: If $K$ is a real-valued symmetric positive definite kernel, then the exponential kernel $(x, y) \mapsto e^{K(x,y)}$ is also positive definite.
 
-**Proof uses**: [`real_valued_PD_kernel_gives_PSD_matrix`](../../OSforGFF/General/GaussianRBF.lean#L124), [`posSemidef_entrywiseExp_hadamardSeries_of_posSemidef`](../../OSforGFF/General/HadamardExp.lean#L426), [`entrywiseExp_eq_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L110), `Matrix.PosSemidef.dotProduct_mulVec_nonneg`
+**Proof uses**: [`real_valued_PD_kernel_gives_PSD_matrix`](../../OSforGFF/General/GaussianRBF.lean#L124), [`posSemidef_entrywiseExp_hadamardSeries_of_posSemidef`](../../OSforGFF/General/HadamardExp.lean#L416), [`entrywiseExp_eq_hadamardSeries`](../../OSforGFF/General/HadamardExp.lean#L106), `Matrix.PosSemidef.dotProduct_mulVec_nonneg`
 
 ---
 
-### [`gaussian_rbf_pd_innerProduct_proof`](../../OSforGFF/General/GaussianRBF.lean#L232) — Theorem
+### [`gaussian_rbf_pd_innerProduct`](../../OSforGFF/General/GaussianRBF.lean#L232) — Theorem
 
 **Statement**: The function $h \mapsto e^{-\frac{1}{2}\lVert h \rVert^2}$ is a positive definite function on the real inner product space $H$, in the sense of $\mathtt{GFF4D.IsPositiveDefinite}$.
 

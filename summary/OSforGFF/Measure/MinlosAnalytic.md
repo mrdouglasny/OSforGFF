@@ -79,8 +79,8 @@ integrable function $\varphi$,
 $$\int \varphi(\omega)\, d\mu(\omega) = \int \varphi(-\omega)\, d\mu(\omega).$$
 
 **Proof uses**: [`negMap_measurable`](../../OSforGFF/Measure/MinlosAnalytic.lean#L64),
-[`distributionPairing`](../../OSforGFF/Spacetime/Basic.lean#L140),
-[`minlos_gaussian_uniqueness`](../../OSforGFF/Measure/Minlos.lean#L204),
+[`distributionPairing`](../../OSforGFF/Spacetime/Basic.lean#L111),
+[`minlos_gaussian_uniqueness`](../../OSforGFF/Measure/Minlos.lean#L184),
 `WeakDual.eval_measurable`,
 `integral_map`, `Complex.exp_conj`, `integral_conj`,
 `Complex.exp_ofReal_im`

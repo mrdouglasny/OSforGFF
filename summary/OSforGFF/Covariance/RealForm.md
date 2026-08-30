@@ -30,13 +30,13 @@ laws, and time-reflection invariance (used by OS3).
 
 None — file is sorry-free.
 
-**Length**: 822 lines, 10 definition(s) + 27 theorem(s)/lemma(s)
+**Length**: 815 lines, 9 definition(s) + 27 theorem(s)/lemma(s)
 
 ---
 
 ## Real Covariance Form
 
-### [`freeCovarianceFormR`](../../OSforGFF/Covariance/RealForm.lean#L57) — Definition
+### [`freeCovarianceFormR`](../../OSforGFF/Covariance/RealForm.lean#L58) — Definition
 
 **Lean signature**
 ```lean
@@ -51,7 +51,7 @@ $C_m(f, g) = \int\!\int f(x)\, C(x,y)\, g(y)\, dx\, dy$ induced by the position-
 
 ---
 
-### [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L61) — Theorem
+### [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L62) — Theorem
 
 **Statement**: On real test functions embedded into complex, the complex bilinear covariance
 reduces to the real form:
@@ -63,20 +63,7 @@ $$C_\mathbb{C}\bigl(\mathrm{toComplex}\,f,\ \mathrm{toComplex}\,g\bigr) = \bigl(
 
 ## Weighted L² Space Construction
 
-### [`momentumWeightMeasure`](../../OSforGFF/Covariance/RealForm.lean#L83) — Definition
-
-**Lean signature**
-```lean
-noncomputable def momentumWeightMeasure (m : ℝ) : Measure (SpaceTime d) :=
-  volume.withDensity (fun k => ENNReal.ofReal (1 / (‖k‖ ^ 2 + m ^ 2)))
-```
-
-**Informal**: The weighted measure on momentum space with density
-$(\lVert k\rVert^2 + m^2)^{-1}$.
-
----
-
-### [`schwartz_real_smul_eq_complex`](../../OSforGFF/Covariance/RealForm.lean#L88) — Lemma *(private)*
+### [`schwartz_real_smul_eq_complex`](../../OSforGFF/Covariance/RealForm.lean#L83) — Lemma *(private)*
 
 **Statement**: For $c : \mathbb{R}$ and a Schwartz function $f$ valued in $\mathbb{C}$, real scalar
 multiplication agrees with complex scalar multiplication through the coercion:
@@ -84,14 +71,14 @@ $c \cdot f = (c : \mathbb{C}) \cdot f$.
 
 ---
 
-### [`lp_real_smul_eq_complex`](../../OSforGFF/Covariance/RealForm.lean#L94) — Lemma *(private)*
+### [`lp_real_smul_eq_complex`](../../OSforGFF/Covariance/RealForm.lean#L89) — Lemma *(private)*
 
 **Statement**: For $c : \mathbb{R}$ and $g \in L^2(\mathbb{R}^d; \mathbb{C})$, real scalar
 multiplication agrees with complex scalar multiplication: $c \cdot g = (c : \mathbb{C}) \cdot g$.
 
 ---
 
-### [`fourierTransformCLM_real`](../../OSforGFF/Covariance/RealForm.lean#L106) — Definition
+### [`fourierTransformCLM_real`](../../OSforGFF/Covariance/RealForm.lean#L101) — Definition
 
 **Lean signature**
 ```lean
@@ -105,7 +92,7 @@ mathlib v4.29.
 
 ---
 
-### [`schwartzToL2CLM_real`](../../OSforGFF/Covariance/RealForm.lean#L121) — Definition
+### [`schwartzToL2CLM_real`](../../OSforGFF/Covariance/RealForm.lean#L116) — Definition
 
 **Lean signature**
 ```lean
@@ -119,7 +106,7 @@ noncomputable def schwartzToL2CLM_real (_m : ℝ) :
 
 ## The Embedding Map
 
-### [`sqrtPropagatorMap`](../../OSforGFF/Covariance/RealForm.lean#L139) — Definition
+### [`sqrtPropagatorMap`](../../OSforGFF/Covariance/RealForm.lean#L134) — Definition
 
 **Lean signature**
 ```lean
@@ -135,7 +122,7 @@ $\sqrt{P_d}(k) = 1/\sqrt{(2\pi)^2\lVert k\rVert^2 + m^2}$.
 
 ---
 
-### [`sqrtPropagatorMap_sq_integrable`](../../OSforGFF/Covariance/RealForm.lean#L146) — Lemma
+### [`sqrtPropagatorMap_sq_integrable`](../../OSforGFF/Covariance/RealForm.lean#L141) — Lemma
 
 **Statement**: $k \mapsto \lVert T f(k)\rVert^2$ is integrable, dominated by
 $(1/m)^2\, \lVert \hat{f}(k)\rVert^2$ since $\sqrt{P_d}(k) \le 1/m$.
@@ -145,16 +132,16 @@ $(1/m)^2\, \lVert \hat{f}(k)\rVert^2$ since $\sqrt{P_d}(k) \le 1/m$.
 
 ---
 
-### [`sqrtPropagatorMap_memLp`](../../OSforGFF/Covariance/RealForm.lean#L201) — Lemma
+### [`sqrtPropagatorMap_memLp`](../../OSforGFF/Covariance/RealForm.lean#L196) — Lemma
 
 **Statement**: The weighted Fourier representative $T f$ lies in $L^2$ (`MemLp … 2 volume`).
 
-**Proof uses**: [`sqrtPropagatorMap_sq_integrable`](../../OSforGFF/Covariance/RealForm.lean#L146),
+**Proof uses**: [`sqrtPropagatorMap_sq_integrable`](../../OSforGFF/Covariance/RealForm.lean#L141),
 `memLp_two_iff_integrable_sq_norm`
 
 ---
 
-### [`sqrtPropagatorMap_norm_sq`](../../OSforGFF/Covariance/RealForm.lean#L220) — Definition
+### [`sqrtPropagatorMap_norm_sq`](../../OSforGFF/Covariance/RealForm.lean#L215) — Definition
 
 **Lean signature**
 ```lean
@@ -166,7 +153,7 @@ noncomputable def sqrtPropagatorMap_norm_sq (m : ℝ) (f : SchwartzTestFunction 
 
 ---
 
-### [`sqrtPropagatorMap_linear_add`](../../OSforGFF/Covariance/RealForm.lean#L225) — Lemma
+### [`sqrtPropagatorMap_linear_add`](../../OSforGFF/Covariance/RealForm.lean#L220) — Lemma
 
 **Statement**: The map is additive: $T(f + g) = T f + T g$.
 
@@ -174,7 +161,7 @@ noncomputable def sqrtPropagatorMap_norm_sq (m : ℝ) (f : SchwartzTestFunction 
 
 ---
 
-### [`sqrtPropagatorMap_linear_smul`](../../OSforGFF/Covariance/RealForm.lean#L238) — Lemma
+### [`sqrtPropagatorMap_linear_smul`](../../OSforGFF/Covariance/RealForm.lean#L233) — Lemma
 
 **Statement**: The map is $\mathbb{R}$-homogeneous: $T(c \cdot f) = c \cdot T f$ for $c : \mathbb{R}$.
 
@@ -184,39 +171,39 @@ noncomputable def sqrtPropagatorMap_norm_sq (m : ℝ) (f : SchwartzTestFunction 
 
 ## Connection to Covariance
 
-### [`toComplex_star`](../../OSforGFF/Covariance/RealForm.lean#L253) — Lemma
+### [`toComplex_star`](../../OSforGFF/Covariance/RealForm.lean#L248) — Lemma
 
 **Statement**: For a real test function, conjugation of its complex embedding is the identity:
 $\overline{\mathrm{toComplex}\,f(x)} = \mathrm{toComplex}\,f(x)$.
 
 ---
 
-### [`freeCovarianceℂ_eq_bilinear_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L258) — Lemma
+### [`freeCovarianceℂ_eq_bilinear_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L253) — Lemma
 
 **Statement**: On real test functions the sesquilinear and bilinear complex covariances coincide:
 $$\mathrm{freeCovarianceℂ}\,m\,(\mathrm{toComplex}\,f)\,(\mathrm{toComplex}\,g)
   = C_\mathbb{C}\bigl(\mathrm{toComplex}\,f,\ \mathrm{toComplex}\,g\bigr),$$
 since conjugation of the first argument acts trivially.
 
-**Proof uses**: [`toComplex_star`](../../OSforGFF/Covariance/RealForm.lean#L253)
+**Proof uses**: [`toComplex_star`](../../OSforGFF/Covariance/RealForm.lean#L248)
 
 ---
 
-### [`sqrtPropagatorMap_norm_eq_covariance`](../../OSforGFF/Covariance/RealForm.lean#L268) — Lemma
+### [`sqrtPropagatorMap_norm_eq_covariance`](../../OSforGFF/Covariance/RealForm.lean#L263) — Lemma
 
 **Statement**: The squared $L^2$ norm of the embedded function equals the covariance form:
 $$\mathrm{sqrtPropagatorMap\_norm\_sq}\ m\ f = C_m(f, f),$$
 via $\lVert T f(k)\rVert^2 = \lVert \hat{f}(k)\rVert^2\, P_d(k)$ and the Parseval bridge.
 
 **Proof uses**: `parseval_covariance_schwartz`, `freePropagatorMomSqrt_sq`,
-[`freeCovarianceℂ_eq_bilinear_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L258),
-[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L61)
+[`freeCovarianceℂ_eq_bilinear_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L253),
+[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L62)
 
 ---
 
 ## The Proof of sqrtPropagatorEmbedding
 
-### [`TargetHilbertSpace`](../../OSforGFF/Covariance/RealForm.lean#L328) — Definition
+### [`TargetHilbertSpace`](../../OSforGFF/Covariance/RealForm.lean#L323) — Definition
 
 **Lean signature**
 ```lean
@@ -228,7 +215,7 @@ abbrev TargetHilbertSpace (d : ℕ) (_m : ℝ) : Type :=
 
 ---
 
-### [`embeddingMap`](../../OSforGFF/Covariance/RealForm.lean#L332) — Definition
+### [`embeddingMap`](../../OSforGFF/Covariance/RealForm.lean#L327) — Definition
 
 **Lean signature**
 ```lean
@@ -242,7 +229,7 @@ lemmas.
 
 ---
 
-### [`freePropagatorMomSqrt_mul_CLM_real`](../../OSforGFF/Covariance/RealForm.lean#L359) — Definition *(private)*
+### [`freePropagatorMomSqrt_mul_CLM_real`](../../OSforGFF/Covariance/RealForm.lean#L354) — Definition *(private)*
 
 **Lean signature**
 ```lean
@@ -256,7 +243,7 @@ private noncomputable def freePropagatorMomSqrt_mul_CLM_real (m : ℝ) [Fact (0 
 
 ---
 
-### [`embeddingMapCLM`](../../OSforGFF/Covariance/RealForm.lean#L376) — Definition
+### [`embeddingMapCLM`](../../OSforGFF/Covariance/RealForm.lean#L371) — Definition
 
 **Lean signature**
 ```lean
@@ -270,32 +257,32 @@ multiplication by $\sqrt{P_d}$.
 
 ---
 
-### [`embeddingMapCLM_apply`](../../OSforGFF/Covariance/RealForm.lean#L382) — Lemma
+### [`embeddingMapCLM_apply`](../../OSforGFF/Covariance/RealForm.lean#L377) — Lemma
 
 **Statement**: The continuous and bare linear-map versions of the embedding agree:
 `embeddingMapCLM m f = embeddingMap m f`.
 
 **Proof uses**: `freePropagatorMomSqrt_mul_CLM_spec`,
-[`sqrtPropagatorMap_memLp`](../../OSforGFF/Covariance/RealForm.lean#L201), `Lp.ext_iff`
+[`sqrtPropagatorMap_memLp`](../../OSforGFF/Covariance/RealForm.lean#L196), `Lp.ext_iff`
 
 ---
 
-### [`sqrtPropagatorEmbedding`](../../OSforGFF/Covariance/RealForm.lean#L419) — Theorem
+### [`sqrtPropagatorEmbedding`](../../OSforGFF/Covariance/RealForm.lean#L414) — Theorem
 
 **Statement**: There exist a real inner-product space $H$ and an $\mathbb{R}$-linear map
 $T : \mathscr{S}(\mathbb{R}^d) \to H$ realizing the covariance as a squared norm:
 $$\forall f,\quad C_m(f, f) = \lVert T f\rVert^2.$$
 Witnessed by $H = L^2(\mathbb{R}^d; \mathbb{C})$ and $T = $ `embeddingMap m`.
 
-**Proof uses**: [`sqrtPropagatorMap_norm_eq_covariance`](../../OSforGFF/Covariance/RealForm.lean#L268),
-[`sqrtPropagatorMap_memLp`](../../OSforGFF/Covariance/RealForm.lean#L201),
+**Proof uses**: [`sqrtPropagatorMap_norm_eq_covariance`](../../OSforGFF/Covariance/RealForm.lean#L263),
+[`sqrtPropagatorMap_memLp`](../../OSforGFF/Covariance/RealForm.lean#L196),
 `Lp.norm_toLp`, `eLpNorm_nnreal_pow_eq_lintegral`
 
 ---
 
 ## Auxiliary Lemmas for Continuity
 
-### [`embeddingMap_norm_sq`](../../OSforGFF/Covariance/RealForm.lean#L467) — Lemma
+### [`embeddingMap_norm_sq`](../../OSforGFF/Covariance/RealForm.lean#L462) — Lemma
 
 **Statement**: The squared $L^2$ norm of the embedded function is the pointwise integral:
 $\lVert T f\rVert^2 = \int \lVert T f(k)\rVert^2\, dk$.
@@ -305,57 +292,57 @@ $\lVert T f\rVert^2 = \int \lVert T f(k)\rVert^2\, dk$.
 
 ---
 
-### [`freeCovarianceFormR_eq_normSq`](../../OSforGFF/Covariance/RealForm.lean#L510) — Lemma
+### [`freeCovarianceFormR_eq_normSq`](../../OSforGFF/Covariance/RealForm.lean#L505) — Lemma
 
 **Statement**: The covariance quadratic form equals the squared embedding norm:
 $C_m(f, f) = \lVert T f\rVert^2$.
 
-**Proof uses**: [`sqrtPropagatorMap_norm_eq_covariance`](../../OSforGFF/Covariance/RealForm.lean#L268),
-[`embeddingMap_norm_sq`](../../OSforGFF/Covariance/RealForm.lean#L467)
+**Proof uses**: [`sqrtPropagatorMap_norm_eq_covariance`](../../OSforGFF/Covariance/RealForm.lean#L263),
+[`embeddingMap_norm_sq`](../../OSforGFF/Covariance/RealForm.lean#L462)
 
 ---
 
-### [`embeddingMap_continuous`](../../OSforGFF/Covariance/RealForm.lean#L518) — Lemma
+### [`embeddingMap_continuous`](../../OSforGFF/Covariance/RealForm.lean#L513) — Lemma
 
 **Statement**: The embedding map $T = $ `embeddingMap m` is continuous.
 
-**Proof uses**: [`embeddingMapCLM`](../../OSforGFF/Covariance/RealForm.lean#L376),
-[`embeddingMapCLM_apply`](../../OSforGFF/Covariance/RealForm.lean#L382)
+**Proof uses**: [`embeddingMapCLM`](../../OSforGFF/Covariance/RealForm.lean#L371),
+[`embeddingMapCLM_apply`](../../OSforGFF/Covariance/RealForm.lean#L377)
 
 ---
 
-### [`freeCovarianceFormR_continuous`](../../OSforGFF/Covariance/RealForm.lean#L529) — Theorem
+### [`freeCovarianceFormR_continuous`](../../OSforGFF/Covariance/RealForm.lean#L524) — Theorem
 
 **Statement**: The real covariance quadratic form $f \mapsto C_m(f, f)$ is continuous in the Schwartz
 topology.
 
-**Proof uses**: [`freeCovarianceFormR_eq_normSq`](../../OSforGFF/Covariance/RealForm.lean#L510),
-[`embeddingMap_continuous`](../../OSforGFF/Covariance/RealForm.lean#L518)
+**Proof uses**: [`freeCovarianceFormR_eq_normSq`](../../OSforGFF/Covariance/RealForm.lean#L505),
+[`embeddingMap_continuous`](../../OSforGFF/Covariance/RealForm.lean#L513)
 
 ---
 
 ## Positivity and Other Properties
 
-### [`freeCovarianceFormR_pos`](../../OSforGFF/Covariance/RealForm.lean#L543) — Theorem
+### [`freeCovarianceFormR_pos`](../../OSforGFF/Covariance/RealForm.lean#L538) — Theorem
 
 **Statement**: The quadratic form is nonnegative: $0 \le C_m(f, f)$ for every test function $f$.
 
-**Proof uses**: [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L61),
-[`freeCovarianceℂ_eq_bilinear_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L258),
+**Proof uses**: [`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L62),
+[`freeCovarianceℂ_eq_bilinear_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L253),
 `freeCovarianceℂ_positive`
 
 ---
 
-### [`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L557) — Theorem
+### [`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L552) — Theorem
 
 **Statement**: The form is symmetric: $C_m(f, g) = C_m(g, f)$.
 
 **Proof uses**: `freeCovarianceℂ_bilinear_symm`,
-[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L61)
+[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L62)
 
 ---
 
-### [`freeCovarianceFormR_add_left`](../../OSforGFF/Covariance/RealForm.lean#L569) — Lemma
+### [`freeCovarianceFormR_add_left`](../../OSforGFF/Covariance/RealForm.lean#L564) — Lemma
 
 **Statement**: Additivity in the first argument:
 $C_m(f_1 + f_2, g) = C_m(f_1, g) + C_m(f_2, g)$.
@@ -364,7 +351,7 @@ $C_m(f_1 + f_2, g) = C_m(f_1, g) + C_m(f_2, g)$.
 
 ---
 
-### [`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean#L593) — Lemma
+### [`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean#L588) — Lemma
 
 **Statement**: Homogeneity in the first argument: $C_m(c \cdot f, g) = c\, C_m(f, g)$ for
 $c : \mathbb{R}$.
@@ -373,7 +360,7 @@ $c : \mathbb{R}$.
 
 ---
 
-### [`freeCovarianceFormR_add_right`](../../OSforGFF/Covariance/RealForm.lean#L619) — Lemma
+### [`freeCovarianceFormR_add_right`](../../OSforGFF/Covariance/RealForm.lean#L614) — Lemma
 
 **Statement**: Additivity in the second argument:
 $C_m(f, g_1 + g_2) = C_m(f, g_1) + C_m(f, g_2)$.
@@ -382,7 +369,7 @@ $C_m(f, g_1 + g_2) = C_m(f, g_1) + C_m(f, g_2)$.
 
 ---
 
-### [`freeCovarianceFormR_smul_right`](../../OSforGFF/Covariance/RealForm.lean#L643) — Lemma
+### [`freeCovarianceFormR_smul_right`](../../OSforGFF/Covariance/RealForm.lean#L638) — Lemma
 
 **Statement**: Homogeneity in the second argument: $C_m(f, c \cdot g) = c\, C_m(f, g)$ for
 $c : \mathbb{R}$.
@@ -391,24 +378,24 @@ $c : \mathbb{R}$.
 
 ---
 
-### [`freeCovarianceFormR_zero_left`](../../OSforGFF/Covariance/RealForm.lean#L669) — Lemma
+### [`freeCovarianceFormR_zero_left`](../../OSforGFF/Covariance/RealForm.lean#L664) — Lemma
 
 **Statement**: Vanishing in the first argument: $C_m(0, g) = 0$.
 
-**Proof uses**: [`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean#L593)
+**Proof uses**: [`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean#L588)
 
 ---
 
-### [`freeCovarianceFormR_zero_right`](../../OSforGFF/Covariance/RealForm.lean#L677) — Lemma
+### [`freeCovarianceFormR_zero_right`](../../OSforGFF/Covariance/RealForm.lean#L672) — Lemma
 
 **Statement**: Vanishing in the second argument: $C_m(f, 0) = 0$.
 
-**Proof uses**: [`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L557),
-[`freeCovarianceFormR_zero_left`](../../OSforGFF/Covariance/RealForm.lean#L669)
+**Proof uses**: [`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L552),
+[`freeCovarianceFormR_zero_left`](../../OSforGFF/Covariance/RealForm.lean#L664)
 
 ---
 
-### [`freeCovarianceFormR_reflection_invariant`](../../OSforGFF/Covariance/RealForm.lean#L682) — Lemma
+### [`freeCovarianceFormR_reflection_invariant`](../../OSforGFF/Covariance/RealForm.lean#L677) — Lemma
 
 **Statement**: The form is invariant under simultaneous time reflection of both arguments:
 $$C_m\bigl(\Theta f,\ \Theta g\bigr) = C_m(f, g),$$
@@ -416,32 +403,32 @@ where $\Theta = $ `QFT.compTimeReflectionReal`.
 
 **Proof uses**: `double_integral_timeReflection_covariance`,
 `covariance_timeReflection_invariant`, `freeCovarianceℂ_bilinear_integrable`,
-[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L61)
+[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L62)
 
 ---
 
-### [`freeCovarianceFormR_reflection_cross`](../../OSforGFF/Covariance/RealForm.lean#L763) — Lemma
+### [`freeCovarianceFormR_reflection_cross`](../../OSforGFF/Covariance/RealForm.lean#L758) — Lemma
 
 **Statement**: Mixed time-reflection identity:
 $C_m\bigl(\Theta f,\ g\bigr) = C_m\bigl(\Theta g,\ f\bigr)$, with $\Theta = $
 `QFT.compTimeReflectionReal`.
 
-**Proof uses**: [`freeCovarianceFormR_reflection_invariant`](../../OSforGFF/Covariance/RealForm.lean#L682),
-[`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L557)
+**Proof uses**: [`freeCovarianceFormR_reflection_invariant`](../../OSforGFF/Covariance/RealForm.lean#L677),
+[`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L552)
 
 ---
 
-### [`freeCovarianceFormR_left_linear_any_right`](../../OSforGFF/Covariance/RealForm.lean#L805) — Lemma
+### [`freeCovarianceFormR_left_linear_any_right`](../../OSforGFF/Covariance/RealForm.lean#L798) — Lemma
 
 **Statement**: Left-linearity over a finite sum of time-reflected positive-time test functions:
 $$\sum_{i \in s} c_i\, C_m\bigl(\Theta (f_i),\ g\bigr)
   = C_m\Bigl(\sum_{i \in s} c_i \cdot \Theta (f_i),\ g\Bigr),$$
 where $\Theta = $ `QFT.compTimeReflectionReal` and $f_i$ range over `PositiveTimeTestFunction d`.
 
-**Proof uses**: [`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean#L593),
-[`freeCovarianceFormR_add_left`](../../OSforGFF/Covariance/RealForm.lean#L569),
-[`freeCovarianceFormR_zero_left`](../../OSforGFF/Covariance/RealForm.lean#L669)
+**Proof uses**: [`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean#L588),
+[`freeCovarianceFormR_add_left`](../../OSforGFF/Covariance/RealForm.lean#L564),
+[`freeCovarianceFormR_zero_left`](../../OSforGFF/Covariance/RealForm.lean#L664)
 
 ---
 
-*This file has **10** definitions and **27** theorems/lemmas (0 with sorry).*
+*This file has **9** definitions and **27** theorems/lemmas (0 with sorry).*

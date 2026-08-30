@@ -36,7 +36,7 @@ None — file is sorry-free.
 
 **Statement**: The Euclidean action on test functions satisfies $(g \cdot f)(x) = f(g^{-1} \cdot x)$, i.e., it acts by pullback.
 
-**Proof uses**: [`euclidean_action`](../../OSforGFF/Spacetime/Euclidean.lean#L352)
+**Proof uses**: [`euclidean_action`](../../OSforGFF/Spacetime/Euclidean.lean#L354)
 
 ---
 
@@ -52,7 +52,7 @@ None — file is sorry-free.
 
 **Statement**: Composing pullback with the forward action cancels: $\mathrm{pullback}_g(g \cdot y) = y$.
 
-**Proof uses**: [`act_inv_general`](../../OSforGFF/Spacetime/Euclidean.lean#L223)
+**Proof uses**: [`act_inv_general`](../../OSforGFF/Spacetime/Euclidean.lean#L224)
 
 ---
 
@@ -60,7 +60,7 @@ None — file is sorry-free.
 
 **Statement**: The forward action followed by pullback is the identity: $g \cdot (\mathrm{pullback}_g(x)) = x$.
 
-**Proof uses**: [`act_inv_general`](../../OSforGFF/Spacetime/Euclidean.lean#L223)
+**Proof uses**: [`act_inv_general`](../../OSforGFF/Spacetime/Euclidean.lean#L224)
 
 ---
 
@@ -87,7 +87,7 @@ noncomputable def actEquiv (g : E d) : SpaceTime d ≃ᵐ SpaceTime d where
 
 **Statement**: The measurable equivalence `actEquiv g` is measure-preserving with respect to Lebesgue measure.
 
-**Proof uses**: [`measurePreserving_act`](../../OSforGFF/Spacetime/Euclidean.lean#L240)
+**Proof uses**: [`measurePreserving_act`](../../OSforGFF/Spacetime/Euclidean.lean#L241)
 
 ---
 
@@ -107,7 +107,7 @@ for all $g \in E(d)$ and complex test functions $f, h$.
 
 ---
 
-### [`CovarianceEuclideanInvariantℂ_μ_GFF`](../../OSforGFF/OS/OS2_Invariance.lean#L151) — Theorem
+### [`CovarianceEuclideanInvariantℂ_μ_GFF`](../../OSforGFF/OS/OS2_Invariance.lean#L152) — Theorem
 
 **Statement**: The GFF measure $\mu_{\mathrm{GFF}}$ satisfies the complex covariance Euclidean
 invariance property: $S_2^{\mathbb{C}}(g \cdot f, g \cdot h) = S_2^{\mathbb{C}}(f, h)$ for all

@@ -22,10 +22,10 @@ where $\mathrm{star}\,f = \overline{f \circ \Theta}$. The factorisation gives
 $Z_\mathbb{C}[f_i - \mathrm{star}\,f_j] = A_i\,\overline{A_j}\,\exp(R_{ij})$ with Hermitian PSD
 $R$, closed using the complex entrywise-exponential PSD theorem.
 
-Both versions hold in every dimension $2 \le d \le 5$ carrying a `GFFPropagator d m` instance:
-the upper bound $d \le 5$ is inherited from the proper-time Fubini layer (`OS3_MixedRepInfra`),
-while the Schur–Hadamard lifting in this file is dimension-free. The file works over section
-variables `{d : ℕ} [Fact (2 ≤ d)] (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] [Fact (d ≤ 5)]`,
+Both versions hold in every dimension $d \ge 2$ carrying a `GFFPropagator d m` instance
+(the proper-time Fubini layer of `OS3_MixedRepInfra` runs at boundary-vanishing order $d$, and
+the Schur–Hadamard lifting in this file is dimension-free). The file works over section
+variables `{d : ℕ} [Fact (2 ≤ d)] (m : ℝ) [Fact (0 < m)] [GFFPropagator d m]`,
 inside namespace `QFT`.
 
 **Main results**: `gaussianFreeField_OS3_real`, `gaussianFreeField_OS3`.

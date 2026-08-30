@@ -44,7 +44,7 @@ combination $t \cdot f + s \cdot g$ ($t, s \in \mathbb{C}$):
 $$\omega\bigl((\mathrm{decompose}(t f + s g)).1\bigr) = t_{\mathrm{re}}\,\omega(f_{\mathrm{re}}) - t_{\mathrm{im}}\,\omega(f_{\mathrm{im}}) + s_{\mathrm{re}}\,\omega(g_{\mathrm{re}}) - s_{\mathrm{im}}\,\omega(g_{\mathrm{im}}),$$
 following from $\mathbb{R}$-linearity of $\omega$ and pointwise complex algebra.
 
-**Proof uses**: [`re_of_complex_combination`](../../OSforGFF/Spacetime/ComplexTestFunction.lean#L51), [`complex_testfunction_decompose`](../../OSforGFF/Spacetime/Basic.lean#L200)
+**Proof uses**: [`re_of_complex_combination`](../../OSforGFF/Spacetime/ComplexTestFunction.lean#L51), [`complex_testfunction_decompose`](../../OSforGFF/Spacetime/Basic.lean#L191)
 
 ---
 
@@ -54,7 +54,7 @@ following from $\mathbb{R}$-linearity of $\omega$ and pointwise complex algebra.
 $t \cdot f + s \cdot g$:
 $$\omega\bigl((\mathrm{decompose}(t f + s g)).2\bigr) = t_{\mathrm{re}}\,\omega(f_{\mathrm{im}}) + t_{\mathrm{im}}\,\omega(f_{\mathrm{re}}) + s_{\mathrm{re}}\,\omega(g_{\mathrm{im}}) + s_{\mathrm{im}}\,\omega(g_{\mathrm{re}}).$$
 
-**Proof uses**: [`im_of_complex_combination`](../../OSforGFF/Spacetime/ComplexTestFunction.lean#L58), [`complex_testfunction_decompose`](../../OSforGFF/Spacetime/Basic.lean#L200)
+**Proof uses**: [`im_of_complex_combination`](../../OSforGFF/Spacetime/ComplexTestFunction.lean#L58), [`complex_testfunction_decompose`](../../OSforGFF/Spacetime/Basic.lean#L191)
 
 ---
 
@@ -63,7 +63,7 @@ $$\omega\bigl((\mathrm{decompose}(t f + s g)).2\bigr) = t_{\mathrm{re}}\,\omega(
 **Statement**: The complex pairing is $\mathbb{C}$-linear in the test-function argument:
 $$\langle\omega,\, t f + s g\rangle_{\mathbb{C}} = t\,\langle\omega, f\rangle_{\mathbb{C}} + s\,\langle\omega, g\rangle_{\mathbb{C}}.$$
 
-**Proof uses**: [`ω_re_decompose_linear`](../../OSforGFF/Spacetime/ComplexTestFunction.lean#L67), [`ω_im_decompose_linear`](../../OSforGFF/Spacetime/ComplexTestFunction.lean#L101), [`distributionPairingℂ_real`](../../OSforGFF/Spacetime/Basic.lean#L243)
+**Proof uses**: [`ω_re_decompose_linear`](../../OSforGFF/Spacetime/ComplexTestFunction.lean#L67), [`ω_im_decompose_linear`](../../OSforGFF/Spacetime/ComplexTestFunction.lean#L101), [`distributionPairingℂ_real`](../../OSforGFF/Spacetime/Basic.lean#L234)
 
 ---
 
@@ -167,7 +167,7 @@ the real pairing: $\langle\omega, \mathrm{toComplex}\, f\rangle_{\mathbb{C}} = \
 **Statement**: The complex generating functional on a complexified real test function equals the
 real generating functional: $Z_{\mathbb{C}}[\mathrm{toComplex}\, f] = Z[f]$.
 
-**Proof uses**: [`GJGeneratingFunctionalℂ`](../../OSforGFF/Spacetime/Basic.lean#L250), [`GJGeneratingFunctional`](../../OSforGFF/Spacetime/Basic.lean#L159)
+**Proof uses**: [`GJGeneratingFunctionalℂ`](../../OSforGFF/Spacetime/Basic.lean#L241), [`GJGeneratingFunctional`](../../OSforGFF/Spacetime/Basic.lean#L150)
 
 ---
 
@@ -204,7 +204,7 @@ pairing with the conjugated test function:
 $$\overline{\langle\omega, f\rangle_{\mathbb{C}}} = \langle\omega, \mathrm{conjSchwartz}\, f\rangle_{\mathbb{C}},$$
 using that $(\bar f)_{\mathrm{re}} = f_{\mathrm{re}}$ and $(\bar f)_{\mathrm{im}} = -f_{\mathrm{im}}$.
 
-**Proof uses**: [`distributionPairingℂ_real`](../../OSforGFF/Spacetime/Basic.lean#L243), [`complex_testfunction_decompose_fst_apply`](../../OSforGFF/Spacetime/Basic.lean#L204), [`complex_testfunction_decompose_snd_apply`](../../OSforGFF/Spacetime/Basic.lean#L210)
+**Proof uses**: [`distributionPairingℂ_real`](../../OSforGFF/Spacetime/Basic.lean#L234), [`complex_testfunction_decompose_fst_apply`](../../OSforGFF/Spacetime/Basic.lean#L195), [`complex_testfunction_decompose_snd_apply`](../../OSforGFF/Spacetime/Basic.lean#L201)
 
 ---
 

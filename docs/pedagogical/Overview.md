@@ -83,12 +83,12 @@ which result proves each field, and where.
 
 | Field | Proved by | Where |
 |---|---|---|
-| `os0` | `gaussianFreeField_satisfies_OS0` | [`OS0_Analyticity.lean:679`](../../OSforGFF/OS/OS0_Analyticity.lean#L679) |
-| `os1` | `gaussianFreeField_satisfies_OS1` | [`OS1_Regularity.lean:407`](../../OSforGFF/OS/OS1_Regularity.lean#L407) |
-| `os2` | `gaussian_satisfies_OS2` ∘ `CovarianceEuclideanInvariantℂ_μ_GFF` | [`GaussianFreeField.lean:69`](../../OSforGFF/Measure/GaussianFreeField.lean#L69) · [`OS2_Invariance.lean:152`](../../OSforGFF/OS/OS2_Invariance.lean#L152) |
+| `os0` | `gaussianFreeField_satisfies_OS0` | [`OS0_Analyticity.lean:659`](../../OSforGFF/OS/OS0_Analyticity.lean#L659) |
+| `os1` | `gaussianFreeField_satisfies_OS1` | [`OS1_Regularity.lean:404`](../../OSforGFF/OS/OS1_Regularity.lean#L404) |
+| `os2` | `gaussian_satisfies_OS2` ∘ `CovarianceEuclideanInvariantℂ_μ_GFF` | [`GaussianFreeField.lean:62`](../../OSforGFF/Measure/GaussianFreeField.lean#L62) · [`OS2_Invariance.lean:152`](../../OSforGFF/OS/OS2_Invariance.lean#L152) |
 | `os3` | `gaussianFreeField_OS3` | [`OS3_ReflectionPositivity.lean:989`](../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L989) |
 | `os4_clustering` | `gaussianFreeField_satisfies_OS4` | [`OS4_Clustering.lean:440`](../../OSforGFF/OS/OS4_Clustering.lean#L440) |
-| `os4_ergodicity` | `OS4_PolynomialClustering_implies_OS4_Ergodicity` (at rate $\alpha=6$, from [`OS4_Clustering.lean:576`](../../OSforGFF/OS/OS4_Clustering.lean#L576)) | [`OS4_Ergodicity.lean:1304`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1304) |
+| `os4_ergodicity` | `OS4_PolynomialClustering_implies_OS4_Ergodicity` (at rate $\alpha=6$, from [`OS4_Clustering.lean:576`](../../OSforGFF/OS/OS4_Clustering.lean#L576)) | [`OS4_Ergodicity.lean:1301`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1301) |
 
 The rest of this note walks the axioms **heaviest first by proof size** — OS3, OS4, OS0,
 OS1, OS2 — but be warned: *proof size is not mathematical depth*. The section
@@ -169,7 +169,7 @@ if lengthy — quantitative argument carries ergodicity:
 Headlines `gaussianFreeField_satisfies_OS4`
 ([`OS4_Clustering.lean:440`](../../OSforGFF/OS/OS4_Clustering.lean#L440)) and
 `OS4_PolynomialClustering_implies_OS4_Ergodicity`
-([`OS4_Ergodicity.lean:1304`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1304)).
+([`OS4_Ergodicity.lean:1301`](../../OSforGFF/OS/OS4_Ergodicity.lean#L1301)).
 
 > **One line:** one beautiful idea (all correlation lives in $e^{C(f,g)}$; the mass gap
 > kills it) plus a long, routine quantitative ergodic theorem. Full walkthrough in
@@ -197,7 +197,7 @@ exponential-square tails) plus Young's inequality. The mathematics is one algebr
 observation; the length is measure theory done honestly.
 
 Headline `gaussianFreeField_satisfies_OS0`
-([`OS0_Analyticity.lean:679`](../../OSforGFF/OS/OS0_Analyticity.lean#L679)).
+([`OS0_Analyticity.lean:659`](../../OSforGFF/OS/OS0_Analyticity.lean#L659)).
 
 > **One line:** "exp of a quadratic is entire" — the rest is the rigor of differentiating
 > a functional integral. Full walkthrough in [OS0.md](OS0.md).
@@ -215,7 +215,7 @@ momentum space, and cap the multiplier by the mass gap, $\widehat{C}(k) = 1/(\lv
 k\rvert^2 + m^2) \le 1/m^2$. Out drops the clean witness $p = 2$, $c = 1/(2m^2)$.
 
 Headline `gaussianFreeField_satisfies_OS1`
-([`OS1_Regularity.lean:407`](../../OSforGFF/OS/OS1_Regularity.lean#L407)).
+([`OS1_Regularity.lean:404`](../../OSforGFF/OS/OS1_Regularity.lean#L404)).
 
 > **One line:** $C$ is the multiplier $1/(\lvert k\rvert^2 + m^2)$, bounded by $1/m^2$ —
 > that *is* the bound. Full walkthrough (with OS2) in [OS1OS2.md](OS1OS2.md).
@@ -231,7 +231,7 @@ the propagator $C(x, y)$ depends only on $\lVert x - y\rVert$ (its symbol $1/(\l
 k\rvert^2 + m^2)$ is radial), and isometries preserve distance, so $C(gx, gy) = C(x, y)$.
 
 Supplied by `gaussian_satisfies_OS2`
-([`GaussianFreeField.lean:69`](../../OSforGFF/Measure/GaussianFreeField.lean#L69)) fed by
+([`GaussianFreeField.lean:62`](../../OSforGFF/Measure/GaussianFreeField.lean#L62)) fed by
 `CovarianceEuclideanInvariantℂ_μ_GFF`
 ([`OS2_Invariance.lean:152`](../../OSforGFF/OS/OS2_Invariance.lean#L152)).
 

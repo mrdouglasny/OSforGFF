@@ -11,25 +11,23 @@ Gaussian Free Field construction. The main results establish: (1) a Cauchy-Schwa
 $\lVert\int_{[a,b]} f\rVert^2 \leq (b-a)\int_{[a,b]}\lVert f\rVert^2$; (2) that the time
 average $(1/T)\int_0^T A_s\,ds$ of a uniformly L²-bounded process is itself in L²; (3)
 measurability and integrability of parametric time integrals; (4) a double integral bound
-$\int_0^T\!\int_0^T (1+|s-u|)^{-\alpha}\,ds\,du \leq C\cdot T$ for $\alpha > 1$; (5) the
-Minkowski inequality for weighted L² sums; (6) variance control $\lVert E[\lVert T^{-1}\int_0^T A_s\,ds - EA\rVert^2]\rVert \leq T^{-2}\lVert\int\!\!\int \mathrm{Cov}(s,u)\rVert$;
-and (7) Fubini integrability of the process covariance triple integral.
+$\int_0^T\!\int_0^T (1+|s-u|)^{-\alpha}\,ds\,du \leq C\cdot T$ for $\alpha > 1$; (5) variance control $\lVert E[\lVert T^{-1}\int_0^T A_s\,ds - EA\rVert^2]\rVert \leq T^{-2}\lVert\int\!\!\int \mathrm{Cov}(s,u)\rVert$;
+and (6) Fubini integrability of the process covariance triple integral.
 
 ## Status
 
 **Main result**: Fully proven — file is sorry-free.
 
-**Length**: 984 lines, 0 definition(s) + 14 theorem(s)/lemma(s)
+**Length**: 708 lines, 0 definition(s) + 10 theorem(s)/lemma(s)
 
-The 14 documented results are the public API; the file additionally contains several `private`
-helper lemmas (Cauchy–Schwarz / Minkowski / lintegral scaffolding for the proofs above) that are
-not listed here.
+The 10 documented results are the public API; the file additionally contains several `private`
+helper lemmas (lintegral scaffolding for the proofs above) that are not listed here.
 
 ---
 
 ## L² Bound for Time Averages
 
-### [`sq_setIntegral_le_measure_mul_setIntegral_sq_proved`](../../OSforGFF/General/L2TimeIntegral.lean#L85) — Theorem
+### [`sq_setIntegral_le_measure_mul_setIntegral_sq`](../../OSforGFF/General/L2TimeIntegral.lean#L82) — Theorem
 
 **Statement**: For $f : \mathbb{R} \to \mathbb{C}$ with $\lVert f \rVert^2$ integrable on $[a,b]$ and $a \leq b$,
 $$\Bigl\lVert\int_{[a,b]} f(x)\,dx\Bigr\rVert^2 \leq (b-a)\int_{[a,b]}\lVert f(x)\rVert^2\,dx.$$
@@ -38,52 +36,25 @@ $$\Bigl\lVert\int_{[a,b]} f(x)\,dx\Bigr\rVert^2 \leq (b-a)\int_{[a,b]}\lVert f(x
 
 ---
 
-### [`cauchy_schwarz_time_integral_pointwise`](../../OSforGFF/General/L2TimeIntegral.lean#L124) — Lemma
+### [`cauchy_schwarz_time_integral_pointwise`](../../OSforGFF/General/L2TimeIntegral.lean#L121) — Lemma
 
 **Statement**: For $T > 0$ and any $\omega$, if $\lVert A_s(\omega)\rVert^2$ is integrable on $[0,T]$, then
 $\lVert\int_0^T A_s(\omega)\,ds\rVert^2 \leq T\int_0^T \lVert A_s(\omega)\rVert^2\,ds$.
 
-**Proof uses**: [`sq_setIntegral_le_measure_mul_setIntegral_sq_proved`](../../OSforGFF/General/L2TimeIntegral.lean#L85)
+**Proof uses**: [`sq_setIntegral_le_measure_mul_setIntegral_sq`](../../OSforGFF/General/L2TimeIntegral.lean#L82)
 
 ---
 
-### [`scaled_time_average_pointwise_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L134) — Lemma
+### [`scaled_time_average_pointwise_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L131) — Lemma
 
 **Statement**: For $T > 0$, the scaled time average satisfies the pointwise bound
 $\lVert(1/T)\int_0^T A_s(\omega)\,ds\rVert^2 \leq (1/T)\int_0^T \lVert A_s(\omega)\rVert^2\,ds$.
 
-**Proof uses**: [`cauchy_schwarz_time_integral_pointwise`](../../OSforGFF/General/L2TimeIntegral.lean#L124)
+**Proof uses**: [`cauchy_schwarz_time_integral_pointwise`](../../OSforGFF/General/L2TimeIntegral.lean#L121)
 
 ---
 
-### [`integral_swap_Icc`](../../OSforGFF/General/L2TimeIntegral.lean#L164) — Lemma
-
-**Statement**: For integrable $f : \mathbb{R} \times \Omega \to \mathbb{R}$ on $[0,T] \times \Omega$,
-$$\int_\Omega\!\int_0^T f(s,\omega)\,ds\,d\mu(\omega) = \int_0^T\!\int_\Omega f(s,\omega)\,d\mu(\omega)\,ds.$$
-
-**Proof uses**: `integral_prod`, `integral_prod_symm`
-
----
-
-### [`setIntegral_L2_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L176) — Lemma
-
-**Statement**: If $\int_\Omega \lVert A_s\rVert^2\,d\mu \leq M_{\mathrm{sq}}$ for all $s \in [0,T]$, then
-$\int_0^T\!\int_\Omega \lVert A_s\rVert^2\,d\mu\,ds \leq T\cdot M_{\mathrm{sq}}$.
-
-**Proof uses**: `setIntegral_mono_on`, `integrableOn_const`
-
----
-
-### [`L2_time_average_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L203) — Theorem
-
-**Statement**: If $A : \mathbb{R} \to \Omega \to \mathbb{C}$ satisfies $\int_\Omega \lVert A_s\rVert^2\,d\mu \leq M_{\mathrm{sq}}$ for all $s \in [0,T]$ and suitable joint measurability and integrability conditions, then
-$$\int_\Omega \Bigl\lVert\frac{1}{T}\int_0^T A_s(\omega)\,ds\Bigr\rVert^2\,d\mu(\omega) \leq M_{\mathrm{sq}}.$$
-
-**Proof uses**: [`scaled_time_average_pointwise_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L134), [`integral_swap_Icc`](../../OSforGFF/General/L2TimeIntegral.lean#L164), [`setIntegral_L2_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L176)
-
----
-
-### [`memLp_prod_of_uniform_slicewise_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L297) — Theorem
+### [`memLp_prod_of_uniform_slicewise_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L167) — Theorem
 
 **Statement**: If $f : \mathbb{R} \times \Omega \to \mathbb{C}$ is jointly AE strongly measurable and satisfies $\int_\Omega \lVert f(s,\omega)\rVert^2\,d\mu \leq M$ for all $s \in [0,T]$ with the slice $s \mapsto \lVert f(s,\cdot)\rVert^2$ uniformly integrable, then $f \in L^2([0,T] \times \Omega)$.
 
@@ -91,53 +62,42 @@ $$\int_\Omega \Bigl\lVert\frac{1}{T}\int_0^T A_s(\omega)\,ds\Bigr\rVert^2\,d\mu(
 
 ---
 
-### [`time_average_memLp_two`](../../OSforGFF/General/L2TimeIntegral.lean#L347) — Theorem
+### [`time_average_memLp_two`](../../OSforGFF/General/L2TimeIntegral.lean#L217) — Theorem
 
 **Statement**: If $A : \mathbb{R} \to \Omega \to \mathbb{C}$ is jointly L² on $[0,T] \times \Omega$, then the pointwise time average $\omega \mapsto (1/T)\int_0^T A_s(\omega)\,ds$ is in $L^2(\Omega)$.
 
-**Proof uses**: [`L2_time_average_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L203), [`memLp_prod_of_uniform_slicewise_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L297)
+**Proof uses**: [`memLp_prod_of_uniform_slicewise_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L167), [`scaled_time_average_pointwise_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L131), `Integrable.mono`
 
 ---
 
-### [`gff_time_integral_aestronglyMeasurable_proved`](../../OSforGFF/General/L2TimeIntegral.lean#L419) — Theorem
+### [`time_integral_aestronglyMeasurable`](../../OSforGFF/General/L2TimeIntegral.lean#L289) — Theorem
 
-**Statement**: If $A : \mathbb{R} \to \Omega \to \mathbb{C}$ is AE strongly measurable on the product $[0,T] \times \Omega$ and each $s$-slice $\omega \mapsto A_s(\omega)$ is integrable for a.e. $\omega$, then the parametric time integral $\omega \mapsto \int_0^T A_s(\omega)\,ds$ is AE strongly measurable on $\Omega$.
+**Statement**: If $A : \mathbb{R} \to \Omega \to \mathbb{C}$ is continuous in $s$ for each $\omega$ and measurable in $\omega$ for each $s$, then the centered parametric time integral $\omega \mapsto (1/T)\int_0^T (A_s(\omega) - EA)\,ds$ is AE strongly measurable on $\Omega$.
 
-**Proof uses**: `AEStronglyMeasurable.integral_prod_right`
-
----
-
-### [`gff_covariance_norm_integrableOn_slice_proved`](../../OSforGFF/General/L2TimeIntegral.lean#L458) — Theorem
-
-**Statement**: If $K : \mathbb{R} \to \mathbb{R}$ is locally integrable with polynomial decay $|K(z)| \leq C(1+|z|)^{-\alpha}$ for $\alpha > 1$, then for each $s \in [0,T]$ the function $u \mapsto |K(s-u)|$ is integrable on $[0,T]$.
-
-**Proof uses**: `IntegrableOn.mono_set`, `integrableOn_Icc_iff_integrableOn_Ioo`
+**Proof uses**: `stronglyMeasurable_uncurry_of_continuous_of_stronglyMeasurable`, `integral_prod_right'`
 
 ---
 
-### [`double_integral_polynomial_decay_bound_proved`](../../OSforGFF/General/L2TimeIntegral.lean#L494) — Theorem
+### [`covariance_norm_integrableOn_slice`](../../OSforGFF/General/L2TimeIntegral.lean#L328) — Theorem
+
+**Statement**: If the covariance $(s,u) \mapsto \int_\Omega A_s\overline{A_u}\,d\mu - EA\,\overline{EA}$ is continuous, then for each $s$ the function $u \mapsto \lVert\mathrm{Cov}(s,u)\rVert$ is integrable on $[0,T]$ (a continuous function on a compact set is integrable).
+
+**Proof uses**: `ContinuousOn.integrableOn_compact`, `isCompact_Icc`
+
+---
+
+### [`double_integral_polynomial_decay_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L364) — Theorem
 
 **Statement**: For $\alpha > 1$ and $T > 0$, there exists $C \geq 0$ such that
 $$\int_0^T\!\int_0^T (1+|s-u|)^{-\alpha}\,ds\,du \leq C\cdot T.$$
 
-**Proof uses**: `integrable_one_add_norm`, `setIntegral_mono_on`
-
----
-
-## Minkowski Inequality for Weighted L² Sums
-
-### [`minkowski_weighted_L2_sum_proved`](../../OSforGFF/General/L2TimeIntegral.lean#L664) — Theorem
-
-**Statement**: For nonneg weights $w_j$ and square-integrable functions $f_j : \Omega \to \mathbb{R}$,
-$$\sqrt{\int_\Omega\Bigl(\sum_j w_j f_j(\omega)\Bigr)^2\,d\mu} \leq \sum_j w_j\sqrt{\int_\Omega f_j(\omega)^2\,d\mu}.$$
-
-**Proof uses**: `inner_mul_le_norm_mul_iff`, `integral_inner`
+**Proof uses**: `integrableOn_add_rpow_Ioi_of_lt`, `integral_sub_left_eq_self`, `setIntegral_le_integral`
 
 ---
 
 ## Variance Bound
 
-### [`L2_variance_time_average_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L723) — Theorem
+### [`L2_variance_time_average_bound`](../../OSforGFF/General/L2TimeIntegral.lean#L447) — Theorem
 
 **Statement**: For an L² process $A : \mathbb{R} \to \Omega \to \mathbb{C}$ with constant mean $EA$, setting $\mathrm{Cov}(s,u) = \int_\Omega A_s(\omega)\overline{A_u(\omega)}\,d\mu - EA\overline{EA}$,
 $$\Bigl\lVert\int_\Omega \Bigl\lVert\frac{1}{T}\int_0^T A_s(\omega)\,ds - EA\Bigr\rVert^2\,d\mu\Bigr\rVert \leq T^{-2}\Bigl\lVert\int_0^T\!\int_0^T \mathrm{Cov}(s,u)\,ds\,du\Bigr\rVert.$$
@@ -148,7 +108,7 @@ $$\Bigl\lVert\int_\Omega \Bigl\lVert\frac{1}{T}\int_0^T A_s(\omega)\,ds - EA\Big
 
 ## Fubini Integrability of L² Process Covariance
 
-### [`L2_process_covariance_fubini_integrable`](../../OSforGFF/General/L2TimeIntegral.lean#L886) — Theorem
+### [`L2_process_covariance_fubini_integrable`](../../OSforGFF/General/L2TimeIntegral.lean#L610) — Theorem
 
 **Statement**: If $A : \mathbb{R} \to \Omega \to \mathbb{C}$ is jointly L² on $[0,T] \times \Omega$, continuous in $s$ for each $\omega$, and strongly measurable in $\omega$ for each $s$, then the covariance integrand $(A_{s}(\omega) - c)\overline{(A_u(\omega) - c)}$ is integrable on $\Omega \times [0,T] \times [0,T]$.
 
@@ -156,4 +116,4 @@ $$\Bigl\lVert\int_\Omega \Bigl\lVert\frac{1}{T}\int_0^T A_s(\omega)\,ds - EA\Big
 
 ---
 
-*This file has **0** definitions and **14** public theorems/lemmas (0 with sorry).*
+*This file has **0** definitions and **10** public theorems/lemmas (0 with sorry).*

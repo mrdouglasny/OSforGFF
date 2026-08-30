@@ -6,25 +6,19 @@
 
 ## Overview
 
-Assembly file for the Gaussian Free Field that proves two Osterwalder–Schrader axioms for
-*general* Gaussian measures on field configurations, under explicit hypotheses on their
+Assembly file for the Gaussian Free Field that proves the OS2 (Euclidean invariance) axiom for
+*general* Gaussian measures on field configurations, under an explicit hypothesis on their
 covariance. Everything is dimension-generic: the section variables are `{d : ℕ} [Fact (2 ≤ d)]`,
-so the results apply to `gaussianFreeField_free (d := d) m` (constructed in
+so the result applies to `gaussianFreeField_free (d := d) m` (constructed in
 [`OSforGFF/Measure/Construct.lean`](../../OSforGFF/Measure/Construct.lean)) once its covariance
-hypotheses are discharged.
+hypothesis is discharged.
 
-The two axioms established here are:
+The axiom established here is:
 
-- **OS0 (alternative proof), `gaussian_satisfies_OS0`** — kept in the `OS0_alt` namespace. For a
-  Gaussian measure the generating functional $Z[\sum_i z_i J_i] = \exp\!\bigl(-\tfrac12 \sum_{i,j}
-  z_i z_j\, S_2^{\mathbb{C}}(J_i, J_j)\bigr)$ is the exponential of a polynomial in the $z_i$, hence
-  entire. The *primary* OS0 proof used by `OS.Master` lives in `OS.OS0_Analyticity` (holomorphic
-  integral theorem); this quadratic-form version is retained as an alternative.
 - **OS2 (Euclidean invariance), `gaussian_satisfies_OS2`** — if the complex covariance is invariant
   under the Euclidean action $E(d)$, then $Z[g \cdot f] = Z[f]$, immediately from the Gaussian form.
 
-The file also defines the covariance-side hypotheses these theorems consume:
-`CovarianceContinuous`, `CovarianceEuclideanInvariant`, and its complex form
+The file also defines the covariance-side hypothesis this theorem consumes:
 `CovarianceEuclideanInvariantℂ`.
 
 ## Status
@@ -33,84 +27,13 @@ The file also defines the covariance-side hypotheses these theorems consume:
 
 None — file is sorry-free.
 
-**Length**: 276 lines, 4 definition(s) + 3 theorem(s)/lemma(s)
-
----
-
-## OS0_alt Namespace
-
-### [`bilin_sum_sum`](../../OSforGFF/Measure/GaussianFreeField.lean#L59) — Lemma
-
-**Statement**: For a $\mathbb{C}$-bilinear map $B$ and finite families $J, z$,
-$$B\Bigl(\sum_i z_i \cdot J_i,\ \sum_j z_j \cdot J_j\Bigr) = \sum_i \sum_j z_i\, z_j\, B(J_i, J_j),$$
-the double-sum expansion of a bilinear form.
-
-**Proof uses**: `map_sum`, `map_smul`, `Finset.sum_comm`, `Finset.mul_sum`
-
----
-
-### [`CovarianceContinuous`](../../OSforGFF/Measure/GaussianFreeField.lean#L76) — Definition
-
-**Lean signature**
-```lean
-def CovarianceContinuous (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
-  ∀ (J K : SchwartzTestFunctionℂ d), Continuous (fun z : ℂ =>
-    SchwingerFunctionℂ₂ dμ_config (z • J) K)
-```
-
-**Informal**: Hypothesis that the complex covariance $z \mapsto S_2^{\mathbb{C}}(z \cdot J, K)$ is
-continuous for every pair of complex test functions $J, K$.
-
----
-
-## OS0: Analyticity for Gaussian Measures (`OS0_alt` namespace)
-
-### [`GJcov_bilin`](../../OSforGFF/Measure/GaussianFreeField.lean#L91) — Definition
-
-**Lean signature**
-```lean
-def GJcov_bilin (dμ_config : ProbabilityMeasure (FieldConfiguration d))
-  (h_bilinear : CovarianceBilinear dμ_config) : LinearMap.BilinMap ℂ (SchwartzTestFunctionℂ d) ℂ
-```
-
-**Informal**: Packages the complex two-point Schwinger function
-$(x, y) \mapsto S_2^{\mathbb{C}}(x, y)$ as a $\mathbb{C}$-bilinear map on complex test functions,
-using the bilinearity hypothesis `CovarianceBilinear`.
-
----
-
-### [`gaussian_satisfies_OS0`](../../OSforGFF/Measure/GaussianFreeField.lean#L109) — Theorem
-
-**Statement**: A Gaussian measure `dμ_config` (`isGaussianGJ`) with bilinear covariance
-(`CovarianceBilinear`) satisfies `OS0_Analyticity`: for every finite family $J$, the map
-$z \mapsto Z[\sum_i z_i J_i]$ is analytic on $\mathbb{C}^n$, being
-$\exp\!\bigl(-\tfrac12 \sum_{i,j} z_i z_j\, S_2^{\mathbb{C}}(J_i, J_j)\bigr)$, the exponential of a
-polynomial. (Alternative to the primary proof in `OS.OS0_Analyticity`.)
-
-**Proof uses**: [`GJcov_bilin`](../../OSforGFF/Measure/GaussianFreeField.lean#L91),
-[`bilin_sum_sum`](../../OSforGFF/Measure/GaussianFreeField.lean#L59),
-`AnalyticOn.cexp`, `Finset.analyticOnNhd_sum`, `ContinuousLinearMap.proj`
+**Length**: 83 lines, 1 definition(s) + 1 theorem(s)/lemma(s)
 
 ---
 
 ## OS2: Euclidean Invariance for Translation-Invariant Gaussian Measures
 
-### [`CovarianceEuclideanInvariant`](../../OSforGFF/Measure/GaussianFreeField.lean#L203) — Definition
-
-**Lean signature**
-```lean
-def CovarianceEuclideanInvariant (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
-  ∀ (g : QFT.E d) (f h : SchwartzTestFunction d),
-    SchwingerFunction₂ dμ_config (QFT.euclidean_action_real g f) (QFT.euclidean_action_real g h) =
-    SchwingerFunction₂ dμ_config f h
-```
-
-**Informal**: Hypothesis that the real two-point function is invariant under the Euclidean action:
-$S_2(g \cdot f, g \cdot h) = S_2(f, h)$ for all $g \in E(d)$ and real test functions $f, h$.
-
----
-
-### [`CovarianceEuclideanInvariantℂ`](../../OSforGFF/Measure/GaussianFreeField.lean#L209) — Definition
+### [`CovarianceEuclideanInvariantℂ`](../../OSforGFF/Measure/GaussianFreeField.lean#L56) — Definition
 
 **Lean signature**
 ```lean
@@ -126,7 +49,7 @@ test functions $f, h$.
 
 ---
 
-### [`gaussian_satisfies_OS2`](../../OSforGFF/Measure/GaussianFreeField.lean#L215) — Theorem
+### [`gaussian_satisfies_OS2`](../../OSforGFF/Measure/GaussianFreeField.lean#L62) — Theorem
 
 **Statement**: A Gaussian measure `dμ_config` (`isGaussianGJ`) whose complex covariance is
 Euclidean-invariant (`CovarianceEuclideanInvariantℂ`) satisfies `OS2_EuclideanInvariance`:
@@ -135,8 +58,8 @@ $\exp\!\bigl(-\tfrac12 S_2^{\mathbb{C}}(g \cdot f, g \cdot f)\bigr) =
 \exp\!\bigl(-\tfrac12 S_2^{\mathbb{C}}(f, f)\bigr)$.
 
 **Proof uses**: the Gaussian form of `isGaussianGJ`,
-[`CovarianceEuclideanInvariantℂ`](../../OSforGFF/Measure/GaussianFreeField.lean#L209)
+[`CovarianceEuclideanInvariantℂ`](../../OSforGFF/Measure/GaussianFreeField.lean#L56)
 
 ---
 
-*This file has **4** definitions and **3** theorems/lemmas (0 with sorry).*
+*This file has **1** definition and **1** theorem (0 with sorry).*

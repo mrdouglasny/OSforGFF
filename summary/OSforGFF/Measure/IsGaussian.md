@@ -55,11 +55,11 @@ is integrable, for all complex test functions $\varphi, \psi$.
 **Statement**: Bilinear expansion of the real covariance form on a two-parameter combination:
 $$C_m(t f + s g,\ t f + s g) = t^2\, C_m(f, f) + 2 t s\, C_m(f, g) + s^2\, C_m(g, g).$$
 
-**Proof uses**: [`freeCovarianceFormR_add_left`](../../OSforGFF/Covariance/RealForm.lean#L569),
-[`freeCovarianceFormR_add_right`](../../OSforGFF/Covariance/RealForm.lean#L619),
-[`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean#L593),
-[`freeCovarianceFormR_smul_right`](../../OSforGFF/Covariance/RealForm.lean#L643),
-[`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L557)
+**Proof uses**: [`freeCovarianceFormR_add_left`](../../OSforGFF/Covariance/RealForm.lean#L564),
+[`freeCovarianceFormR_add_right`](../../OSforGFF/Covariance/RealForm.lean#L614),
+[`freeCovarianceFormR_smul_left`](../../OSforGFF/Covariance/RealForm.lean#L588),
+[`freeCovarianceFormR_smul_right`](../../OSforGFF/Covariance/RealForm.lean#L638),
+[`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L552)
 
 ---
 
@@ -70,7 +70,7 @@ formula:
 $$Z\bigl[t f + s g\bigr] = \exp\!\Bigl(-\tfrac12\bigl(t^2 C_m(f,f) + 2 t s\, C_m(f,g)
   + s^2 C_m(g,g)\bigr)\Bigr).$$
 
-**Proof uses**: [`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L148),
+**Proof uses**: [`gff_real_characteristic`](../../OSforGFF/Measure/Construct.lean#L147),
 [`freeCovarianceFormR_bilinear_expand`](../../OSforGFF/Measure/IsGaussian.lean#L58)
 
 ---
@@ -157,7 +157,7 @@ agree on $\mathbb{R}^2$, and matching them everywhere by the 1-D identity theore
 [`gaussian_rhs_slice_analytic_z1`](../../OSforGFF/Measure/IsGaussian.lean#L181),
 [`gff_cf_agrees_on_reals_OS0`](../../OSforGFF/Measure/IsGaussian.lean#L203),
 `AnalyticOnNhd.eq_of_frequently_eq`,
-[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L61)
+[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L62)
 
 ---
 
@@ -170,10 +170,10 @@ covariance form:
 $$\int \langle\omega, f\rangle\, \langle\omega, g\rangle\, d\mu(\omega) = C_m(f, g),$$
 via the polarization identity $XY = \tfrac14((X+Y)^2 - (X-Y)^2)$.
 
-**Proof uses**: [`gff_second_moment_eq_covariance`](../../OSforGFF/Measure/Construct.lean#L298),
-[`gff_pairing_square_integrable`](../../OSforGFF/Measure/Construct.lean#L280),
-[`freeCovarianceFormR_add_left`](../../OSforGFF/Covariance/RealForm.lean#L569),
-[`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L557)
+**Proof uses**: [`gff_second_moment_eq_covariance`](../../OSforGFF/Measure/Construct.lean#L297),
+[`gff_pairing_square_integrable`](../../OSforGFF/Measure/Construct.lean#L279),
+[`freeCovarianceFormR_add_left`](../../OSforGFF/Covariance/RealForm.lean#L564),
+[`freeCovarianceFormR_symm`](../../OSforGFF/Covariance/RealForm.lean#L552)
 
 ---
 
@@ -185,8 +185,8 @@ $$S_2^{\mathbb{C}}\bigl(\mathrm{toComplex}\,f,\ \mathrm{toComplex}\,g\bigr)
   = C_\mathbb{C}\bigl(\mathrm{toComplex}\,f,\ \mathrm{toComplex}\,g\bigr).$$
 
 **Proof uses**: [`schwinger_eq_covariance_real`](../../OSforGFF/Measure/IsGaussian.lean#L370),
-[`gaussianFreeField_pairing_memLp`](../../OSforGFF/Measure/Construct.lean#L264),
-[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L61),
+[`gaussianFreeField_pairing_memLp`](../../OSforGFF/Measure/Construct.lean#L263),
+[`freeCovarianceℂ_bilinear_agrees_on_reals`](../../OSforGFF/Covariance/RealForm.lean#L62),
 `integral_ofReal_eq`, `MemLp.integrable_mul`
 
 ---
@@ -224,7 +224,7 @@ $$Z[J] = \exp\!\Bigl(-\tfrac12\, S_2^{\mathbb{C}}(J, J)\Bigr) \qquad \text{for a
 in the Glimm–Jaffe sense (`isGaussianGJ`): it is centered and its generating functional satisfies
 $Z[J] = \exp\!\bigl(-\tfrac12 S_2^{\mathbb{C}}(J, J)\bigr)$.
 
-**Proof uses**: [`gaussianFreeField_free_centered`](../../OSforGFF/Measure/Construct.lean#L360),
+**Proof uses**: [`gaussianFreeField_free_centered`](../../OSforGFF/Measure/Construct.lean#L359),
 [`gff_complex_generating`](../../OSforGFF/Measure/IsGaussian.lean#L522)
 
 ---

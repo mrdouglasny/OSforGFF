@@ -24,15 +24,12 @@ spacetime points $x, y \in \mathbb{R}^d$ (`SpaceTime d`). The integrability esti
 linear-vanishing bound $\lVert f(x)\rVert\,\lVert f(y)\rVert \le C\,x_0 y_0/(\cdots)$ for
 positive-time test functions, combined with Gaussian moment formulas for the time integrals.
 
-**Where the dimension enters.** A test function vanishing on $\{x_0 \le 0\}$ vanishes to first
-order at the boundary, and the resulting $x_0 y_0$-moment of the time Gaussian produces the
-$s^{3/2}$ in the dominating function $\mathrm{dominate\_G} \sim s^{3/2}\,e^{-s(\lVert k\rVert^2+m^2)}$
-— an $s$-power independent of $d$, because the $(4\pi s)^{-d/2}$ prefactor cancels against the
-$(4\pi s)^{(d-1)/2}$ volume factor of the spatial Fourier transform, leaving the one-dimensional
-time factor $(4\pi s)^{-1/2}$. The spatial $k$-integral of the dominator is then
-$\sim s^{(4-d)/2}\,e^{-s m^2}$, integrable near $s = 0$ exactly when $d \le 5$. This is the
-**only** place the hypothesis `Fact (d ≤ 5)` is used (in `integrable_dominate_G` and
-`fubini_s_ksp_swap`); it propagates from here to the OS-3 axiom.
+**Where the dimension enters.** A test function vanishing on $\{x_0 \le 0\}$ vanishes to order
+$d$ at the boundary, and the resulting $x_0^d y_0^d$-moment of the time Gaussian produces the
+$s^{d+1/2}$ in the dominating function $\mathrm{dominate\_G} \sim s^{d+1/2}\,e^{-s(\lVert k\rVert^2+m^2)}$.
+The spatial $k$-integral of the dominator leaves $\sim s^{(d+2)/2}\,e^{-s m^2}$, integrable near
+$s = 0$ for **every** dimension, so `integrable_dominate_G` and `fubini_s_ksp_swap` hold for all
+$d \ge 2$ with no upper bound on the dimension.
 
 The whole file is dimension-generic over the section variables
 `{d : ℕ} [Fact (2 ≤ d)] {m : ℝ} [Fact (0 < m)]`. The generic heat-kernel name
@@ -46,7 +43,7 @@ about the generic `heatKernelProfile d`).
 
 None — file is sorry-free.
 
-**Length**: 3755 lines, 5 definition(s) + 48 theorem(s)/lemma(s)
+**Length**: 3620 lines, 5 definition(s) + 48 theorem(s)/lemma(s)
 
 (A `sorry` token appears nowhere in the file — not even inside a comment; verified with `grep`.)
 
@@ -54,7 +51,7 @@ None — file is sorry-free.
 
 ## Core Definitions
 
-### [`spatialDot`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L76) — Definition
+### [`spatialDot`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L78) — Definition
 
 **Lean signature**
 ```lean
@@ -64,19 +61,19 @@ noncomputable def spatialDot (k_spatial x_spatial : SpatialCoords d) : ℝ
 
 ---
 
-### [`real_inner_eq_mul`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L80) — Lemma
+### [`real_inner_eq_mul`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L82) — Lemma
 
 **Statement**: The real inner product on $\mathbb{R}$ is multiplication: $\langle x, y\rangle_{\mathbb{R}} = x\,y$.
 
 ---
 
-### [`spatialDot_eq_inner`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L85) — Lemma
+### [`spatialDot_eq_inner`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L87) — Lemma
 
 **Statement**: `spatialDot` agrees with the real inner product on $\mathbb{R}^{d-1}$: $k_{sp}\cdot x_{sp} = \langle k_{sp}, x_{sp}\rangle_{\mathbb{R}}$.
 
 ---
 
-### [`spacetime_inner_decompose`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L95) — Lemma
+### [`spacetime_inner_decompose`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L97) — Lemma
 
 **Statement**: The spacetime inner product splits into a time and a spatial part: $\langle k, z\rangle_{\mathbb{R}} = k_0 z_0 + \mathrm{spatialDot}(k_{sp}, z_{sp})$.
 
@@ -84,7 +81,7 @@ noncomputable def spatialDot (k_spatial x_spatial : SpatialCoords d) : ℝ
 
 ## Integral Decomposition for `SpaceTime d`
 
-### [`weightedLaplaceFourier`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L115) — Definition
+### [`weightedLaplaceFourier`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L117) — Definition
 
 **Lean signature**
 ```lean
@@ -96,13 +93,13 @@ noncomputable def weightedLaplaceFourier (m : ℝ) (f : SchwartzTestFunctionℂ 
 
 ## Time Reflection Properties
 
-### [`timeReflection_measurePreserving`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L123) — Lemma
+### [`timeReflection_measurePreserving`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L125) — Lemma
 
 **Statement**: Time reflection $\Theta$ preserves Lebesgue measure on $\mathbb{R}^d$ (it is a linear isometry).
 
 ---
 
-### [`timeReflection_involutive`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L128) — Lemma
+### [`timeReflection_involutive`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L130) — Lemma
 
 **Statement**: Time reflection is an involution: $\Theta(\Theta x) = x$.
 
@@ -116,7 +113,7 @@ noncomputable def weightedLaplaceFourier (m : ℝ) (f : SchwartzTestFunctionℂ 
 
 ## Laplace Integral Identity
 
-### [`heatKernel_eq_gaussianFT`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L184) — Theorem
+### [`heatKernel_eq_gaussianFT`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L186) — Theorem
 
 **Statement**: The $d$-dimensional inverse Gaussian Fourier transform recovers the heat kernel: for $s > 0$,
 $$H_d(s, \lVert z\rVert) = \frac{1}{(2\pi)^d}\int_{\mathbb{R}^d} e^{-i\langle k, z\rangle}\,e^{-s\lVert k\rVert^2}\,dk .$$
@@ -127,27 +124,27 @@ $$H_d(s, \lVert z\rVert) = \frac{1}{(2\pi)^d}\int_{\mathbb{R}^d} e^{-i\langle k,
 
 ## Technical Integration Lemmas
 
-### [`heatKernelPositionSpace_continuousOn`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L258) — Lemma
+### [`heatKernelPositionSpace_continuousOn`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L260) — Lemma
 
 **Statement**: $(t, r) \mapsto H_d(t, r)$ is jointly continuous on $(0, \infty) \times \mathbb{R}$.
 
 ---
 
-### [`heatKernelPositionSpace_aestronglyMeasurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L300) — Theorem
+### [`heatKernelPositionSpace_aestronglyMeasurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L302) — Theorem
 
 **Statement**: The map $(s, x, y) \mapsto \bigl(H_d(s, \lVert \Theta x - y\rVert) : \mathbb{C}\bigr)$ is a.e.-strongly measurable for $(\mathrm{vol}|_{(0,\infty)}) \otimes (\mathrm{vol} \otimes \mathrm{vol})$.
 
-**Proof uses**: [`heatKernelPositionSpace_continuousOn`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L258), `Measure.restrict_prod_eq_prod_univ`, `ContinuousOn.aestronglyMeasurable`
+**Proof uses**: [`heatKernelPositionSpace_continuousOn`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L260), `Measure.restrict_prod_eq_prod_univ`, `ContinuousOn.aestronglyMeasurable`
 
 ---
 
-### [`heatKernelPositionSpace_aestronglyMeasurable_real`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L351) — Theorem
+### [`heatKernelPositionSpace_aestronglyMeasurable_real`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L353) — Theorem
 
 **Statement**: The real-valued version: $(s, x, y) \mapsto H_d(s, \lVert \Theta x - y\rVert)$ is a.e.-strongly measurable for the same restricted product measure.
 
 ---
 
-### [`heatKernelPositionSpace_integral_translated`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L402) — Lemma
+### [`heatKernelPositionSpace_integral_translated`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L404) — Lemma
 
 **Statement**: For $s > 0$ and any $a \in \mathbb{R}^d$, the heat kernel has unit mass under translation: $\int_{\mathbb{R}^d} H_d(s, \lVert a - y\rVert)\,dy = 1$.
 
@@ -155,69 +152,69 @@ $$H_d(s, \lVert z\rVert) = \frac{1}{(2\pi)^d}\int_{\mathbb{R}^d} e^{-i\langle k,
 
 ---
 
-### [`heatKernelPositionSpace_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L423) — Lemma
+### [`heatKernelPositionSpace_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L425) — Lemma
 
 **Statement**: For $s > 0$, the translated heat kernel $y \mapsto H_d(s, \lVert a - y\rVert)$ is integrable (its integral is $1$).
 
 ---
 
-### [`schwinger_bound_integrand_nonneg`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L430) — Lemma
+### [`schwinger_bound_integrand_nonneg`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L432) — Lemma
 
 **Statement**: Nonnegativity of the Schwinger bound integrand for $s > 0$ and $C_f \ge 0$: $0 \le \lVert f(x)\rVert\, C_f\, e^{-s m^2}\, H_d(s, \lVert \Theta x - y\rVert)$.
 
 ---
 
-### [`schwinger_bound_integrand_integrable_y`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L443) — Lemma
+### [`schwinger_bound_integrand_integrable_y`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L445) — Lemma
 
 **Statement**: For fixed $s > 0$ and $x$, the Schwinger bound integrand is integrable in $y$.
 
 ---
 
-### [`schwinger_bound_integrand_integral_y`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L455) — Lemma
+### [`schwinger_bound_integrand_integral_y`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L457) — Lemma
 
 **Statement**: The $y$-integral of the Schwinger bound integrand equals $\lVert f(x)\rVert\, C_f\, e^{-s m^2}$ (heat kernel integrates to $1$).
 
 ---
 
-### [`schwinger_bound_integrand_integrable_x`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L474) — Lemma
+### [`schwinger_bound_integrand_integrable_x`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L476) — Lemma
 
 **Statement**: Given $\int \lVert f\rVert < \infty$, the function $x \mapsto \lVert f(x)\rVert\, C_f\, e^{-s m^2}$ is integrable.
 
 ---
 
-### [`schwinger_bound_integrable_xy`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L483) — Lemma
+### [`schwinger_bound_integrable_xy`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L485) — Lemma
 
 **Statement**: For fixed $s > 0$ (with $C_f \ge 0$ and $\int \lVert f\rVert < \infty$), the Schwinger bound integrand is integrable in $(x, y)$ on the product measure.
 
-**Proof uses**: `MeasureTheory.integrable_prod_iff`, [`schwinger_bound_integrand_integrable_y`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L443), [`schwinger_bound_integrand_integral_y`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L455)
+**Proof uses**: `MeasureTheory.integrable_prod_iff`, [`schwinger_bound_integrand_integrable_y`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L445), [`schwinger_bound_integrand_integral_y`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L457)
 
 ---
 
-### [`schwinger_bound_integrand_integral_xy`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L566) — Lemma
+### [`schwinger_bound_integrand_integral_xy`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L568) — Lemma
 
 **Statement**: The $(x, y)$-integral of the Schwinger bound integrand equals $\bigl(C_f \int \lVert f\rVert\bigr)\,e^{-s m^2}$.
 
-**Proof uses**: `MeasureTheory.integral_prod`, [`schwinger_bound_integrable_xy`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L483)
+**Proof uses**: `MeasureTheory.integral_prod`, [`schwinger_bound_integrable_xy`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L485)
 
 ---
 
-### [`schwinger_bound_integrable_fubini`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L600) — Theorem
+### [`schwinger_bound_integrable_fubini`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L603) — Theorem
 
 **Statement**: The Tonelli/Fubini step: under the standing hypotheses, the full $(s, x, y)$ Schwinger bound integrand $\lVert f(x)\rVert\, C_f\, e^{-s m^2}\, H_d(s, \lVert \Theta x - y\rVert)$ is integrable on $(\mathrm{vol}|_{(0,\infty)}) \otimes (\mathrm{vol} \otimes \mathrm{vol})$.
 
-**Proof uses**: [`heatKernelPositionSpace_aestronglyMeasurable_real`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L351), [`schwinger_bound_integrand_integral_xy`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L566)
+**Proof uses**: [`heatKernelPositionSpace_aestronglyMeasurable_real`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L353), [`schwinger_bound_integrand_integral_xy`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L568)
 
 ---
 
-### [`schwinger_bound_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L714) — Theorem
+### [`schwinger_bound_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L717) — Theorem
 
 **Statement**: If $\lVert f(x)\rVert \le C_f$ for all $x$, then the Schwinger bound integrand is integrable on $(\mathrm{vol}|_{(0,\infty)}) \otimes (\mathrm{vol} \otimes \mathrm{vol})$, with total mass $\le C_f\,\lVert f\rVert_1 / m^2$.
 
-**Proof uses**: [`heatKernelPositionSpace_integral_translated`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L402), `SchwartzMap.integrable`, `integral_exp_neg_mul_Ioi_eq_inv`, [`schwinger_bound_integrable_fubini`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L600)
+**Proof uses**: [`heatKernelPositionSpace_integral_translated`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L404), `SchwartzMap.integrable`, `integral_exp_neg_mul_Ioi_eq_inv`, [`schwinger_bound_integrable_fubini`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L603)
 
 ---
 
-### [`integrable_s_inv_sq_exp_neg_inv_s`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L781) — Theorem
+### [`integrable_s_inv_sq_exp_neg_inv_s`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L784) — Theorem
 
 **Statement**: For $a > 0$, the function $s \mapsto s^{-2}\,e^{-a/s}$ is integrable on $(0, \infty)$ (via the substitution $z = 1/s$).
 
@@ -225,72 +222,71 @@ $$H_d(s, \lVert z\rVert) = \frac{1}{(2\pi)^d}\int_{\mathbb{R}^d} e^{-i\langle k,
 
 ---
 
-### [`dominate_G`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L843) — Definition
+### [`dominate_G`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L847) — Definition
 
 **Lean signature**
 ```lean
 def dominate_G (C : ℝ) (m : ℝ) (p : ℝ × SpatialCoords d) : ℝ
 ```
-**Informal**: The dominating function for the $s \leftrightarrow k_{sp}$ Fubini swap: $\mathrm{dominate\_G}(C, m)(s, k) = C\,s^{3/2}\,e^{-s(\lVert k\rVert^2 + m^2)}$ for $s > 0$, and $0$ otherwise.
+**Informal**: The dominating function for the $s \leftrightarrow k_{sp}$ Fubini swap: $\mathrm{dominate\_G}(C, m)(s, k) = C\,s^{d+1/2}\,e^{-s(\lVert k\rVert^2 + m^2)}$ for $s > 0$, and $0$ otherwise.
 
 ---
 
-### [`integrable_dominate_G`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L854) — Theorem
+### [`integrable_dominate_G`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L858) — Theorem
 
-**Statement**: For $m > 0$ and $d \le 5$, `dominate_G` is integrable on $(0, \infty) \times \mathbb{R}^{d-1}$. The spatial $k$-integral leaves $\sim s^{(4-d)/2}\,e^{-s m^2}$, which converges near $s = 0$ exactly when $d \le 5$; this is one of the two sites of the `Fact (d ≤ 5)` hypothesis.
+**Statement**: For $m > 0$, `dominate_G` is integrable on $(0, \infty) \times \mathbb{R}^{d-1}$ in **every** dimension $d \ge 2$: the spatial $k$-integral leaves $\sim s^{(d+2)/2}\,e^{-s m^2}$, which converges near $s = 0$ for every $d$, and the mass supplies the decay at large $s$.
 
 **Proof uses**: `integrableOn_rpow_mul_exp_neg_mul_rpow`, `GaussianFourier.integral_rexp_neg_mul_sq_norm`
 
 ---
 
-### [`spatialPart_measurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1078) — Lemma
+### [`spatialPart_measurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1079) — Lemma
 
 **Statement**: The spatial projection $\mathrm{spatialPart} : \mathbb{R}^d \to \mathbb{R}^{d-1}$ is measurable.
 
 ---
 
-### [`fubini_s_ksp_integrand_stronglyMeasurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1098) — Lemma
+### [`fubini_s_ksp_integrand_stronglyMeasurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1099) — Lemma
 
 **Statement**: The uncurried four-fold integrand of `fubini_s_ksp_swap` — a product of $\bar f(x)$, $f(y)$, $\sqrt{\pi/s}$, and three complex exponentials — is strongly measurable.
 
-**Proof uses**: [`spatialPart_measurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1078), [`spatialDot_eq_inner`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L85), `Measurable.inner`
+**Proof uses**: [`spatialPart_measurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1079), [`spatialDot_eq_inner`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L87), `Measurable.inner`
 
 ---
 
 ## Heat Kernel Moment Bounds
 
-### [`integral_u_cubed_gaussian`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1179) — Lemma
+### [`integral_odd_pow_gaussian`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1354) — Lemma
 
-**Statement**: The one-dimensional Gaussian moment $\int_0^\infty u^3\,e^{-u^2/(4s)}\,du = 8 s^2$ for $s > 0$.
+**Statement**: The odd-power one-dimensional Gaussian moment $\int_0^\infty u^{2N+1}\,e^{-u^2/(4s)}\,du = \tfrac{N!}{2}\,(4s)^{N+1}$ for $s > 0$.
 
-**Proof uses**: `integral_rpow_mul_exp_neg_mul_rpow`, `Real.Gamma_two`
+**Proof uses**: `integral_rpow_mul_exp_neg_mul_rpow`, `Real.Gamma_nat_eq_factorial`
 
 ---
 
-### [`triangular_fubini_quadrant`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1227) — Lemma
+### [`triangular_fubini_quadrant`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1185) — Lemma
 
 **Statement**: The shear change of variables $u = x + y$ (Jacobian $1$): for nonnegative integrable $f$, $\int_{x>0}\int_{y>0} f(x, x+y) = \int_{u>0}\int_{0<x<u} f(x, u)$.
 
 ---
 
-### [`heat_kernel_moment_integral`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1401) — Lemma
+### [`integral_pow_mul_sub_pow_le`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1390) — Lemma
 
-**Statement**: The heat-kernel time moment: for $s > 0$,
-$$\int_{x_0>0}\int_{y_0>0} x_0\,y_0\,\sqrt{\pi/s}\,e^{-(x_0+y_0)^2/(4s)} = \tfrac{4}{3}\sqrt{\pi}\,s^{3/2}.$$
-
-**Proof uses**: [`integral_u_cubed_gaussian`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1179)
+**Statement**: The crude Beta-moment bound $\int_0^u x^N (u-x)^N\,dx \le u^{2N+1}$ (the integrand is at most $u^{2N}$ on $(0,u)$).
 
 ---
 
-### [`heat_kernel_moment_integral_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1642) — Lemma
+### [`heat_kernel_moment_integral_pow_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1418) — Lemma
 
-**Statement**: The same double integral is bounded by $10\,s^{3/2}$ (since $\tfrac{4}{3}\sqrt{\pi} < 10$).
+**Statement**: The order-$N$ double Gaussian moment bound: there is $C_N > 0$ with, for all $s > 0$,
+$$\int_{x_0>0}\int_{y_0>0} x_0^N\,y_0^N\,\sqrt{\pi/s}\,e^{-(x_0+y_0)^2/(4s)} \le C_N\,s^{N+1/2}.$$
+The change of variables $u = x_0 + y_0$ reduces the double integral to the inner moment against the Gaussian, whose odd moment supplies the $s^{N+1}$ scaling.
 
-**Proof uses**: [`heat_kernel_moment_integral`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1401), `pi_lt_four`
+**Proof uses**: [`integral_odd_pow_gaussian`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1354), [`integral_pow_mul_sub_pow_le`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1390), [`triangular_fubini_quadrant`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1185)
 
 ---
 
-### [`gaussian_moment_integrableOn_Ioi`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1663) — Lemma
+### [`gaussian_moment_integrableOn_Ioi`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1569) — Lemma
 
 **Statement**: For $b > 0$, the function $t \mapsto t\,e^{-b t^2}$ is integrable on $(0, \infty)$.
 
@@ -298,17 +294,17 @@ $$\int_{x_0>0}\int_{y_0>0} x_0\,y_0\,\sqrt{\pi/s}\,e^{-(x_0+y_0)^2/(4s)} = \tfra
 
 ---
 
-### [`heat_kernel_inner_integrableOn`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1694) — Lemma
+### [`heat_kernel_inner_integrableOn`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1583) — Lemma
 
 **Statement**: For $s > 0$ and $t_1 \ge 0$, the function $t_2 \mapsto t_2\,e^{-(t_1+t_2)^2/(4s)}$ is integrable on $(0, \infty)$ (dominated by the $t_1 = 0$ Gaussian).
 
-**Proof uses**: [`gaussian_moment_integrableOn_Ioi`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1663)
+**Proof uses**: [`gaussian_moment_integrableOn_Ioi`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1569)
 
 ---
 
-### [`heat_kernel_moment_integrableOn_quadrant`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1734) — Lemma
+### [`heat_kernel_moment_integrableOn_quadrant`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1622) — Lemma
 
-**Statement**: The moment integrand $(z_1, z_2) \mapsto z_1 z_2\,\sqrt{\pi/s}\,e^{-(z_1+z_2)^2/(4s)}$ is integrable on the first quadrant $(0,\infty)^2$, via the domination $(z_1+z_2)^2 \ge z_1^2 + z_2^2$.
+**Statement**: The moment integrand $(z_1, z_2) \mapsto z_1^n z_2^n\,\sqrt{\pi/s}\,e^{-(z_1+z_2)^2/(4s)}$ is integrable on the first quadrant $(0,\infty)^2$, via the domination $(z_1+z_2)^2 \ge z_1^2 + z_2^2$.
 
 **Proof uses**: `integrable_mul_exp_neg_mul_sq`, `MeasureTheory.Integrable.mul_prod`
 
@@ -316,89 +312,89 @@ $$\int_{x_0>0}\int_{y_0>0} x_0\,y_0\,\sqrt{\pi/s}\,e^{-(x_0+y_0)^2/(4s)} = \tfra
 
 ## Heat Kernel Moment — Extended by Zero
 
-### [`heatKernelMomentExt`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1796) — Definition
+### [`heatKernelMomentExt`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1691) — Definition
 
 **Lean signature**
 ```lean
-def heatKernelMomentExt (s : ℝ) : ℝ × ℝ → ℝ
+def heatKernelMomentExt (n : ℕ) (s : ℝ) : ℝ × ℝ → ℝ
 ```
-**Informal**: The heat-kernel moment integrand extended by zero outside $(0,\infty)^2$: $(p_1, p_2) \mapsto p_1 p_2\,\sqrt{\pi/s}\,e^{-(p_1+p_2)^2/(4s)}$ for $p_1, p_2 > 0$, else $0$.
+**Informal**: The order-$n$ heat-kernel moment integrand extended by zero outside $(0,\infty)^2$: $(p_1, p_2) \mapsto p_1^n p_2^n\,\sqrt{\pi/s}\,e^{-(p_1+p_2)^2/(4s)}$ for $p_1, p_2 > 0$, else $0$.
 
 ---
 
-### [`heatKernelMomentExt_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1810) — Lemma
+### [`heatKernelMomentExt_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1702) — Lemma
 
-**Statement**: For $s > 0$, `heatKernelMomentExt s` is integrable on $\mathbb{R}^2$ (it is the indicator of the quadrant moment).
+**Statement**: For $s > 0$, `heatKernelMomentExt n s` is integrable on $\mathbb{R}^2$ (it is the indicator of the quadrant moment).
 
-**Proof uses**: [`heat_kernel_moment_integrableOn_quadrant`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1734)
-
----
-
-### [`heatKernelMomentExt_parametric_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1829) — Lemma
-
-**Statement**: The parametric integral $t_1 \mapsto \int_{\mathbb{R}} \mathrm{heatKernelMomentExt}\,s\,(t_1, t_2)\,dt_2$ is integrable on $\mathbb{R}$.
-
-**Proof uses**: [`heatKernelMomentExt_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1810), `Integrable.integral_prod_left`
+**Proof uses**: [`heat_kernel_moment_integrableOn_quadrant`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1622)
 
 ---
 
-### [`heatKernelMomentExt_parametric_eq_setIntegral`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1834) — Lemma
+### [`heatKernelMomentExt_parametric_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1721) — Lemma
 
-**Statement**: For $t_1 > 0$, the full-line parametric integral equals the set integral over $t_2 > 0$: $\int_{\mathbb{R}} \mathrm{heatKernelMomentExt}\,s\,(t_1, t_2)\,dt_2 = \int_{t_2>0} t_1 t_2\,\sqrt{\pi/s}\,e^{-(t_1+t_2)^2/(4s)}$.
+**Statement**: The parametric integral $t_1 \mapsto \int_{\mathbb{R}} \mathrm{heatKernelMomentExt}\,n\,s\,(t_1, t_2)\,dt_2$ is integrable on $\mathbb{R}$.
 
----
-
-### [`heatKernelMoment_setIntegral_integrableOn`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1859) — Lemma
-
-**Statement**: For any constant $c$, the parametric set integral $t_1 \mapsto \int_{t_2>0} c\,t_1 t_2\,\sqrt{\pi/s}\,e^{-(t_1+t_2)^2/(4s)}$ is integrable on $(0, \infty)$.
-
-**Proof uses**: [`heatKernelMomentExt_parametric_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1829), [`heatKernelMomentExt_parametric_eq_setIntegral`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1834)
+**Proof uses**: [`heatKernelMomentExt_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1702), `Integrable.integral_prod_left`
 
 ---
 
-### [`spacetime_fubini_linear_vanishing_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1900) — Lemma
+### [`heatKernelMomentExt_parametric_eq_setIntegral`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1726) — Lemma
+
+**Statement**: For $t_1 > 0$, the full-line parametric integral equals the set integral over $t_2 > 0$: $\int_{\mathbb{R}} \mathrm{heatKernelMomentExt}\,n\,s\,(t_1, t_2)\,dt_2 = \int_{t_2>0} t_1^n t_2^n\,\sqrt{\pi/s}\,e^{-(t_1+t_2)^2/(4s)}$.
+
+---
+
+### [`heatKernelMoment_setIntegral_integrableOn`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1751) — Lemma
+
+**Statement**: For any constant $c$, the parametric set integral $t_1 \mapsto \int_{t_2>0} c\,t_1^n t_2^n\,\sqrt{\pi/s}\,e^{-(t_1+t_2)^2/(4s)}$ is integrable on $(0, \infty)$.
+
+**Proof uses**: [`heatKernelMomentExt_parametric_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1721), [`heatKernelMomentExt_parametric_eq_setIntegral`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1726)
+
+---
+
+### [`spacetime_fubini_vanishing_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1794) — Lemma
 
 **Statement**: For $f$ vanishing on $\{x_0 \le 0\}$ there is $K > 0$ with, for every $s > 0$,
-$$\int_x\int_y \lVert f(x)\rVert\,\lVert f(y)\rVert\,\sqrt{\pi/s}\,e^{-(x_0+y_0)^2/(4s)} \le K\,s^{3/2}.$$
-(Tonelli factorization through the spatial linear bound and `heat_kernel_moment_integral_bound`.)
+$$\int_x\int_y \lVert f(x)\rVert\,\lVert f(y)\rVert\,\sqrt{\pi/s}\,e^{-(x_0+y_0)^2/(4s)} \le K\,s^{d+1/2}.$$
+(Tonelli factorization through the order-$d$ spatial bound and `heat_kernel_moment_integral_pow_bound`.)
 
-**Proof uses**: `spatialNormIntegral_linear_bound`, [`heat_kernel_moment_integral_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1642)
+**Proof uses**: `spatialNormIntegral_pow_bound`, [`heat_kernel_moment_integral_pow_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1418)
 
 ---
 
-### [`schwartz_heat_product_aestronglymeasurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2286) — Lemma
+### [`schwartz_heat_product_aestronglymeasurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2172) — Lemma
 
 **Statement**: For fixed $x$ and constants $c_1, c_2, s$, the map $a \mapsto \lVert f(x)\rVert\,\lVert f(a)\rVert\,c_1\,e^{-(x_0+a_0)^2/(4s)}\,c_2$ is a.e.-strongly measurable.
 
 ---
 
-### [`schwartz_iterated_integral_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2325) — Lemma
+### [`schwartz_iterated_integral_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2211) — Lemma
 
 **Statement**: Given $\int \lVert f\rVert < \infty$, the iterated integral $x \mapsto \int_y \lVert f(x)\rVert\,\lVert f(y)\rVert\,c_1\,e^{-(x_0+y_0)^2/(4s)}\,c_2$ is integrable.
 
-**Proof uses**: `Integrable.integral_prod_left`, [`schwartz_norm_prod_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2919)
+**Proof uses**: `Integrable.integral_prod_left`, [`schwartz_norm_prod_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2784)
 
 ---
 
-### [`F_norm_bound_via_linear_vanishing`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2443) — Lemma
+### [`F_norm_bound_via_vanishing`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2323) — Lemma
 
-**Statement**: For $f$ vanishing on $\{x_0 \le 0\}$ there is $C > 0$ so that the inner $(x,y)$-integral $F(s, k_{sp})$ satisfies $\lVert F(s, k_{sp})\rVert \le C\,s^{3/2}\,e^{-s(\lVert k_{sp}\rVert^2 + m^2)}$ — the pointwise bound matching `dominate_G`.
+**Statement**: For $f$ vanishing on $\{x_0 \le 0\}$ there is $C > 0$ so that the inner $(x,y)$-integral $F(s, k_{sp})$ satisfies $\lVert F(s, k_{sp})\rVert \le C\,s^{d+1/2}\,e^{-s(\lVert k_{sp}\rVert^2 + m^2)}$ — the pointwise bound matching `dominate_G`.
 
-**Proof uses**: [`spacetime_fubini_linear_vanishing_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1900), `schwartz_vanishing_linear_bound`
+**Proof uses**: [`spacetime_fubini_vanishing_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1794), `schwartz_vanishing_pow_bound`
 
 ---
 
-### [`fubini_s_ksp_swap`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2785) — Theorem
+### [`fubini_s_ksp_swap`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2650) — Theorem
 
-**Statement**: For $m > 0$ and $d \le 5$ (with $f$ vanishing on $\{x_0 \le 0\}$), the proper-time $s$ and spatial-momentum $k_{sp}$ integrals commute in the four-fold Schwinger integral:
+**Statement**: For $m > 0$ (with $f$ vanishing on $\{x_0 \le 0\}$), the proper-time $s$ and spatial-momentum $k_{sp}$ integrals commute in the four-fold Schwinger integral:
 $$\int_{s>0}\int_{k_{sp}}\int_x\int_y (\cdots) = \int_{k_{sp}}\int_{s>0}\int_x\int_y (\cdots).$$
-The `Fact (d ≤ 5)` hypothesis enters here through the dominating function.
+The order-$d$ dominating function makes this valid in every dimension $d \ge 2$.
 
-**Proof uses**: [`F_norm_bound_via_linear_vanishing`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2443), [`integrable_dominate_G`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L854), [`fubini_s_ksp_integrand_stronglyMeasurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1098), `MeasureTheory.integral_integral_swap`
+**Proof uses**: [`F_norm_bound_via_vanishing`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2323), [`integrable_dominate_G`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L858), [`fubini_s_ksp_integrand_stronglyMeasurable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L1099), `MeasureTheory.integral_integral_swap`
 
 ---
 
-### [`schwartz_norm_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2913) — Lemma
+### [`schwartz_norm_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2778) — Lemma
 
 **Statement**: The norm $x \mapsto \lVert f(x)\rVert$ of a complex Schwartz function is integrable.
 
@@ -406,15 +402,15 @@ The `Fact (d ≤ 5)` hypothesis enters here through the dominating function.
 
 ---
 
-### [`schwartz_norm_prod_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2919) — Lemma
+### [`schwartz_norm_prod_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2784) — Lemma
 
 **Statement**: The product $(x, y) \mapsto \lVert f(x)\rVert\,\lVert f(y)\rVert$ is integrable on $\mathbb{R}^d \times \mathbb{R}^d$.
 
-**Proof uses**: [`schwartz_norm_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2913), `Integrable.mul_prod`
+**Proof uses**: [`schwartz_norm_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2778), `Integrable.mul_prod`
 
 ---
 
-### [`s_xy_swap_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2929) — Definition
+### [`s_xy_swap_bound`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2794) — Definition
 
 **Lean signature**
 ```lean
@@ -424,26 +420,26 @@ def s_xy_swap_bound (f : SchwartzTestFunctionℂ d) (m : ℝ) (p : ℝ × SpaceT
 
 ---
 
-### [`s_xy_swap_bound_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2933) — Lemma
+### [`s_xy_swap_bound_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2798) — Lemma
 
 **Statement**: For $m > 0$, `s_xy_swap_bound` is integrable on $(\mathrm{vol}|_{(0,\infty)}) \otimes (\mathrm{vol} \otimes \mathrm{vol})$ over $(0,\infty) \times \mathbb{R}^d \times \mathbb{R}^d$; it factorizes as $\bigl(\sqrt{\pi}\,s^{-1/2}\,e^{-m^2 s}\bigr) \cdot \lVert f(x)\rVert\,\lVert f(y)\rVert$.
 
-**Proof uses**: `integrableOn_rpow_mul_exp_neg_mul_rpow`, [`schwartz_norm_prod_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2919), `Integrable.mul_prod`
+**Proof uses**: `integrableOn_rpow_mul_exp_neg_mul_rpow`, [`schwartz_norm_prod_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2784), `Integrable.mul_prod`
 
 ---
 
-### [`fubini_s_xy_swap`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3004) — Theorem
+### [`fubini_s_xy_swap`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2869) — Theorem
 
 **Statement**: For fixed $k_{sp}$ and $m > 0$, the proper-time $s$ integral commutes with the $(x, y)$ integrals in the Schwinger integrand:
 $$\int_{s>0}\int_x\int_y (\cdots) = \int_x\int_y\int_{s>0} (\cdots).$$
 
-**Proof uses**: [`s_xy_swap_bound_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2933), `MeasureTheory.integral_integral_swap`
+**Proof uses**: [`s_xy_swap_bound_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2798), `MeasureTheory.integral_integral_swap`
 
 ---
 
 ## Fubini Helper Lemmas
 
-### [`gaussian_integrable_spatialCoords`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3309) — Lemma
+### [`gaussian_integrable_spatialCoords`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3174) — Lemma
 
 **Statement**: For $s > 0$, the spatial Gaussian $k_{sp} \mapsto e^{-s\lVert k_{sp}\rVert^2}$ is integrable on $\mathbb{R}^{d-1}$.
 
@@ -451,34 +447,34 @@ $$\int_{s>0}\int_x\int_y (\cdots) = \int_x\int_y\int_{s>0} (\cdots).$$
 
 ---
 
-### [`continuous_spatialPart`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3332) — Lemma
+### [`continuous_spatialPart`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3197) — Lemma
 
 **Statement**: The spatial projection $\mathrm{spatialPart} : \mathbb{R}^d \to \mathbb{R}^{d-1}$ is continuous.
 
 ---
 
-### [`fubini_ksp_xy_integrand_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3348) — Lemma
+### [`fubini_ksp_xy_integrand_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3213) — Lemma
 
 **Statement**: For $s > 0$, the real integrand $(k_{sp}, x, y) \mapsto \lVert f(x)\rVert\,\lVert f(y)\rVert\,e^{-s\lVert k_{sp}\rVert^2}$ is integrable on $\mathbb{R}^{d-1} \times \mathbb{R}^d \times \mathbb{R}^d$ (it factorizes).
 
-**Proof uses**: [`gaussian_integrable_spatialCoords`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3309), [`schwartz_norm_prod_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2919), `Integrable.mul_prod`
+**Proof uses**: [`gaussian_integrable_spatialCoords`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3174), [`schwartz_norm_prod_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L2784), `Integrable.mul_prod`
 
 ---
 
-### [`fubini_ksp_xy_full_integrand_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3383) — Lemma
+### [`fubini_ksp_xy_full_integrand_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3248) — Lemma
 
 **Statement**: For $s > 0$, the full complex integrand $\bar f(x)\,f(y)\,\sqrt{\pi/s}\,e^{-(-x_0-y_0)^2/(4s)}\,e^{-s\lVert k_{sp}\rVert^2}\,e^{-i\,k_{sp}\cdot(x_{sp}-y_{sp})}$ is integrable on $\mathbb{R}^{d-1} \times \mathbb{R}^d \times \mathbb{R}^d$.
 
-**Proof uses**: [`fubini_ksp_xy_integrand_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3348), `MeasureTheory.Integrable.mono'`
+**Proof uses**: [`fubini_ksp_xy_integrand_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3213), `MeasureTheory.Integrable.mono'`
 
 ---
 
-### [`fubini_ksp_xy_swap`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3490) — Theorem
+### [`fubini_ksp_xy_swap`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3355) — Theorem
 
 **Statement**: For fixed $s > 0$, the spatial-momentum integral $k_{sp}$ is moved from inside the spacetime $(x, y)$ integrals to outside them:
 $$\int_x\int_y (\cdots)\!\int_{k_{sp}}(\cdots) = \int_{k_{sp}}\int_x\int_y (\cdots).$$
 
-**Proof uses**: `MeasureTheory.integral_const_mul`, [`fubini_ksp_xy_full_integrand_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3383), `MeasureTheory.integral_integral_swap`
+**Proof uses**: `MeasureTheory.integral_const_mul`, [`fubini_ksp_xy_full_integrand_integrable`](../../OSforGFF/OS/OS3_MixedRepInfra.lean#L3248), `MeasureTheory.integral_integral_swap`
 
 ---
 

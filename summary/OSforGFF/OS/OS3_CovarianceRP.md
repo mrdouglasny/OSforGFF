@@ -17,8 +17,7 @@ perfect square $\int (1/\omega)\lvert F_\omega(\bar k)\rvert^2\,d\bar k$ with
 $F_\omega(\bar k) = \int \tilde f(t,\bar k)\,e^{-\omega t}\,dt$ the weighted Laplace–Fourier transform.
 
 The file is **dimension-generic**: it works over section variables `{d : ℕ} [Fact (2 ≤ d)]` (with
-`{m : ℝ} [Fact (0 < m)]` and `[GFFPropagator d m]` supplied per declaration, and `[Fact (d ≤ 5)]` on
-the results that go through the mixed representation). It uses the generic complexified bilinear form
+`{m : ℝ} [Fact (0 < m)]` and `[GFFPropagator d m]` supplied per declaration). It uses the generic complexified bilinear form
 `freeCovarianceℂ_bilinear` and the generic `real_integral_eq_complex_re` lemma from
 `Covariance/ParsevalGeneric.lean` (in place of the old dimension-specific `*4` position-space
 bilinear-algebra names). The self-contained momentum-space argument lives in the inner namespace

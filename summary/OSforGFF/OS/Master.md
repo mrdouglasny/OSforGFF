@@ -8,49 +8,47 @@
 This is the headline file: it assembles the six Osterwalder–Schrader components
 (OS0 analyticity, OS1 regularity, OS2 Euclidean invariance, OS3 reflection positivity,
 OS4 clustering, OS4 ergodicity) into a single
-[`SatisfiesAllOS`](../../OSforGFF/OS/Axioms.lean#L194) verdict for the free Gaussian Free
+[`SatisfiesAllOS`](../../OSforGFF/OS/Axioms.lean#L195) verdict for the free Gaussian Free
 Field measure. The central result is the **dimension-generic** master theorem
 `gaussianFreeField_satisfies_all_OS_axioms_generic`, valid for any spacetime dimension with
-`{d : ℕ} [Fact (2 ≤ d)] [Fact (d ≤ 5)]` equipped with a `[GFFPropagator d m]` instance and
+`{d : ℕ} [Fact (2 ≤ d)]` equipped with a `[GFFPropagator d m]` instance and
 mass `m > 0`. From it the file derives an **all-dimensions corollary**
-`gaussianFreeField_satisfies_all_OS_axioms_of_dim` (every `2 ≤ d ≤ 5`, supplying the canonical
+`gaussianFreeField_satisfies_all_OS_axioms_of_dim` (every `d ≥ 2`, supplying the canonical
 [`GFFPropagator.ofProperTime`](../../OSforGFF/Covariance/Propagator.lean) instance so no per-`d`
 closed form is required), and **four concrete instances** at the literal dimensions `d = 4, 3, 2, 5`,
 each stated as `SatisfiesAllOS (μ_GFF n m)` for the single unified measure
-[`μ_GFF d`](../../OSforGFF/Measure/Construct.lean). The `d ≤ 5` ceiling enters only through the
-proper-time Fubini domination in the OS3 mixed-representation argument. The file declares no
+[`μ_GFF d`](../../OSforGFF/Measure/Construct.lean). The file declares no
 definitions and no axioms; each theorem is a thin assembly of results proven in the `OS/` submodules.
 
 ## Status
 
 **Main result**: Fully proven (0 sorries; `grep` for `sorry`/`admit` finds none).
 
-**Length**: 126 lines, 0 definitions + 6 theorems/lemmas
+**Length**: 119 lines, 0 definitions + 6 theorems/lemmas
 
 ---
 
-### [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L60) — Theorem
+### [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L61) — Theorem
 
 **Lean signature**
 ```lean
 theorem gaussianFreeField_satisfies_all_OS_axioms_generic
-    {d : ℕ} [Fact (2 ≤ d)] (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] [Fact (d ≤ 5)] :
+    {d : ℕ} [Fact (2 ≤ d)] (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
     SatisfiesAllOS (gaussianFreeField_free (d := d) m)
 ```
 
-**Statement**: The dimension-generic master theorem. For any spacetime dimension `d` with
-$2 \le d \le 5$, mass $m > 0$, and a `GFFPropagator d m` instance (the closed-form radial
+**Statement**: The dimension-generic master theorem. For any spacetime dimension $d \ge 2$,
+mass $m > 0$, and a `GFFPropagator d m` instance (the closed-form radial
 covariance identified with the proper-time integral), the free GFF measure
 `gaussianFreeField_free (d := d) m` satisfies **all** Osterwalder–Schrader axioms:
 $$\mathrm{SatisfiesAllOS}\bigl(\mathrm{gaussianFreeField\_free}\ (d := d)\ m\bigr).$$
 
 **Informal**: Builds the `SatisfiesAllOS` structure field-by-field
-(`os0, os1, os2, os3, os4_clustering, os4_ergodicity`). The upper bound $d \le 5$ enters only
-through the proper-time Fubini domination in the OS3 mixed-representation argument.
+(`os0, os1, os2, os3, os4_clustering, os4_ergodicity`).
 
 **Proof uses**: OS0 [`QFT.gaussianFreeField_satisfies_OS0`](../../OSforGFF/OS/OS0_Analyticity.lean)
 (holomorphic integral / differentiation under the integral);
-OS1 [`gaussianFreeField_satisfies_OS1_revised`](../../OSforGFF/OS/OS1_Regularity.lean)
+OS1 [`gaussianFreeField_satisfies_OS1`](../../OSforGFF/OS/OS1_Regularity.lean)
 (Fourier/momentum-space methods);
 OS2 [`gaussian_satisfies_OS2`](../../OSforGFF/Measure/GaussianFreeField.lean) with
 [`isGaussianGJ_gaussianFreeField_free`](../../OSforGFF/Measure/IsGaussian.lean) and
@@ -65,17 +63,17 @@ at $\alpha = 6$.
 
 ---
 
-### [`gaussianFreeField_satisfies_all_OS_axioms_of_dim`](../../OSforGFF/OS/Master.lean#L79) — Theorem
+### [`gaussianFreeField_satisfies_all_OS_axioms_of_dim`](../../OSforGFF/OS/Master.lean#L80) — Theorem
 
 **Lean signature**
 ```lean
 theorem gaussianFreeField_satisfies_all_OS_axioms_of_dim (d : ℕ) [Fact (2 ≤ d)]
-    (m : ℝ) [Fact (0 < m)] [Fact (d ≤ 5)] :
+    (m : ℝ) [Fact (0 < m)] :
     letI := GFFPropagator.ofProperTime d m
     SatisfiesAllOS (gaussianFreeField_free (d := d) m)
 ```
 
-**Statement**: All-dimensions corollary. For **every** $2 \le d \le 5$ and mass $m > 0$, the free
+**Statement**: All-dimensions corollary. For **every** $d \ge 2$ and mass $m > 0$, the free
 GFF built from the canonical proper-time propagator satisfies all Osterwalder–Schrader axioms:
 $$\text{with } \mathrm{GFFPropagator.ofProperTime}\ d\ m,\quad
 \mathrm{SatisfiesAllOS}\bigl(\mathrm{gaussianFreeField\_free}\ (d := d)\ m\bigr).$$
@@ -86,11 +84,11 @@ canonical instance [`GFFPropagator.ofProperTime`](../../OSforGFF/Covariance/Prop
 covariance in closed form).
 
 **Proof uses**: [`GFFPropagator.ofProperTime`](../../OSforGFF/Covariance/Propagator.lean),
-[`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L60).
+[`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L61).
 
 ---
 
-### [`gaussianFreeField_satisfies_all_OS_axioms_dim4`](../../OSforGFF/OS/Master.lean#L91) — Theorem
+### [`gaussianFreeField_satisfies_all_OS_axioms_dim4`](../../OSforGFF/OS/Master.lean#L106) — Theorem
 
 **Lean signature**
 ```lean
@@ -103,15 +101,15 @@ $m > 0$ — that the free GFF in dimension `4` satisfies all OS axioms:
 $$\mathrm{SatisfiesAllOS}(\mu_{\mathrm{GFF}}\ 4\ m).$$
 
 **Informal**: The `d = 4` specialization, obtained by applying the generic master theorem at the
-literal dimension `4`; the instances `[Fact (2 ≤ 4)]`, `[Fact (4 ≤ 5)]`, and `GFFPropagator 4 m`
+literal dimension `4`; the instances `[Fact (2 ≤ 4)]` and `GFFPropagator 4 m`
 are synthesized by typeclass search.
 
-**Proof uses**: [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L60),
+**Proof uses**: [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L61),
 [`μ_GFF`](../../OSforGFF/Measure/Construct.lean).
 
 ---
 
-### [`gaussianFreeField_satisfies_all_OS_axioms_dim3`](../../OSforGFF/OS/Master.lean#L98) — Theorem
+### [`gaussianFreeField_satisfies_all_OS_axioms_dim3`](../../OSforGFF/OS/Master.lean#L97) — Theorem
 
 **Lean signature**
 ```lean
@@ -125,12 +123,12 @@ $$\mathrm{SatisfiesAllOS}(\mu_{\mathrm{GFF}}\ 3\ m).$$
 
 **Informal**: The `d = 3` specialization of the generic master theorem.
 
-**Proof uses**: [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L60),
+**Proof uses**: [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L61),
 [`μ_GFF`](../../OSforGFF/Measure/Construct.lean).
 
 ---
 
-### [`gaussianFreeField_satisfies_all_OS_axioms_dim2`](../../OSforGFF/OS/Master.lean#L105) — Theorem
+### [`gaussianFreeField_satisfies_all_OS_axioms_dim2`](../../OSforGFF/OS/Master.lean#L90) — Theorem
 
 **Lean signature**
 ```lean
@@ -144,7 +142,7 @@ $$\mathrm{SatisfiesAllOS}(\mu_{\mathrm{GFF}}\ 2\ m).$$
 
 **Informal**: The `d = 2` specialization of the generic master theorem.
 
-**Proof uses**: [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L60),
+**Proof uses**: [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L61),
 [`μ_GFF`](../../OSforGFF/Measure/Construct.lean).
 
 ---
@@ -161,10 +159,9 @@ theorem gaussianFreeField_satisfies_all_OS_axioms_dim5 (m : ℝ) [Fact (0 < m)] 
 $(1 + mr)\, e^{-mr}/(8\pi^2 r^3)$ satisfies all OS axioms:
 $$\mathrm{SatisfiesAllOS}(\mu_{\mathrm{GFF}}\ 5\ m).$$
 
-**Informal**: The `d = 5` specialization of the generic master theorem; $d = 5$ is the boundary
-of the proven $d \le 5$ OS3 range.
+**Informal**: The `d = 5` specialization of the generic master theorem.
 
-**Proof uses**: [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L60),
+**Proof uses**: [`gaussianFreeField_satisfies_all_OS_axioms_generic`](../../OSforGFF/OS/Master.lean#L61),
 [`μ_GFF`](../../OSforGFF/Measure/Construct.lean).
 
 ---

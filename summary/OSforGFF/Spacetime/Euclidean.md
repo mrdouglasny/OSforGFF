@@ -6,7 +6,7 @@
 ## Overview
 
 This file (in namespace `QFT`, generic in the dimension `d : ℕ`) defines the Euclidean group
-`E d = ℝ^d ⋊ O(d)` of rigid motions of $\mathbb{R}^d$, with orthogonal part `O4 d` (linear
+`E d = ℝ^d ⋊ O(d)` of rigid motions of $\mathbb{R}^d$, with orthogonal part `O d` (linear
 isometries) and translation part, acting on spacetime by $g \cdot x = R x + t$ via `act`. It
 proves the group axioms (semidirect-product multiplication, identity, inverse via a helper
 `LinearIsometry.inv`, associativity/cancellation) so that `E d` is a `Group`, and that `act` is a
@@ -14,25 +14,24 @@ genuine left action ($\mathrm{act}(gh) = \mathrm{act}\,g \circ \mathrm{act}\,h$ 
 $\mathrm{act}\,g^{-1} \circ \mathrm{act}\,g = \mathrm{id}$). It then shows Lebesgue measure is
 invariant under every motion (`measurePreserving_act`) and packages the common pullback map
 $x \mapsto g^{-1} \cdot x$ (`euclidean_pullback`) — establishing its temperate growth and
-polynomial bounds — to build a unified family of induced actions on complex/real test functions
-and on $L^2$, as continuous linear maps. This is the geometric foundation for the OS2 (Euclidean
+polynomial bounds — to build the induced action `euclidean_action` on complex test functions. This is the geometric foundation for the OS2 (Euclidean
 invariance) axiom.
 
 ## Status
 
 **Main result**: The Euclidean group `E d`, its group structure and action on spacetime, measure
-preservation of rigid motions, and the induced pullback actions on test functions and $L^2$.
+preservation of rigid motions, and the induced pullback action on complex test functions.
 Fully proven (0 sorries; no `sorry`/`admit`).
 
-**Length**: 406 lines, 17 definition(s) + 26 theorem(s)/lemma(s)
+**Length**: 360 lines, 14 definition(s) + 24 theorem(s)/lemma(s)
 
 ---
 
-### [`O4`](../../OSforGFF/Spacetime/Euclidean.lean#L53) — Definition *(abbrev)*
+### [`O`](../../OSforGFF/Spacetime/Euclidean.lean#L54) — Definition *(abbrev)*
 
 **Lean signature**
 ```lean
-abbrev O4 (d : ℕ) : Type :=
+abbrev O (d : ℕ) : Type :=
   LinearIsometry (RingHom.id ℝ) (SpaceTime d) (SpaceTime d)
 ```
 
@@ -40,12 +39,12 @@ abbrev O4 (d : ℕ) : Type :=
 
 ---
 
-### [`E`](../../OSforGFF/Spacetime/Euclidean.lean#L58) — Definition *(structure)*
+### [`E`](../../OSforGFF/Spacetime/Euclidean.lean#L59) — Definition *(structure)*
 
 **Lean signature**
 ```lean
 structure E (d : ℕ) where
-  R : (O4 d)
+  R : (O d)
   t : (SpaceTime d)
 ```
 
@@ -54,7 +53,7 @@ $E(d) = \mathbb{R}^d \rtimes O(d)$.
 
 ---
 
-### [`act`](../../OSforGFF/Spacetime/Euclidean.lean#L64) — Definition
+### [`act`](../../OSforGFF/Spacetime/Euclidean.lean#L65) — Definition
 
 **Lean signature**
 ```lean
@@ -65,29 +64,29 @@ def act (g : (E d)) (x : (SpaceTime d)) : (SpaceTime d) := g.R x + g.t
 
 ---
 
-### [`act_one`](../../OSforGFF/Spacetime/Euclidean.lean#L69) — Lemma *(simp)*
+### [`act_one`](../../OSforGFF/Spacetime/Euclidean.lean#L70) — Lemma *(simp)*
 
 **Statement**: $\mathrm{act}\,\langle 1, 0\rangle\, x = x$.
 
 ---
 
-### [`act_mul`](../../OSforGFF/Spacetime/Euclidean.lean#L72) — Lemma *(simp)*
+### [`act_mul`](../../OSforGFF/Spacetime/Euclidean.lean#L73) — Lemma *(simp)*
 
 **Statement**: $\mathrm{act}\,\langle g_R \circ h_R,\, g_R h_t + g_t\rangle\, x = g_R(h_R x + h_t) + g_t$.
 
 ---
 
-### [`act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L76) — Lemma *(simp)*
+### [`act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L77) — Lemma *(simp)*
 
 **Statement**: $\mathrm{act}\,\langle g_R,\, -g_R g_t\rangle\, x = g_R(x - g_t)$.
 
 ---
 
-### [`LinearIsometry.inv`](../../OSforGFF/Spacetime/Euclidean.lean#L88) — Definition
+### [`LinearIsometry.inv`](../../OSforGFF/Spacetime/Euclidean.lean#L89) — Definition
 
 **Lean signature**
 ```lean
-noncomputable def inv (g : (O4 d)) : (O4 d) :=
+noncomputable def inv (g : (O d)) : (O d) :=
   ((g.toLinearIsometryEquiv rfl).symm).toLinearIsometry
 ```
 
@@ -96,56 +95,56 @@ finite-dimensional equivalence and taking its `symm` back to a `LinearIsometry`.
 
 ---
 
-### [`LinearIsometry.comp_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L91) — Lemma *(simp)*
+### [`LinearIsometry.comp_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L92) — Lemma *(simp)*
 
 **Statement**: $(g \circ h)(x) = g(h(x))$ (by `rfl`).
 
 ---
 
-### [`LinearIsometry.inv_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L94) — Lemma *(simp)*
+### [`LinearIsometry.inv_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L95) — Lemma *(simp)*
 
 **Statement**: $(\mathrm{inv}\, g)(g(x)) = x$.
 
 ---
 
-### [`LinearIsometry.one_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L100) — Lemma *(simp)*
+### [`LinearIsometry.one_apply`](../../OSforGFF/Spacetime/Euclidean.lean#L101) — Lemma *(simp)*
 
 **Statement**: $(1 : O(d))(x) = x$ (by `rfl`).
 
 ---
 
-### [`LinearIsometry.one_comp`](../../OSforGFF/Spacetime/Euclidean.lean#L102) — Lemma *(simp)*
+### [`LinearIsometry.one_comp`](../../OSforGFF/Spacetime/Euclidean.lean#L103) — Lemma *(simp)*
 
 **Statement**: $1 \circ R = R$.
 
 ---
 
-### [`LinearIsometry.comp_one`](../../OSforGFF/Spacetime/Euclidean.lean#L105) — Lemma *(simp)*
+### [`LinearIsometry.comp_one`](../../OSforGFF/Spacetime/Euclidean.lean#L106) — Lemma *(simp)*
 
 **Statement**: $R \circ 1 = R$.
 
 ---
 
-### [`LinearIsometry.inv_comp`](../../OSforGFF/Spacetime/Euclidean.lean#L108) — Lemma *(simp)*
+### [`LinearIsometry.inv_comp`](../../OSforGFF/Spacetime/Euclidean.lean#L109) — Lemma *(simp)*
 
 **Statement**: $(\mathrm{inv}\, R) \circ R = 1$.
 
 ---
 
-### [`LinearIsometry.comp_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L112) — Lemma *(simp)*
+### [`LinearIsometry.comp_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L113) — Lemma *(simp)*
 
 **Statement**: $R \circ (\mathrm{inv}\, R) = 1$.
 
 ---
 
-### [`E.ext`](../../OSforGFF/Spacetime/Euclidean.lean#L124) — Lemma *(ext)*
+### [`E.ext`](../../OSforGFF/Spacetime/Euclidean.lean#L125) — Lemma *(ext)*
 
 **Statement**: Two Euclidean motions are equal when their rotation and translation components
 agree: $g_R = h_R$ and $g_t = h_t$ imply $g = h$.
 
 ---
 
-### [`instance : Mul (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L132) — Definition *(instance)*
+### [`instance : Mul (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L133) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -158,7 +157,7 @@ translation by the first rotation.
 
 ---
 
-### [`instance : One (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L135) — Definition *(instance)*
+### [`instance : One (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L136) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -170,7 +169,7 @@ instance : One (E d) where
 
 ---
 
-### [`instance : Inv (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L138) — Definition *(instance)*
+### [`instance : Inv (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L139) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -183,7 +182,7 @@ translation.
 
 ---
 
-### [`instance : Div (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L142) — Definition *(instance)*
+### [`instance : Div (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L143) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -195,43 +194,43 @@ instance : Div (E d) where
 
 ---
 
-### [`mul_R`](../../OSforGFF/Spacetime/Euclidean.lean#L148) — Lemma *(simp)*
+### [`mul_R`](../../OSforGFF/Spacetime/Euclidean.lean#L149) — Lemma *(simp)*
 
 **Statement**: $(g \cdot h)_R = g_R \circ h_R$ (by `rfl`).
 
 ---
 
-### [`mul_t`](../../OSforGFF/Spacetime/Euclidean.lean#L149) — Lemma *(simp)*
+### [`mul_t`](../../OSforGFF/Spacetime/Euclidean.lean#L150) — Lemma *(simp)*
 
 **Statement**: $(g \cdot h)_t = g_R h_t + g_t$ (by `rfl`).
 
 ---
 
-### [`one_R`](../../OSforGFF/Spacetime/Euclidean.lean#L150) — Lemma *(simp)*
+### [`one_R`](../../OSforGFF/Spacetime/Euclidean.lean#L151) — Lemma *(simp)*
 
 **Statement**: $(1)_R = 1$ (by `rfl`).
 
 ---
 
-### [`one_t`](../../OSforGFF/Spacetime/Euclidean.lean#L151) — Lemma *(simp)*
+### [`one_t`](../../OSforGFF/Spacetime/Euclidean.lean#L152) — Lemma *(simp)*
 
 **Statement**: $(1)_t = 0$ (by `rfl`).
 
 ---
 
-### [`inv_R`](../../OSforGFF/Spacetime/Euclidean.lean#L152) — Lemma *(simp)*
+### [`inv_R`](../../OSforGFF/Spacetime/Euclidean.lean#L153) — Lemma *(simp)*
 
 **Statement**: $(g^{-1})_R = \mathrm{inv}\, g_R$ (by `rfl`).
 
 ---
 
-### [`inv_t`](../../OSforGFF/Spacetime/Euclidean.lean#L153) — Lemma *(simp)*
+### [`inv_t`](../../OSforGFF/Spacetime/Euclidean.lean#L154) — Lemma *(simp)*
 
 **Statement**: $(g^{-1})_t = -(\mathrm{inv}\, g_R)\, g_t$ (by `rfl`).
 
 ---
 
-### [`instance : Group (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L157) — Definition *(instance)*
+### [`instance : Group (E d)`](../../OSforGFF/Spacetime/Euclidean.lean#L158) — Definition *(instance)*
 
 **Lean signature**
 ```lean
@@ -243,21 +242,21 @@ left-inverse cancellation proved component-wise via `E.ext`.
 
 ---
 
-### [`act_mul_general`](../../OSforGFF/Spacetime/Euclidean.lean#L197) — Lemma *(simp)*
+### [`act_mul_general`](../../OSforGFF/Spacetime/Euclidean.lean#L198) — Lemma *(simp)*
 
 **Statement**: `act` is a left group action:
 $$\mathrm{act}(g \cdot h)\, x = \mathrm{act}\, g\,(\mathrm{act}\, h\, x).$$
 
 ---
 
-### [`act_inv_general`](../../OSforGFF/Spacetime/Euclidean.lean#L223) — Lemma *(simp)*
+### [`act_inv_general`](../../OSforGFF/Spacetime/Euclidean.lean#L224) — Lemma *(simp)*
 
 **Statement**: The inverse law of the action:
 $$\mathrm{act}\, g^{-1}\,(\mathrm{act}\, g\, x) = x.$$
 
 ---
 
-### [`measurePreserving_act`](../../OSforGFF/Spacetime/Euclidean.lean#L240) — Lemma
+### [`measurePreserving_act`](../../OSforGFF/Spacetime/Euclidean.lean#L241) — Lemma
 
 **Statement**: Every rigid motion preserves Lebesgue measure: `act g` is measure-preserving for
 `volume` on `SpaceTime d` (the push-forward of $\mu$ by $x \mapsto g \cdot x$ is $\mu$).
@@ -266,14 +265,14 @@ $$\mathrm{act}\, g^{-1}\,(\mathrm{act}\, g\, x) = x.$$
 
 ---
 
-### [`contDiff_act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L252) — Lemma *(private)*
+### [`contDiff_act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L253) — Lemma *(private)*
 
 **Statement**: The map `act g⁻¹` is smooth ($C^\infty$), as a sum of a linear isometry and a
 constant.
 
 ---
 
-### [`fderiv_linear_add_const`](../../OSforGFF/Spacetime/Euclidean.lean#L258) — Lemma *(private)*
+### [`fderiv_linear_add_const`](../../OSforGFF/Spacetime/Euclidean.lean#L260) — Lemma *(private)*
 
 **Statement**: $D(y \mapsto L y + c)(x) = D L(x)$ for a continuous linear map $L$ and constant $c$.
 
@@ -281,7 +280,7 @@ constant.
 
 ---
 
-### [`fderiv_act_inv_eq_linear`](../../OSforGFF/Spacetime/Euclidean.lean#L263) — Definition *(private)*
+### [`fderiv_act_inv_eq_linear`](../../OSforGFF/Spacetime/Euclidean.lean#L265) — Definition *(private)*
 
 **Lean signature**
 ```lean
@@ -294,7 +293,7 @@ $g^{-1}_R$ everywhere.
 
 ---
 
-### [`fderiv_has_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L273) — Definition *(private)*
+### [`fderiv_has_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L275) — Definition *(private)*
 
 **Lean signature**
 ```lean
@@ -306,7 +305,7 @@ private def fderiv_has_temperate_growth (g : (E d)) :
 
 ---
 
-### [`act_inv_poly_bound`](../../OSforGFF/Spacetime/Euclidean.lean#L278) — Definition *(private)*
+### [`act_inv_poly_bound`](../../OSforGFF/Spacetime/Euclidean.lean#L280) — Definition *(private)*
 
 **Lean signature**
 ```lean
@@ -318,7 +317,7 @@ private def act_inv_poly_bound (g : (E d)) :
 
 ---
 
-### [`euclidean_pullback`](../../OSforGFF/Spacetime/Euclidean.lean#L315) — Definition
+### [`euclidean_pullback`](../../OSforGFF/Spacetime/Euclidean.lean#L317) — Definition
 
 **Lean signature**
 ```lean
@@ -330,16 +329,16 @@ actions on function spaces.
 
 ---
 
-### [`euclidean_pullback_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L318) — Lemma
+### [`euclidean_pullback_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L320) — Lemma
 
 **Statement**: The pullback map `euclidean_pullback g` has temperate growth (needed for the
 Schwartz-space action).
 
-**Proof uses**: [`fderiv_has_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L273), [`contDiff_act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L252), [`act_inv_poly_bound`](../../OSforGFF/Spacetime/Euclidean.lean#L278)
+**Proof uses**: [`fderiv_has_temperate_growth`](../../OSforGFF/Spacetime/Euclidean.lean#L275), [`contDiff_act_inv`](../../OSforGFF/Spacetime/Euclidean.lean#L253), [`act_inv_poly_bound`](../../OSforGFF/Spacetime/Euclidean.lean#L280)
 
 ---
 
-### [`euclidean_pullback_polynomial_bounds`](../../OSforGFF/Spacetime/Euclidean.lean#L330) — Lemma
+### [`euclidean_pullback_polynomial_bounds`](../../OSforGFF/Spacetime/Euclidean.lean#L332) — Lemma
 
 **Statement**: The pullback map satisfies the reverse polynomial bound
 $$\lVert x\rVert \le (1 + \lVert g^{-1}_t\rVert)\,(1 + \lVert \mathrm{euclidean\_pullback}\, g\, x\rVert)^1,$$
@@ -347,7 +346,7 @@ using the isometry property of $g^{-1}_R$.
 
 ---
 
-### [`euclidean_action`](../../OSforGFF/Spacetime/Euclidean.lean#L352) — Definition
+### [`euclidean_action`](../../OSforGFF/Spacetime/Euclidean.lean#L354) — Definition
 
 **Lean signature**
 ```lean
@@ -362,65 +361,4 @@ $(g \bullet f)(x) = f(g^{-1} \cdot x)$.
 
 ---
 
-### [`euclidean_action_real`](../../OSforGFF/Spacetime/Euclidean.lean#L360) — Definition
-
-**Lean signature**
-```lean
-noncomputable def euclidean_action_real (g : (E d)) (f : (SchwartzTestFunction d)) : (SchwartzTestFunction d) :=
-  SchwartzMap.compCLM (𝕜 := ℝ)
-    (hg := euclidean_pullback_temperate_growth g)
-    (hg_upper := euclidean_pullback_polynomial_bounds g) f
-```
-
-**Informal**: The real-valued version of `euclidean_action` on `SchwartzTestFunction d`.
-
----
-
-### [`euclidean_action_unified_basis`](../../OSforGFF/Spacetime/Euclidean.lean#L367) — Lemma
-
-**Statement**: The pullback map is measure-preserving: `euclidean_pullback g` preserves `volume`
-on `SpaceTime d`. This is the key lemma enabling both the test-function and $L^2$ actions.
-
-**Proof uses**: [`measurePreserving_act`](../../OSforGFF/Spacetime/Euclidean.lean#L240)
-
----
-
-### [`euclidean_action_L2`](../../OSforGFF/Spacetime/Euclidean.lean#L378) — Definition
-
-**Lean signature**
-```lean
-noncomputable def euclidean_action_L2 (g : (E d))
-    (f : Lp ℂ 2 (volume : Measure (SpaceTime d))) : Lp ℂ 2 (volume : Measure (SpaceTime d))
-```
-
-**Informal**: The Euclidean action on $L^2$ functions via the same pullback, using measure
-preservation (`Lp.compMeasurePreserving`) instead of temperate-growth bounds.
-
----
-
-### [`euclidean_action_CLM`](../../OSforGFF/Spacetime/Euclidean.lean#L387) — Definition
-
-**Lean signature**
-```lean
-noncomputable def euclidean_action_CLM (g : (E d)) : (SchwartzTestFunctionℂ d) →L[ℂ] (SchwartzTestFunctionℂ d) :=
-  SchwartzMap.compCLM (𝕜 := ℂ)
-    (hg := euclidean_pullback_temperate_growth g)
-    (hg_upper := euclidean_pullback_polynomial_bounds g)
-```
-
-**Informal**: The Euclidean action on complex test functions packaged as a continuous
-$\mathbb{C}$-linear map.
-
----
-
-### [`euclidean_actions_unified`](../../OSforGFF/Spacetime/Euclidean.lean#L393) — Lemma
-
-**Statement**: Both the test-function and $L^2$ actions arise from continuous linear maps: there
-exist $T_{\mathrm{test}}$ (equal to `euclidean_action_CLM g`) and $T_{L^2}$ agreeing pointwise
-with `euclidean_action g` and `euclidean_action_L2 g` respectively.
-
-**Proof uses**: [`euclidean_action_CLM`](../../OSforGFF/Spacetime/Euclidean.lean#L387), [`euclidean_action_L2`](../../OSforGFF/Spacetime/Euclidean.lean#L378)
-
----
-
-*This file has **17** definitions and **26** theorems/lemmas (0 with sorry).*
+*This file has **14** definitions and **24** theorems/lemmas (0 with sorry).*

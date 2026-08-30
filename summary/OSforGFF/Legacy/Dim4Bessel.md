@@ -21,9 +21,10 @@ The content is preserved (not deleted) because it is genuine proven mathematics 
 derivation, not a re-statement of the generic results. Everything is fixed to dimension $d = 4$ via
 private shorthands `STDimension := 4`, `SpaceTime4 := SpaceTime 4`, `TestFunctionℂ4 := TestFunctionℂ 4`,
 and it legitimately uses 4D-specific constructs (`freeCovariance4`, `freeCovarianceBessel`, closed
-$16\pi^2$ heat-kernel coefficients). The live 4D kernel `freeCovarianceBessel` / `freeCovariance4` —
-the only externally consumed declarations of the original file — has been extracted to
-`Instances/Dim4.lean` (on the build graph) and is imported here for the lemmas that still refer to it.
+$16\pi^2$ heat-kernel coefficients). The named 4D kernel `freeCovarianceBessel` / `freeCovariance4` (with the `rfl` identity
+`freeCovariance_dim4_eq`) is no longer consumed by the on-graph library — the live
+`Instances/Dim4.lean` instance works directly with the radial profile — so the kernel is defined
+here (lines 87–98) for the lemmas that refer to it.
 
 **Supersession map (per the header):** `freePropagatorMomentum(_mathlib)` $\to$ `freePropagatorMom`;
 `heatKernelPositionSpace` (+ variants) $\to$ `heatKernelProfile`; `covarianceSchwingerRep` (+
@@ -275,7 +276,7 @@ propagator.
 **Statement**: The Bessel covariance is symmetric:
 $C_{\mathrm{Bessel}}(x,y) = C_{\mathrm{Bessel}}(y,x)$.
 
-**Proof uses**: `norm_sub_rev` (the imported `freeCovarianceBessel` from `Instances/Dim4.lean`).
+**Proof uses**: `norm_sub_rev` (the `freeCovarianceBessel` kernel defined earlier in this file).
 
 ---
 

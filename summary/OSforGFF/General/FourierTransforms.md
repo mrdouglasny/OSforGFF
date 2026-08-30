@@ -9,31 +9,20 @@
 This file proves Fourier transform identities needed for the Gaussian Free Field, particularly
 for reflection positivity of the free covariance. The main results are: (1) the Fourier
 transform of the exponential decay $e^{-\mu\lvert x \rvert}$ is the Lorentzian
-$2\mu/(k^2 + \mu^2)$; (2) the inverse — the Fourier transform of the Lorentzian
-$1/(k^2 + \mu^2)$ is $(\pi/\mu) e^{-\mu\lvert x \rvert}$; and (3) a factorization lemma
-$e^{-\mu\lvert x - y \rvert} = e^{-\mu x} e^{\mu y}$ for $x \geq 0$, $y \leq 0$ that directly
-enables the reflection positivity argument.
+$2\mu/(k^2 + \mu^2)$; and (2) the inverse — the Fourier transform of the Lorentzian
+$1/(k^2 + \mu^2)$ is $(\pi/\mu) e^{-\mu\lvert x \rvert}$.
 
 ## Status
 
 **Main result**: Fully proven — file is sorry-free.
 
-**Length**: 830 lines, 1 definition(s) + 25 theorem(s)/lemma(s)
+**Length**: 671 lines, 1 definition(s) + 19 theorem(s)/lemma(s)
 
 ---
 
 ## Dependencies
 
-### [`fubini_triple_reorder`](../../OSforGFF/General/FourierTransforms.lean#L98) — Lemma
-
-**Statement**: For integrable $F : \alpha \times \alpha \times \alpha \to \mathbb{C}$, the order of integration may be swapped:
-$$\int_x \int_y \int_k F(x,y,k) = \int_k \int_x \int_y F(x,y,k).$$
-
-**Proof uses**: `MeasurePreserving.integrable_comp_emb`, `integral_prod`, `MeasurePreserving.integral_comp`
-
----
-
-### [`integrable_exponential_decay`](../../OSforGFF/General/FourierTransforms.lean#L138) — Lemma
+### [`integrable_exponential_decay`](../../OSforGFF/General/FourierTransforms.lean#L65) — Lemma
 
 **Statement**: For $\mu > 0$, the function $x \mapsto e^{-\mu\lvert x \rvert}$ is integrable over $\mathbb{R}$.
 
@@ -41,17 +30,17 @@ $$\int_x \int_y \int_k F(x,y,k) = \int_k \int_x \int_y F(x,y,k).$$
 
 ---
 
-### [`integrable_exponential_decay_fourier`](../../OSforGFF/General/FourierTransforms.lean#L161) — Lemma
+### [`integrable_exponential_decay_fourier`](../../OSforGFF/General/FourierTransforms.lean#L88) — Lemma
 
 **Statement**: For $\mu > 0$ and any $k \in \mathbb{R}$, the function $x \mapsto e^{ikx} e^{-\mu\lvert x \rvert}$ is integrable over $\mathbb{R}$.
 
-**Proof uses**: [`integrable_exponential_decay`](../../OSforGFF/General/FourierTransforms.lean#L138), `Integrable.bdd_mul`
+**Proof uses**: [`integrable_exponential_decay`](../../OSforGFF/General/FourierTransforms.lean#L65), `Integrable.bdd_mul`
 
 ---
 
 ## Half-Line Integrals and Antiderivatives
 
-### [`ik_add_ne_zero`](../../OSforGFF/General/FourierTransforms.lean#L184) — Lemma
+### [`ik_add_ne_zero`](../../OSforGFF/General/FourierTransforms.lean#L111) — Lemma
 
 **Statement**: For $\alpha \neq 0$ and any $k \in \mathbb{R}$, the complex number $ik + \alpha$ is nonzero.
 
@@ -59,15 +48,7 @@ $$\int_x \int_y \int_k F(x,y,k) = \int_k \int_x \int_y F(x,y,k).$$
 
 ---
 
-### [`antideriv_exp_complex_linear`](../../OSforGFF/General/FourierTransforms.lean#L200) — Lemma
-
-**Statement**: The function $t \mapsto e^{(ik+\alpha)t}/(ik+\alpha)$ is an antiderivative of $t \mapsto e^{(ik+\alpha)t}$ whenever $\alpha \neq 0$.
-
-**Proof uses**: `Complex.ofRealCLM.hasDerivAt`, `HasDerivAt.cexp`, `HasDerivAt.div_const`
-
----
-
-### [`tendsto_cexp_atTop_zero`](../../OSforGFF/General/FourierTransforms.lean#L224) — Theorem
+### [`tendsto_cexp_atTop_zero`](../../OSforGFF/General/FourierTransforms.lean#L121) — Theorem
 
 **Statement**: If $\mathrm{Re}(c) < 0$, then $e^{cx} \to 0$ as $x \to +\infty$ in $\mathbb{R}$.
 
@@ -75,7 +56,7 @@ $$\int_x \int_y \int_k F(x,y,k) = \int_k \int_x \int_y F(x,y,k).$$
 
 ---
 
-### [`tendsto_cexp_atBot_zero`](../../OSforGFF/General/FourierTransforms.lean#L239) — Theorem
+### [`tendsto_cexp_atBot_zero`](../../OSforGFF/General/FourierTransforms.lean#L136) — Theorem
 
 **Statement**: If $\mathrm{Re}(c) > 0$, then $e^{cx} \to 0$ as $x \to -\infty$ in $\mathbb{R}$.
 
@@ -83,7 +64,7 @@ $$\int_x \int_y \int_k F(x,y,k) = \int_k \int_x \int_y F(x,y,k).$$
 
 ---
 
-### [`integrableOn_exp_decay_Ioi`](../../OSforGFF/General/FourierTransforms.lean#L249) — Theorem
+### [`integrableOn_exp_decay_Ioi`](../../OSforGFF/General/FourierTransforms.lean#L146) — Theorem
 
 **Statement**: For $\mu > 0$, the function $x \mapsto e^{(ik-\mu)x}$ is integrable on $(0, \infty)$.
 
@@ -91,23 +72,7 @@ $$\int_x \int_y \int_k F(x,y,k) = \int_k \int_x \int_y F(x,y,k).$$
 
 ---
 
-### [`exp_pos_integrableOn_Iio`](../../OSforGFF/General/FourierTransforms.lean#L261) — Theorem
-
-**Statement**: For $b > 0$, the function $x \mapsto e^{bx}$ is integrable on $(-\infty, a)$.
-
-**Proof uses**: `exp_neg_integrableOn_Ioi`, `IntegrableOn.comp_neg`
-
----
-
-### [`exp_pos_integrableOn_Iic`](../../OSforGFF/General/FourierTransforms.lean#L277) — Theorem
-
-**Statement**: For $b > 0$, the function $x \mapsto e^{bx}$ is integrable on $(-\infty, a]$.
-
-**Proof uses**: `integrableOn_exp_mul_Iic`
-
----
-
-### [`integrableOn_exp_growth_Iic`](../../OSforGFF/General/FourierTransforms.lean#L283) — Theorem
+### [`integrableOn_exp_growth_Iic`](../../OSforGFF/General/FourierTransforms.lean#L158) — Theorem
 
 **Statement**: For $\mu > 0$, the function $x \mapsto e^{(ik+\mu)x}$ is integrable on $(-\infty, 0]$.
 
@@ -115,7 +80,7 @@ $$\int_x \int_y \int_k F(x,y,k) = \int_k \int_x \int_y F(x,y,k).$$
 
 ---
 
-### [`ik_sub_ne_zero`](../../OSforGFF/General/FourierTransforms.lean#L294) — Lemma
+### [`ik_sub_ne_zero`](../../OSforGFF/General/FourierTransforms.lean#L169) — Lemma
 
 **Statement**: For $\mu \neq 0$ and any $k \in \mathbb{R}$, the complex number $ik - \mu$ is nonzero.
 
@@ -123,55 +88,48 @@ $$\int_x \int_y \int_k F(x,y,k) = \int_k \int_x \int_y F(x,y,k).$$
 
 ---
 
-### [`fourier_exp_decay_positive_halfline`](../../OSforGFF/General/FourierTransforms.lean#L308) — Theorem
+### [`fourier_exp_decay_positive_halfline`](../../OSforGFF/General/FourierTransforms.lean#L183) — Theorem
 
 **Statement**: For $\mu > 0$,
 $$\int_0^\infty e^{ikx} e^{-\mu x}\, dx = \frac{1}{\mu - ik}.$$
 
-**Proof uses**: [`ik_sub_ne_zero`](../../OSforGFF/General/FourierTransforms.lean#L294), [`integrableOn_exp_decay_Ioi`](../../OSforGFF/General/FourierTransforms.lean#L249), [`tendsto_cexp_atTop_zero`](../../OSforGFF/General/FourierTransforms.lean#L224), `integral_Ioi_of_hasDerivAt_of_tendsto'`, `HasDerivAt.cexp`, `HasDerivAt.div_const`
+**Proof uses**: [`ik_sub_ne_zero`](../../OSforGFF/General/FourierTransforms.lean#L169), [`integrableOn_exp_decay_Ioi`](../../OSforGFF/General/FourierTransforms.lean#L146), [`tendsto_cexp_atTop_zero`](../../OSforGFF/General/FourierTransforms.lean#L121), `integral_Ioi_of_hasDerivAt_of_tendsto'`, `HasDerivAt.cexp`, `HasDerivAt.div_const`
 
 ---
 
-### [`fourier_exp_decay_negative_halfline`](../../OSforGFF/General/FourierTransforms.lean#L366) — Theorem
+### [`fourier_exp_decay_negative_halfline`](../../OSforGFF/General/FourierTransforms.lean#L241) — Theorem
 
 **Statement**: For $\mu > 0$,
 $$\int_{-\infty}^0 e^{ikx} e^{\mu x}\, dx = \frac{1}{\mu + ik}.$$
 
-**Proof uses**: [`ik_add_ne_zero`](../../OSforGFF/General/FourierTransforms.lean#L184), [`integrableOn_exp_growth_Iic`](../../OSforGFF/General/FourierTransforms.lean#L283), [`tendsto_cexp_atBot_zero`](../../OSforGFF/General/FourierTransforms.lean#L239), `integral_Iic_of_hasDerivAt_of_tendsto'`, `HasDerivAt.cexp`, `HasDerivAt.div_const`
+**Proof uses**: [`ik_add_ne_zero`](../../OSforGFF/General/FourierTransforms.lean#L111), [`integrableOn_exp_growth_Iic`](../../OSforGFF/General/FourierTransforms.lean#L158), [`tendsto_cexp_atBot_zero`](../../OSforGFF/General/FourierTransforms.lean#L136), `integral_Iic_of_hasDerivAt_of_tendsto'`, `HasDerivAt.cexp`, `HasDerivAt.div_const`
 
 ---
 
-### [`fourier_exponential_decay_split`](../../OSforGFF/General/FourierTransforms.lean#L420) — Lemma
+### [`fourier_exponential_decay_split`](../../OSforGFF/General/FourierTransforms.lean#L295) — Lemma
 
 **Statement**: The sum of the two half-line integrals equals the Lorentzian:
 $$\int_{-\infty}^0 e^{ikx} e^{\mu x}\, dx + \int_0^\infty e^{ikx} e^{-\mu x}\, dx = \frac{2\mu}{k^2 + \mu^2}.$$
 
-**Proof uses**: [`fourier_exp_decay_negative_halfline`](../../OSforGFF/General/FourierTransforms.lean#L366), [`fourier_exp_decay_positive_halfline`](../../OSforGFF/General/FourierTransforms.lean#L308)
+**Proof uses**: [`fourier_exp_decay_negative_halfline`](../../OSforGFF/General/FourierTransforms.lean#L241), [`fourier_exp_decay_positive_halfline`](../../OSforGFF/General/FourierTransforms.lean#L183)
 
 ---
 
 ## Fourier Transform of Exponential Decay
 
-### [`fourier_exponential_decay'`](../../OSforGFF/General/FourierTransforms.lean#L463) — Lemma
+### [`fourier_exponential_decay'`](../../OSforGFF/General/FourierTransforms.lean#L338) — Lemma
 
 **Statement**: For $\mu > 0$,
 $$\int_{-\infty}^\infty e^{ikx} e^{-\mu\lvert x \rvert}\, dx = \frac{2\mu}{k^2 + \mu^2}.$$
 
-**Proof uses**: [`integrable_exponential_decay_fourier`](../../OSforGFF/General/FourierTransforms.lean#L161), [`fourier_exponential_decay_split`](../../OSforGFF/General/FourierTransforms.lean#L420)
+**Proof uses**: [`integrable_exponential_decay_fourier`](../../OSforGFF/General/FourierTransforms.lean#L88), [`fourier_exponential_decay_split`](../../OSforGFF/General/FourierTransforms.lean#L295)
 
 ---
 
-### [`fourier_exponential_decay`](../../OSforGFF/General/FourierTransforms.lean#L501) — Lemma
-
-**Statement**: The variant with negative phase convention: $\int e^{-ikx} e^{-\mu\lvert x \rvert}\, dx = 2\mu/(k^2 + \mu^2)$.
-
-**Proof uses**: [`fourier_exponential_decay'`](../../OSforGFF/General/FourierTransforms.lean#L463)
-
----
 
 ## Fourier Inversion and the Lorentzian Transform
 
-### [`expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L537) — Definition
+### [`expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L401) — Definition
 
 **Lean signature**
 ```lean
@@ -181,7 +139,7 @@ noncomputable def expDecayFun (μ : ℝ) : ℝ → ℂ
 
 ---
 
-### [`continuous_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L540) — Lemma
+### [`continuous_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L404) — Lemma
 
 **Statement**: The function $\mathrm{expDecayFun}(\mu)$ is continuous.
 
@@ -189,66 +147,57 @@ noncomputable def expDecayFun (μ : ℝ) : ℝ → ℂ
 
 ---
 
-### [`integrable_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L547) — Lemma
+### [`integrable_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L411) — Lemma
 
 **Statement**: For $\mu > 0$, $\mathrm{expDecayFun}(\mu)$ is integrable over $\mathbb{R}$.
 
-**Proof uses**: [`integrable_exponential_decay`](../../OSforGFF/General/FourierTransforms.lean#L138)
+**Proof uses**: [`integrable_exponential_decay`](../../OSforGFF/General/FourierTransforms.lean#L65)
 
 ---
 
-### [`fourierIntegral_expDecayFun_eq`](../../OSforGFF/General/FourierTransforms.lean#L554) — Lemma
+### [`fourierIntegral_expDecayFun_eq`](../../OSforGFF/General/FourierTransforms.lean#L418) — Lemma
 
 **Statement**: The Mathlib Fourier transform of $\mathrm{expDecayFun}(\mu)$ at frequency $\xi$ equals $2\mu/(4\pi^2\xi^2 + \mu^2)$.
 
-**Proof uses**: [`fourier_exponential_decay'`](../../OSforGFF/General/FourierTransforms.lean#L463)
+**Proof uses**: [`fourier_exponential_decay'`](../../OSforGFF/General/FourierTransforms.lean#L338)
 
 ---
 
-### [`integrable_fourierIntegral_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L584) — Lemma
+### [`integrable_fourierIntegral_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L448) — Lemma
 
 **Statement**: For $\mu > 0$, the Fourier transform $\hat{f}_\mu$ of $\mathrm{expDecayFun}(\mu)$ is integrable over $\mathbb{R}$.
 
-**Proof uses**: [`fourierIntegral_expDecayFun_eq`](../../OSforGFF/General/FourierTransforms.lean#L554), `integrable_inv_one_add_sq`, `integrable_comp_smul_iff`
+**Proof uses**: [`fourierIntegral_expDecayFun_eq`](../../OSforGFF/General/FourierTransforms.lean#L418), `integrable_inv_one_add_sq`, `integrable_comp_smul_iff`
 
 ---
 
-### [`fourier_inversion_exp_decay`](../../OSforGFF/General/FourierTransforms.lean#L622) — Theorem
+### [`fourier_inversion_exp_decay`](../../OSforGFF/General/FourierTransforms.lean#L486) — Theorem
 
 **Statement**: For $\mu > 0$ and $x \in \mathbb{R}$,
 $$\frac{1}{2\pi} \int e^{ikx} \cdot \frac{2\mu}{k^2 + \mu^2}\, dk = e^{-\mu\lvert x \rvert}.$$
 
-**Proof uses**: [`continuous_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L540), [`integrable_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L547), [`integrable_fourierIntegral_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L584), [`fourierIntegral_expDecayFun_eq`](../../OSforGFF/General/FourierTransforms.lean#L554), `Continuous.fourierInv_fourier_eq`, `MeasureTheory.Measure.integral_comp_smul`
+**Proof uses**: [`continuous_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L404), [`integrable_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L411), [`integrable_fourierIntegral_expDecayFun`](../../OSforGFF/General/FourierTransforms.lean#L448), [`fourierIntegral_expDecayFun_eq`](../../OSforGFF/General/FourierTransforms.lean#L418), `Continuous.fourierInv_fourier_eq`, `MeasureTheory.Measure.integral_comp_smul`
 
 ---
 
 ## The Lorentzian Fourier Transform (Main Result)
 
-### [`fourier_lorentzian_1d`](../../OSforGFF/General/FourierTransforms.lean#L705) — Theorem
+### [`fourier_lorentzian_1d`](../../OSforGFF/General/FourierTransforms.lean#L569) — Theorem
 
 **Statement**: For $\mu > 0$ and $x \in \mathbb{R}$,
 $$\int_{-\infty}^\infty \frac{e^{ikx}}{k^2 + \mu^2}\, dk = \frac{\pi}{\mu} e^{-\mu\lvert x \rvert}.$$
 
-**Proof uses**: [`fourier_inversion_exp_decay`](../../OSforGFF/General/FourierTransforms.lean#L622)
+**Proof uses**: [`fourier_inversion_exp_decay`](../../OSforGFF/General/FourierTransforms.lean#L486)
 
 ---
 
-### [`exp_factorization_reflection`](../../OSforGFF/General/FourierTransforms.lean#L750) — Lemma
-
-**Statement**: For $x \geq 0$ and $y \leq 0$,
-$$e^{-\mu\lvert x - y \rvert} = e^{-\mu x} \cdot e^{\mu y}.$$
-
-**Proof uses**: *(direct tactic proof)*
-
----
-
-### [`fourier_lorentzian_1d_neg`](../../OSforGFF/General/FourierTransforms.lean#L764) — Theorem
+### [`fourier_lorentzian_1d_neg`](../../OSforGFF/General/FourierTransforms.lean#L617) — Theorem
 
 **Statement**: The negative-phase variant:
 $$\int_{-\infty}^\infty \frac{e^{-ikx}}{k^2 + \mu^2}\, dk = \frac{\pi}{\mu} e^{-\mu\lvert x \rvert}.$$
 
-**Proof uses**: [`fourier_lorentzian_1d`](../../OSforGFF/General/FourierTransforms.lean#L705)
+**Proof uses**: [`fourier_lorentzian_1d`](../../OSforGFF/General/FourierTransforms.lean#L569)
 
 ---
 
-*This file has **1** definition and **25** theorems/lemmas (0 with sorry).*
+*This file has **1** definition and **19** theorems/lemmas (0 with sorry).*

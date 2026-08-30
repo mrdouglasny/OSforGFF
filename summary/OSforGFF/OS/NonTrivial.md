@@ -84,10 +84,10 @@ None — file is sorry-free.
 
 ### [`embeddingMap_injective`](../../OSforGFF/OS/NonTrivial.lean#L162) — Theorem
 
-**Statement**: The square-root propagator embedding $T = $ [`embeddingMap m`](../../OSforGFF/Covariance/RealForm.lean#L332)$: S(\mathbb{R}^d) \to L^2(\mathbb{R}^d,\mathbb{C})$ is injective (dimension-generic). If $T f = T g$ then $\int \lVert\mathrm{sqrtPropagatorMap}\,m\,(f-g)\rVert^2 = 0$; the nonnegative continuous integrand vanishes a.e., hence everywhere, so $\mathcal{F}(f-g) = 0$ and $f = g$.
+**Statement**: The square-root propagator embedding $T = $ [`embeddingMap m`](../../OSforGFF/Covariance/RealForm.lean#L327)$: S(\mathbb{R}^d) \to L^2(\mathbb{R}^d,\mathbb{C})$ is injective (dimension-generic). If $T f = T g$ then $\int \lVert\mathrm{sqrtPropagatorMap}\,m\,(f-g)\rVert^2 = 0$; the nonnegative continuous integrand vanishes a.e., hence everywhere, so $\mathcal{F}(f-g) = 0$ and $f = g$.
 
-**Proof uses**: [`embeddingMap_norm_sq`](../../OSforGFF/Covariance/RealForm.lean#L467),
-[`sqrtPropagatorMap_sq_integrable`](../../OSforGFF/Covariance/RealForm.lean#L146),
+**Proof uses**: [`embeddingMap_norm_sq`](../../OSforGFF/Covariance/RealForm.lean#L462),
+[`sqrtPropagatorMap_sq_integrable`](../../OSforGFF/Covariance/RealForm.lean#L141),
 [`eq_zero_of_continuous_ae_zero`](../../OSforGFF/OS/NonTrivial.lean#L101),
 [`sqrtPropagatorMap_eq_zero_iff`](../../OSforGFF/OS/NonTrivial.lean#L123)
 
@@ -99,7 +99,7 @@ None — file is sorry-free.
 
 **Statement**: Strict positive-definiteness — $C(f,f) > 0$ for every nonzero real test function $f$, since $C(f,f) = \lVert Tf\rVert^2$ with $T$ injective. This rules out the Dirac-at-zero measure as an OS model.
 
-**Proof uses**: [`freeCovarianceFormR_eq_normSq`](../../OSforGFF/Covariance/RealForm.lean#L510),
+**Proof uses**: [`freeCovarianceFormR_eq_normSq`](../../OSforGFF/Covariance/RealForm.lean#L505),
 [`embeddingMap_injective`](../../OSforGFF/OS/NonTrivial.lean#L162)
 
 ---
@@ -110,7 +110,7 @@ None — file is sorry-free.
 
 **Statement**: For $f \neq 0$, the pairing $\langle\omega,f\rangle$ has strictly positive variance under the free GFF: $\int (\langle\omega,f\rangle)^2\,d\mu_{\mathrm{GFF}} > 0$ (the pushforward by the pairing is a non-degenerate Gaussian).
 
-**Proof uses**: [`gff_second_moment_eq_covariance`](../../OSforGFF/Measure/Construct.lean#L298),
+**Proof uses**: [`gff_second_moment_eq_covariance`](../../OSforGFF/Measure/Construct.lean#L297),
 [`freeCovarianceFormR_strictPos`](../../OSforGFF/OS/NonTrivial.lean#L202)
 
 ---

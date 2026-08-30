@@ -103,7 +103,7 @@ noncomputable def SchwingerTwoPointFunction
 **Statement**: For any net of bump functions $\phi_i$ with $r_{\mathrm{out},i} \to 0$, if the two-point Schwinger function is given by integration against a continuous kernel $C$ (continuous away from $0$), then the smeared two-point functions converge to $C(x)$ for $x \neq 0$:
 $$\text{SmearedTwoPointFunction}(\phi_i, x) \xrightarrow{i} C(x).$$
 
-**Proof uses**: [`double_mollifier_convergence`](../../OSforGFF/General/FunctionalAnalysis.lean#L992), [`bumpToSchwartz_apply`](../../OSforGFF/Schwinger/TwoPoint.lean#L54), [`translateSchwartz`](../../OSforGFF/Schwinger/TwoPoint.lean#L62), [`SchwartzMap.translate`](../../OSforGFF/General/FunctionalAnalysis.lean#L805)
+**Proof uses**: [`double_mollifier_convergence`](../../OSforGFF/General/FunctionalAnalysis.lean#L699), [`bumpToSchwartz_apply`](../../OSforGFF/Schwinger/TwoPoint.lean#L54), [`translateSchwartz`](../../OSforGFF/Schwinger/TwoPoint.lean#L62), [`SchwartzMap.translate`](../../OSforGFF/General/FunctionalAnalysis.lean#L512)
 
 ---
 

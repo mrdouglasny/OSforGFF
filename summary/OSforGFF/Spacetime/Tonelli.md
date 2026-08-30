@@ -40,7 +40,7 @@ None — file is sorry-free.
 
 **Statement**: For a complex Schwartz function $f$ on $\mathbb{R}^d$ and any fixed time $t$, the function $v \mapsto \lVert f(\mathrm{spacetimeDecomp}^{-1}(t, v))\rVert$ is integrable over $\mathbb{R}^{d-1}$, via the decay bound $C/(1+\lVert\cdot\rVert)^{d+1}$ (the exponent $d+1$ exceeds both the spacetime dimension $d$ and the slice dimension $d-1$).
 
-**Proof uses**: [`schwartz_integrable_decay`](../../OSforGFF/General/FunctionalAnalysis.lean#L834), `integrable_one_add_norm`, [`spacetimeDecomp_symm_norm_ge`](../../OSforGFF/Spacetime/Tonelli.lean#L36)
+**Proof uses**: [`schwartz_integrable_decay`](../../OSforGFF/General/FunctionalAnalysis.lean#L541), `integrable_one_add_norm`, [`spacetimeDecomp_symm_norm_ge`](../../OSforGFF/Spacetime/Tonelli.lean#L36)
 
 ---
 

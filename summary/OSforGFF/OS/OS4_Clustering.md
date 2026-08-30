@@ -17,8 +17,7 @@ $S_2(f, T_a g) = \iint f(x)\,K(x-y)\,g(y-a)\,dy\,dx$, obtained by splitting the 
 $\lVert y\rVert = \lVert x\rVert/2$.
 
 The file is dimension-generic: it runs over section variables `{d : ℕ} [Fact (2 ≤ d)]` (each result
-adding `(m : ℝ) [Fact (0 < m)] [GFFPropagator d m]`), and — unlike the OS3 chain — needs **no**
-`Fact (d ≤ 5)`. All covariance information enters through the centered kernel engine of
+adding `(m : ℝ) [Fact (0 < m)] [GFFPropagator d m]`). All covariance information enters through the centered kernel engine of
 `Covariance/ParsevalGeneric.lean`: the kernel `freeCovarianceKernel d m := freeCovariance d m 0 ·`,
 its identification `freeCovariance_eq_kernel`, and the analytic facts
 `freeCovarianceKernel_continuousOn`, `freeCovarianceKernel_integrable`, the exponential-decay bound
@@ -112,7 +111,7 @@ $\lVert S_2(f, T_a g)\rVert < \delta \le 1$, then $\lVert Z[f + T_a g] - Z[f]\,Z
 for every $\varepsilon > 0$ there is $R > 0$ with $\lVert S_2(f, T_a g)\rVert < \varepsilon$ whenever
 $\lVert a\rVert > R$, where $S_2(f, T_a g) = \iint f(x)\,K(x-y)\,g(y-a)\,dy\,dx$.
 
-**Proof uses**: `freeCovarianceKernel_decay_bound`, `schwartz_bilinear_translation_decay_proof`,
+**Proof uses**: `freeCovarianceKernel_decay_bound`, `schwartz_bilinear_translation_decay`,
 `freeCovariance_eq_kernel`, `schwinger_eq_covariance`
 
 ---
@@ -235,7 +234,7 @@ $$\bigl\lVert \mathbb{E}[e^{\langle\omega,f\rangle+\langle T_s\omega,g\rangle}] 
 for $s \ge 0$; the mass gap gives exponential decay of the cross term, stronger than any polynomial.
 
 **Proof uses**: `freeCovarianceKernel_exp_decay` (rate $m/2$, radius $1$),
-`schwartz_bilinear_translation_decay_polynomial_proof`,
+`schwartz_bilinear_translation_decay_polynomial`,
 [`schwinger2_time_translated_eq_bilinear`](../../OSforGFF/OS/OS4_Clustering.lean#L570),
 [`timeShiftConst_norm`](../../OSforGFF/OS/OS4_Clustering.lean#L538),
 `OS4infra.gff_joint_mgf_factorization`
