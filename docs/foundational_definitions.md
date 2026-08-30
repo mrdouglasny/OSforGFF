@@ -36,78 +36,75 @@ fix `d = 2, 3, 4, 5`.
 | `SchwartzTestFunctionℂ d` | `SchwartzMap (SpaceTime d) ℂ` — complex Schwartz functions S(ℝ^d, ℂ) |
 | `FieldConfiguration d` | `WeakDual ℝ (SchwartzTestFunction d)` — tempered distributions S'(ℝ^d) |
 | `SpatialCoords d` | `EuclideanSpace ℝ (Fin (d - 1))` — spatial ℝ^{d−1} |
-| `SpatialL2 d` | `Lp ℝ 2 (volume : Measure (SpatialCoords d))` — L²(ℝ^{d−1}) |
 
 ### Pairings and generating functionals (`Spacetime/Basic.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 122 | `distributionPairing` | `⟨ω, f⟩ : ℝ` — evaluation of distribution ω on test function f |
-| 163 | `GJGeneratingFunctional` | `Z[J] = ∫ exp(i⟨ω,J⟩) dμ(ω)` — Glimm–Jaffe generating functional |
-| 249 | `distributionPairingℂ_real` | `⟨ω, f⟩ₗ = ⟨ω, fᵣₑ⟩ + i⟨ω, fᵢₘ⟩` — complex pairing |
-| 256 | `GJGeneratingFunctionalℂ` | Complex generating functional for complex test functions |
-| 261 | `GJMean` | `𝔼_μ[⟨ω, φ⟩]` — mean field |
-| 279 | `E` | `E(m, k) = √(‖k‖² + m²)` — relativistic dispersion relation |
+| Name | Definition |
+|------|------------|
+| `distributionPairing` | `⟨ω, f⟩ : ℝ` — evaluation of distribution ω on test function f |
+| `GJGeneratingFunctional` | `Z[J] = ∫ exp(i⟨ω,J⟩) dμ(ω)` — Glimm–Jaffe generating functional |
+| `distributionPairingℂ_real` | `⟨ω, f⟩ₗ = ⟨ω, fᵣₑ⟩ + i⟨ω, fᵢₘ⟩` — complex pairing |
+| `GJGeneratingFunctionalℂ` | Complex generating functional for complex test functions |
+| `GJMean` | `𝔼_μ[⟨ω, φ⟩]` — mean field |
+| `E` | `E(m, k) = √(‖k‖² + m²)` — relativistic dispersion relation |
 
 ### Complex test functions (`Spacetime/ComplexTestFunction.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 218 | `toComplex` | Embedding ℝ-Schwartz → ℂ-Schwartz |
-| 308 | `conjSchwartz` | Pointwise complex conjugation on Schwartz functions |
+| Name | Definition |
+|------|------------|
+| `toComplex` | Embedding ℝ-Schwartz → ℂ-Schwartz |
+| `conjSchwartz` | Pointwise complex conjugation on Schwartz functions |
 
 ### Spacetime decomposition (`Spacetime/Decomposition.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 49 | `spacetimeDecomp` | Measurable equivalence SpaceTime ≃ᵐ ℝ × SpatialCoords |
+| Name | Definition |
+|------|------------|
+| `spacetimeDecomp` | Measurable equivalence SpaceTime ≃ᵐ ℝ × SpatialCoords |
 
 ---
 
 ## Discrete Symmetries (`Spacetime/DiscreteSymmetry.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 58 | `QFT.timeReflection` | Θ: (t, x̄) ↦ (−t, x̄) on spacetime |
-| 72 | `QFT.timeReflectionIsometry` | Θ as element of O(4) |
-| 125 | `QFT.timeReflectionLE` | Θ as linear isometry equivalence (self-inverse) |
-| 176 | `QFT.compTimeReflection` | Pullback f ↦ f∘Θ on complex test functions (CLM) |
-| 185 | `QFT.compTimeReflectionReal` | Pullback f ↦ f∘Θ on real test functions (CLM) |
+| Name | Definition |
+|------|------------|
+| `QFT.timeReflection` | Θ: (t, x̄) ↦ (−t, x̄) on spacetime |
+| `QFT.timeReflectionLE` | Θ as linear isometry equivalence (self-inverse) |
+| `QFT.compTimeReflection` | Pullback f ↦ f∘Θ on complex test functions (CLM) |
+| `QFT.compTimeReflectionReal` | Pullback f ↦ f∘Θ on real test functions (CLM) |
 
 ---
 
 ## Euclidean Group (`Spacetime/Euclidean.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 51 | `QFT.O4` | Orthogonal group O(4) = linear isometries of ℝ⁴ |
-| 56 | `QFT.E` | `structure` — Euclidean motion (R ∈ O(4), t ∈ ℝ⁴), i.e. E(4) = ℝ⁴ ⋊ O(4) |
-| 62 | `QFT.act` | Group action x ↦ R·x + t |
-| 350 | `QFT.euclidean_action` | Pullback (g·f)(x) = f(g⁻¹·x) on complex test functions |
-| 385 | `QFT.euclidean_action_CLM` | Euclidean action as a continuous linear map |
+| Name | Definition |
+|------|------------|
+| `QFT.O` | Orthogonal group O(d) = linear isometries of ℝᵈ |
+| `QFT.E` | `structure` — Euclidean motion (R ∈ O(d), t ∈ ℝᵈ), i.e. E(d) = ℝᵈ ⋊ O(d) |
+| `QFT.act` | Group action x ↦ R·x + t |
+| `QFT.euclidean_action` | Pullback (g·f)(x) = f(g⁻¹·x) on complex test functions |
 
 ---
 
 ## Time Translation (`Spacetime/TimeTranslation.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 70 | `timeShift` | (t, x̄) ↦ (t+s, x̄) on spacetime |
-| 199 | `timeTranslationSchwartzCLM` | T_s as CLM on real Schwartz functions |
-| 874 | `timeTranslationDistribution` | T_s on distributions by duality: ⟨T_s ω, f⟩ = ⟨ω, T_{−s} f⟩ |
+| Name | Definition |
+|------|------------|
+| `timeShift` | (t, x̄) ↦ (t+s, x̄) on spacetime |
+| `timeTranslationSchwartzCLM` | T_s as CLM on real Schwartz functions |
+| `timeTranslationDistribution` | T_s on distributions by duality: ⟨T_s ω, f⟩ = ⟨ω, T_{−s} f⟩ |
 
 ---
 
 ## Positive-Time Test Functions and OS Star (`Spacetime/PositiveTimeTestFunction.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 42 | `HasPositiveTime` | Predicate: x₀ > 0 |
-| 52 | `PositiveTimeTestFunctions.submodule` | Submodule of f ∈ S(ℝ⁴) with tsupport ⊆ {x₀ > 0} |
-| 67 | `PositiveTimeTestFunction` | Type alias for positive-time test functions |
-| 83 | `PositiveTimeTestFunctionsℂ.submodule` | ℂ-submodule of f ∈ S(ℝ⁴, ℂ) with tsupport ⊆ {x₀ > 0} |
-| 98 | `PositiveTimeTestFunctionℂ` | Type alias for complex positive-time test functions |
-| 130 | `starTestFunction` | OS star: (star f)(x) = conj(f(Θ x)) — time reflection + conjugation |
+| Name | Definition |
+|------|------------|
+| `HasPositiveTime` | Predicate: x₀ > 0 |
+| `PositiveTimeTestFunctions.submodule` | Submodule of f ∈ S(ℝᵈ) with tsupport ⊆ {x₀ > 0} |
+| `PositiveTimeTestFunction` | Type alias for positive-time test functions |
+| `PositiveTimeTestFunctionsℂ.submodule` | ℂ-submodule of f ∈ S(ℝᵈ, ℂ) with tsupport ⊆ {x₀ > 0} |
+| `PositiveTimeTestFunctionℂ` | Type alias for complex positive-time test functions |
+| `starTestFunction` | OS star: (star f)(x) = conj(f(Θ x)) — time reflection + conjugation |
 
 ---
 
@@ -162,20 +159,19 @@ operators) is preserved off the build graph in `OSforGFF/Legacy/`.
 
 ### n-point functions (`Schwinger/Defs.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 57 | `SchwingerFunction` | S_n(f₁,…,fₙ) = ∫ ∏ᵢ ⟨ω, fᵢ⟩ dμ(ω) — n-point correlation |
-| 62 | `SchwingerFunction₁` | 1-point function (mean field) |
-| 67 | `SchwingerFunction₂` | 2-point function (covariance) |
-| 109 | `CovarianceBilinear` | Property: S₂ is ℂ-bilinear |
-| 258 | `IsGaussianMeasure` | Z[J] = exp(−½ Cov(J,J)) for all J |
+| Name | Definition |
+|------|------------|
+| `SchwingerFunction` | S_n(f₁,…,fₙ) = ∫ ∏ᵢ ⟨ω, fᵢ⟩ dμ(ω) — n-point correlation |
+| `SchwingerFunction₁` | 1-point function (mean field) |
+| `SchwingerFunction₂` | 2-point function (covariance) |
+| `CovarianceBilinear` | Property: S₂ is ℂ-bilinear |
 
 ### Pointwise 2-point function (`Schwinger/TwoPoint.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 67 | `SmearedTwoPointFunction` | Bump-regularized 2-point function |
-| 102 | `SchwingerTwoPointFunction` | Pointwise 2-point function as limit of smeared correlations |
+| Name | Definition |
+|------|------------|
+| `SmearedTwoPointFunction` | Bump-regularized 2-point function |
+| `SchwingerTwoPointFunction` | Pointwise 2-point function as limit of smeared correlations |
 
 ---
 
@@ -183,45 +179,49 @@ operators) is preserved off the build graph in `OSforGFF/Legacy/`.
 
 ### Nuclear space (`Measure/NuclearSpace.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 45 | `IsNuclearMap` | A CLM is nuclear (trace-class): T = ∑ₙ φₙ(·)·yₙ with ∑‖φₙ‖·‖yₙ‖ < ∞ |
-| 126 | `NuclearSpace` | `class` — topology generated by Hilbertian seminorms with Hilbert–Schmidt inclusions |
+The nuclear-space notions themselves (`NuclearSpace`, nuclear maps) come from the external
+bochner library; this file supplies the bridge facts the construction needs:
+
+| Name | Definition |
+|------|------------|
+| `nuclearSpace_to_isNuclear` | the library's `NuclearSpace` instance yields nuclearity in bochner's sense |
+| `schwartz_isHilbertNuclear` | Schwartz space is Hilbert-nuclear |
+| `schwartz_separableSpace` | Schwartz space is separable |
 
 ### Minlos theorem (`Measure/Minlos.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 100 | `gaussian_characteristic_functional` | Φ(f) = exp(−½⟨f, Cf⟩) |
+| Name | Definition |
+|------|------------|
+| `gaussian_characteristic_functional` | Φ(f) = exp(−½⟨f, Cf⟩) |
 
 ### Covariance form structure (`Measure/MinlosAnalytic.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 52 | `CovarianceForm` | `structure` — symmetric positive-semidefinite bilinear form Q with positive-definite Gaussian CF |
+| Name | Definition |
+|------|------------|
+| `CovarianceForm` | `structure` — symmetric positive-semidefinite bilinear form Q with positive-definite Gaussian CF |
 
 ### GFF construction (`Measure/Construct.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 85 | `isCenteredGJ` | 𝔼[⟨ω, f⟩] = 0 for all f |
-| 90 | `isGaussianGJ` | Z[J] = exp(−½ S₂(J,J)) |
-| 129 | `gaussianFreeField_free` | **The GFF measure** μ_GFF d m on S'(ℝ^d), constructed via Minlos |
-| 322 | `freeCovarianceForm` | The free covariance packaged as a `CovarianceForm` |
+| Name | Definition |
+|------|------------|
+| `isCenteredGJ` | 𝔼[⟨ω, f⟩] = 0 for all f |
+| `isGaussianGJ` | Z[J] = exp(−½ S₂(J,J)) |
+| `gaussianFreeField_free` | **The GFF measure** μ_GFF d m on S'(ℝ^d), constructed via Minlos |
+| `freeCovarianceForm` | The free covariance packaged as a `CovarianceForm` |
 
 ---
 
 ## OS Axiom Definitions (`OS/Axioms.lean`)
 
-| Line | Name | Definition |
-|------|------|------------|
-| 73 | `OS0_Analyticity` | Z[∑ zᵢJᵢ] is analytic on ℂⁿ |
-| 83 | `OS1_Regularity` | ‖Z[f]‖ ≤ exp(c·‖f‖_Lp) |
-| 91 | `OS2_EuclideanInvariance` | Z[f] = Z[g·f] for all g ∈ E(d) |
-| 109 | `OS3_ReflectionPositivity` | Re(∑ c̄ᵢcⱼ Z_ℂ[fᵢ − star fⱼ]) ≥ 0 for complex positive-time fᵢ, star f = conj∘f∘Θ |
-| 123 | `OS4_Clustering` | Z[f + τ_a g] → Z[f]·Z[g] as ‖a‖ → ∞ |
-| 136 | `OS4_Ergodicity` | (1/T)∫₀ᵀ A(T_s ω) ds →_{L²} 𝔼[A] |
-| 173 | `SatisfiesAllOS` | `structure` — bundles OS0–OS4 |
+| Name | Definition |
+|------|------------|
+| `OS0_Analyticity` | Z[∑ zᵢJᵢ] is analytic on ℂⁿ |
+| `OS1_Regularity` | ‖Z[f]‖ ≤ exp(c·‖f‖_Lp) |
+| `OS2_EuclideanInvariance` | Z[f] = Z[g·f] for all g ∈ E(d) |
+| `OS3_ReflectionPositivity` | Re(∑ c̄ᵢcⱼ Z_ℂ[fᵢ − star fⱼ]) ≥ 0 for complex positive-time fᵢ, star f = conj∘f∘Θ |
+| `OS4_Clustering` | Z[f + τ_a g] → Z[f]·Z[g] as ‖a‖ → ∞ |
+| `OS4_Ergodicity` | (1/T)∫₀ᵀ A(T_s ω) ds →_{L²} 𝔼[A] |
+| `SatisfiesAllOS` | `structure` — bundles OS0–OS4 |
 
 ### Master theorem (`OS/Master.lean`)
 
@@ -246,7 +246,7 @@ theorem gaussianFreeField_satisfies_all_OS_axioms_dim5 (m) [Fact (0 < m)] : Sati
 ## General Mathematics (`General/`)
 
 | File | Name | Definition |
-|------|------|------------|
+|------|------------|
 | BesselK.lean | `besselK ν z` | Modified Bessel function of order ν + the master Schwinger identity |
 | BesselFunction.lean | `besselK1` | Modified Bessel function K₁(z) (def only; analytic lemmas in `Legacy/`) |
 | BesselK0.lean | `besselK0` | Modified Bessel function K₀(z) (def only) |

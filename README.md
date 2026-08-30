@@ -46,7 +46,7 @@ boundary-vanishing order `d`, so no upper bound on the dimension is needed.
 
 [![CI](https://github.com/mrdouglasny/OSforGFF/actions/workflows/ci.yml/badge.svg)](https://github.com/mrdouglasny/OSforGFF/actions/workflows/ci.yml)
 
-**Status:** Version 3.2 (general dimension `d ≥ 2`), August 2026. 0 sorries, 0 axioms, ~31,500 lines of Lean across 54 files. Instances for `d = 2, 3, 4, 5`; the axiom footprint and statement type of every headline theorem (generic, all-dimensions `d ≥ 2`, `d = 4`, `d = 3`, `d = 2`, `d = 5`) are build-frozen in `OSforGFF/Guardrails.lean`.
+**Status:** Version 3.2 (general dimension `d ≥ 2`), August 2026. 0 sorries, 0 axioms, ~25,500 lines of Lean across 52 on-graph files (plus the off-graph `OS/NonTrivial.lean` and 6 off-graph `Legacy/` files). Instances for `d = 2, 3, 4, 5`; the axiom footprint and statement type of every headline theorem (generic, all-dimensions `d ≥ 2`, `d = 4`, `d = 3`, `d = 2`, `d = 5`) are build-frozen in `OSforGFF/Guardrails.lean`.
 
 All results are fully proved — no assumed axioms. Nuclear space structure and the Minlos theorem
 are provided by the external libraries [bochner](https://github.com/mrdouglasny/bochner) and
@@ -55,8 +55,10 @@ The Minlos proof uses the external library [kolmogorov_extension4](https://githu
 
 ## Project Structure
 
-The 53 on-graph library files (plus 6 off-graph `Legacy/` files, below) are organized into 7 layers, with imports flowing from
-earlier to later sections. See [docs/architecture.md](docs/architecture.md) for dependency structure,
+The 52 on-graph library files (plus the off-graph `OS/NonTrivial.lean` and 6 off-graph
+`Legacy/` files, below) are organized into 7 layers, with imports flowing from
+earlier to later sections (one exception: `Schwinger/GaussianMoments.lean` imports
+`Measure/Construct.lean`). See [docs/architecture.md](docs/architecture.md) for dependency structure,
 design choices, and proof outlines, and [docs/dimension_generic.md](docs/dimension_generic.md)
 for the dimension-generic design. For a pedagogical, axiom-by-axiom walkthrough of the
 OS proofs — ordered by complexity, with pointers into the code — see
@@ -168,7 +170,7 @@ Axiom definitions, individual proofs, and master theorem.
 | [OS4_Clustering](OSforGFF/OS/OS4_Clustering.lean) | [Gaussian factorization + convolution decay lemma (domain split at ‖y‖=‖x‖/2)](summary/OSforGFF/OS/OS4_Clustering.md) |
 | [OS4_Ergodicity](OSforGFF/OS/OS4_Ergodicity.lean) | [Polynomial clustering (α=6) → L² convergence](summary/OSforGFF/OS/OS4_Ergodicity.md) |
 | [NonTrivial](OSforGFF/OS/NonTrivial.lean) | [Nontriviality: C(f,f) > 0, positive variance, UV divergence C(x,y) → ∞](summary/OSforGFF/OS/NonTrivial.md) — deliberately off the root import graph; compiled by `scripts/check-guardrails.sh`, not `lake build` |
-| [Master](OSforGFF/OS/Master.lean) | [Assembles OS0–OS4 into the generic master theorem and its 4D, 3D, and 2D instances](summary/OSforGFF/OS/Master.md) |
+| [Master](OSforGFF/OS/Master.lean) | [Assembles OS0–OS4 into the generic master theorem, the all-dimensions corollary `_of_dim`, and the 4D, 3D, 2D, and 5D instances](summary/OSforGFF/OS/Master.md) |
 
 ---
 
@@ -178,7 +180,7 @@ Per-dimension closed forms of the covariance, packaged as `GFFPropagator` instan
 
 | File | Contents |
 |------|----------|
-| [Dim4](OSforGFF/Instances/Dim4.lean) | [The `GFFPropagator 4 m` instance: Bessel kernel (m/4π²r)K₁(mr) via the order ν=−1 case of the master identity (schwingerIntegral_eq_besselK1), plus the live 4D kernel `freeCovariance4`](summary/OSforGFF/Instances/Dim4.md) |
+| [Dim4](OSforGFF/Instances/Dim4.lean) | [The `GFFPropagator 4 m` instance: Bessel kernel (m/4π²r)K₁(mr) via the order ν=−1 case of the master identity (schwingerIntegral_eq_besselK1)](summary/OSforGFF/Instances/Dim4.md) |
 | [Dim3](OSforGFF/Instances/Dim3.lean) | [The `GFFPropagator 3 m` instance: Yukawa kernel e^{−mr}/(4πr) via the order ν=−1/2 case of the master identity (besselK_half), and the UV divergence](summary/OSforGFF/Instances/Dim3.md) |
 | [Dim2](OSforGFF/Instances/Dim2.lean) | [The `GFFPropagator 2 m` instance: Bessel kernel (1/2π)K₀(mr) via the order-zero case of the master identity in `General/BesselK`](summary/OSforGFF/Instances/Dim2.md) |
 | [Dim5](OSforGFF/Instances/Dim5.lean) | [The `GFFPropagator 5 m` instance: K_{3/2} kernel (1+mr)e^{−mr}/(8π²r³) via the order ν=−3/2 case of the master identity (besselK_three_half by Gaussian moments)](summary/OSforGFF/Instances/Dim5.md) |
@@ -232,13 +234,15 @@ All are axiom-free.
 
 ## Dependencies and Cross-Cutting Concerns
 
-The import graph (`dependency/import_graph.dot`) is mostly layered, with one
-cross-cutting dependency:
+The import graph (`dependency/import_graph.dot`) is mostly layered, with two
+cross-cutting dependencies:
 
 1. **IsGaussian → OS0_Analyticity**: Gaussianity verification uses the OS0 analyticity result
    to identify S₂(f,g) = C(f,g) via the identity theorem (see Section 5 note)
+2. **GaussianMoments → Measure/Construct**: the moment bounds are stated for the
+   constructed free-field measure
 
-This prevents a perfectly linear ordering but does not create a circular dependency.
+These prevent a perfectly linear ordering but do not create a circular dependency.
 
 ## Building
 
@@ -276,7 +280,7 @@ which also replays the built environment through an external kernel check (`lean
 
 ## Planned Generalizations
 
-1. ~~The `d = 2` instance (the K₀ kernel (1/2π)K₀(mr))~~ — Done. The `d = 2` (K₀), `d = 3` (Yukawa), and `d = 4` (Bessel) instances are all provided, completing the dimensions discussed in [docs/dimension_dependence.md](docs/dimension_dependence.md).
+1. ~~The `d = 2` instance (the K₀ kernel (1/2π)K₀(mr))~~ — Done. The `d = 2` (K₀), `d = 3` (Yukawa), `d = 4` (Bessel K₁), and `d = 5` (K_{3/2}) instances are all provided, completing the dimensions discussed in [docs/dimension_dependence.md](docs/dimension_dependence.md).
 2. ~~Explicit construction of the measure not using Minlos~~ — Done. The Minlos theorem and Kolmogorov extension are now fully proved in [bochner](https://github.com/mrdouglasny/bochner) and [kolmogorov_extension4](https://github.com/remydegenne/kolmogorov_extension4).
 3. ~~General dimension `d ≥ 2`~~ — Done. The OS3 Fubini domination now runs at boundary-vanishing order `d` (positive-time test functions are flat to all orders at the time boundary), so the OS theorems hold in **every** dimension `d ≥ 2`; the program and its implementation are written up in [docs/general_dimension.md](docs/general_dimension.md).
 

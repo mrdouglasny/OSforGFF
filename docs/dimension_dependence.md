@@ -2,7 +2,10 @@
 
 > **Note.** This document analyzes the *pre-unification* four-dimensional
 > code. The library is now dimension-generic; see `dimension_generic.md` for
-> the current architecture. Kept for reference.
+> the current architecture. Kept for reference: the declarations, file names
+> (`Covariance/Momentum.lean`, `Covariance/Position.lean`, `Covariance/Parseval.lean`)
+> and the `STDimension := 4` abbreviation it describes no longer exist in the
+> on-graph library (the 4D-era code survives in off-graph `Legacy/` files).
 
 This document inventories where the spacetime dimension $d = 4$ (and spatial dimension $d-1 = 3$) enters the proofs. The project defines `STDimension := 4` in `Spacetime/Basic.lean`  changing this value would require updates to every file listed below as **essential** or **spatial**.
 
@@ -75,7 +78,7 @@ These files reference `STDimension` or `SpaceTime` but work for any $d \ge 2$.
 | `Measure/Construct.lean` | Measure construction infrastructure |
 | `Measure/IsGaussian.lean` | Gaussianity verification |
 | `Schwinger/GaussianMoments.lean` | Moment computations |
-| `Measure/Minlos.lean` | Minlos theorem (axiom, dimension-independent) |
+| `Measure/Minlos.lean` | Minlos theorem (proved in the external bochner library; dimension-independent) |
 | `Measure/MinlosAnalytic.lean` | Analytic continuation of characteristic functional |
 | `OS/OS0_Analyticity.lean` | OS0 proof (analyticity) |
 | `OS/OS2_Invariance.lean` | OS2 proof (Euclidean invariance) |

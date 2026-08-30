@@ -84,7 +84,7 @@ which result proves each field, and where.
 | Field | Proved by | Where |
 |---|---|---|
 | `os0` | `gaussianFreeField_satisfies_OS0` | [`OS0_Analyticity.lean:679`](../../OSforGFF/OS/OS0_Analyticity.lean#L679) |
-| `os1` | `gaussianFreeField_satisfies_OS1_revised` | [`OS1_Regularity.lean:407`](../../OSforGFF/OS/OS1_Regularity.lean#L407) |
+| `os1` | `gaussianFreeField_satisfies_OS1` | [`OS1_Regularity.lean:407`](../../OSforGFF/OS/OS1_Regularity.lean#L407) |
 | `os2` | `gaussian_satisfies_OS2` ∘ `CovarianceEuclideanInvariantℂ_μ_GFF` | [`GaussianFreeField.lean:69`](../../OSforGFF/Measure/GaussianFreeField.lean#L69) · [`OS2_Invariance.lean:152`](../../OSforGFF/OS/OS2_Invariance.lean#L152) |
 | `os3` | `gaussianFreeField_OS3` | [`OS3_ReflectionPositivity.lean:989`](../../OSforGFF/OS/OS3_ReflectionPositivity.lean#L989) |
 | `os4_clustering` | `gaussianFreeField_satisfies_OS4` | [`OS4_Clustering.lean:440`](../../OSforGFF/OS/OS4_Clustering.lean#L440) |
@@ -214,7 +214,7 @@ are distributions of finite order). From $(\star)$, $\lvert Z[f]\rvert = \exp(-\
 momentum space, and cap the multiplier by the mass gap, $\widehat{C}(k) = 1/(\lvert
 k\rvert^2 + m^2) \le 1/m^2$. Out drops the clean witness $p = 2$, $c = 1/(2m^2)$.
 
-Headline `gaussianFreeField_satisfies_OS1_revised`
+Headline `gaussianFreeField_satisfies_OS1`
 ([`OS1_Regularity.lean:407`](../../OSforGFF/OS/OS1_Regularity.lean#L407)).
 
 > **One line:** $C$ is the multiplier $1/(\lvert k\rvert^2 + m^2)$, bounded by $1/m^2$ —

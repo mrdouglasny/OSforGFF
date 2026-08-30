@@ -34,8 +34,9 @@ Lean formalization of one uniform Taylor-type estimate plus mechanical rethreadi
 The reflection-positive bilinear form is written in a mixed representation over proper time
 `s ∈ (0, ∞)` and spatial momentum `k ∈ ℝ^{d−1}`; justifying the integration-order exchange
 (`OS3_MixedRepInfra.fubini_s_ksp_swap`, whose domination is `integrable_dominate_G`) requires an
-`s`-integrable dominator near `s = 0`. The `OS3_MixedRepInfra` module header flags this as *the only
-place* `Fact (d ≤ 5)` is used.
+`s`-integrable dominator near `s = 0`. The `OS3_MixedRepInfra` module header flagged this, at the
+time, as *the only place* `Fact (d ≤ 5)` was used (the hypothesis is gone from the library — see
+"Implementation notes" below).
 
 Positive-time test functions satisfy `tsupport f ⊆ {x | getTimeComponent x > 0}`, hence vanish on
 the closed complement `{x₀ ≤ 0}` (in code: the "`getTimeComponent x ≤ 0 → f x = 0`" lemmas in
@@ -150,4 +151,4 @@ follows for general `d` (order `ν = d/2 − 1`); but `_of_dim` needs none of it
   hyperplane factors through `x₀^N`; only the resulting inequality is used here.
 - The time-boundary moment is the Euler Beta function `B(N+1, N+1)`.
 - The OS3 mixed-representation / reflection-positivity argument: the `OS3_MixedRepInfra.lean` module
-  header and [`dimension_generic.md`](dimension_generic.md) ("OS3 and the bound `d ≤ 5`").
+  header and [`dimension_generic.md`](dimension_generic.md) ("OS3 and the order-`d` domination").

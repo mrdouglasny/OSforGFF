@@ -80,8 +80,9 @@ same identity, using `K_{−ν} = K_ν`:
 - `Instances/Dim2.lean` (`ν = 0`): the Bessel kernel `(1/2π)K₀(mr)`.
 - `Instances/Dim3.lean` (`ν = −1/2`): the Yukawa kernel `e^{−mr}/(4πr)`, using the elementary
   `K_{1/2}(z) = √(π/2z) e^{−z}` (`besselK_half`, substitution `u = sinh(t/2)` → Gaussian).
-- `Instances/Dim4.lean` (`ν = −1`): the Bessel kernel `(m/4π²r)K₁(mr)`; at this instance the
-  generic kernel is *definitionally* the Bessel kernel `freeCovariance4` (`Instances/Dim4Bessel.lean`).
+- `Instances/Dim4.lean` (`ν = −1`): the Bessel kernel `(m/4π²r)K₁(mr)` (the original
+  4D development's named kernel `freeCovariance4` survives off-graph in
+  `Legacy/Dim4Bessel.lean`).
 - `Instances/Dim5.lean` (`ν = −3/2`): the `K_{3/2}` kernel `(1+mr)e^{−mr}/(8π²r³)`, using
   `K_{3/2}(z) = √(π/2z) e^{−z}(1+1/z)` (`besselK_three_half`, Gaussian zeroth and second moments).
 

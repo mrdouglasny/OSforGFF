@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 # formalization.yaml — https://github.com/mathlib-initiative/formalization.yaml (v0.4)
 # Describes the dimension-generic library (uniform μ_GFF d, every d ≥ 2). 0 sorries,
-# 0 custom axioms; ~26,000 lines across 52 on-graph files (plus the off-graph
+# 0 custom axioms; ~25,500 lines across 52 on-graph files (plus the off-graph
 # OS/NonTrivial.lean, verified by scripts/check-guardrails.sh, and 6 off-graph Legacy files).
 # The Palomar registry Challenge/Solution pair lives in the thin wrapper repository
 # mrdouglasny/OSforGFF-comparator, which pins this one by commit.
@@ -260,7 +260,7 @@ review:
   status: "self-assessed"
   reviewers: []
   notes: >
-    0 sorries and 0 custom axioms in the OSforGFF source (52 on-graph files, ~26,000 lines,
+    0 sorries and 0 custom axioms in the OSforGFF source (52 on-graph files, ~25,500 lines,
     plus the off-graph OS/NonTrivial.lean — live non-degeneracy results verified by
     scripts/check-guardrails.sh — and 6 off-graph Legacy files preserving superseded
     4D-era proofs). The registry

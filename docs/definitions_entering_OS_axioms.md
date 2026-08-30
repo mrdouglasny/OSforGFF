@@ -1,8 +1,8 @@
 # Definitions Entering the OS Axiom Statements
 
 The library is **dimension-generic**: every definition below is parameterized by the spacetime
-dimension `d : ℕ` (a `variable {d}` in scope), so `SpaceTime`, `SchwartzTestFunction`, `E`, `O4`,
-`FieldConfiguration` in the snippets mean `SpaceTime d`, `SchwartzTestFunction d`, `E d`, `O4 d`,
+dimension `d : ℕ` (a `variable {d}` in scope), so `SpaceTime`, `SchwartzTestFunction`, `E`, `O`,
+`FieldConfiguration` in the snippets mean `SpaceTime d`, `SchwartzTestFunction d`, `E d`, `O d`,
 `FieldConfiguration d`. The master theorem is:
 
 ```lean
@@ -27,7 +27,7 @@ assessments below hold uniformly in `d`.)
 
 ## 1. `GJGeneratingFunctional` — sign of i
 
-**Definition** ([Spacetime/Basic.lean:163](../OSforGFF/Spacetime/Basic.lean#L163)):
+**Definition** ([Spacetime/Basic.lean](../OSforGFF/Spacetime/Basic.lean)):
 ```lean
 def GJGeneratingFunctional (dμ_config : ProbabilityMeasure FieldConfiguration)
   (J : SchwartzTestFunction) : ℂ :=
@@ -45,7 +45,7 @@ matrix would be conjugate-transposed). **Correct.**
 
 ## 2. `GJGeneratingFunctionalℂ` and `distributionPairingℂ_real` — complex extension
 
-**Definitions** ([Spacetime/Basic.lean:249,256](../OSforGFF/Spacetime/Basic.lean#L249)):
+**Definitions** ([Spacetime/Basic.lean](../OSforGFF/Spacetime/Basic.lean)):
 ```lean
 def distributionPairingℂ_real (ω : FieldConfiguration) (f : SchwartzTestFunctionℂ) : ℂ :=
   let ⟨f_re, f_im⟩ := complex_testfunction_decompose f
@@ -69,7 +69,7 @@ standard construction. **Correct.**
 
 ## 3. `distributionPairing` — evaluation
 
-**Definition** ([Spacetime/Basic.lean:122](../OSforGFF/Spacetime/Basic.lean#L122)):
+**Definition** ([Spacetime/Basic.lean](../OSforGFF/Spacetime/Basic.lean)):
 ```lean
 def distributionPairing (ω : FieldConfiguration) (f : SchwartzTestFunction) : ℝ := ω f
 ```
@@ -80,7 +80,7 @@ def distributionPairing (ω : FieldConfiguration) (f : SchwartzTestFunction) : �
 
 ## 4. `OS3_ReflectionPositivity` — complex coefficients and test functions
 
-**Definition** ([OS/Axioms.lean:96](../OSforGFF/OS/Axioms.lean#L96)):
+**Definition** ([OS/Axioms.lean](../OSforGFF/OS/Axioms.lean)):
 ```lean
 def OS3_ReflectionPositivity (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
   ∀ (n : ℕ) (f : Fin n → PositiveTimeTestFunctionℂ) (c : Fin n → ℂ),
@@ -130,28 +130,28 @@ handled separately via `starRingEnd ℂ` in the coefficients.  **Correct.**
 
 ## 5. `QFT.timeReflection` — negates time coordinate
 
-**Definition** ([Spacetime/DiscreteSymmetry.lean:58](../OSforGFF/Spacetime/DiscreteSymmetry.lean#L58)):
+**Definition** ([Spacetime/DiscreteSymmetry.lean](../OSforGFF/Spacetime/DiscreteSymmetry.lean)):
 ```lean
 abbrev timeReflection (x : SpaceTime) : SpaceTime :=
   (WithLp.equiv 2 _).symm (Function.update x.ofLp 0 (-x.ofLp 0))
 ```
 
 **Assessment**: `Function.update x 0 (−x₀)` replaces coordinate 0 with its negation,
-leaving coordinates 1,2,3 unchanged. This gives (t, x̄) ↦ (−t, x̄). The time coordinate
-is index 0 throughout the project (`getTimeComponent x = x ⟨0, _⟩` in Basic.lean:61,
-`timeIndex = ⟨0, _⟩` in TimeTranslation.lean:63). **Correct and consistent.**
+leaving the spatial coordinates 1,…,d−1 unchanged. This gives (t, x̄) ↦ (−t, x̄). The time coordinate
+is index 0 throughout the project (`getTimeComponent x = x ⟨0, _⟩` in Basic.lean,
+`timeIndex = ⟨0, _⟩` in TimeTranslation.lean). **Correct and consistent.**
 
 ---
 
 ## 6. `QFT.euclidean_action` — pullback by inverse
 
-**Definition** ([Spacetime/Euclidean.lean:350](../OSforGFF/Spacetime/Euclidean.lean#L350)):
+**Definition** ([Spacetime/Euclidean.lean](../OSforGFF/Spacetime/Euclidean.lean)):
 ```lean
 noncomputable def euclidean_action (g : E) (f : SchwartzTestFunctionℂ) : SchwartzTestFunctionℂ :=
   SchwartzMap.compCLM ... f    -- composes f with euclidean_pullback g = act g⁻¹
 ```
 
-The inverse of `g = ⟨R, t⟩` is `g⁻¹ = ⟨R⁻¹, −R⁻¹t⟩` (Euclidean.lean:137).
+The inverse of `g = ⟨R, t⟩` is `g⁻¹ = ⟨R⁻¹, −R⁻¹t⟩` (Euclidean.lean).
 
 **Verification**: act(g⁻¹, act(g, x)) = R⁻¹(Rx + t) + (−R⁻¹t) = x + R⁻¹t − R⁻¹t = x. ✓
 
@@ -162,10 +162,10 @@ ensuring `(gh)·f = g·(h·f)`. This is standard in the OS literature. **Correct
 
 ## 7. `QFT.E` — Euclidean group structure
 
-**Definition** ([Spacetime/Euclidean.lean:56](../OSforGFF/Spacetime/Euclidean.lean#L56)):
+**Definition** ([Spacetime/Euclidean.lean](../OSforGFF/Spacetime/Euclidean.lean)):
 ```lean
 structure E (d : ℕ) where
-  R : O4 d        -- O4 d = LinearIsometry ℝ (SpaceTime d) (SpaceTime d)
+  R : O d         -- O d = LinearIsometry ℝ (SpaceTime d) (SpaceTime d)
   t : SpaceTime d
 
 instance : Mul (E d) where
@@ -180,7 +180,7 @@ inverse) are all proved in Lean. **Correct.**
 
 ## 8. `OS4_Clustering` — translation direction
 
-**Definition** ([OS/Axioms.lean:123](../OSforGFF/OS/Axioms.lean#L123)):
+**Definition** ([OS/Axioms.lean](../OSforGFF/OS/Axioms.lean)):
 ```lean
 def OS4_Clustering (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
   ∀ (f g : SchwartzTestFunction) (ε : ℝ), ε > 0 → ∃ (R : ℝ), R > 0 ∧ ∀ (a : SpaceTime),
@@ -197,14 +197,14 @@ space, so clustering in any single direction implies clustering in all direction
 same rate. The two formulations are therefore **equivalent given OS2**, and using all
 directions is cleaner. **Correct.**
 
-`SchwartzMap.translate` is defined as `f.translate a x = f (x − a)` (FunctionalAnalysis.lean:808),
+`SchwartzMap.translate` is defined as `f.translate a x = f (x − a)` (General/FunctionalAnalysis.lean),
 which is standard: translating the function by +a means evaluating at x − a. **Correct.**
 
 ---
 
 ## 9. `OS4_Ergodicity` — observable class and convergence
 
-**Definition** ([OS/Axioms.lean:136](../OSforGFF/OS/Axioms.lean#L136)):
+**Definition** ([OS/Axioms.lean](../OSforGFF/OS/Axioms.lean)):
 ```lean
 def OS4_Ergodicity (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
   ∀ (n : ℕ) (z : Fin n → ℂ) (f : Fin n → SchwartzTestFunctionℂ),
@@ -227,7 +227,7 @@ The convergence is ∫ ‖time-average − space-average‖² dμ → 0, i.e., L
 of the Cesàro mean to the ensemble mean. The normalization `1/T` with `Icc 0 T`
 (averaging over [0,T]) is standard. This matches GJ's formulation. **Correct.**
 
-`timeTranslationDistribution s ω = ω ∘ T_{−s}` (TimeTranslation.lean:874), giving
+`timeTranslationDistribution s ω = ω ∘ T_{−s}` (Spacetime/TimeTranslation.lean), giving
 ⟨T_s ω, f⟩ = ⟨ω, T_{−s}f⟩ = ⟨ω, f(· − se₀)⟩, which shifts by time s via duality.
 The sign convention (positive s = forward time) is correct.
 **Correct.**
@@ -236,7 +236,7 @@ The sign convention (positive s = forward time) is correct.
 
 ## 10. `PositiveTimeTestFunction` — support condition
 
-**Definition** ([Spacetime/PositiveTimeTestFunction.lean:52](../OSforGFF/Spacetime/PositiveTimeTestFunction.lean#L52)):
+**Definition** ([Spacetime/PositiveTimeTestFunction.lean](../OSforGFF/Spacetime/PositiveTimeTestFunction.lean)):
 ```lean
 def PositiveTimeTestFunctions.submodule : Submodule ℝ SchwartzTestFunction where
   carrier := { f : SchwartzTestFunction | tsupport f ⊆ positiveTimeSet }
@@ -255,7 +255,7 @@ support inside an open set implies support inside that set). **Correct.**
 
 ## 11. `OS0_Analyticity`
 
-**Definition** ([OS/Axioms.lean:73](../OSforGFF/OS/Axioms.lean#L73)):
+**Definition** ([OS/Axioms.lean](../OSforGFF/OS/Axioms.lean)):
 ```lean
 def OS0_Analyticity (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
   ∀ (n : ℕ) (J : Fin n → SchwartzTestFunctionℂ),
@@ -272,7 +272,7 @@ subspaces of the test function space. **Correct.**
 
 ## 12. `OS1_Regularity`
 
-**Definition** ([OS/Axioms.lean:83](../OSforGFF/OS/Axioms.lean#L83)):
+**Definition** ([OS/Axioms.lean](../OSforGFF/OS/Axioms.lean)):
 ```lean
 def OS1_Regularity (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
   ∃ (p : ℝ) (c : ℝ), 1 ≤ p ∧ p ≤ 2 ∧ c > 0 ∧
@@ -290,7 +290,7 @@ encodes temperedness: Z extends continuously to Lp. The subsidiary condition
 
 ## 13. `OS2_EuclideanInvariance`
 
-**Definition** ([OS/Axioms.lean:91](../OSforGFF/OS/Axioms.lean#L91)):
+**Definition** ([OS/Axioms.lean](../OSforGFF/OS/Axioms.lean)):
 ```lean
 def OS2_EuclideanInvariance (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :=
   ∀ (g : QFT.E) (f : SchwartzTestFunctionℂ),

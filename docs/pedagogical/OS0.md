@@ -249,10 +249,8 @@ and $\lvert x\rvert \le e^{\lvert x\rvert}$ soaks up the polynomial prefactor. A
 of lemmas exists solely to assemble this one dominator —
 `gff_exp_neg_pairing_integrable`
 ([:130](../../OSforGFF/OS/OS0_Analyticity.lean#L130)),
-`gff_exp_abs_pairing_memLp`
-([:171](../../OSforGFF/OS/OS0_Analyticity.lean#L171)), and
-`gff_integrand_norm_integrable`
-([:310](../../OSforGFF/OS/OS0_Analyticity.lean#L310)) — consumed inside
+and `gff_exp_abs_pairing_memLp`
+([:171](../../OSforGFF/OS/OS0_Analyticity.lean#L171)) — consumed inside
 `gff_cf_slice_entire`'s differentiation under the integral. Unglamorous — and the reason
 analyticity holds. *The Gaussian tails of the free field are exactly what make its
 generating functional entire.*
@@ -317,7 +315,6 @@ proof covers every $d \ge 2$.
 | $\lVert e^{i\langle\omega,f\rangle}\rVert = e^{-\varphi(f_{\mathrm{im}})}$ (C) | `OS/OS0_Analyticity.lean` | `norm_exp_I_distributionPairingℂ_real` (112) |
 | $e^{-\varphi(f)}$ integrable (Fernique) | `OS/OS0_Analyticity.lean` | `gff_exp_neg_pairing_integrable` (130) |
 | $e^{\lvert\varphi(f)\rvert} \in L^p$ (Young + Fernique) | `OS/OS0_Analyticity.lean` | `gff_exp_abs_pairing_memLp` (171) |
-| integrand norm integrable | `OS/OS0_Analyticity.lean` | `gff_integrand_norm_integrable` (310) |
 | slice is entire (Leibniz / diff. under $\int$) | `OS/OS0_Analyticity.lean` | `gff_cf_slice_entire` (338) |
 | $Z[f] = \exp(-\tfrac12 C_{\mathbb C}(f,f))$ (A) | `OS/OS0_Analyticity.lean` | `gff_complex_CF_covariance` (506) |
 | bilinear expansion | `OS/OS0_Analyticity.lean` | `freeCovarianceℂ_bilinear_sum_expansion` (638) |
