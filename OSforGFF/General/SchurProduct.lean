@@ -19,7 +19,6 @@ the diagonal embedding of `x` into `ι × ι`. Used in the OS3 reflection positi
 to transfer PSD properties through the matrix exponential via `HadamardExp.lean`.
 -/
 
-set_option linter.unusedSectionVars false
 
 open scoped BigOperators
 open scoped Kronecker
@@ -37,6 +36,7 @@ notation:100 A "∘ₕ" B => Matrix.hadamard A B
 argument: only the diagonal entries are nonzero and equal to `x`. -/
 @[simp] def diagEmbed (x : ι → ℝ) : ι × ι → ℝ := fun p => if p.2 = p.1 then x p.1 else 0
 
+omit [Fintype ι] in
 lemma diagEmbed_ne_zero_of_ne_zero {x : ι → ℝ} (hx : x ≠ 0) : diagEmbed (ι:=ι) x ≠ 0 := by
   classical
   -- If diagEmbed x = 0 then all diagonal entries vanish, hence x = 0, contradiction.
@@ -46,11 +46,13 @@ lemma diagEmbed_ne_zero_of_ne_zero {x : ι → ℝ} (hx : x ≠ 0) : diagEmbed (
   have := congrArg (fun f => f (i, i)) h
   simpa [diagEmbed] using this
 
+omit [DecidableEq ι] in
 /-- Finite sum over pairs equals iterated double sum over coordinates (binderless sums). -/
 lemma sum_pairs_eq_double (g : ι × ι → ℝ) :
   (∑ p, g p) = ∑ i, ∑ j, g (i, j) :=
   Fintype.sum_prod_type g
 
+omit [Fintype ι] [DecidableEq ι] in
 /-- Over `ℝ`, the Hadamard product of Hermitian matrices is Hermitian. -/
 private lemma isHermitian_hadamard_real {A B : Matrix ι ι ℝ}
     (hA : A.IsHermitian) (hB : B.IsHermitian) : (A ∘ₕ B).IsHermitian := by

@@ -614,7 +614,7 @@ variable {E}
 noncomputable def bumpSelfConv (φ : ContDiffBump (0 : E)) : E → ℝ :=
   (φ.normed volume) ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] (φ.normed volume)
 
-set_option linter.unusedSectionVars false in
+omit [NullSingletonClass (volume : Measure E)] in
 /-- Self-convolution is nonnegative. -/
 lemma bumpSelfConv_nonneg (φ : ContDiffBump (0 : E)) (x : E) : 0 ≤ bumpSelfConv φ x := by
   unfold bumpSelfConv convolution
@@ -623,7 +623,7 @@ lemma bumpSelfConv_nonneg (φ : ContDiffBump (0 : E)) (x : E) : 0 ≤ bumpSelfCo
   simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul]
   exact mul_nonneg (φ.nonneg_normed _) (φ.nonneg_normed _)
 
-set_option linter.unusedSectionVars false in
+omit [NullSingletonClass (volume : Measure E)] in
 /-- Self-convolution has mass 1: ∫(φ ⋆ φ) = (∫φ)(∫φ) = 1·1 = 1. -/
 lemma bumpSelfConv_integral (φ : ContDiffBump (0 : E)) :
     ∫ x, bumpSelfConv φ x = 1 := by
@@ -636,7 +636,7 @@ lemma bumpSelfConv_integral (φ : ContDiffBump (0 : E)) :
   · exact φ.integrable_normed
   · exact φ.integrable_normed
 
-set_option linter.unusedSectionVars false in
+omit [NullSingletonClass (volume : Measure E)] in
 /-- Support of self-convolution is contained in ball of radius 2*rOut. -/
 lemma bumpSelfConv_support_subset (φ : ContDiffBump (0 : E)) :
     support (bumpSelfConv φ) ⊆ Metric.ball 0 (2 * φ.rOut) := by
@@ -663,6 +663,7 @@ lemma bumpSelfConv_support_subset (φ : ContDiffBump (0 : E)) :
     _ < φ.rOut + φ.rOut := add_lt_add hy_ball hz_ball
     _ = 2 * φ.rOut := by ring
 
+omit [NullSingletonClass (volume : Measure E)] in
 /-- Self-convolution support shrinks to {0} as rOut → 0. -/
 lemma bumpSelfConv_support_tendsto {ι : Type*} {l : Filter ι} [l.NeBot]
     (φ : ι → ContDiffBump (0 : E)) (hφ : Tendsto (fun i => (φ i).rOut) l (nhds 0)) :

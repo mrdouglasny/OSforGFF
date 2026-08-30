@@ -198,7 +198,6 @@ private lemma charFun_implies_gaussian
   rw [h t, charFun_gaussianReal]
   ring_nf
 
-set_option backward.isDefEq.respectTransparency false in
 omit [Fact (2 ≤ d)] in
 /-- The characteristic function of a pushforward measure by `distributionPairingCLM φ`
     equals the generating functional at a scaled test function. -/
@@ -213,7 +212,7 @@ private lemma charFun_eq_GJGeneratingFunctional
   congr 1
   ext ω
   congr 1
-  simp only [distributionPairingCLM, ContinuousLinearMap.coe_mk', real_inner_comm]
+  simp only [distributionPairingCLM, real_inner_comm]
   rw [mul_comm _ I]
   congr 1
   simp [distributionPairing]

@@ -83,7 +83,6 @@ lemma measurePreserving_actEquiv (g : E d) :
 
 /-! ## Main theorem: Bilinear form invariance -/
 
-set_option linter.unusedSectionVars false in
 /-- The complex bilinear covariance form is invariant under Euclidean transformations:
     ⟨g•f, C(g•h)⟩ = ⟨f, Ch⟩.
 
