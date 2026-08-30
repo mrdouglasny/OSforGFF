@@ -184,30 +184,3 @@ theorem covariance_bilinear_from_general
   exact fun φ ψ => gaussian_pairing_product_integrable_free_2point m φ ψ
 
 end
-
-/-! ## Implementation Notes
-
-### Current Status:
-1. **Structure**: Complete framework for n-point integrability
-2. **Base Cases**: n = 0, 1 implemented; n = 2 reduces to core lemma
-3. **Inductive Step**: Outlined using Gaussian moment theory
-4. **Applications**: Schwinger functions and covariance bilinearity derived
-
-### Next Steps:
-1. **Implement n = 1 case**: Use Schwartz space bounds + nuclear structure
-2. **Implement n = 2 case**: Use one of three approaches:
-   - **Nuclear/Minlos**: Leverage explicit construction
-   - **Characteristic Function**: Use Gaussian 2D distribution
-   - **Hilbert Embedding**: Use square-root propagator embedding
-3. **Complete n ≥ 3**: Use Gaussian finite moment theorem + induction
-
-### Mathematical Foundation:
-**Key Insight**: Nuclear covariance ⟹ all polynomial moments finite
-**Strategy**: Reduce to established Gaussian measure theory
-**Connection**: Links constructive QFT (Minlos) to abstract theory (OS axioms)
-
-This approach provides a clean separation between:
-- **Abstract structure** (this file)
-- **Concrete implementation** (nuclear/characteristic function proofs)
-- **Applications** (OS axiom verification)
--/

@@ -71,15 +71,6 @@ def SchwingerFunction₂ (dμ_config : ProbabilityMeasure (FieldConfiguration d)
   SchwingerFunction dμ_config 2 ![f, g]
 
 
-/-- The Schwinger function equals the GJ mean for n=1 -/
-lemma schwinger_eq_mean (dμ_config : ProbabilityMeasure (FieldConfiguration d)) (f : (SchwartzTestFunction d)) :
-  SchwingerFunction₁ dμ_config f = GJMean dμ_config f := by
-  unfold SchwingerFunction₁ SchwingerFunction GJMean
-  -- The product over a singleton {0} is just the single element f 0 = f
-  classical
-  -- simplify the finite product over Fin 1 and evaluate the single entry of ![f]
-  simp
-
 /-- The Schwinger function equals the direct covariance integral for n=2 -/
 lemma schwinger_eq_covariance (dμ_config : ProbabilityMeasure (FieldConfiguration d)) (f g : (SchwartzTestFunction d)) :
   SchwingerFunction₂ dμ_config f g = ∫ ω, (distributionPairing ω f) * (distributionPairing ω g) ∂dμ_config.toMeasure := by

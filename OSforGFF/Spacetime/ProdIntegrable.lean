@@ -121,19 +121,6 @@ lemma continuous_spacetimeOfTimeSpace_right (t : ℝ) :
     continuous_const.add spatialEmbedCLM.continuous
   exact (continuous_congr h_decompose).mpr h_cont
 
-/-- The squared norm splits into time and spatial parts:
-    `‖(t, x)‖² = t² + ‖x‖²`. -/
-lemma spacetimeOfTimeSpace_norm_sq (t : ℝ) (x : SpatialCoords d) :
-    ‖spacetimeOfTimeSpace t x‖ ^ 2 = t ^ 2 + ‖x‖ ^ 2 := by
-  obtain ⟨n, rfl⟩ : ∃ n, d = n + 1 := ⟨d - 1, by have h : 2 ≤ d := Fact.out; omega⟩
-  rw [EuclideanSpace.norm_sq_eq, Fin.sum_univ_succ]
-  congr 1
-  · rw [show (spacetimeOfTimeSpace t x).ofLp 0 = t from spacetimeOfTimeSpace_time t x]
-    simp [Real.norm_eq_abs, sq_abs]
-  · rw [EuclideanSpace.norm_sq_eq]
-    exact Finset.sum_congr rfl fun j _ => by
-      rw [show (spacetimeOfTimeSpace t x).ofLp j.succ = x j from rfl]
-
 /-- The time-axis point `(s, 0, …, 0)` is `s` times the time unit vector. -/
 lemma spacetimeOfTimeSpace_eq_smul_single (s : ℝ) :
     spacetimeOfTimeSpace (d := d) s 0 = s • (EuclideanSpace.single (0 : Fin d) (1 : ℝ)) := by
@@ -163,63 +150,6 @@ lemma polynomial_decay_integrable_spatial :
   simp only [Real.rpow_neg (le_of_lt h_pos), one_div]
   congr 1
   exact (Real.rpow_natCast (1 + ‖x‖) d).symm
-
-/-- A Schwartz function restricted to a fixed time slice is integrable over the spatial slice.
-    Uses decay transfer: d-dimensional Schwartz decay implies (d-1)-dimensional integrability
-    via norm comparison. -/
-lemma schwartz_time_slice_integrable (f : SchwartzTestFunctionℂ d) (t : ℝ) :
-    Integrable (fun x : SpatialCoords d => f (spacetimeOfTimeSpace t x)) volume := by
-  -- Strategy: Show the function has rapid decay and use integrability of decay functions
-  --
-  -- Key facts:
-  -- 1. f is Schwartz, so |f(y)| ≤ C/(1 + ‖y‖)^N for any N
-  -- 2. For fixed t, ‖spacetimeOfTimeSpace t x‖ ≥ ‖x‖
-  -- 3. So |f(spacetimeOfTimeSpace t x)| ≤ C/(1 + ‖x‖)^N which is integrable for N > d - 1
-  have h1d : 1 ≤ d := by have h : 2 ≤ d := Fact.out; omega
-  have hST_dim : Module.finrank ℝ (SpaceTime d) < d + 1 := by
-    rw [finrank_euclideanSpace_fin]; omega
-  obtain ⟨C, hC_pos, hf_decay⟩ := schwartz_integrable_decay f (d + 1) hST_dim
-
-  -- The dominator function: x ↦ C / (1 + ‖x‖)^(d+1)
-  have h_dom_integrable : Integrable (fun x : SpatialCoords d => C / (1 + ‖x‖) ^ (d + 1)) volume := by
-    have h_dim : (Module.finrank ℝ (SpatialCoords d) : ℝ) < ((d + 1 : ℕ) : ℝ) := by
-      rw [finrank_euclideanSpace_fin]
-      have : ((d - 1 : ℕ) : ℝ) = (d : ℝ) - 1 := by push_cast [h1d]; ring
-      rw [this]; push_cast; linarith
-    have h_int := integrable_one_add_norm (E := SpatialCoords d) (μ := volume)
-      (r := ((d + 1 : ℕ) : ℝ)) h_dim
-    have h_eq : ∀ x : SpatialCoords d,
-        C / (1 + ‖x‖) ^ (d + 1) = C * (1 + ‖x‖) ^ (-((d + 1 : ℕ) : ℝ)) := by
-      intro x
-      have h_pos : 0 < 1 + ‖x‖ := by linarith [norm_nonneg x]
-      have h1 : ((1 + ‖x‖) ^ (d + 1) : ℝ)⁻¹ = (1 + ‖x‖) ^ (-((d + 1 : ℕ) : ℝ)) := by
-        rw [← Real.rpow_natCast (1 + ‖x‖) (d + 1), ← Real.rpow_neg (le_of_lt h_pos)]
-      rw [div_eq_mul_inv, h1]
-    simp_rw [h_eq]
-    exact h_int.const_mul C
-
-  -- Pointwise bound via the spacetime-vs-spatial norm comparison
-  have h_bound : ∀ x : SpatialCoords d,
-      ‖f (spacetimeOfTimeSpace t x)‖ ≤ C / (1 + ‖x‖) ^ (d + 1) := by
-    intro x
-    have h1 := hf_decay (spacetimeOfTimeSpace t x)
-    have h_norm_ge : ‖spacetimeOfTimeSpace t x‖ ≥ ‖x‖ :=
-      spacetimeOfTimeSpace_norm_ge t x
-    have h_bracket_ge : 1 + ‖spacetimeOfTimeSpace t x‖ ≥ 1 + ‖x‖ := by linarith
-    have h_bracket_pos : 0 < 1 + ‖x‖ := by linarith [norm_nonneg x]
-    have h_pow_le : (1 + ‖x‖) ^ (d + 1) ≤ (1 + ‖spacetimeOfTimeSpace t x‖) ^ (d + 1) := by
-      apply pow_le_pow_left₀ (by linarith [norm_nonneg x]) h_bracket_ge
-    calc ‖f (spacetimeOfTimeSpace t x)‖
-        ≤ C / (1 + ‖spacetimeOfTimeSpace t x‖) ^ (d + 1) := h1
-      _ ≤ C / (1 + ‖x‖) ^ (d + 1) := by
-          apply div_le_div_of_nonneg_left (le_of_lt hC_pos) (by positivity) h_pow_le
-
-  -- Apply Integrable.mono
-  apply Integrable.mono h_dom_integrable
-    (f.continuous.comp (continuous_spacetimeOfTimeSpace_right t)).aestronglyMeasurable
-  filter_upwards with x
-  rw [Real.norm_of_nonneg (by positivity : 0 ≤ C / (1 + ‖x‖) ^ (d + 1))]
-  exact h_bound x
 
 /-- The spatial integral G(t) = ∫ ‖f(t, x)‖ dx over the spatial slice. -/
 noncomputable def spatialNormIntegral (f : SchwartzTestFunctionℂ d) (t : ℝ) : ℝ :=

@@ -33,6 +33,10 @@ From `OS/OS0_Analyticity.lean` (side lemmas of the holomorphic-integral OS0 proo
 chain uses the measurable/integrable siblings that remain on-graph):
 - `QFT.distributionPairingℂ_real_continuous` — continuity in ω; the OS0 proof only needs
   measurability (`distributionPairingℂ_real_measurable`).
+- `QFT.gff_integrand_measurable`, `QFT.gff_integrand_norm_integrable` (moved 2026-08-30) —
+  packaged measurability/integrability of the generating-functional integrand; the OS0
+  proof derives both inline from `distributionPairingℂ_real_measurable` and
+  `gff_exp_neg_pairing_integrable`.
 - `QFT.gff_integrand_analytic` — analyticity of the integrand at a point; the proof works
   through `gff_cf_slice_entire` and the dominated-derivative machinery instead.
 - `QFT.gff_exp_abs_sum_memLp` — L² bound for finite products of exponentials of pairings.
@@ -83,7 +87,7 @@ variable (m : ℝ) [Fact (0 < m)] [GFFPropagator d m]
 omit [Fact (2 ≤ d)] in
 /-- The complex pairing is continuous in ω.
     This follows from the continuity of the evaluation map on WeakDual. -/
-theorem distributionPairingℂ_real_continuous (f : TestFunctionℂ d) :
+theorem distributionPairingℂ_real_continuous (f : SchwartzTestFunctionℂ d) :
     Continuous (fun ω : FieldConfiguration d => distributionPairingℂ_real ω f) := by
   -- distributionPairingℂ_real ω f = ω f_re + I * ω f_im
   -- where f_re = schwartz_comp_clm f reCLM and f_im = schwartz_comp_clm f imCLM
@@ -104,7 +108,7 @@ omit [Fact (2 ≤ d)] in
     2. ω ↦ ⟨ω, f⟩ is linear in f
     3. exp(i · _) is entire -/
 theorem gff_integrand_analytic
-    (n : ℕ) (J : Fin n → TestFunctionℂ d) (ω : FieldConfiguration d) (z₀ : Fin n → ℂ) :
+    (n : ℕ) (J : Fin n → SchwartzTestFunctionℂ d) (ω : FieldConfiguration d) (z₀ : Fin n → ℂ) :
     AnalyticAt ℂ
       (fun z : Fin n → ℂ =>
         Complex.exp (Complex.I * distributionPairingℂ_real ω (∑ i, z i • J i)))
@@ -132,12 +136,12 @@ theorem gff_integrand_analytic
       -- distributionPairingℂ_real is linear in the test function
       -- Use pairing_linear_combo: pairing(t•f + s•g) = t * pairing(f) + s * pairing(g)
       -- First establish the basic linearity properties
-      have h_add : ∀ f g : TestFunctionℂ d, distributionPairingℂ_real ω (f + g) =
+      have h_add : ∀ f g : SchwartzTestFunctionℂ d, distributionPairingℂ_real ω (f + g) =
           distributionPairingℂ_real ω f + distributionPairingℂ_real ω g := fun f g => by
         have := pairing_linear_combo ω f g 1 1
         simp at this
         exact this
-      have h_smul : ∀ (c : ℂ) (f : TestFunctionℂ d), distributionPairingℂ_real ω (c • f) =
+      have h_smul : ∀ (c : ℂ) (f : SchwartzTestFunctionℂ d), distributionPairingℂ_real ω (c • f) =
           c * distributionPairingℂ_real ω f := fun c f => by
         have := pairing_linear_combo ω f 0 c 0
         simp at this
@@ -173,7 +177,7 @@ theorem gff_integrand_analytic
     If we have k test functions g₁, ..., gₖ, then exp(∑ᵢ |ω gᵢ|) = ∏ᵢ exp(|ω gᵢ|).
     Each exp(|ω gᵢ|) ∈ L^(2k) by gff_exp_abs_pairing_memLp.
     By generalized Hölder (MemLp.prod'), a product of k functions in L^(2k) is in L². -/
-lemma gff_exp_abs_sum_memLp {ι : Type*} (s : Finset ι) (g : ι → TestFunction d) :
+lemma gff_exp_abs_sum_memLp {ι : Type*} (s : Finset ι) (g : ι → SchwartzTestFunction d) :
     MemLp (fun ω : FieldConfiguration d => Real.exp (∑ i ∈ s, |ω (g i)|)) 2 (gaussianFreeField_free (d := d) m).toMeasure := by
   -- Rewrite exp(sum) as product of exp
   have h_eq : (fun ω : FieldConfiguration d => Real.exp (∑ i ∈ s, |ω (g i)|)) =
@@ -224,10 +228,30 @@ lemma gff_exp_abs_sum_memLp {ι : Type*} (s : Finset ι) (g : ι → TestFunctio
   -- Goal: 2 = 2⁻¹⁻¹
   simp only [inv_inv]
 
+/-- The GFF integrand for the generating functional is measurable in ω for each z
+    (from `OS/OS0_Analyticity.lean`, moved 2026-08-30). -/
+theorem gff_integrand_measurable
+    (n : ℕ) (J : Fin n → SchwartzTestFunctionℂ d) (z : Fin n → ℂ) :
+    AEStronglyMeasurable
+      (fun ω : FieldConfiguration d =>
+        Complex.exp (Complex.I * distributionPairingℂ_real ω (∑ i, z i • J i)))
+      (gaussianFreeField_free (d := d) m).toMeasure := by
+  exact (Complex.continuous_exp.measurable.comp
+    (measurable_const.mul (distributionPairingℂ_real_measurable _))).aestronglyMeasurable
+
+/-- The integral of ‖exp(I * distributionPairingℂ_real ω f)‖ is finite for any complex test
+    function (from `OS/OS0_Analyticity.lean`, moved 2026-08-30). -/
+lemma gff_integrand_norm_integrable (f : SchwartzTestFunctionℂ d) :
+    Integrable (fun ω : FieldConfiguration d =>
+        ‖Complex.exp (Complex.I * distributionPairingℂ_real ω f)‖)
+      (gaussianFreeField_free (d := d) m).toMeasure := by
+  simp_rw [norm_exp_I_distributionPairingℂ_real]
+  exact gff_exp_neg_pairing_integrable m (complex_testfunction_decompose f).2
+
 /-- The GFF integrand is integrable for each z.
     This follows from the norm being exp(-(ω f_im)) which is integrable by
     Gaussian exponential integrability. -/
-theorem gff_integrand_integrable (n : ℕ) (J : Fin n → TestFunctionℂ d) (z : Fin n → ℂ) :
+theorem gff_integrand_integrable (n : ℕ) (J : Fin n → SchwartzTestFunctionℂ d) (z : Fin n → ℂ) :
     Integrable
       (fun ω : FieldConfiguration d =>
         Complex.exp (Complex.I * distributionPairingℂ_real ω (∑ i, z i • J i)))
@@ -329,7 +353,7 @@ lemma mixed_rep_to_k0_inside_integrand (k_spatial : (SpatialCoords d)) (m : ℝ)
     2. Use `mixed_rep_to_k0_inside_integrand`: (1/ω) exp(-ω|t|) = (1/π) ∫_{k₀}...
     3. Factor the spatial phase into the k₀ integral
     4. Combine normalizations: 1/(2(2π)^{d-1}) × (1/π) = 1/(2π)^d -/
-theorem bilinear_to_k0_inside (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (f : (TestFunctionℂ d))
+theorem bilinear_to_k0_inside (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (f : (SchwartzTestFunctionℂ d))
     (hf_supp : ∀ x, x 0 ≤ 0 → f x = 0) :
   ∫ x : (SpaceTime d), ∫ y : (SpaceTime d),
     (starRingEnd ℂ (f x)) *
@@ -554,7 +578,7 @@ variable {d : ℕ} [Fact (2 ≤ d)]
 
 /-- Covariance clustering property: the 2-point function decays at large separations. -/
 def CovarianceClustering_real (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
-  ∀ (f g : (TestFunction d)) (ε : ℝ), ε > 0 →
+  ∀ (f g : (SchwartzTestFunction d)) (ε : ℝ), ε > 0 →
     ∃ R > 0, ∀ a : (SpaceTime d), ‖a‖ > R →
       ‖SchwingerFunction₂ dμ_config f (g.translate a)‖ < ε
 
@@ -594,3 +618,4 @@ lemma freeCovariance_isometry_invariant
 end
 
 end CovariancePropagator
+

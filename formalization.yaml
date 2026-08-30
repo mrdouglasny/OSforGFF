@@ -173,7 +173,7 @@ status:
       literature_dependencies:
         - statement: "OS0: analyticity of the generating functional Z[sum z_i J_i]"
           source: "10.1007/BF01645738"
-    - declaration: "gaussianFreeField_satisfies_OS1_revised"
+    - declaration: "gaussianFreeField_satisfies_OS1"
       file: "OSforGFF/OS/OS1_Regularity.lean"
       sorry_count: 0
       axioms: []
@@ -294,7 +294,7 @@ alignment:
       module: "OSforGFF.OS.OS0_Analyticity"
       status: "proved"
     - source: "10.1007/BF01645738"
-      lean: "gaussianFreeField_satisfies_OS1_revised"
+      lean: "gaussianFreeField_satisfies_OS1"
       module: "OSforGFF.OS.OS1_Regularity"
       status: "proved"
     - source: "10.1007/BF01645738"

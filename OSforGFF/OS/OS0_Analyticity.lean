@@ -90,16 +90,6 @@ lemma distributionPairingℂ_real_measurable (f : SchwartzTestFunctionℂ d) :
   exact (continuous_ofReal.measurable.comp (WeakDual.eval_measurable _)).add
     (measurable_const.mul (continuous_ofReal.measurable.comp (WeakDual.eval_measurable _)))
 
-/-- The GFF integrand for the generating functional is measurable in ω for each z. -/
-theorem gff_integrand_measurable
-    (n : ℕ) (J : Fin n → SchwartzTestFunctionℂ d) (z : Fin n → ℂ) :
-    AEStronglyMeasurable
-      (fun ω : FieldConfiguration d =>
-        Complex.exp (Complex.I * distributionPairingℂ_real ω (∑ i, z i • J i)))
-      (gaussianFreeField_free (d := d) m).toMeasure := by
-  exact (Complex.continuous_exp.measurable.comp
-    (measurable_const.mul (distributionPairingℂ_real_measurable _))).aestronglyMeasurable
-
 omit [Fact (2 ≤ d)] in
 /-- The norm of exp(I * distributionPairingℂ_real ω f) equals exp(-(ω f_im))
     where f_im is the imaginary part of the complex test function.
@@ -305,16 +295,6 @@ lemma gff_exp_abs_pairing_integrable (f : SchwartzTestFunction d) :
     Integrable (fun ω : FieldConfiguration d => Real.exp |ω f|) (gaussianFreeField_free (d := d) m).toMeasure :=
   memLp_one_iff_integrable.mp (gff_exp_abs_pairing_memLp m f 1 ENNReal.one_ne_top)
 
-/-- The integral of ‖exp(I * distributionPairingℂ_real ω f)‖ is finite for any complex test function.
-    This follows from the Gaussian exponential integrability applied to the imaginary part. -/
-lemma gff_integrand_norm_integrable (f : SchwartzTestFunctionℂ d) :
-    Integrable (fun ω : FieldConfiguration d =>
-        ‖Complex.exp (Complex.I * distributionPairingℂ_real ω f)‖)
-      (gaussianFreeField_free (d := d) m).toMeasure := by
-  -- Rewrite the norm using our lemma
-  simp_rw [norm_exp_I_distributionPairingℂ_real]
-  -- This is exp(-(ω f_im)) which is integrable by gff_exp_neg_pairing_integrable
-  exact gff_exp_neg_pairing_integrable m (complex_testfunction_decompose f).2
 
 
 

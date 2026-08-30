@@ -412,9 +412,7 @@ set_option maxHeartbeats 1000000
     This follows from the positive definite case by continuity: if R is PSD, then
     R + εI is PD for ε > 0, so entrywiseExp_hadamardSeries(R + εI) is PD, and
     taking ε → 0⁺ with continuity of entrywiseExp_hadamardSeries gives that
-    entrywiseExp_hadamardSeries(R) is PSD.
-
-    NOTE: This proof is simplified to avoid matrix reduction timeouts. -/
+    entrywiseExp_hadamardSeries(R) is PSD. -/
 lemma posSemidef_entrywiseExp_hadamardSeries_of_posSemidef
   (R : Matrix ι ι ℝ) (hR : R.PosSemidef) :
   (entrywiseExp_hadamardSeries (ι:=ι) R).PosSemidef := by

@@ -169,8 +169,8 @@ lemma kernelTail_tendsto_zero (K : E → ℝ) (R₀ : ℝ)
 
 /-! ## Key theorem: L¹ ⋆ C₀ → C₀
 
-This is the main engine of the proof. In Mathlib this should be something like
-`convolution_tendsto_zero_of_integrable_of_continuous_vanishing` or similar. -/
+The convolution of an integrable function with a continuous function vanishing at
+infinity again vanishes at infinity. -/
 
 omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 /-- A continuous function vanishing at infinity is bounded. -/

@@ -68,10 +68,6 @@ focusing on integrability, Schwartz function properties, and L² embeddings.
 - `SchwartzMap.translate`: Translation of Schwartz functions
 - `schwartz_integrable_decay`: Decay bounds for Schwartz function integrals
 
-**Complex Embeddings:**
-- `Complex.ofRealCLM_continuous_compLp`: Continuous lifting to Lp spaces
-- `embedding_real_to_complex`: Canonical ℝ→ℂ embedding for Lp functions
-
 **Schwartz→L² Embedding:**
 - `schwartzToL2`: Embedding Schwartz functions into L² space
 
@@ -101,13 +97,6 @@ open scoped FourierTransform
 
 noncomputable section
 
-/-! ## Proven theorems in this file
-
-The following L∞ × L² multiplication theorems are fully proven (2025-12-13):
-- `linfty_mul_L2_CLM`: L∞ × L² → L² bounded linear operator
-- `linfty_mul_L2_CLM_spec`: pointwise specification (g·f)(x) = g(x)·f(x) a.e.
--/
-
 open MeasureTheory.Measure
 
 
@@ -126,7 +115,7 @@ open scoped SchwartzMap
 variable {𝕜 : Type} [RCLike 𝕜]
 variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
--- General version that works for any normed space over ℝ
+/-- Schwartz functions have temperate growth, for any real normed domain and codomain. -/
 lemma SchwartzMap.hasTemperateGrowth_general
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
@@ -134,67 +123,14 @@ lemma SchwartzMap.hasTemperateGrowth_general
     Function.HasTemperateGrowth (⇑g) :=
   hasTemperateGrowth g
 
-/- Measure lifting from real to complex Lp spaces -/
+/- Borel measurable structure on Lp spaces -/
 
 variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
 
--- Add measurable space instances for Lp spaces
-instance [MeasurableSpace α] (μ : Measure α) : MeasurableSpace (Lp ℝ 2 μ) := borel _
-instance [MeasurableSpace α] (μ : Measure α) : BorelSpace (Lp ℝ 2 μ) := ⟨rfl⟩
-instance [MeasurableSpace α] (μ : Measure α) : MeasurableSpace (Lp ℂ 2 μ) := borel _
-instance [MeasurableSpace α] (μ : Measure α) : BorelSpace (Lp ℂ 2 μ) := ⟨rfl⟩
-
--- Use this to prove our specific case
-lemma Complex.ofRealCLM_continuous_compLp {α : Type*} [MeasurableSpace α] {μ : Measure α} :
-  Continuous (fun φ : Lp ℝ 2 μ => Complex.ofRealCLM.compLp φ : Lp ℝ 2 μ → Lp ℂ 2 μ) := by
-  -- The function φ ↦ L.compLp φ is the application of the continuous linear map
-  -- ContinuousLinearMap.compLpL p μ L, which is continuous
-  exact (ContinuousLinearMap.compLpL 2 μ Complex.ofRealCLM).continuous
-
-/--
-Compose an Lp function with a continuous linear map.
-This should be the canonical way to lift real Lp functions to complex Lp functions.
--/
-noncomputable def composed_function {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (f : Lp ℝ 2 μ) (A : ℝ →L[ℝ] ℂ): Lp ℂ 2 μ :=
-  A.compLp f
-
--- Check that we get the expected norm bound
-example {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (f : Lp ℝ 2 μ) (A : ℝ →L[ℝ] ℂ) : ‖A.compLp f‖ ≤ ‖A‖ * ‖f‖ :=
-  ContinuousLinearMap.norm_compLp_le A f
-
-/--
-Embedding from real Lp functions to complex Lp functions using the canonical embedding ℝ → ℂ.
--/
-noncomputable def embedding_real_to_complex {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (φ : Lp ℝ 2 μ) : Lp ℂ 2 μ :=
-  composed_function φ (Complex.ofRealCLM)
-
-section LiftMeasure
-  variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
-
-  /--
-  Lifts a probability measure from the space of real Lp functions to the space of
-  complex Lp functions, with support on the real subspace.
-  -/
-  noncomputable def liftMeasure_real_to_complex
-      (dμ_real : ProbabilityMeasure (Lp ℝ 2 μ)) :
-      ProbabilityMeasure (Lp ℂ 2 μ) :=
-    let dμ_complex_measure : Measure (Lp ℂ 2 μ) :=
-      Measure.map embedding_real_to_complex dμ_real
-    have h_ae : AEMeasurable embedding_real_to_complex dμ_real := by
-      apply Continuous.aemeasurable
-      unfold embedding_real_to_complex composed_function
-      have : Continuous (fun φ : Lp ℝ 2 μ => Complex.ofRealCLM.compLp φ : Lp ℝ 2 μ → Lp ℂ 2 μ) :=
-        Complex.ofRealCLM_continuous_compLp
-      exact this
-    have h_is_prob := isProbabilityMeasure_map h_ae
-    ⟨dμ_complex_measure, h_is_prob⟩
-
-end LiftMeasure
-
-
+instance (μ : Measure α) : MeasurableSpace (Lp ℝ 2 μ) := borel _
+instance (μ : Measure α) : BorelSpace (Lp ℝ 2 μ) := ⟨rfl⟩
+instance (μ : Measure α) : MeasurableSpace (Lp ℂ 2 μ) := borel _
+instance (μ : Measure α) : BorelSpace (Lp ℂ 2 μ) := ⟨rfl⟩
 
 /-! ## Fourier Transform as Linear Isometry on L² Spaces
 

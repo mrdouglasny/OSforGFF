@@ -40,8 +40,8 @@ open TopologicalSpace Measure
 
 noncomputable section
 
-/-OS2 R^d with d=4, where mu is the Lebegue measure.
-We know the OS2 dp must be Euclidean invariant -/
+/- The Euclidean group of `ℝ^d` and its pullback action on test functions, the
+symmetry underlying OS2 (Euclidean invariance) for the Lebesgue-measure spacetime. -/
 
 open scoped Real InnerProductSpace SchwartzMap
 
@@ -356,39 +356,5 @@ noncomputable def euclidean_action (g : (E d)) (f : (SchwartzTestFunctionℂ d))
     (hg := euclidean_pullback_temperate_growth g)
     (hg_upper := euclidean_pullback_polynomial_bounds g) f
 
-/-- Action of Euclidean group on real test functions via pullback.
-    For g ∈ (E d) and f ∈ (SchwartzTestFunction d), define (g • f)(x) = f(g⁻¹ • x).
-    This is the real version of euclidean_action for (SchwartzTestFunction d) = SchwartzMap (SpaceTime d) ℝ. -/
-noncomputable def euclidean_action_real (g : (E d)) (f : (SchwartzTestFunction d)) : (SchwartzTestFunction d) :=
-  SchwartzMap.compCLM (𝕜 := ℝ)
-    (hg := euclidean_pullback_temperate_growth g)
-    (hg_upper := euclidean_pullback_polynomial_bounds g) f
-
-/-- The measure preservation result enables both test function and L² actions.
-    This is the key unifying lemma that works specifically for the spacetime measure μ. -/
-lemma euclidean_action_unified_basis (g : (E d)) :
-    MeasurePreserving (euclidean_pullback g) (volume : Measure (SpaceTime d)) volume := by
-  -- This is just measurePreserving_act applied to g⁻¹
-  unfold euclidean_pullback
-  exact measurePreserving_act g⁻¹
-
-/-- Action of Euclidean group on L² functions via pullback.
-    For g ∈ (E d) and f ∈ Lp ℂ 2 (volume : Measure (SpaceTime d)), define (g • f)(x) = f(g⁻¹ • x).
-    This uses the same fundamental pullback transformation as the test function action,
-    but leverages measure preservation instead of temperate growth bounds.
-    Specialized for (SpaceTime d) with Lebesgue measure. -/
-noncomputable def euclidean_action_L2 (g : (E d))
-    (f : Lp ℂ 2 (volume : Measure (SpaceTime d))) : Lp ℂ 2 (volume : Measure (SpaceTime d)) :=
-  -- Use Lp.compMeasurePreserving for measure-preserving transformations
-  have h_meas_pres : MeasurePreserving (euclidean_pullback g) (volume : Measure (SpaceTime d)) volume :=
-    euclidean_action_unified_basis g
-  Lp.compMeasurePreserving (p := 2) (euclidean_pullback g) h_meas_pres f
-
-/-- The Euclidean action as a continuous linear map on test functions.
-    This leverages the Schwartz space structure and temperate growth bounds. -/
-noncomputable def euclidean_action_CLM (g : (E d)) : (SchwartzTestFunctionℂ d) →L[ℂ] (SchwartzTestFunctionℂ d) :=
-  SchwartzMap.compCLM (𝕜 := ℂ)
-    (hg := euclidean_pullback_temperate_growth g)
-    (hg_upper := euclidean_pullback_polynomial_bounds g)
 
 

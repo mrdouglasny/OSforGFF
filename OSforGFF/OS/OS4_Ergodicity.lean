@@ -973,10 +973,7 @@ lemma variance_decay_from_clustering (m : ℝ) [Fact (0 < m)] [GFFPropagator d m
           exact continuous_parametric_integral_of_continuous h_DecayFn_cont isCompact_Icc
         · exact measurableSet_Icc
         · intro s hs
-          -- Technical integrability: ‖Cov s ·‖ and decay function are continuous hence integrable on [0,T]
-          -- These follow from gff_covariance_continuous and continuity of the decay function
-          -- Inner integrability follows from gff_covariance_continuous + Continuous.integrableOn_Icc
-          -- but Lean times out on the type unification with the Cov definition
+          -- ‖Cov s ·‖ and the decay function are continuous, hence integrable on [0,T]
           have h_inner_int1 : MeasureTheory.IntegrableOn (fun u => ‖Cov s u‖) (Set.Icc 0 T) :=
             gff_covariance_norm_integrableOn_slice m f s T
           have h_inner_int2 : MeasureTheory.IntegrableOn

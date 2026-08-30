@@ -78,12 +78,6 @@ theorem freeCovarianceℂ_bilinear_agrees_on_reals
   rw [step1]
   exact integral_ofReal
 
-/-! ## Weighted L² Space Construction -/
-
-/-- The weighted measure on momentum space with density (‖k‖² + m²)⁻¹. -/
-noncomputable def momentumWeightMeasure (m : ℝ) : Measure (SpaceTime d) :=
-  volume.withDensity (fun k => ENNReal.ofReal (1 / (‖k‖ ^ 2 + m ^ 2)))
-
 omit [Fact (2 ≤ d)] in
 /-- For `c : ℝ` and Schwartz functions over ℂ, ℝ-smul equals ℂ-smul by the canonical coercion. -/
 private lemma schwartz_real_smul_eq_complex (c : ℝ) (f : SchwartzMap (SpaceTime d) ℂ) :
@@ -102,8 +96,8 @@ private lemma lp_real_smul_eq_complex (c : ℝ) (g : Lp ℂ 2 (volume : Measure 
 
 /-- ℝ-linear view of the complex Fourier transform on Schwartz space.
 
-Note: we build this manually instead of using `restrictScalars` because the
-`LinearMap.CompatibleSMul` instance is not found automatically in mathlib v4.29. -/
+Built by hand rather than via `restrictScalars`, whose `LinearMap.CompatibleSMul`
+instance is not found automatically here. -/
 noncomputable def fourierTransformCLM_real :
     SchwartzTestFunctionℂ d →L[ℝ] SchwartzTestFunctionℂ d where
   toLinearMap :=
