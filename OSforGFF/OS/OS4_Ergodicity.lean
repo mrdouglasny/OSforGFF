@@ -121,8 +121,7 @@ lemma gff_exp_pairing_integrable (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (f
   exact (Complex.continuous_exp.measurable.comp (QFT.distributionPairingℂ_real_measurable f)).aestronglyMeasurable
 
 /-- Time-translated complex exponential is in L² under the GFF measure.
-    This follows from |exp(z)|² = exp(2 Re z) ≤ exp(2|Re z|) which is integrable.
-    (Copied from OS4Ron.lean - needed for integrability proofs) -/
+    This follows from |exp(z)|² = exp(2 Re z) ≤ exp(2|Re z|) which is integrable. -/
 lemma gff_exp_time_translated_memLp_two (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (s : ℝ) (f : (SchwartzTestFunctionℂ d)) :
     MemLp (fun ω : (FieldConfiguration d) =>
         Complex.exp (distributionPairingℂ_real (timeTranslationDistribution s ω) f))

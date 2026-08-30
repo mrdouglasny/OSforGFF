@@ -84,31 +84,14 @@ lemma measurePreserving_actEquiv (g : E d) :
 /-! ## Main theorem: Bilinear form invariance -/
 
 set_option linter.unusedSectionVars false in
-/-- The complex bilinear covariance form is invariant under Euclidean transformations.
-    This is the key lemma showing ⟨g•f, C(g•h)⟩ = ⟨f, Ch⟩.
+/-- The complex bilinear covariance form is invariant under Euclidean transformations:
+    ⟨g•f, C(g•h)⟩ = ⟨f, Ch⟩.
 
-    **What needs to be proven:**
-    Starting from:
-    - `freeCovariance_euclidean_invariant`: C(g•x, g•y) = C(x, y) (proven in Covariance.lean)
-    - `measurePreserving_act`: act g preserves Lebesgue measure (proven in Euclidean.lean)
-
-    We need to show:
-      ∫∫ f(g⁻¹•x) C(x,y) h(g⁻¹•y) dx dy = ∫∫ f(u) C(u,v) h(v) du dv
-
-    **Proof sketch:**
-    1. Rewrite C(x,y) = C(g•(g⁻¹•x), g•(g⁻¹•y)) using act_euclidean_pullback
-    2. Apply freeCovariance_euclidean_invariant to get C(g⁻¹•x, g⁻¹•y)
-    3. Now the integrand is F(g⁻¹•x, g⁻¹•y) where F(u,v) = f(u) C(u,v) h(v)
-    4. Change variables u = g⁻¹•x, v = g⁻¹•y (measure-preserving on product space)
-    5. Use MeasurePreserving.prod to get measure preservation on SpaceTime d × SpaceTime d
-
-    **Technical gap:**
-    The Mathlib lemma `MeasurePreserving.integral_comp'` requires the integrand
-    to have the form `G(e x)` for a MeasurableEquiv `e`. Our integrand after step 2
-    has the form `f(g⁻¹•x) * C(g⁻¹•x, g⁻¹•y) * h(g⁻¹•y)` which matches this pattern
-    for the product integral ∫ F(e p.1, e p.2) d(p) where e = actEquiv g⁻¹.
-
-    Need to carefully apply integral_prod and MeasurePreserving.prod to complete. -/
+    Proof: rewrite C(x,y) = C(g⁻¹•x, g⁻¹•y) by the kernel invariance
+    `freeCovariance_euclidean_invariant` (`Covariance/ParsevalGeneric.lean`), then change
+    variables u = g⁻¹•x, v = g⁻¹•y in the double integral — the Euclidean action preserves
+    Lebesgue measure (`measurePreserving_act`), and `MeasurePreserving.prod` lifts this to
+    the product space. -/
 theorem freeCovarianceℂ_bilinear_euclidean_invariant (g : E d) (f h : SchwartzTestFunctionℂ d) :
     freeCovarianceℂ_bilinear m (euclidean_action g f) (euclidean_action g h) =
     freeCovarianceℂ_bilinear m f h := by

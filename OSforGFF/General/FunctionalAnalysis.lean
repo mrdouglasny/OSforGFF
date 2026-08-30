@@ -72,7 +72,8 @@ focusing on integrability, Schwartz function properties, and L² embeddings.
 - `schwartzToL2`: Embedding Schwartz functions into L² space
 
 **L∞·L² Multiplication:**
-- `linfty_mul_L2_CLM`: Continuous bilinear map L∞ × L² → L²
+- `linfty_mul_L2_CLM`: multiplication by a fixed essentially bounded function as a
+  continuous linear operator L² → L²
 
 **Integrability Results:**
 - `integrableOn_ball_of_radial`: Radial functions integrable on balls
@@ -172,7 +173,7 @@ Mathematical background:
 - The operator norm satisfies ‖Mg‖ ≤ C
 - The action is pointwise a.e.: (Mg f)(x) = g(x) · f(x) a.e.
 
-Proof method (2025-12-13):
+Proof method:
 - Uses Mathlib's `eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm` for the L∞ × Lp → Lp bound
 - For ℂ, multiplication equals scalar multiplication (g * f = g • f)
 - Hölder's inequality via `MemLp.mul` with HolderTriple ∞ 2 2

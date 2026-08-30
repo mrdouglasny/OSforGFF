@@ -421,7 +421,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
   -- Use Mean Value estimate: ‖g(1) - g(0)‖ ≤ |h| · sup ‖D^{n+1} f(path)‖ · ‖unitTimeDir‖
   -- Since the path is from x to x + h•e₀, the bound involves |h|
   -- We bound this by the seminorm, absorbing weight shift via Peetre
-  -- For now, use a direct bound: each point on the path satisfies the seminorm bound
+  -- Direct bound: each point on the path satisfies the seminorm bound
   -- The translated point is x + h • unitTimeDir
   let z := x + y
   -- Use Peetre's inequality: ‖x‖^k ≤ (1+‖y‖)^k · (1+‖z‖)^k
@@ -468,8 +468,8 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
   -- Step 2: Show ‖g 1 - g 0‖ ≤ |h| * sup_t ‖D^{n+1} f(w_t)‖
   -- This uses MVT + chain rule + currying
 
-  -- For now, we use a bound via the seminorms
-  -- The key observation: (1+‖w_t‖)^k * ‖D^{n+1} f(w_t)‖ is bounded by seminorms
+  -- Bound via the seminorms:
+  -- the key observation is that (1+‖w_t‖)^k * ‖D^{n+1} f(w_t)‖ is bounded by seminorms
 
   -- Case split: if ‖w_t‖ ≥ 1, use seminorm k; if ‖w_t‖ < 1, use seminorm 0
   -- In either case: (1+‖w_t‖)^k * ‖D^{n+1} f(w_t)‖ ≤ 2^k * (seminorm k + seminorm 0 + 1)

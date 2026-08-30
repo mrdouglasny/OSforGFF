@@ -17,6 +17,7 @@ by performing the Fubini exchanges justified in `OS3_MixedRepInfra`. The chain i
 2. Fourier representation of heat kernel introduces spatial momenta k̄
 3. k₀ Gaussian integral: ∫ e^{ik₀(x₀+y₀)} e^{−sk₀²} dk₀ = √(π/s) e^{−(x₀+y₀)²/4s}
 4. Laplace transform in s: ∫₀^∞ s^{−1/2} e^{−(x₀+y₀)²/4s − sω²} ds = √(π/ω²) e^{−ω|x₀+y₀|}
+5. Fubini theorems (from `OS3_MixedRepInfra`) justify every change of integration order.
 
 The final result (Bessel K_{1/2} identity) is:
 
@@ -27,9 +28,6 @@ This is the integration order exchange from eq. (4.19) that the naive approach c
 not justify due to the non-absolute-integrability of 1/√(k²+m²) in the spatial
 momentum space. The entry point is `GFFPropagator.schwinger_eq`, so the derivation
 holds for every dimension d ≥ 2.
-
-5. **Fubini Theorems** (from `OS3_MixedRepInfra`): Justify all changes in integration order
-   using the integrability bounds.
 
 ## Physical Interpretation
 
