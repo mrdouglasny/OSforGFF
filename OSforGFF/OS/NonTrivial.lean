@@ -49,6 +49,12 @@ Injectivity of T follows from:
 
 - Glimm–Jaffe, *Quantum Physics*, §6.1 (nondegeneracy of the free field)
 - Reed–Simon, *Methods of Modern Mathematical Physics* II, §IX.8
+
+## Build status
+
+This file is deliberately **off the root import graph** — the headline theorems of
+`OS.Master` do not depend on it, and `lake build` does not compile it. It is verified
+separately, via `lake env lean`, by `scripts/check-guardrails.sh`.
 -/
 
 open MeasureTheory Complex QFT
@@ -62,6 +68,7 @@ namespace OSforGFF
 
 /-! ## Injectivity of the real-to-complex embedding -/
 
+omit [Fact (2 ≤ d)] in
 /-- The embedding `toComplex : S(ℝ^d,ℝ) → S(ℝ^d,ℂ)` is injective.
     Follows from injectivity of `ℝ → ℂ` applied pointwise. -/
 theorem toComplex_injective : Function.Injective (toComplex : SchwartzTestFunction d → SchwartzTestFunctionℂ d) := by
@@ -73,6 +80,7 @@ theorem toComplex_injective : Function.Injective (toComplex : SchwartzTestFuncti
 
 /-! ## Injectivity of the Fourier transform on Schwartz space -/
 
+omit [Fact (2 ≤ d)] in
 /-- The Fourier transform is injective on complex Schwartz space.
     Proof: `FourierPair` gives `𝓕⁻(𝓕 f) = f`, so `𝓕` has a left inverse. -/
 theorem fourierTransform_schwartz_injective :
@@ -93,6 +101,7 @@ theorem fourierTransform_schwartz_injective :
 
 /-! ## Continuous functions that vanish a.e. vanish everywhere -/
 
+omit [Fact (2 ≤ d)] in
 /-- A continuous function `SpaceTime d → ℂ` that is zero a.e. with respect to
     Lebesgue measure is zero everywhere.
 
@@ -152,7 +161,7 @@ theorem sqrtPropagatorMap_eq_zero_iff (m : ℝ) [Fact (0 < m)] [GFFPropagator d 
     rw [h1]
     have h2 : SchwartzMap.fourierTransformCLM ℂ (0 : SchwartzTestFunctionℂ d) = 0 :=
       ContinuousLinearMap.map_zero _
-    simp only [h2, SchwartzMap.zero_apply, zero_mul]
+    simp only [h2, zero_apply, zero_mul]
 
 /-- The embedding `T : S(ℝ^d,ℝ) → L²(ℝ^d,ℂ)` is injective.
 
