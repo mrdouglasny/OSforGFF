@@ -393,7 +393,7 @@ lemma gff_two_point_locally_integrable (m : ℝ) [Fact (0 < m)] [GFFPropagator d
 
 Using the exponential L²-bound for the generating functional and local
 integrability of the two-point function, we verify OS1 as stated in
-`OS_Axioms.lean` (with the p-th power appearing inside the exponential).
+`OS/Axioms.lean` (with the p-th power appearing inside the exponential).
 -/
 
 open MeasureTheory

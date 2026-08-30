@@ -230,7 +230,7 @@ lemma exp_is_pd_kernel {α : Type*} (K : α → α → ℂ) (hK : IsPositiveDefi
 
 /-- The Gaussian RBF kernel is positive definite on any inner product space. -/
 theorem gaussian_rbf_pd_innerProduct :
-    GFF4D.IsPositiveDefinite (fun h : H => cexp (-(1/2 : ℂ) * (‖h‖^2 : ℝ))) := by
+    GFF.IsPositiveDefinite (fun h : H => cexp (-(1/2 : ℂ) * (‖h‖^2 : ℝ))) := by
   -- Strategy:
   -- 1. Use the polarization identity: ‖x - y‖² = ‖x‖² + ‖y‖² - 2⟨x, y⟩
   -- 2. Factor the Gaussian kernel:

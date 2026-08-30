@@ -67,7 +67,8 @@ path goes through `OS4_PolynomialClustering`):
 
 From `Covariance/Propagator.lean`:
 - `freeCovariance_isometry_invariant` — isometry invariance of the position kernel; OS2
-  invariance is proven in momentum space (`Covariance/Momentum.lean`), not from the kernel.
+  invariance is proven from `freeCovariance_euclidean_invariant`
+  (`Covariance/ParsevalGeneric.lean`), not from this lemma.
 -/
 
 /-! ### From `OS/OS0_Analyticity.lean` -/

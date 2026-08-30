@@ -284,7 +284,7 @@ lemma gaussian_cf_im_zero (r : ℝ) :
 theorem gaussian_rbf_pd_bochner
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] :
     IsPositiveDefinite (fun h : H => Complex.exp (-(1/2 : ℂ) * (‖h‖^2 : ℝ))) :=
-  gff4d_to_bochner_pd gaussian_rbf_pd_innerProduct (fun h => by
+  gff_to_bochner_pd gaussian_rbf_pd_innerProduct (fun h => by
     simp only [norm_neg]; exact (conj_cexp_real _ (gaussian_cf_im_zero _)).symm)
 
 variable {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]

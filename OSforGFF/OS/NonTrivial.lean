@@ -233,7 +233,8 @@ theorem gaussianFreeField_variance_pos (m : ℝ) [Fact (0 < m)] [GFFPropagator d
     verification in `Master.lean` is nontrivial.
 
     Any nonzero Schwartz function witnesses this.  We use a standard bump
-    function on ℝ^d, which exists by `ContDiff.exists_eq_one_of_isOpen`. -/
+    function on ℝ^d (a `ContDiffBump`, viewed as a Schwartz map via
+    `HasCompactSupport.toSchwartzMap`). -/
 theorem gaussianFreeField_not_dirac (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
     ∃ f : SchwartzTestFunction d, f ≠ 0 ∧
       0 < ∫ ω, (distributionPairingCLM f ω) ^ 2 ∂(gaussianFreeField_free (d := d) m).toMeasure := by

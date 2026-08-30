@@ -247,7 +247,7 @@ lemma measurePreserving_act (g : (E d)) :
     simpa using map_add_right_eq_self (volume : Measure (SpaceTime d)) g.t
   simpa [act, Function.comp_def] using trans.comp rot
 
--- Helper functions for temperate growth (adapted from OS2.lean)
+-- Temperate-growth helpers for the pullback map
 open Function
 
 private lemma contDiff_act_inv (g : (E d)) :
@@ -320,7 +320,6 @@ noncomputable def euclidean_pullback (g : (E d)) : (SpaceTime d) → (SpaceTime 
 lemma euclidean_pullback_temperate_growth (g : (E d)) :
     Function.HasTemperateGrowth (euclidean_pullback g) := by
   -- The map x ↦ g⁻¹.R x + g⁻¹.t is affine (linear isometry + translation)
-  -- Use the complete implementation from OS2.lean's helper_htg
   unfold euclidean_pullback
   obtain ⟨k, C, hbound⟩ := act_inv_poly_bound g
   exact Function.HasTemperateGrowth.of_fderiv
@@ -332,7 +331,6 @@ lemma euclidean_pullback_temperate_growth (g : (E d)) :
 lemma euclidean_pullback_polynomial_bounds (g : (E d)) :
     ∃ (k : ℕ) (C : ℝ), ∀ (x : (SpaceTime d)), ‖x‖ ≤ C * (1 + ‖euclidean_pullback g x‖) ^ k := by
   -- Since euclidean_pullback g x = g⁻¹.R x + g⁻¹.t and g⁻¹.R is an isometry:
-  -- This follows the pattern from hg_up_nat in OS2.lean
   use 1, (1 + ‖g⁻¹.t‖)
   intro x
   simp only [pow_one, euclidean_pullback, act]

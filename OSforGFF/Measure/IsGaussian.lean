@@ -109,8 +109,7 @@ The key insight is that we can extend from real to complex test functions using:
 2. For real parameters, we have the Gaussian formula
 3. The Gaussian formula defines an entire function of (z₀, z₁)
 4. By the identity theorem (applied twice in 1D), the two analytic functions agree everywhere
-
-This eliminates the need for `twoD_line_from_realCF` from MinlosAnalytic. -/
+-/
 
 /-- Key technical lemma: fixing one coordinate, the slice is analytic in the other.
     For z₀ ↦ Z[z₀•f + t•g] where t is a fixed complex number.
@@ -208,8 +207,7 @@ lemma gff_cf_agrees_on_reals_OS0 (f g : SchwartzTestFunction d) (t s : ℝ) :
   -- GJGeneratingFunctionalℂ on a real test function equals GJGeneratingFunctional
   rw [GJGeneratingFunctionalℂ_toComplex, h]
 
-/-- Complex generating functional for the free GFF via OS0 + identity theorem.
-    This proves the result WITHOUT using twoD_line_from_realCF. -/
+/-- Complex generating functional for the free GFF via OS0 + identity theorem. -/
 theorem gff_complex_characteristic_OS0 :
     ∀ J : SchwartzTestFunctionℂ d,
       GJGeneratingFunctionalℂ (gaussianFreeField_free m) J =

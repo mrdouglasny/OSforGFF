@@ -12,8 +12,9 @@ import OSforGFF.Covariance.Propagator
 
 The radial profile of the free covariance in four dimensions is the Bessel closed form
 `(m/(4π²r)) K₁(mr)`; its identification with the generic proper-time integral
-`properTimeCovariance` is the evaluation `properTimeCovariance_dim4_eq` (the order `ν = -1` case of
-the master identity `schwingerIntegral_eq_besselK1`, `General/BesselK`).
+`properTimeCovariance` is the evaluation `properTimeCovariance_dim4_eq`, via
+`schwingerIntegral_eq_besselK1` — the order `ν = -1` case of the master identity
+`schwingerIntegral_eq_besselK` (`General/BesselK`).
 -/
 
 noncomputable section

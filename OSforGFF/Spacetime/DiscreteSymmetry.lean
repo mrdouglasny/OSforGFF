@@ -168,9 +168,9 @@ noncomputable def compTimeReflection : (SchwartzTestFunctionℂ d) →L[ℝ] (Sc
     (hg_upper := timeReflection_hg_upper)
 
 /-- Composition with time reflection as a continuous linear map on **real-valued**
-    test functions. This version will be used when working with positive-time
-    subspaces defined over ℝ, so that reflection positivity can be formulated
-    without passing through complex scalars. -/
+    test functions: the version used with positive-time subspaces defined over ℝ,
+    so that reflection positivity can be formulated without passing through
+    complex scalars. -/
 noncomputable def compTimeReflectionReal : (SchwartzTestFunction d) →L[ℝ] (SchwartzTestFunction d) := by
   exact SchwartzMap.compCLM (𝕜 := ℝ)
     (hg := timeReflectionCLM.hasTemperateGrowth)

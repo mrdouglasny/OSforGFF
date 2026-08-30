@@ -406,7 +406,6 @@ lemma posDef_entrywiseExp_hadamardSeries_of_posDef
   simpa [hq_tsum] using this
 
 set_option maxHeartbeats 1000000
---set_option diagnostics true
 
 /-- The Hadamard-series entrywise exponential preserves positive semidefiniteness.
     This follows from the positive definite case by continuity: if R is PSD, then
