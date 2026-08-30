@@ -1,34 +1,28 @@
 /-
-Build-enforced guardrails for the dimension-generic refactor.
+Build-enforced guardrails.
 
 This file is compiled as part of the library, so `lake build` is the enforcer: the build FAILS
 here (via `#guard_msgs`) if any change
 
-  * introduces a new `axiom` reachable from the master theorem, or
-  * lets a `sorry` leak into the goal (surfaces as `sorryAx` in the axiom list), or
-  * changes the master theorem's statement type.
+  * introduces a new `axiom` reachable from a headline theorem, or
+  * lets a `sorry` leak in (surfaces as `sorryAx` in the axiom list), or
+  * changes a headline theorem's statement type.
 
-## Status: ACTIVATED at Stage 0 (2026-07-02).
+The frozen axiom footprint is exactly Lean's three core axioms (`propext`, `Classical.choice`,
+`Quot.sound`); no custom axiom is reachable from the headlines. In particular the dependency
+axioms `schwartz_nuclear` / `minlos_theorem` / `differentiable_analyticAt_finDim` are not:
+`minlos_theorem` is a proven `theorem` (BochnerMinlos/Minlos/Main.lean), the `schwartz_*`
+nuclear axioms live only in BochnerMinlos' `Test/` tree (off the import path), and
+`differentiable_analyticAt_finDim` no longer exists. The guards freeze this, so the build also
+fails if any of those dependency axioms ever creeps back onto the import path.
 
-The frozen axiom footprint below is the *actual* footprint of the pristine 4D baseline
-(`pre-unification-baseline`, commit 60ab679), built against the pinned deps
-BochnerMinlos @ 1b56973 / GaussianField @ 36ae6dd: **only Lean's three core axioms**
-(`propext`, `Classical.choice`, `Quot.sound`).
-
-Note — this is cleaner than the earlier docs anticipated (they expected three inherited custom
-axioms `schwartz_nuclear` / `minlos_theorem` / `differentiable_analyticAt_finDim`). At the pinned
-revs none are reachable: `minlos_theorem` is a proven `theorem` (BochnerMinlos/Minlos/Main.lean),
-the `schwartz_*` nuclear axioms live only in BochnerMinlos' `Test/` tree (off the import path),
-and `differentiable_analyticAt_finDim` no longer exists. The guard freezes reality, so it will now
-also fail if any of those dependency axioms ever creep back onto the import path.
-
-Frozen blocks are present for all six headline theorems: the dimension-generic master theorem, the
-all-dimensions corollary (`_of_dim`, every `d ≥ 2`), and the concrete instances `d = 4`,
-`d = 3`, `d = 2`, and `d = 5`.
+Frozen blocks — axiom footprint AND statement type — cover all six headline theorems: the
+dimension-generic master theorem, the all-dimensions corollary (`_of_dim`, every `d ≥ 2`), and
+the concrete instances `d = 4`, `d = 3`, `d = 2`, and `d = 5`.
 -/
 import «OSforGFF».OS.Master
 
--- ── Axiom-footprint guard (ACTIVATED) ────────────────────────────────────────
+-- ── Axiom-footprint guard for the four-dimensional instance ──────────────────
 /-- info: 'OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in
 #print axioms OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4
@@ -38,7 +32,13 @@ import «OSforGFF».OS.Master
 #guard_msgs in
 #print axioms OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic
 
--- ── Goal-type guard: pins the master theorem's statement (ACTIVATED) ──────────
+-- ── Goal-type guard: pins the dimension-generic master theorem's statement ────
+/-- info: @OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic : ∀ {d : ℕ} [inst : Fact (2 ≤ d)] (m : ℝ)
+  [inst_1 : Fact (0 < m)] [inst_2 : OSforGFF.GFFPropagator d m], SatisfiesAllOS (gaussianFreeField_free m) -/
+#guard_msgs in
+#check @OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_generic
+
+-- ── Goal-type guard: pins the four-dimensional headline's statement ───────────
 /-- info: OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4 : ∀ (m : ℝ) [inst : Fact (0 < m)], SatisfiesAllOS (μ_GFF 4 m) -/
 #guard_msgs in
 #check @OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4

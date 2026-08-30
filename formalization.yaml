@@ -1,7 +1,8 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
 # formalization.yaml — https://github.com/mathlib-initiative/formalization.yaml (v0.4)
 # Describes the dimension-generic library (uniform μ_GFF d, every d ≥ 2). 0 sorries,
-# 0 custom axioms; ~31,500 lines across 54 on-graph files (+6 off-graph Legacy files).
+# 0 custom axioms; ~26,000 lines across 52 on-graph files (plus the off-graph
+# OS/NonTrivial.lean, verified by scripts/check-guardrails.sh, and 6 off-graph Legacy files).
 # The Palomar registry Challenge/Solution pair lives in the thin wrapper repository
 # mrdouglasny/OSforGFF-comparator, which pins this one by commit.
 version: "v0.4"
@@ -157,7 +158,7 @@ status:
       literature_dependencies:
         - statement: "the free GFF with the K_{3/2} covariance (d=5) satisfies OS0-OS4"
           source: "10.1007/BF01645738"
-    - declaration: "OSforGFF.gaussianFreeField_free"
+    - declaration: "gaussianFreeField_free"
       file: "OSforGFF/Measure/Construct.lean"
       sorry_count: 0
       axioms: []
@@ -224,9 +225,10 @@ automation:
         Solution bridging proof, comparator configuration, and metadata, now carried by
         mrdouglasny/OSforGFF-comparator.
   notes: >
-    Build: `lake build` (library + guardrails). Mathlib + bochner + gaussian-field + kolmogorov_extension4 pinned via
-    lake-manifest.json (bochner and gaussian-field pinned to full commit SHAs in the
-    lakefile). Models per README acknowledgements.
+    Build: `lake build` (library + guardrails). Mathlib + bochner + gaussian-field +
+    kolmogorov_extension4 pinned via lake-manifest.json; the registry pair and its
+    full-SHA dependency pins live in the wrapper mrdouglasny/OSforGFF-comparator.
+    Models per README acknowledgements.
 
 fidelity:
   divergences: >
@@ -258,8 +260,10 @@ review:
   status: "self-assessed"
   reviewers: []
   notes: >
-    0 sorries and 0 custom axioms in the OSforGFF source (54 on-graph files, ~31,500 lines,
-    plus 6 off-graph Legacy files preserving superseded 4D-era proofs). The registry
+    0 sorries and 0 custom axioms in the OSforGFF source (52 on-graph files, ~26,000 lines,
+    plus the off-graph OS/NonTrivial.lean — live non-degeneracy results verified by
+    scripts/check-guardrails.sh — and 6 off-graph Legacy files preserving superseded
+    4D-era proofs). The registry
     Challenge/Solution pair, and the single `sorry` that is its challenge hole, live in
     mrdouglasny/OSforGFF-comparator. External dependencies
     (bochner, gaussian-field, kolmogorov_extension4) are themselves axiom-free per their
