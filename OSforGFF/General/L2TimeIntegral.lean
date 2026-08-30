@@ -72,7 +72,6 @@ The L² Cauchy-Schwarz inequality |⟨1, f⟩|² ≤ ‖1‖² · ‖f‖² appl
 
 Proof uses Hölder's inequality with p = q = 2, taking one function to be constant 1. -/
 
-set_option maxHeartbeats 400000 in
 /-- **Cauchy-Schwarz for set integrals.**
 
 For f : ℝ → ℂ with ‖f‖² integrable on [a,b]:
@@ -278,7 +277,6 @@ joint StronglyMeasurable on ℝ × Ω from continuous-in-s + measurable-in-ω.
 Then swap + `integral_prod_right'` gives measurability of the marginal integral.
 -/
 
-set_option maxHeartbeats 400000 in
 /-- **Measurability of parametric time integrals.**
 
 For A : ℝ → Ω → ℂ with s ↦ A s ω continuous for each ω and A s measurable for each s,
@@ -350,7 +348,6 @@ is bounded linearly in T. The proof uses:
 3. **Outer integral:** ∫_{[0,T]} C ds = C·T.
 -/
 
-set_option maxHeartbeats 800000 in
 /-- **Double integral bound for polynomial decay kernels.**
 
 For the kernel K(s,u) = (1 + |s-u|)^{-α} with α > 1:
@@ -437,7 +434,6 @@ section VarianceBound
 
 variable {Ω : Type*} [MeasurableSpace Ω]
 
-set_option maxHeartbeats 1600000 in
 /-- **Variance of time averages bounded by double integral of covariance** (proved theorem)
 
 For an L² stationary process A with constant mean EA:

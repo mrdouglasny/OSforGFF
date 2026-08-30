@@ -261,9 +261,8 @@ private lemma fderiv_linear_add_const (L : (SpaceTime d) →L[ℝ] (SpaceTime d)
     fderiv ℝ (fun y => L y + c) x = fderiv ℝ L x := by
   apply fderiv_add_const
 
-set_option linter.unusedVariables false in
 private theorem fderiv_act_inv_eq_linear (g : (E d)) :
-  (fun x => fderiv ℝ (act g⁻¹) x) = fun x => g⁻¹.R.toContinuousLinearMap := by
+  (fun x => fderiv ℝ (act g⁻¹) x) = fun _ => g⁻¹.R.toContinuousLinearMap := by
   ext x v i
   let L := g⁻¹.R.toContinuousLinearMap
   calc (fderiv ℝ (act g⁻¹) x v) i
