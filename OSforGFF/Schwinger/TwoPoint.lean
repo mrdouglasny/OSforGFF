@@ -88,6 +88,17 @@ noncomputable def standardBumpSequence (n : ℕ) (hn : n ≠ 0) : ContDiffBump (
       simp only [one_div]
       exact this }
 
+omit [Fact (2 ≤ d)] in
+/-- The outer radii of the shifted standard bump sequence tend to `0`: `1/(n+1) → 0`. -/
+lemma standardBumpSequence_rOut_tendsto_zero :
+    Filter.Tendsto
+      (fun n : ℕ => (standardBumpSequence (d := d) (n + 1) (Nat.succ_ne_zero n)).rOut)
+      Filter.atTop (nhds 0) := by
+  simp only [standardBumpSequence]
+  have h1 : ∀ n : ℕ, (1 : ℝ) / ↑(n + 1) = 1 / (↑n + 1) := fun n => by norm_cast
+  simp_rw [h1]
+  exact tendsto_one_div_add_atTop_nhds_zero_nat
+
 /-- Two-point correlation function defined as the limit of smeared correlations.
 
     **Definition**: S₂(x) := lim_{n→∞} SmearedTwoPointFunction dμ (φ_{1/n}) x
@@ -187,11 +198,8 @@ theorem schwingerTwoPointFunction_eq_kernel
     let φ : ℕ → ContDiffBump (0 : SpaceTime d) := fun n => standardBumpSequence (n + 1) (Nat.succ_ne_zero n)
 
     -- The rOut of this sequence tends to 0: 1/(n+1) → 0
-    have hφ_rOut : Filter.Tendsto (fun n => (φ n).rOut) Filter.atTop (nhds 0) := by
-      simp only [φ, standardBumpSequence]
-      have h1 : ∀ n : ℕ, (1 : ℝ) / ↑(n + 1) = 1 / (↑n + 1) := fun n => by norm_cast
-      simp_rw [h1]
-      exact tendsto_one_div_add_atTop_nhds_zero_nat
+    have hφ_rOut : Filter.Tendsto (fun n => (φ n).rOut) Filter.atTop (nhds 0) :=
+      standardBumpSequence_rOut_tendsto_zero
 
     -- Apply smearedTwoPoint_tendsto_schwingerTwoPoint to φ
     have h_smeared : Filter.Tendsto (fun n => SmearedTwoPointFunction dμ_config (φ n) x)
