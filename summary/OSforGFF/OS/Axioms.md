@@ -21,13 +21,13 @@ a single predicate.
 
 **Main result**: Fully proven (pure definitions, no proofs needed)
 
-**Length**: 201 lines, 10 definition(s) + 0 theorem(s)/lemma(s)
+**Length**: 232 lines, 10 definition(s) + 0 theorem(s)/lemma(s)
 
 ---
 
 ## Osterwalder-Schrader Axioms
 
-### [`OS0_Analyticity`](../../../OSforGFF/OS/Axioms.lean#L76) — Definition
+### [`OS0_Analyticity`](../../../OSforGFF/OS/Axioms.lean#L78) — Definition
 
 **Lean signature**
 ```lean
@@ -38,18 +38,18 @@ def OS0_Analyticity (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : P
 
 ---
 
-### [`TwoPointIntegrable`](../../../OSforGFF/OS/Axioms.lean#L82) — Definition
+### [`TwoPointIntegrable`](../../../OSforGFF/OS/Axioms.lean#L98) — Definition
 
 **Lean signature**
 ```lean
 def TwoPointIntegrable (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop
 ```
 
-**Informal**: The two-point Schwinger function $S_2(x)$ is locally integrable with respect to Lebesgue measure on spacetime, an integrability condition needed for the $p = 2$ case of OS-1.
+**Informal**: There is a locally integrable $K : \mathbb{R}^d \to \mathbb{R}$ to which the smeared two-point functions $S_2(\phi_n(\cdot - x), \phi_n)$ converge at every non-coincident point $x \neq 0$, along the standard mollifier sequence $\phi_n$ (the $(n{+}1)$-st standard bump, named `TwoPointIntegrable.standardMollifier` in a `where` clause). The convergence is part of the condition — the limit is quantified explicitly rather than produced by a totalized limit operator. Integrability condition needed for the $p = 2$ case of OS-1. It implies local integrability of the `limUnder`-defined `SchwingerTwoPointFunction` (`TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable`, in `OS/OS1_Regularity.lean`).
 
 ---
 
-### [`OS1_Regularity`](../../../OSforGFF/OS/Axioms.lean#L86) — Definition
+### [`OS1_Regularity`](../../../OSforGFF/OS/Axioms.lean#L111) — Definition
 
 **Lean signature**
 ```lean
@@ -58,11 +58,11 @@ def OS1_Regularity (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Pr
 
 **Informal**: There exist $1 \leq p \leq 2$ and $c > 0$ such that the generating functional satisfies the exponential bound
 $$\lVert Z[f] \rVert \leq \exp\!\Bigl(c\Bigl(\int \lVert f(x) \rVert\, dx + \int \lVert f(x) \rVert^p\, dx\Bigr)\Bigr)$$
-for every complex test function $f$; moreover, when $p = 2$, the two-point function is locally integrable (temperedness).
+for every complex test function $f$; moreover, when $p = 2$, the mollified two-point functions converge away from the coincident point to a locally integrable limit (`TwoPointIntegrable`, temperedness).
 
 ---
 
-### [`OS2_EuclideanInvariance`](../../../OSforGFF/OS/Axioms.lean#L94) — Definition
+### [`OS2_EuclideanInvariance`](../../../OSforGFF/OS/Axioms.lean#L121) — Definition
 
 **Lean signature**
 ```lean
@@ -73,7 +73,7 @@ def OS2_EuclideanInvariance (dμ_config : ProbabilityMeasure (FieldConfiguration
 
 ---
 
-### [`OS3_ReflectionPositivity`](../../../OSforGFF/OS/Axioms.lean#L112) — Definition
+### [`OS3_ReflectionPositivity`](../../../OSforGFF/OS/Axioms.lean#L141) — Definition
 
 **Lean signature**
 ```lean
@@ -86,7 +86,7 @@ where the star operation is $f^\star(x) = \overline{f(\Theta x)}$, combining tim
 
 ---
 
-### [`OS3_ReflectionPositivity_real`](../../../OSforGFF/OS/Axioms.lean#L122) — Definition
+### [`OS3_ReflectionPositivity_real`](../../../OSforGFF/OS/Axioms.lean#L151) — Definition
 
 **Lean signature**
 ```lean
@@ -99,7 +99,7 @@ where $\Theta$ denotes (real-valued) time reflection. This is equivalent to `OS3
 
 ---
 
-### [`OS4_Clustering`](../../../OSforGFF/OS/Axioms.lean#L145) — Definition
+### [`OS4_Clustering`](../../../OSforGFF/OS/Axioms.lean#L176) — Definition
 
 **Lean signature**
 ```lean
@@ -112,7 +112,7 @@ where $T_a$ denotes translation by $a \in \mathbb{R}^d$. This is equivalent to e
 
 ---
 
-### [`OS4_Ergodicity`](../../../OSforGFF/OS/Axioms.lean#L158) — Definition
+### [`OS4_Ergodicity`](../../../OSforGFF/OS/Axioms.lean#L189) — Definition
 
 **Lean signature**
 ```lean
@@ -125,7 +125,7 @@ as $T \to \infty$.
 
 ---
 
-### [`OS4_PolynomialClustering`](../../../OSforGFF/OS/Axioms.lean#L180) — Definition
+### [`OS4_PolynomialClustering`](../../../OSforGFF/OS/Axioms.lean#L211) — Definition
 
 **Lean signature**
 ```lean
@@ -140,7 +140,7 @@ $$\left\lVert \mathbb{E}_\mu\!\left[e^{\langle \phi,f\rangle + \langle T_s \phi,
 
 ## Bundled Axiom Conjunction
 
-### [`SatisfiesAllOS`](../../../OSforGFF/OS/Axioms.lean#L195) — Definition
+### [`SatisfiesAllOS`](../../../OSforGFF/OS/Axioms.lean#L226) — Definition
 
 **Lean signature**
 ```lean

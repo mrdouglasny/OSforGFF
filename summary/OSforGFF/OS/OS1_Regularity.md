@@ -20,11 +20,15 @@ with `(m : ℝ) [Fact (0 < m)] [GFFPropagator d m]`. Per the refactor, the two-p
 was rebuilt on the **centered** kernel `freeCovarianceKernel d m` ($= $ `freeCovariance d m 0 ·`,
 from `Covariance/ParsevalGeneric.lean`): continuity off the origin comes from
 `freeCovarianceKernel_continuousOn` (built on `properTimeCovariance_continuousOn` composed with
-the norm and `schwinger_eq`), and `TwoPointIntegrable` comes from `GFFPropagator.integrable`
-(global $L^1$-integrability of the radial profile) transported a.e. off the null set $\{0\}$ —
-the old $r^{-2}$ / `locallyIntegrable_of_rpow_decay_real` route and the two decay-bound lemmas
-were dropped. The exponential chain runs on the generic `freeCovarianceℂ_bilinear`,
-`parseval_covariance_schwartz`, and `freePropagatorMom`.
+the norm and `schwinger_eq`), and `TwoPointIntegrable` is discharged with the kernel itself as
+the quantified limit: convergence of the smeared two-point functions away from the origin from
+`smearedTwoPoint_tendsto_schwingerTwoPoint` (fed by the kernel representation
+`gff_schwinger_eq_kernel_rep`), integrability from `GFFPropagator.integrable` (global
+$L^1$-integrability of the radial profile) — the old $r^{-2}$ /
+`locallyIntegrable_of_rpow_decay_real` route and the two decay-bound lemmas were dropped, and the
+`limUnder`-based local-integrability statement survives as
+`gff_schwingerTwoPoint_locallyIntegrable`. The exponential chain runs on the generic
+`freeCovarianceℂ_bilinear`, `parseval_covariance_schwartz`, and `freePropagatorMom`.
 
 ## Status
 
@@ -32,7 +36,7 @@ were dropped. The exponential chain runs on the generic `freeCovarianceℂ_bilin
 
 None — file is sorry-free.
 
-**Length**: 454 lines, 1 definition + 11 theorem(s)/lemma(s)
+**Length**: 498 lines, 1 definition + 14 theorem(s)/lemma(s)
 
 ---
 
@@ -65,36 +69,44 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
 
 ---
 
-### [`schwingerTwoPointFunction_eq_GFF`](../../../OSforGFF/OS/OS1_Regularity.lean#L86) — Theorem
+### [`gff_schwinger_eq_kernel_rep`](../../../OSforGFF/OS/OS1_Regularity.lean#L86) — Lemma
 
-**Statement**: Away from the origin ($x \neq 0$), the abstract mollified two-point function of the GFF agrees with the concrete kernel: $\mathrm{SchwingerTwoPointFunction}(\mu_{\mathrm{GFF}})(x) = \mathrm{SchwingerTwoPointFunction\_GFF}\,m\,x$.
+**Statement**: Kernel representation of the GFF two-point Schwinger function: $S_2(f, g) = \int\!\!\int f(u)\, K(u - v)\, g(v)\,du\,dv$ with $K = $ `freeCovarianceKernel d m` the centered covariance kernel.
 
-**Proof uses**: [`schwingerTwoPointFunction_eq_kernel`](../../../OSforGFF/Schwinger/TwoPoint.lean#L169),
-[`freeCovarianceKernel_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1038),
-`schwinger_eq_covariance`, `GFFIsGaussian.schwinger_eq_covariance_real`,
+**Proof uses**: `schwinger_eq_covariance`, `GFFIsGaussian.schwinger_eq_covariance_real`,
 [`freeCovariance_eq_kernel`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1031)
 
 ---
 
-### [`schwingerTwoPointFunction_eq_freeCovariance`](../../../OSforGFF/OS/OS1_Regularity.lean#L120) — Theorem
+### [`schwingerTwoPointFunction_eq_GFF`](../../../OSforGFF/OS/OS1_Regularity.lean#L110) — Theorem
 
-**Statement**: For $x \neq 0$, the abstract two-point function of the GFF equals the covariance kernel: $\mathrm{SchwingerTwoPointFunction}(\mu_{\mathrm{GFF}})(x) = $ `freeCovarianceKernel d m x` (undefined at coincident points).
+**Statement**: Away from the origin ($x \neq 0$), the abstract mollified two-point function of the GFF agrees with the concrete kernel: $\mathrm{SchwingerTwoPointFunction}(\mu_{\mathrm{GFF}})(x) = \mathrm{SchwingerTwoPointFunction\_GFF}\,m\,x$.
 
-**Proof uses**: [`schwingerTwoPointFunction_eq_GFF`](../../../OSforGFF/OS/OS1_Regularity.lean#L86)
+**Proof uses**: [`schwingerTwoPointFunction_eq_kernel`](../../../OSforGFF/Schwinger/TwoPoint.lean#L180),
+[`freeCovarianceKernel_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1038),
+[`gff_schwinger_eq_kernel_rep`](../../../OSforGFF/OS/OS1_Regularity.lean#L86)
 
 ---
 
-### [`schwingerTwoPoint_ae_eq_kernel`](../../../OSforGFF/OS/OS1_Regularity.lean#L127) — Lemma
+### [`schwingerTwoPointFunction_eq_freeCovariance`](../../../OSforGFF/OS/OS1_Regularity.lean#L123) — Theorem
+
+**Statement**: For $x \neq 0$, the abstract two-point function of the GFF equals the covariance kernel: $\mathrm{SchwingerTwoPointFunction}(\mu_{\mathrm{GFF}})(x) = $ `freeCovarianceKernel d m x` (undefined at coincident points).
+
+**Proof uses**: [`schwingerTwoPointFunction_eq_GFF`](../../../OSforGFF/OS/OS1_Regularity.lean#L110)
+
+---
+
+### [`schwingerTwoPoint_ae_eq_kernel`](../../../OSforGFF/OS/OS1_Regularity.lean#L130) — Lemma
 
 **Statement**: The abstract two-point function agrees a.e. (Lebesgue) with the covariance kernel: they coincide on $\{x \neq 0\}$, and $\{0\}$ is Lebesgue-null.
 
-**Proof uses**: [`schwingerTwoPointFunction_eq_freeCovariance`](../../../OSforGFF/OS/OS1_Regularity.lean#L120), `MeasureTheory.measure_singleton`
+**Proof uses**: [`schwingerTwoPointFunction_eq_freeCovariance`](../../../OSforGFF/OS/OS1_Regularity.lean#L123), `MeasureTheory.measure_singleton`
 
 ---
 
 ## GFF Exponential Bound
 
-### [`gff_generating_norm_eq`](../../../OSforGFF/OS/OS1_Regularity.lean#L150) — Lemma
+### [`gff_generating_norm_eq`](../../../OSforGFF/OS/OS1_Regularity.lean#L153) — Lemma
 
 **Statement**: The norm of the GFF generating functional is $\lVert Z[f]\rVert = \exp(-\tfrac12\,\mathrm{Re}\,C_\mathbb{C}(f,f))$, from $\lvert e^z\rvert = e^{\mathrm{Re}\,z}$.
 
@@ -102,7 +114,7 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
 
 ---
 
-### [`gff_generating_bound_by_imaginary`](../../../OSforGFF/OS/OS1_Regularity.lean#L160) — Lemma
+### [`gff_generating_bound_by_imaginary`](../../../OSforGFF/OS/OS1_Regularity.lean#L163) — Lemma
 
 **Statement**: $\exp(-\tfrac12\,\mathrm{Re}\,C_\mathbb{C}(f,f)) \le \exp(\tfrac12\,\mathrm{Re}\,C_\mathbb{C}(\mathrm{Im}\,f, \mathrm{Im}\,f))$, obtained from the bilinear decomposition $\mathrm{Re}\,C_\mathbb{C}(f,f) = \mathrm{Re}\,C_\mathbb{C}(\mathrm{Re}\,f,\mathrm{Re}\,f) - \mathrm{Re}\,C_\mathbb{C}(\mathrm{Im}\,f,\mathrm{Im}\,f)$ together with positivity $\mathrm{Re}\,C_\mathbb{C}(\mathrm{Re}\,f,\mathrm{Re}\,f) \ge 0$.
 
@@ -114,7 +126,7 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
 
 ---
 
-### [`covariance_imaginary_L2_bound`](../../../OSforGFF/OS/OS1_Regularity.lean#L236) — Lemma
+### [`covariance_imaginary_L2_bound`](../../../OSforGFF/OS/OS1_Regularity.lean#L239) — Lemma
 
 **Statement**: The covariance of the imaginary part is controlled by the $L^2$ norm: $\mathrm{Re}\,C_\mathbb{C}(\mathrm{Im}\,f,\mathrm{Im}\,f) \le \tfrac{1}{m^2}\int \lVert f(x)\rVert^2\,dx$, via the momentum-space representation, the propagator bound $P_d(k) = 1/((2\pi)^2\lVert k\rVert^2 + m^2) \le 1/m^2$ (proven inline), Plancherel, and $\lvert\mathrm{Im}(f\,x)\rvert \le \lVert f\,x\rVert$.
 
@@ -126,36 +138,56 @@ noncomputable def SchwingerTwoPointFunction_GFF (m : ℝ) [Fact (0 < m)] [GFFPro
 
 ---
 
-### [`gff_generating_L2_bound`](../../../OSforGFF/OS/OS1_Regularity.lean#L368) — Lemma
+### [`gff_generating_L2_bound`](../../../OSforGFF/OS/OS1_Regularity.lean#L371) — Lemma
 
 **Statement**: The GFF generating functional obeys the pure $L^2$ bound $\lVert Z[f]\rVert \le \exp\!\big(\tfrac{1}{2m^2}\int \lVert f(x)\rVert^2\,dx\big)$.
 
-**Proof uses**: [`gff_generating_norm_eq`](../../../OSforGFF/OS/OS1_Regularity.lean#L150),
-[`gff_generating_bound_by_imaginary`](../../../OSforGFF/OS/OS1_Regularity.lean#L160),
-[`covariance_imaginary_L2_bound`](../../../OSforGFF/OS/OS1_Regularity.lean#L236)
+**Proof uses**: [`gff_generating_norm_eq`](../../../OSforGFF/OS/OS1_Regularity.lean#L153),
+[`gff_generating_bound_by_imaginary`](../../../OSforGFF/OS/OS1_Regularity.lean#L163),
+[`covariance_imaginary_L2_bound`](../../../OSforGFF/OS/OS1_Regularity.lean#L239)
 
 ---
 
 ## Two-Point Function Local Integrability
 
-### [`gff_two_point_locally_integrable`](../../../OSforGFF/OS/OS1_Regularity.lean#L386) — Lemma
+### [`TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable`](../../../OSforGFF/OS/OS1_Regularity.lean#L390) — Theorem
 
-**Statement**: `TwoPointIntegrable (gaussianFreeField_free (d := d) m)` — the two-point function is locally integrable, because it agrees a.e. with the globally integrable covariance kernel.
+**Statement**: The strengthened two-point condition implies the previous formulation: under convergence, the totalized `Filter.limUnder` in `SchwingerTwoPointFunction` picks out the limit $K(x)$ at every $x \neq 0$, so the two functions agree off the null coincident point and local integrability transfers.
+
+**Proof uses**: `Filter.Tendsto.limUnder_eq`, `Filter.tendsto_add_atTop_iff_nat`, `MeasureTheory.measure_singleton`, `MeasureTheory.LocallyIntegrable.congr`
+
+---
+
+### [`gff_two_point_locally_integrable`](../../../OSforGFF/OS/OS1_Regularity.lean#L413) — Lemma
+
+**Statement**: `TwoPointIntegrable (gaussianFreeField_free (d := d) m)` — the smeared two-point functions converge, away from the origin, to the covariance kernel `freeCovarianceKernel d m` (the quantified limit), which is globally integrable, hence locally integrable.
 
 **Proof uses**: [`freeCovarianceKernel_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1051),
-[`schwingerTwoPoint_ae_eq_kernel`](../../../OSforGFF/OS/OS1_Regularity.lean#L127)
+[`smearedTwoPoint_tendsto_schwingerTwoPoint`](../../../OSforGFF/Schwinger/TwoPoint.lean#L144),
+[`standardBumpSequence_rOut_tendsto_zero`](../../../OSforGFF/Schwinger/TwoPoint.lean#L93),
+[`freeCovarianceKernel_continuousOn`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1038),
+[`gff_schwinger_eq_kernel_rep`](../../../OSforGFF/OS/OS1_Regularity.lean#L86)
+
+---
+
+### [`gff_schwingerTwoPoint_locallyIntegrable`](../../../OSforGFF/OS/OS1_Regularity.lean#L430) — Lemma
+
+**Statement**: The `Filter.limUnder`-defined `SchwingerTwoPointFunction` of the GFF is locally integrable: it agrees a.e. with the globally integrable covariance kernel. (Also derivable from `gff_two_point_locally_integrable` via `TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable`.)
+
+**Proof uses**: [`freeCovarianceKernel_integrable`](../../../OSforGFF/Covariance/ParsevalGeneric.lean#L1051),
+[`schwingerTwoPoint_ae_eq_kernel`](../../../OSforGFF/OS/OS1_Regularity.lean#L130)
 
 ---
 
 ## OS1 Verification for the GFF
 
-### [`gaussianFreeField_satisfies_OS1`](../../../OSforGFF/OS/OS1_Regularity.lean#L404) — Theorem
+### [`gaussianFreeField_satisfies_OS1`](../../../OSforGFF/OS/OS1_Regularity.lean#L448) — Theorem
 
-**Statement**: The Gaussian free field satisfies OS1 regularity with $p = 2$ and $c = 1/(2m^2)$: `OS1_Regularity (gaussianFreeField_free (d := d) m)`. The generating-functional bound is strengthened by adding the nonnegative $L^1$ term inside the exponential, and two-point integrability discharges the $p = 2$ case.
+**Statement**: The Gaussian free field satisfies OS1 regularity with $p = 2$ and $c = 1/(2m^2)$: `OS1_Regularity (gaussianFreeField_free (d := d) m)`. The generating-functional bound is strengthened by adding the nonnegative $L^1$ term inside the exponential, and the two-point condition (convergence of the smeared two-point functions to the locally integrable covariance kernel) discharges the $p = 2$ case.
 
-**Proof uses**: [`gff_generating_L2_bound`](../../../OSforGFF/OS/OS1_Regularity.lean#L368),
-[`gff_two_point_locally_integrable`](../../../OSforGFF/OS/OS1_Regularity.lean#L386),
-[`OS1_Regularity`](../../../OSforGFF/OS/Axioms.lean#L86)
+**Proof uses**: [`gff_generating_L2_bound`](../../../OSforGFF/OS/OS1_Regularity.lean#L371),
+[`gff_two_point_locally_integrable`](../../../OSforGFF/OS/OS1_Regularity.lean#L413),
+[`OS1_Regularity`](../../../OSforGFF/OS/Axioms.lean#L104)
 
 ---
 

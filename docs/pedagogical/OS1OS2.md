@@ -105,8 +105,9 @@ of *finite order*. Concretely, there must exist $p \in [1, 2]$ and $c > 0$ with
 
 $$\big\lvert Z[f]\big\rvert \;\le\; \exp\!\Big(c\,\big(\lVert f\rVert_{L^1} + \lVert f\rVert_{L^p}^p\big)\Big),$$
 
-plus a side condition that when $p = 2$ the two-point function is locally integrable. The Lean
-statement, for anchoring:
+plus a side condition when $p = 2$: the mollified two-point functions must converge, away from the
+coincident point, to an explicitly quantified locally integrable limit (`TwoPointIntegrable`). The
+Lean statement, for anchoring:
 
 ```lean
 def OS1_Regularity (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
@@ -152,11 +153,12 @@ The whole bound is one estimate on the covariance form, in four moves — each o
    (`covariance_imaginary_L2_bound`), hence the pure $L^2$ bound with $c = 1/(2m^2)$
    (`gff_generating_L2_bound`).
 
-The $p = 2$ side condition is discharged uniformly in $d$: the two-point function agrees almost
-everywhere with the centered covariance kernel (they differ only at the origin, a null set), and that
-kernel is *globally* $L^1$ straight from the propagator's built-in integrability
-(`gff_two_point_locally_integrable`). Local integrability is then immediate — no dimension-sensitive
-$\lVert x\rVert^{-\alpha}$ estimate is needed.
+The $p = 2$ side condition is discharged uniformly in $d$ with the centered covariance kernel as the
+quantified limit: the smeared two-point functions converge to it away from the origin
+(`smearedTwoPoint_tendsto_schwingerTwoPoint`, fed by the kernel representation
+`gff_schwinger_eq_kernel_rep`), and that kernel is *globally* $L^1$ straight from the propagator's
+built-in integrability (`gff_two_point_locally_integrable`). Local integrability of the limit is
+then immediate — no dimension-sensitive $\lVert x\rVert^{-\alpha}$ estimate is needed.
 
 > **One line:** OS1 holds because $C$ is the Fourier multiplier $1/(\lvert k\rvert^2 + m^2)$, bounded
 > by $1/m^2$ — the mass gap turns "$\le$ the $L^2$ norm" into the growth bound.

@@ -287,7 +287,10 @@ def OS1_Regularity (dμ_config : ProbabilityMeasure FieldConfiguration) : Prop :
 
 **Assessment**: The bound ‖Z[f]‖ ≤ exp(c·(‖f‖_L¹ + ‖f‖_Lp^p)) for some 1 ≤ p ≤ 2
 encodes temperedness: Z extends continuously to Lp. The subsidiary condition
-(p = 2 ⟹ local integrability of S₂) matches the GJ statement. **Correct.**
+(`TwoPointIntegrable`: for p = 2 the mollified two-point functions converge, away
+from the coincident point, to an explicitly quantified locally integrable limit)
+matches the GJ statement — the convergence is demanded in the predicate itself,
+so it cannot hold through the totalized default of a limit operator. **Correct.**
 
 ---
 
