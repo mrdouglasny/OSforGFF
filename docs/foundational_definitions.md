@@ -173,6 +173,11 @@ operators) is preserved off the build graph in `OSforGFF/Legacy/`.
 | `SmearedTwoPointFunction` | Bump-regularized 2-point function |
 | `SchwingerTwoPointFunction` | Pointwise 2-point function as limit of smeared correlations |
 
+OS1's two-point condition (`TwoPointIntegrable`, `OS/Axioms.lean`) does not go through
+`SchwingerTwoPointFunction`: it demands the convergence of the smeared two-point functions to an
+explicitly quantified locally integrable limit directly, and implies local integrability of
+`SchwingerTwoPointFunction` as a corollary.
+
 ---
 
 ## Measure Construction (`Measure/`)

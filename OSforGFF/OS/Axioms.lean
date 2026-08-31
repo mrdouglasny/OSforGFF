@@ -72,15 +72,40 @@ noncomputable section
 variable {d : ℕ} [Fact (2 ≤ d)]
 open scoped MeasureTheory Complex BigOperators SchwartzMap
 
+/-! ## OS0: Analyticity -/
+
 /-- OS0 (Analyticity): The generating functional is analytic in the test functions. -/
 def OS0_Analyticity (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
   ∀ (n : ℕ) (J : Fin n → SchwartzTestFunctionℂ d),
     AnalyticOn ℂ (fun z : Fin n → ℂ =>
       GJGeneratingFunctionalℂ dμ_config (∑ i, z i • J i)) Set.univ
 
-/-- Two-point function local integrability condition for p = 2 -/
+/-! ## OS1: Regularity
+
+The axiom is `OS1_Regularity`; `TwoPointIntegrable` is the subsidiary two-point
+condition it imposes in the borderline case `p = 2`. -/
+
+/-- The subsidiary two-point condition of OS1 for `p = 2`: the smeared two-point
+    functions along the standard mollifier sequence converge, at every non-coincident
+    point, to an explicitly quantified limit function `K`, and `K` is locally integrable.
+
+    The limit is quantified explicitly, so the convergence of the mollified two-point
+    functions is part of the condition; no constraint is placed at the coincident point
+    `x = 0` (a Lebesgue-null set), where the two-point function of a quantum field
+    diverges. This condition implies local integrability of the `Filter.limUnder`-defined
+    `SchwingerTwoPointFunction`
+    (`TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable`). -/
 def TwoPointIntegrable (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
-  LocallyIntegrable (fun x => SchwingerTwoPointFunction dμ_config x) volume
+  ∃ K : SpaceTime d → ℝ, LocallyIntegrable K volume ∧
+    ∀ x : SpaceTime d, x ≠ 0 →
+      Filter.Tendsto
+        (fun n : ℕ => SmearedTwoPointFunction dμ_config (standardMollifier n) x)
+        Filter.atTop (nhds (K x))
+where
+  /-- The `n`-th standard mollifier: the `(n+1)`-st standard bump, re-indexed so the
+      family is total in `n`. -/
+  standardMollifier (n : ℕ) : ContDiffBump (0 : SpaceTime d) :=
+    standardBumpSequence (n + 1) (Nat.succ_ne_zero n)
 
 /-- OS1 (Regularity): The complex generating functional satisfies exponential bounds. -/
 def OS1_Regularity (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
@@ -90,11 +115,15 @@ def OS1_Regularity (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Pr
         Real.exp (c * (∫ x, ‖f x‖ ∂volume + ∫ x, ‖f x‖^p ∂volume))) ∧
     (p = 2 → TwoPointIntegrable dμ_config)
 
+/-! ## OS2: Euclidean Invariance -/
+
 /-- OS2 (Euclidean Invariance): The measure is invariant under Euclidean transformations. -/
 def OS2_EuclideanInvariance (dμ_config : ProbabilityMeasure (FieldConfiguration d)) : Prop :=
   ∀ (g : QFT.E d) (f : SchwartzTestFunctionℂ d),
     GJGeneratingFunctionalℂ dμ_config f =
     GJGeneratingFunctionalℂ dμ_config (QFT.euclidean_action g f)
+
+/-! ## OS3: Reflection Positivity -/
 
 /-- OS3 (Reflection Positivity): The generating functional defines a positive semi-definite
     Hermitian form on positive-time test functions.  This is the standard complex formulation
@@ -125,6 +154,8 @@ def OS3_ReflectionPositivity_real (dμ_config : ProbabilityMeasure (FieldConfigu
       GJGeneratingFunctional dμ_config
         ((f i).val - compTimeReflectionReal ((f j).val))
     0 ≤ ∑ i, ∑ j, c i * c j * (reflection_matrix i j).re
+
+/-! ## OS4: Clustering and Ergodicity -/
 
 /-- OS4 (Clustering): Clustering via correlation decay.
 
