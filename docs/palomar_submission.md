@@ -233,6 +233,12 @@ target or an explicit CI step in whichever repository ends up holding them.
 which preserves the kernel-acceptance and axiom-whitelist guarantees but not the sandbox.
 Palomar runs the real thing.
 
+*(Postscript, 2026-08-20: both remaining items are resolved in the wrapper repository of §7 —
+[`mrdouglasny/OSforGFF-comparator`](https://github.com/mrdouglasny/OSforGFF-comparator) makes
+`Challenge` and `Solution` its default targets, so its plain-`lake build` CI covers them on
+every push, and its CI also runs Comparator under a real Landrun sandbox with the NanoDa
+replay.)*
+
 ---
 
 ## 7. Branch strategy — a question for Sergey
@@ -249,6 +255,15 @@ substantive `kim-em/erdos-unit-distance`, declared via `repository.substantive_f
 hold `Challenge.lean`, `Solution.lean`, `comparator.json`, a small `formalization.yaml`, and
 a lakefile pinning OSforGFF at a commit. `main` stays as it is, and re-pinning becomes an
 explicit act rather than continuous drift. The cost is a second repository to maintain.
+
+*(Postscript, 2026-08-20: decided — the thin wrapper.
+[`mrdouglasny/OSforGFF-comparator`](https://github.com/mrdouglasny/OSforGFF-comparator)
+exists, scaffolded from `PalomarRegistry/PalomarTemplate`, carrying the pair unchanged and
+pinning this repository by full commit SHA. Re-pin triggers, recorded in its README: a
+meaningful library milestone, verified there before any registry version cites the new
+commit; a change to this repository's metadata, not only its mathematics, since Palomar
+inspects the substantive repository at the declared commit; and a red canary — its scheduled
+CI job that builds the pair against `main` instead of the pin — as the drift signal.)*
 
 ---
 
@@ -288,6 +303,15 @@ COMPARATOR_LEAN4EXPORT=/tmp/lean4export-4331/.lake/build/bin/lean4export \
 may be absent and that Palomar writes its own protected configuration regardless. Older
 Comparator binaries reject the omission; add it to a local copy, never to the committed file.
 
+*(Postscript, 2026-08-20, updated 2026-08-31: the canonical reproduction now lives in the
+wrapper —
+`git clone https://github.com/mrdouglasny/OSforGFF-comparator && cd OSforGFF-comparator &&
+lake build && ./scripts/verify-comparator.sh`, which builds the pinned Comparator,
+`lean4export`, NanoDa and Landrun and runs the comparison in a real sandbox, exactly as its
+CI does. The recipe above remains valid against tag `palomar-passing-archive`, the
+historical in-library configuration — the branch of that name was retired at the tag after
+registration.)*
+
 ---
 
 ## 10. Open question for Kim
@@ -298,3 +322,15 @@ Challenge of this size acceptable for a result of this shape — OS0–OS4 genui
 spacetime, test-function, generating-functional and positive-time apparatus restated — or is
 the size itself a signal? §8 describes a technique that would take it to roughly 350 lines if
 that matters.
+
+*(Postscript, 2026-08-31: answered in practice. The wrapper adopted the §8-style
+characterised pair (a 389-line Challenge), and the submission ran the registry's course:
+a first attempt at wrapper commit `dc8d4fe` passed mechanical verification but drew a
+revision request from the automated editorial review — document the literature search
+behind the priority statement, and strengthen `TwoPointIntegrable`, whose totalized
+`Filter.limUnder` let OS1's `p = 2` clause hold in principle without actual convergence.
+Both were fixed (this library's PR #20 strengthened the clause and proved the new form
+implies the old; the wrapper gained `docs/novelty.md`), and the corrected wrapper commit
+`6e56a6f`, pinning this repository at `fef84a8`, verified with a clean review and was
+**registered on 2026-08-31 as
+[`PALOMAR-2026-08-31-000012`](https://data.palomar-registry.org/entries/PALOMAR-2026-08-31-000012-v1.json)**.)*
