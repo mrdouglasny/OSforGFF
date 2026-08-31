@@ -80,6 +80,30 @@ theorem schwingerTwoPoint_eq_freeCovariance (m : ℝ) [Fact (0 < m)] [GFFPropaga
     (x : SpaceTime d) :
   SchwingerTwoPointFunction_GFF m x = freeCovarianceKernel d m x := rfl
 
+/-- **Kernel representation of the GFF two-point Schwinger function**:
+    `S₂(f, g) = ∫∫ f(u) K(u − v) g(v)` with `K = freeCovarianceKernel d m` the centered
+    covariance kernel. -/
+lemma gff_schwinger_eq_kernel_rep (m : ℝ) [Fact (0 < m)] [GFFPropagator d m]
+    (f g : SchwartzTestFunction d) :
+    SchwingerFunction₂ (gaussianFreeField_free (d := d) m) f g =
+      ∫ u, ∫ v, f u * freeCovarianceKernel d m (u - v) * g v := by
+  -- Chain: S₂(f,g) = ∫ω (ωf)(ωg) dμ = freeCovarianceFormR m f g = ∫∫ f(u) C(u,v) g(v)
+  -- where C(u,v) = K(u-v) by translation invariance
+  -- Step 1: S₂ = ∫ω (ωf)(ωg) via schwinger_eq_covariance
+  rw [schwinger_eq_covariance]
+  -- Unfold distributionPairing to ω f
+  simp only [distributionPairing]
+  -- Step 2: For GFF, ∫ω (ωf)(ωg) = freeCovarianceFormR via schwinger_eq_covariance_real
+  rw [GFFIsGaussian.schwinger_eq_covariance_real m f g]
+  -- Step 3: freeCovarianceFormR = ∫∫ f(u) * freeCovariance(u,v) * g(v)
+  unfold freeCovarianceFormR
+  -- Step 4: freeCovariance(u,v) = K(u-v) by translation invariance
+  congr 1
+  ext u
+  congr 1
+  ext v
+  rw [freeCovariance_eq_kernel u v]
+
 /-- The abstract two-point Schwinger function of the GFF equals the concrete covariance
     kernel away from the origin: the mollified limit defining `SchwingerTwoPointFunction`
     evaluates to the continuous kernel via `schwingerTwoPointFunction_eq_kernel`. -/
@@ -87,31 +111,10 @@ theorem schwingerTwoPointFunction_eq_GFF (m : ℝ) [Fact (0 < m)] [GFFPropagator
     (x : SpaceTime d) (hx : x ≠ 0) :
   SchwingerTwoPointFunction (gaussianFreeField_free (d := d) m) x
     = SchwingerTwoPointFunction_GFF m x := by
-  have h_cont : ContinuousOn (freeCovarianceKernel d m)
-      {y : SpaceTime d | y ≠ 0} := freeCovarianceKernel_continuousOn
-  have h_S₂ : ∀ (f g : SchwartzTestFunction d),
-      SchwingerFunction₂ (gaussianFreeField_free (d := d) m) f g =
-      ∫ u, ∫ v, f u * freeCovarianceKernel d m (u - v) * g v := by
-    -- Chain: S₂(f,g) = ∫ω (ωf)(ωg) dμ = freeCovarianceFormR m f g = ∫∫ f(u) C(u,v) g(v)
-    -- where C(u,v) = K(u-v) by translation invariance
-    intro f g
-    -- Step 1: S₂ = ∫ω (ωf)(ωg) via schwinger_eq_covariance
-    rw [schwinger_eq_covariance]
-    -- Unfold distributionPairing to ω f
-    simp only [distributionPairing]
-    -- Step 2: For GFF, ∫ω (ωf)(ωg) = freeCovarianceFormR via schwinger_eq_covariance_real
-    rw [GFFIsGaussian.schwinger_eq_covariance_real m f g]
-    -- Step 3: freeCovarianceFormR = ∫∫ f(u) * freeCovariance(u,v) * g(v)
-    unfold freeCovarianceFormR
-    -- Step 4: freeCovariance(u,v) = K(u-v) by translation invariance
-    congr 1
-    ext u
-    congr 1
-    ext v
-    rw [freeCovariance_eq_kernel u v]
   -- Apply the general kernel theorem
   rw [schwingerTwoPointFunction_eq_kernel (gaussianFreeField_free (d := d) m) x hx
-        (freeCovarianceKernel d m) h_cont h_S₂]
+        (freeCovarianceKernel d m) freeCovarianceKernel_continuousOn
+        (gff_schwinger_eq_kernel_rep m)]
   -- By definition of SchwingerTwoPointFunction_GFF
   rfl
 
@@ -380,13 +383,54 @@ lemma gff_generating_L2_bound (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (f : 
 
 /-! ## Two-Point Function Local Integrability -/
 
-/-- The two-point Schwinger function is locally integrable: it agrees a.e. with the
-    covariance kernel `x ↦ C(x, 0)`, which is globally integrable
-    (`GFFPropagator.integrable`). -/
+/-- The strengthened two-point condition implies the previous formulation: under
+    convergence, the totalized `Filter.limUnder` in `SchwingerTwoPointFunction` picks out
+    the limit `K x` at every `x ≠ 0`, so the two functions agree off a null set and local
+    integrability transfers. -/
+theorem TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable
+    {dμ_config : ProbabilityMeasure (FieldConfiguration d)}
+    (h : TwoPointIntegrable dμ_config) :
+    LocallyIntegrable (fun x => SchwingerTwoPointFunction dμ_config x) volume := by
+  obtain ⟨K, hK, hconv⟩ := h
+  have heq : ∀ x : SpaceTime d, x ≠ 0 → SchwingerTwoPointFunction dμ_config x = K x := by
+    intro x hx
+    unfold SchwingerTwoPointFunction
+    simp only [hx, if_false]
+    refine Filter.Tendsto.limUnder_eq ?_
+    refine (Filter.tendsto_add_atTop_iff_nat 1).mp ?_
+    simpa [Nat.succ_ne_zero, TwoPointIntegrable.standardMollifier] using hconv x hx
+  have hd : 0 < d := by have := (Fact.out : 2 ≤ d); omega
+  have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  have h_mem : {x : SpaceTime d | x ≠ 0} ∈ ae (volume : Measure (SpaceTime d)) := by
+    rw [MeasureTheory.mem_ae_iff]
+    simp only [ne_eq, Set.compl_setOf, not_not]
+    exact MeasureTheory.measure_singleton (0 : SpaceTime d)
+  exact hK.congr (Filter.eventuallyEq_of_mem h_mem heq).symm
+
+/-- The GFF satisfies the two-point condition of OS1: the smeared two-point functions
+    converge, away from the origin, to the covariance kernel `K = freeCovarianceKernel`,
+    which is globally integrable (`GFFPropagator.integrable`), hence locally integrable. -/
 lemma gff_two_point_locally_integrable (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
   TwoPointIntegrable (gaussianFreeField_free (d := d) m) := by
-  unfold TwoPointIntegrable
-  exact ((freeCovarianceKernel_integrable (d := d) (m := m)).congr
+  refine ⟨freeCovarianceKernel d m,
+    (freeCovarianceKernel_integrable (d := d) (m := m)).locallyIntegrable,
+    fun x hx => ?_⟩
+  exact smearedTwoPoint_tendsto_schwingerTwoPoint
+    (gaussianFreeField_free (d := d) m) x hx
+    (fun n => standardBumpSequence (n + 1) (Nat.succ_ne_zero n))
+    standardBumpSequence_rOut_tendsto_zero
+    (freeCovarianceKernel d m)
+    freeCovarianceKernel_continuousOn
+    (gff_schwinger_eq_kernel_rep m)
+
+/-- The `Filter.limUnder`-defined two-point Schwinger function is locally integrable: it
+    agrees a.e. with the covariance kernel `x ↦ C(x, 0)`, which is globally integrable
+    (`GFFPropagator.integrable`). Also derivable from `gff_two_point_locally_integrable`
+    via `TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable`. -/
+lemma gff_schwingerTwoPoint_locallyIntegrable (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
+    LocallyIntegrable
+      (fun x => SchwingerTwoPointFunction (gaussianFreeField_free (d := d) m) x) volume :=
+  ((freeCovarianceKernel_integrable (d := d) (m := m)).congr
     (schwingerTwoPoint_ae_eq_kernel m).symm).locallyIntegrable
 
 /-! ## OS1 Verification for the GFF
