@@ -83,7 +83,7 @@ lemma properTime_slice_integrableOn (d : ℕ) (m : ℝ) (hm : 0 < m) {r : ℝ} (
   have hgi : MeasureTheory.IntegrableOn
       (fun t => t ^ ((d : ℝ) / 2) * Real.exp (-m ^ 2 * t)) (Set.Ioi 0) := by
     have := integrableOn_rpow_mul_exp_neg_mul_rpow (s := (d : ℝ) / 2) (p := 1) (b := m ^ 2)
-      (by have h2 : (0 : ℝ) ≤ (d : ℝ) / 2 := (by positivity); linarith) (le_refl 1) (by positivity)
+      (by have h2 : (0 : ℝ) ≤ (d : ℝ) / 2 := (by positivity); linarith) (by norm_num) (by positivity)
     simpa [Real.rpow_one] using this
   refine (hgi.const_mul ((4 * Real.pi) ^ (-(d : ℝ) / 2)
     * ((d.factorial : ℝ) * (4 / r ^ 2) ^ d))).mono' ?_ ?_

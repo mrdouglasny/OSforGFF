@@ -219,7 +219,7 @@ lemma decayDominator_integrableOn (d : ℕ) (m : ℝ) (hm : 0 < m) :
   have hb : (0 : ℝ) < m ^ 2 / 2 := by positivity
   have hgi : IntegrableOn (fun t => t ^ ((d : ℝ) / 2) * Real.exp (-(m ^ 2 / 2) * t)) (Set.Ioi 0) := by
     have := integrableOn_rpow_mul_exp_neg_mul_rpow (s := (d : ℝ) / 2) (p := 1) (b := m ^ 2 / 2)
-      (by have h2 : (0 : ℝ) ≤ (d : ℝ) / 2 := (by positivity); linarith) (le_refl 1) hb
+      (by have h2 : (0 : ℝ) ≤ (d : ℝ) / 2 := (by positivity); linarith) (by norm_num) hb
     simpa [Real.rpow_one] using this
   refine (hgi.const_mul ((4 * Real.pi) ^ (-(d : ℝ) / 2) * ((d.factorial : ℝ) * 8 ^ d))).mono' ?_ ?_
   · exact (by fun_prop : Measurable _).aestronglyMeasurable
