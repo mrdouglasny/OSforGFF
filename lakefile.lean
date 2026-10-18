@@ -8,14 +8,14 @@ package «OSforGFF» where
   ]
   -- add any additional package configuration options here
 
-require BochnerMinlos from git
-  "https://github.com/mrdouglasny/bochner.git" @ "main"
+-- Local branch only: point at the sibling ports (branch pin-v4.34.1) of the two upstream deps;
+-- BochnerMinlos in turn requires `../kolmogorov_extension4` by path.
+require BochnerMinlos from "../bochner"
 
-require GaussianField from git
-  "https://github.com/mrdouglasny/gaussian-field.git" @ "main"
+require GaussianField from "../gaussian-field"
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git" @ "v4.33.0-rc1"
+  "https://github.com/leanprover-community/mathlib4.git" @ "v4.34.1"
 
 @[default_target]
 lean_lib «OSforGFF» where
