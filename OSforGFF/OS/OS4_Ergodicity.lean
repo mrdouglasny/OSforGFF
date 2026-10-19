@@ -332,10 +332,9 @@ lemma gff_err_sq_integrable (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (T : �
   have h_diff_L2 : MemLp (fun ω => (1/T : ℂ) * (∫ s in Set.Icc (0 : ℝ) T, A s ω) - EA) 2 μ := by
     have h := h_avg_L2.sub h_const_L2
     convert h using 2
-    rfl
   -- Step 4: L² function has integrable square
   have h_sq_int : Integrable (fun ω => ‖(1/T : ℂ) * (∫ s in Set.Icc (0 : ℝ) T, A s ω) - EA‖^2) μ := by
-    have h_meas := h_diff_L2.1
+    have h_meas := h_diff_L2.aestronglyMeasurable
     rw [memLp_two_iff_integrable_sq_norm h_meas] at h_diff_L2
     exact h_diff_L2
   -- Goal matches h_sq_int up to notation: smul ↔ mul, and ∫ ω' ... ↔ EA

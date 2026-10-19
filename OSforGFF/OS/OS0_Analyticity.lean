@@ -261,7 +261,7 @@ lemma gff_exp_abs_pairing_memLp (f : SchwartzTestFunction d) (p : ENNReal) (hp :
   -- Convert integrability of exp(p|x|) to eLpNorm bound
   -- Using: eLpNorm f p μ < ∞ ↔ ∫⁻ ‖f‖ₑ^p ∂μ < ∞
   have h_eLpNorm_lt : eLpNorm (fun ω => Real.exp |ω f|) p (gaussianFreeField_free (d := d) m).toMeasure < ⊤ := by
-    rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp_pos hp]
+    rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp_pos hp h_aesm]
     -- Need: ∫⁻ ‖exp(|ω f|)‖ₑ^p < ⊤
     -- Since ‖exp(|x|)‖ₑ = exp(|x|), we have ‖exp(|x|)‖ₑ^p = exp(p|x|)
     -- and exp(p|x|) is integrable by h_exp_p_integrable
@@ -284,7 +284,7 @@ lemma gff_exp_abs_pairing_memLp (f : SchwartzTestFunction d) (p : ENNReal) (hp :
     intro ω
     rw [Real.enorm_eq_ofReal (le_of_lt (Real.exp_pos _))]
 
-  exact ⟨h_aesm, h_eLpNorm_lt⟩
+  exact h_eLpNorm_lt
 
 /-- Integrability of exp(|ω f|) under the GFF measure.
     This is the L¹ special case of gff_exp_abs_pairing_memLp. -/

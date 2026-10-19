@@ -96,8 +96,7 @@ lemma integral_neg_invariance
   classical
   -- Step 1: Define the pushforward measure
   let μneg := μ.toMeasure.map negMap
-  have hμneg_prob : IsProbabilityMeasure μneg := by
-    exact Measure.isProbabilityMeasure_map (Measurable.aemeasurable negMap_measurable)
+  have hμneg_prob : IsProbabilityMeasure μneg := inferInstance
 
   -- Step 2: Show characteristic functionals are equal
   have hCF_equal : ∀ g : SchwartzTestFunction d,

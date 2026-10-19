@@ -224,8 +224,6 @@ private lemma gff_pushforward_charFun
   (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (φ : SchwartzTestFunction d) (t : ℝ) :
   charFun ((gaussianFreeField_free m).toMeasure.map (distributionPairingCLM φ)) t =
     Complex.exp (-(1/2 : ℂ) * t^2 * (freeCovarianceFormR m φ φ : ℝ)) := by
-  haveI : IsProbabilityMeasure ((gaussianFreeField_free m).toMeasure.map (distributionPairingCLM φ)) :=
-    Measure.isProbabilityMeasure_map ((distributionPairingCLM_measurable φ).aemeasurable)
   rw [charFun_eq_GJGeneratingFunctional]
   have h_char := gff_real_characteristic m (t • φ)
   rw [h_char]
@@ -240,8 +238,6 @@ theorem gff_pairing_is_gaussian
   (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (φ : SchwartzTestFunction d) :
   (gaussianFreeField_free m).toMeasure.map (distributionPairingCLM φ)
     = gaussianReal 0 (freeCovarianceFormR m φ φ).toNNReal := by
-  haveI : IsProbabilityMeasure ((gaussianFreeField_free m).toMeasure.map (distributionPairingCLM φ)) :=
-    Measure.isProbabilityMeasure_map ((distributionPairingCLM_measurable φ).aemeasurable)
   apply charFun_implies_gaussian
   intro t
   rw [gff_pushforward_charFun]

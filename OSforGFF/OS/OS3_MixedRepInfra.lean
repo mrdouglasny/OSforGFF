@@ -1049,7 +1049,7 @@ theorem integrable_dominate_G (C : ℝ) (m : ℝ) [Fact (0 < m)] :
                   (fun s : ℝ => s ^ (((d : ℝ) + 2) / 2) * Real.exp (-s * m^2)) (Set.Ioi 0) := by
                 have h0 := integrableOn_rpow_mul_exp_neg_mul_rpow
                   (s := ((d : ℝ) + 2) / 2) (p := 1) (b := m^2)
-                  (by linarith : (-1 : ℝ) < ((d : ℝ) + 2) / 2) (le_refl 1) (by positivity)
+                  (by linarith : (-1 : ℝ) < ((d : ℝ) + 2) / 2) one_pos (by positivity)
                 refine h0.congr_fun (fun s hs => ?_) measurableSet_Ioi
                 simp only [Real.rpow_one]
                 ring_nf
@@ -1083,9 +1083,7 @@ lemma spatialPart_measurable : Measurable (spatialPart : (SpaceTime d) → (Spat
   apply Measurable.comp
   · -- ContinuousLinearEquiv is continuous, hence measurable
     exact (EuclideanSpace.equiv (Fin (d - 1)) ℝ).symm.continuous.measurable
-  · apply measurable_pi_lambda
-    intro i
-    exact (measurable_pi_apply _).comp (WithLp.measurable_ofLp 2 _)
+  · exact Measurable.of_eval fun i ↦ (measurable_pi_apply _).comp (WithLp.measurable_ofLp 2 _)
 
 /-- The integrand for `fubini_s_ksp_swap` is strongly measurable.
 
@@ -2808,7 +2806,7 @@ lemma s_xy_swap_bound_integrable (f : (SchwartzTestFunctionℂ d)) (m : ℝ) [Fa
     -- g_s(s) = √π * (s^{-1/2} * exp(-m² s))
     have h_inner : Integrable (fun s => s ^ (-(1:ℝ)/2) * Real.exp (-m^2 * s)) (volume.restrict (Set.Ioi 0)) := by
       have hr : (-1 : ℝ) < -(1:ℝ)/2 := by norm_num
-      have hp : (1 : ℝ) ≤ 1 := le_refl 1
+      have hp : (0 : ℝ) < 1 := one_pos
       have h := integrableOn_rpow_mul_exp_neg_mul_rpow hr hp hm2
       simp only [Real.rpow_one] at h
       exact h
