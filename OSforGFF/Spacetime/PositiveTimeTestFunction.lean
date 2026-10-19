@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
 import Mathlib.Tactic  -- gives `ext` and `simp` power
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Algebra.Star.Basic
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Analysis.Complex.Basic
@@ -50,7 +50,7 @@ def positiveTimeSet : Set (SpaceTime d) := {x | HasPositiveTime x}
 def PositiveTimeTestFunctions.submodule : Submodule ℝ (SchwartzTestFunction d) where
   carrier := { f : (SchwartzTestFunction d) | tsupport f ⊆ positiveTimeSet }
   zero_mem' := by
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     suffices h : tsupport (0 : (SchwartzTestFunction d)) = ∅ by
       rw [h]
       apply Set.empty_subset
@@ -79,7 +79,7 @@ lemma PositiveTimeTestFunction.sum_smul_mem
 def PositiveTimeTestFunctionsℂ.submodule : Submodule ℂ (SchwartzTestFunctionℂ d) where
   carrier := { f : (SchwartzTestFunctionℂ d) | tsupport f ⊆ positiveTimeSet }
   zero_mem' := by
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     suffices h : tsupport (0 : (SchwartzTestFunctionℂ d)) = ∅ by
       rw [h]
       apply Set.empty_subset

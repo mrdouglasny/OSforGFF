@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
 
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Analysis.LocallyConvex.Basic
 import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
 import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv

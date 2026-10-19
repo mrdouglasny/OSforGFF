@@ -6,7 +6,7 @@ Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Niss
 -/
 
 import Mathlib.Tactic
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Analytic.Basic
 import Mathlib.Analysis.Analytic.Constructions

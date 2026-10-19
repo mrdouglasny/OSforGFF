@@ -6,7 +6,7 @@ Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Niss
 -/
 
 import Mathlib.Tactic  -- gives `ext` and `simp` power
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
 import Mathlib.Analysis.SpecialFunctions.Bernstein
@@ -32,7 +32,7 @@ import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 import Mathlib.Analysis.Calculus.BumpFunction.Normed
 import Mathlib.Analysis.Calculus.ContDiff.FTaylorSeries
@@ -728,7 +728,7 @@ theorem double_mollifier_convergence
   have hmC : AEStronglyMeasurable C volume := by
     have h_ae : ∀ᵐ (x : E) ∂volume, x ∈ {x : E | x ≠ 0} := by
       rw [ae_iff]
-      simp only [mem_setOf_eq, not_not]
+      simp only [mem_ofPred_eq, not_not]
       have : ({x : E | x = 0} : Set E) = {0} := by ext; simp
       rw [this]
       exact measure_singleton 0
@@ -866,7 +866,7 @@ theorem double_mollifier_convergence
               · exact Continuous.continuousOn (continuous_const.sub continuous_fst)
               · intro ⟨t, v⟩ htv
                 dsimp [K, K_t, K_v] at htv
-                simp only [mem_prod, Metric.mem_closedBall, dist_zero_right, mem_setOf_eq, sub_ne_zero] at htv ⊢
+                simp only [mem_prod, Metric.mem_closedBall, dist_zero_right, mem_ofPred_eq, sub_ne_zero] at htv ⊢
                 by_contra h_ta
                 rw [← h_ta] at htv
                 have hr : (φ i).rOut < ‖a‖ / 3 := by

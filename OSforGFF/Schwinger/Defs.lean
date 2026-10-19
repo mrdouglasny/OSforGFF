@@ -6,8 +6,8 @@ Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Niss
 -/
 
 import Mathlib.Tactic  -- gives `ext` and `simp` power
-import Mathlib.Data.Complex.Basic
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Complex.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Algebra.Star.Basic
 import Mathlib.Analysis.InnerProductSpace.LinearMap

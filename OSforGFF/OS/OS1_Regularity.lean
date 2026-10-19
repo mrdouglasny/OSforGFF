@@ -6,8 +6,8 @@ Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Niss
 -/
 
 import Mathlib.Tactic
-import Mathlib.Data.Complex.Basic
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Complex.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -136,7 +136,7 @@ lemma schwingerTwoPoint_ae_eq_kernel (m : ℝ) [Fact (0 < m)] [GFFPropagator d m
   -- The complement of {0} has full measure, so {x ≠ 0} ∈ ae volume
   have h_mem : {x : SpaceTime d | x ≠ 0} ∈ ae volume := by
     rw [MeasureTheory.mem_ae_iff]
-    simp only [ne_eq, Set.compl_setOf, not_not]
+    simp only [ne_eq, Set.compl_ofPred, not_not]
     exact MeasureTheory.measure_singleton (0 : SpaceTime d)
   -- The functions agree on this set
   exact Filter.eventuallyEq_of_mem h_mem
@@ -395,7 +395,7 @@ theorem TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable
   have heq : ∀ x : SpaceTime d, x ≠ 0 → SchwingerTwoPointFunction dμ_config x = K x := by
     intro x hx
     unfold SchwingerTwoPointFunction
-    simp only [hx, if_false]
+    simp only [hx, ite_false]
     refine Filter.Tendsto.limUnder_eq ?_
     refine (Filter.tendsto_add_atTop_iff_nat 1).mp ?_
     simpa [Nat.succ_ne_zero, TwoPointIntegrable.standardMollifier] using hconv x hx
@@ -403,7 +403,7 @@ theorem TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable
   have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
   have h_mem : {x : SpaceTime d | x ≠ 0} ∈ ae (volume : Measure (SpaceTime d)) := by
     rw [MeasureTheory.mem_ae_iff]
-    simp only [ne_eq, Set.compl_setOf, not_not]
+    simp only [ne_eq, Set.compl_ofPred, not_not]
     exact MeasureTheory.measure_singleton (0 : SpaceTime d)
   exact hK.congr (Filter.eventuallyEq_of_mem h_mem heq).symm
 

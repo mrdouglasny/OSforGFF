@@ -128,10 +128,10 @@ lemma spacetimeOfTimeSpace_eq_smul_single (s : ℝ) :
   ext j
   cases' j using Fin.cases with j
   · simp [spacetimeOfTimeSpace, EuclideanSpace.equiv, Fin.cast, Fin.cons, Fin.cases,
-          EuclideanSpace.single_apply]
+          PiLp.single_apply]
   · have hne : Fin.succ j ≠ 0 := Fin.succ_ne_zero j
     simp [spacetimeOfTimeSpace, EuclideanSpace.equiv, Fin.cast, Fin.cons, Fin.cases,
-          EuclideanSpace.single_apply, hne]
+          PiLp.single_apply, hne]
 
 /-- The polynomial decay `1/(1+‖x‖)^d` is integrable on the spatial slice `ℝ^(d-1)`
     (the exponent `d` exceeds the dimension `d - 1`). -/

@@ -79,6 +79,6 @@ noncomputable instance instGFFPropagatorDim3 (m : ℝ) [Fact (0 < m)] :
     GFFPropagator 3 m where
   Cprofile r := if r = 0 then 0 else Real.exp (-(m * r)) / (4 * Real.pi * r)
   schwinger_eq r hr := by
-    rw [if_neg (ne_of_gt hr), properTimeCovariance_dim3_eq m r Fact.out hr]
+    rw [ite_eq_right (ne_of_gt hr), properTimeCovariance_dim3_eq m r Fact.out hr]
 
 end OSforGFF

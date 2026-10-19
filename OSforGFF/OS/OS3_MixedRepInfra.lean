@@ -13,7 +13,7 @@ import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
@@ -1279,7 +1279,7 @@ lemma triangular_fubini_quadrant {f : ℝ → ℝ → ℝ}
       -- g ∘ φ = indicator of square
       have h_eq : g ∘ φ = (Set.Ioi 0 ×ˢ Set.Ioi 0).indicator (fun q => f q.1 (q.1 + q.2)) := by
         ext ⟨x, y⟩
-        simp only [g, T, φ, Set.indicator_apply, Set.mem_prod, Set.mem_Ioi, Set.mem_setOf_eq, Function.comp_apply]
+        simp only [g, T, φ, Set.indicator_apply, Set.mem_prod, Set.mem_Ioi, Set.mem_ofPred_eq, Function.comp_apply]
         split_ifs <;> simp_all
 
       -- Apply transfer
@@ -1315,11 +1315,11 @@ lemma triangular_fubini_quadrant {f : ℝ → ℝ → ℝ}
         -- T = {p | 0 < p.1 ∧ p.1 < p.2}, so (x, u) ∈ T iff 0 < x ∧ x < u
         -- Set.Ioo 0 u = {x | 0 < x ∧ x < u}
         -- These are the same condition!
-        simp only [g, T, Set.indicator_apply, Set.mem_Ioo, Set.mem_setOf_eq]
+        simp only [g, T, Set.indicator_apply, Set.mem_Ioo, Set.mem_ofPred_eq]
       · symm
         apply MeasureTheory.integral_eq_zero_of_ae
         filter_upwards with x
-        simp only [g, T, Set.indicator_apply, Set.mem_setOf_eq]
+        simp only [g, T, Set.indicator_apply, Set.mem_ofPred_eq]
         split_ifs with hcond
         · exfalso; exact hu (lt_trans hcond.1 hcond.2)
         · rfl
@@ -2965,7 +2965,7 @@ theorem fubini_s_xy_swap (m : ℝ) [Fact (0 < m)] (f : (SchwartzTestFunctionℂ 
         -- Need: μ({p | 0 < p.1}ᶜ) = 0, i.e., μ({p | p.1 ≤ 0}) = 0
         have h_compl : ({p : ℝ × (SpaceTime d) × (SpaceTime d) | 0 < p.1})ᶜ =
             Prod.fst ⁻¹' Set.Iic 0 := by
-          ext p; simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_lt, Set.mem_preimage, Set.mem_Iic]
+          ext p; simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt, Set.mem_preimage, Set.mem_Iic]
         rw [h_compl]
         -- Prod.fst ⁻¹' Iic 0 = Iic 0 ×ˢ univ
         have h_prod : (Prod.fst ⁻¹' Set.Iic (0 : ℝ) : Set (ℝ × (SpaceTime d) × (SpaceTime d))) =

@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
 
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
 import Mathlib.Topology.Algebra.Module.Multilinear.Basic
 import Mathlib.Analysis.Complex.OperatorNorm
@@ -375,7 +375,7 @@ lemma distributionPairingℂ_real_conj (ω : (FieldConfiguration d)) (f : (Schwa
   have h_conj_im : (complex_testfunction_decompose (conjSchwartz f)).2 =
       -(complex_testfunction_decompose f).2 := by
     ext x
-    simp only [complex_testfunction_decompose_snd_apply, SchwartzMap.neg_apply]
+    simp only [complex_testfunction_decompose_snd_apply, neg_apply]
     change (starRingEnd ℂ (f x)).im = -(f x).im
     exact Complex.conj_im (f x)
   rw [h_conj_re, h_conj_im]

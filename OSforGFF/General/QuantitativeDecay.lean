@@ -333,7 +333,7 @@ def convolution_polynomial_decay
             _ ≤ c_A := by
               apply div_le_div_of_nonneg_left (le_of_lt hC_u_pos)
               · positivity
-              · simp only [A, mem_setOf_eq] at hy
+              · simp only [A, mem_ofPred_eq] at hy
                 exact Real.rpow_le_rpow (by positivity) (by linarith) (lt_of_le_of_lt (Nat.cast_nonneg _) hN_dim).le
       _ = c_A * ∫ y in A, ‖v (x - y)‖ := by
           rw [MeasureTheory.integral_const_mul]
@@ -371,7 +371,7 @@ def convolution_polynomial_decay
             (hu_int.norm.mul_const c_Ac).integrableOn hA_meas.compl
           intro y hy
           gcongr
-          simp only [A, mem_compl_iff, mem_setOf_eq, not_le] at hy
+          simp only [A, mem_compl_iff, mem_ofPred_eq, not_le] at hy
           -- ‖x - y‖ ≥ ‖x‖ - ‖y‖ > ‖x‖ - ‖x‖/2 = ‖x‖/2
           have h_xy : ‖x - y‖ ≥ ‖x‖ / 2 := by
             have h1 : ‖x - y‖ ≥ ‖x‖ - ‖y‖ := norm_sub_norm_le x y

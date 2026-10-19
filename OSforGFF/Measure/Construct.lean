@@ -7,8 +7,8 @@ Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Niss
 
 import Mathlib.Algebra.Algebra.Defs
 import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Data.Complex.Basic
-import Mathlib.Data.NNReal.Defs
+import Mathlib.Basic.Complex.Basic
+import Mathlib.Basic.NNReal.Defs
 import Mathlib.Analysis.InnerProductSpace.Defs
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.LinearMap
