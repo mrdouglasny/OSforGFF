@@ -4,43 +4,44 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Tactic  -- gives `ext` and `simp` power
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Algebra.Group.Support
-import Mathlib.Algebra.Star.Basic
-import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Analytic.Basic
-import Mathlib.Analysis.Analytic.Constructions
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Tactic  -- gives `ext` and `simp` power
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Algebra.Group.Support
+public import Mathlib.Algebra.Star.Basic
+public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Analytic.Basic
+public import Mathlib.Analysis.Analytic.Constructions
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Analysis.InnerProductSpace.PiL2
 
-import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
-import Mathlib.Topology.MetricSpace.Isometry
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
+public import Mathlib.Topology.MetricSpace.Isometry
 
-import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
-import Mathlib.MeasureTheory.Measure.Haar.OfBasis
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.MeasureTheory.Function.LpSpace.Basic
-import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
+public import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.MeasureTheory.Function.LpSpace.Basic
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
 
-import Mathlib.Probability.Independence.Basic
-import Mathlib.Probability.Density
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.Probability.Density
 
-import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Analysis.Normed.Module.RCLike.Basic
-import Mathlib.Analysis.Normed.Module.RCLike.Real
+public import Mathlib.Analysis.RCLike.Basic
+public import Mathlib.Analysis.Normed.Module.RCLike.Basic
+public import Mathlib.Analysis.Normed.Module.RCLike.Real
 
 --import Mathlib.LinearAlgebra.TensorAlgebra.Basic
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.Euclidean
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.Euclidean
 
 /-!
 # Time Reflection Θ and Discrete Symmetries
@@ -51,6 +52,8 @@ Properties: self-inverse (Θ² = id), measure-preserving, isometric.
 Induced actions on test functions: (Θf)(x) = f(Θx) = f(−t, x̄).
 Foundation for the OS3 reflection positivity axiom.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -165,7 +168,7 @@ private lemma timeReflection_hg_upper :
 noncomputable def compTimeReflection : (SchwartzTestFunctionℂ d) →L[ℝ] (SchwartzTestFunctionℂ d) :=
   SchwartzMap.compCLM (𝕜 := ℝ)
     (hg := timeReflectionCLM.hasTemperateGrowth)
-    (hg_upper := timeReflection_hg_upper)
+    (hg_upper := by exact timeReflection_hg_upper)
 
 /-- Composition with time reflection as a continuous linear map on **real-valued**
     test functions: the version used with positive-time subspaces defined over ℝ,
@@ -174,7 +177,7 @@ noncomputable def compTimeReflection : (SchwartzTestFunctionℂ d) →L[ℝ] (Sc
 noncomputable def compTimeReflectionReal : (SchwartzTestFunction d) →L[ℝ] (SchwartzTestFunction d) := by
   exact SchwartzMap.compCLM (𝕜 := ℝ)
     (hg := timeReflectionCLM.hasTemperateGrowth)
-    (hg_upper := timeReflection_hg_upper)
+    (hg_upper := by exact timeReflection_hg_upper)
 
 /-- Time reflection is linear on real test functions. -/
 lemma compTimeReflectionReal_linear_combination {n : ℕ} (f : Fin n → (SchwartzTestFunction d)) (c : Fin n → ℝ) :

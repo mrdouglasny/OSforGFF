@@ -4,27 +4,28 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Analysis.Analytic.Basic
-import Mathlib.Analysis.Analytic.Constructions
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.LinearAlgebra.BilinearMap
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Data.Finset.Basic
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
+public import Mathlib.Analysis.Analytic.Basic
+public import Mathlib.Analysis.Analytic.Constructions
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.LinearAlgebra.BilinearMap
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Tactic.Ring
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.NormNum
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.OS.Axioms
-import OSforGFF.Measure.Construct
-import OSforGFF.Measure.IsGaussian
-import OSforGFF.Spacetime.Euclidean
-import OSforGFF.Spacetime.DiscreteSymmetry
-import OSforGFF.General.FunctionalAnalysis
-import OSforGFF.Measure.Minlos
-import OSforGFF.Measure.MinlosAnalytic
-import OSforGFF.Schwinger.Defs
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.OS.Axioms
+public import OSforGFF.Measure.Construct
+public import OSforGFF.Measure.IsGaussian
+public import OSforGFF.Spacetime.Euclidean
+public import OSforGFF.Spacetime.DiscreteSymmetry
+public import OSforGFF.General.FunctionalAnalysis
+public import OSforGFF.Measure.Minlos
+public import OSforGFF.Measure.MinlosAnalytic
+public import OSforGFF.Schwinger.Defs
 
 /-!
 # Euclidean invariance of Gaussian measures
@@ -34,6 +35,8 @@ A Gaussian measure inherits OS2 (Euclidean invariance) from its covariance:
 the Euclidean group (`CovarianceEuclideanInvariantℂ`), the Gaussian generating functional
 `Z[f] = exp(−½⟨f, Cf⟩)` satisfies `Z[gf] = Z[f]` for every Euclidean motion `g`.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex
 open TopologicalSpace SchwartzMap

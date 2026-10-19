@@ -8,7 +8,7 @@
    "name": "BochnerMinlos",
    "manifestFile": "lake-manifest.json",
    "inherited": false,
-   "dir": "../bochner",
+   "dir": "../bochner-module",
    "configFile": "lakefile.lean"
   },
   {
@@ -17,7 +17,7 @@
    "name": "GaussianField",
    "manifestFile": "lake-manifest.json",
    "inherited": false,
-   "dir": "../gaussian-field",
+   "dir": "../gaussian-field-module",
    "configFile": "lakefile.lean"
   },
   {
@@ -134,7 +134,7 @@
    "name": "kolmogorov_extension4",
    "manifestFile": "lake-manifest.json",
    "inherited": true,
-   "dir": "../bochner/../kolmogorov_extension4",
+   "dir": "../bochner-module/../kolmogorov_extension4",
    "configFile": "lakefile.toml"
   }
  ],

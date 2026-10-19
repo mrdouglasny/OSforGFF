@@ -4,35 +4,36 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
-import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
-import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Order.Filter.Basic
-import Mathlib.MeasureTheory.Function.JacobianOneDim
+public import Mathlib.Analysis.Fourier.FourierTransform
+public import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+public import Mathlib.Data.Nat.Factorial.DoubleFactorial
+public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Order.Filter.Basic
+public import Mathlib.MeasureTheory.Function.JacobianOneDim
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.Euclidean
-import OSforGFF.Spacetime.DiscreteSymmetry
-import OSforGFF.Schwinger.Defs
-import OSforGFF.General.FunctionalAnalysis
-import OSforGFF.Covariance.ParsevalGeneric
-import OSforGFF.General.FourierTransforms
-import OSforGFF.OS.Axioms
-import OSforGFF.Spacetime.ProdIntegrable
-import OSforGFF.Spacetime.Decomposition
-import OSforGFF.Spacetime.Tonelli
-import OSforGFF.General.LaplaceIntegral
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.Euclidean
+public import OSforGFF.Spacetime.DiscreteSymmetry
+public import OSforGFF.Schwinger.Defs
+public import OSforGFF.General.FunctionalAnalysis
+public import OSforGFF.Covariance.ParsevalGeneric
+public import OSforGFF.General.FourierTransforms
+public import OSforGFF.OS.Axioms
+public import OSforGFF.Spacetime.ProdIntegrable
+public import OSforGFF.Spacetime.Decomposition
+public import OSforGFF.Spacetime.Tonelli
+public import OSforGFF.General.LaplaceIntegral
 
 /-!
 # OS3 Infrastructure — Schwinger Parametrization and Fubini Theorems
@@ -64,6 +65,8 @@ vanishing contributes one power of s. The spatial k-integral of the dominator is
 ∼ s^{(d+2)/2} e^{−sm²}, integrable near s = 0 for every d — so the OS3 chain carries no
 upper bound on the dimension.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex Real Filter QFT OSforGFF
 open TopologicalSpace

@@ -4,56 +4,57 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Tactic  -- gives `ext` and `simp` power
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
-import Mathlib.Analysis.Analytic.Basic
-import Mathlib.Analysis.Analytic.Constructions
+public import Mathlib.Tactic  -- gives `ext` and `simp` power
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+public import Mathlib.Data.Nat.Factorial.DoubleFactorial
+public import Mathlib.Analysis.Analytic.Basic
+public import Mathlib.Analysis.Analytic.Constructions
 
-import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
 
-import Mathlib.MeasureTheory.Function.Holder
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
+public import Mathlib.MeasureTheory.Function.Holder
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
 
-import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Analysis.Normed.Module.RCLike.Basic
-import Mathlib.Analysis.Normed.Module.RCLike.Real
-import Mathlib.Analysis.Normed.Field.Basic
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.Analysis.Fourier.Inversion
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.InnerProductSpace.EuclideanDist
+public import Mathlib.Analysis.RCLike.Basic
+public import Mathlib.Analysis.Normed.Module.RCLike.Basic
+public import Mathlib.Analysis.Normed.Module.RCLike.Real
+public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Fourier.FourierTransform
+public import Mathlib.Analysis.Fourier.Inversion
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 
-import Mathlib.Basic.Real.Basic
-import Mathlib.Analysis.Calculus.BumpFunction.Convolution
-import Mathlib.Analysis.Calculus.BumpFunction.Normed
-import Mathlib.Analysis.Calculus.ContDiff.FTaylorSeries
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.Calculus.BumpFunction.Convolution
+public import Mathlib.Analysis.Calculus.BumpFunction.Normed
+public import Mathlib.Analysis.Calculus.ContDiff.FTaylorSeries
 
-import Mathlib.Analysis.Calculus.MeanValue
-import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
-import Mathlib.Analysis.Calculus.LineDeriv.Basic
+public import Mathlib.Analysis.Calculus.MeanValue
+public import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
+public import Mathlib.Analysis.Calculus.LineDeriv.Basic
 
-import Mathlib.Data.Nat.Choose.Sum
+public import Mathlib.Data.Nat.Choose.Sum
 
-import Mathlib.MeasureTheory.Function.LpSpace.ContinuousFunctions
-import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.MeasureTheory.Function.LpSpace.ContinuousFunctions
+public import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 
-import Mathlib.Probability.Independence.Basic
-import Mathlib.Probability.Density
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.Probability.Density
 
-import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
-import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
-import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
-import Mathlib.MeasureTheory.Constructions.HaarToSphere
+public import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
+public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
+public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
+public import Mathlib.MeasureTheory.Constructions.HaarToSphere
 
 /-!
 ## Functional Analysis for AQFT
@@ -91,6 +92,8 @@ focusing on integrability, Schwartz function properties, and L² embeddings.
 - `norm_exp_neg_I_mul_real`: ‖exp(-i·r)‖ = 1
 - `sub_const_hasTemperateGrowth`: Translation has temperate growth
 -/
+
+@[expose] public section
 
 open MeasureTheory NNReal ENNReal Complex
 open TopologicalSpace Measure

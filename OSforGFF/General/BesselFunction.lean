@@ -4,8 +4,10 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
 /-!
 # Modified Bessel function `K₁`
@@ -20,6 +22,8 @@ The `K₁` analytic lemmas (positivity, continuity, the asymptotic and near-orig
 integrability) supported the original four-dimensional analysis and are preserved off the build
 graph in `OSforGFF/Legacy/BesselK1Analytics.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set Filter Asymptotics Real
 

@@ -4,10 +4,11 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.Measure.IsGaussian
-import OSforGFF.Spacetime.Euclidean
-import OSforGFF.Measure.GaussianFreeField
+public import OSforGFF.Measure.IsGaussian
+public import OSforGFF.Spacetime.Euclidean
+public import OSforGFF.Measure.GaussianFreeField
 
 /-!
 # OS2 — Euclidean Invariance
@@ -26,6 +27,8 @@ Hence S(Ef) = ∫∫ f*(x) C(x,y) f(y) dx dy = S(f).
 - `freeCovarianceℂ_bilinear_euclidean_invariant`
 - `CovarianceEuclideanInvariantℂ_μ_GFF`
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex Real Filter OSforGFF
 open scoped Real BigOperators

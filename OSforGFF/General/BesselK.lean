@@ -4,9 +4,11 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import OSforGFF.General.BesselK0
-import OSforGFF.General.BesselFunction
-import Mathlib.Analysis.SpecialFunctions.Arsinh
+module
+
+public import OSforGFF.General.BesselK0
+public import OSforGFF.General.BesselFunction
+public import Mathlib.Analysis.SpecialFunctions.Arsinh
 
 /-!
 # The modified Bessel function `K_ν` of arbitrary order and the master Schwinger identity
@@ -28,6 +30,8 @@ integral. The order-zero and order-one instances (`besselK0`, `besselK1`) coinci
 are recovered as corollaries, and the elementary half-integer value
 `K_{1/2}(z) = √(π/(2z)) · e^{-z}` supplies the three-dimensional (Yukawa) evaluation.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set Filter Real Topology Asymptotics intervalIntegral
 

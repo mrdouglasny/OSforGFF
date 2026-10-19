@@ -4,7 +4,9 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
 
 /-!
 # The `GFFPropagator` typeclass and the generic proper-time covariance
@@ -28,6 +30,8 @@ symmetric and invariant under simultaneous isometries of both arguments by radia
 Instances (`Instances/`) provide the closed form and its Schwinger-integral evaluation;
 everything else in the library consumes only the class.
 -/
+
+@[expose] public section
 
 open MeasureTheory Real Complex
 open scoped RealInnerProductSpace

@@ -4,38 +4,39 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Algebra.Algebra.Defs
-import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Basic.NNReal.Defs
-import Mathlib.Analysis.InnerProductSpace.Defs
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Analysis.InnerProductSpace.EuclideanDist
-import Mathlib.MeasureTheory.Integral.IntegrableOn
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.Probability.Distributions.Gaussian.Basic
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Probability.ProbabilityMassFunction.Basic
-import Mathlib.Probability.Moments.ComplexMGF
-import Mathlib.Analysis.Analytic.Basic
-import Mathlib.Analysis.Analytic.Constructions
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
-import Mathlib.LinearAlgebra.BilinearMap
-import Mathlib.LinearAlgebra.BilinearForm.Basic
-import Mathlib.Analysis.Calculus.Deriv.Basic
-import Mathlib.Probability.Distributions.Gaussian.Fernique
-import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
+public import Mathlib.Algebra.Algebra.Defs
+public import Mathlib.Analysis.RCLike.Basic
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Basic.NNReal.Defs
+public import Mathlib.Analysis.InnerProductSpace.Defs
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.Probability.Distributions.Gaussian.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Probability.ProbabilityMassFunction.Basic
+public import Mathlib.Probability.Moments.ComplexMGF
+public import Mathlib.Analysis.Analytic.Basic
+public import Mathlib.Analysis.Analytic.Constructions
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
+public import Mathlib.LinearAlgebra.BilinearMap
+public import Mathlib.LinearAlgebra.BilinearForm.Basic
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Fernique
+public import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Schwinger.Defs
-import OSforGFF.Measure.Minlos
-import OSforGFF.Covariance.RealForm
-import OSforGFF.Measure.MinlosAnalytic
-import OSforGFF.Spacetime.ComplexTestFunction
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Schwinger.Defs
+public import OSforGFF.Measure.Minlos
+public import OSforGFF.Covariance.RealForm
+public import OSforGFF.Measure.MinlosAnalytic
+public import OSforGFF.Spacetime.ComplexTestFunction
 
 /-!
 # GFF Measure Construction via Minlos Theorem
@@ -60,6 +61,8 @@ then using Mathlib's `memLp_id_gaussianReal`.
   headline theorems are about
 - `μ_GFF d m`: notation-level abbreviation for `gaussianFreeField_free` at dimension `d`
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex QFT ProbabilityTheory OSforGFF
 open TopologicalSpace SchwartzMap

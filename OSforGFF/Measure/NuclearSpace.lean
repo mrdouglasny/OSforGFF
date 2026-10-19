@@ -19,17 +19,20 @@ the bochner library (Minlos theorem).
 - Trèves, "Topological Vector Spaces", Ch. 50-51
 - Gel'fand-Vilenkin, "Generalized Functions" Vol. 4, Ch. 3-4
 -/
+module
 
-import Minlos.NuclearSpace
-import Minlos.PietschBridge
-import Minlos.Main
-import SchwartzNuclear.HermiteNuclear
-import Nuclear.NuclearSpace
+public import Minlos.NuclearSpace
+public import Minlos.PietschBridge
+public import Minlos.Main
+public import SchwartzNuclear.HermiteNuclear
+public import Nuclear.NuclearSpace
 
 /-! ### WithSeminorms reindexing
 
 A general reindexing lemma: if `p` generates the topology and `e` is an equivalence,
 then `p ∘ e` also generates the topology. -/
+
+@[expose] public section
 
 open TopologicalSpace
 

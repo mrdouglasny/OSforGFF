@@ -4,18 +4,19 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.MeasureTheory.Integral.IntegrableOn
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.Data.Matrix.Basic
-import Mathlib.Data.Finset.Basic
-import Mathlib.Basic.ENNReal.Holder
-import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.Data.Matrix.Basic
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Basic.ENNReal.Holder
+public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Schwinger.Defs
-import OSforGFF.Measure.Construct
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Schwinger.Defs
+public import OSforGFF.Measure.Construct
 
 /-!
 ## Gaussian Moments and n-Point Integrability
@@ -38,6 +39,8 @@ hence integrable.
 This generalizes `gaussian_pairing_product_integrable_free_2point` to arbitrary n,
 providing a unified foundation for all Schwinger function computations.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex Finset OSforGFF
 open TopologicalSpace SchwartzMap

@@ -4,9 +4,10 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.OS.OS0_Analyticity
-import OSforGFF.Schwinger.GaussianMoments
+public import OSforGFF.OS.OS0_Analyticity
+public import OSforGFF.Schwinger.GaussianMoments
 
 /-!
 # Gaussianity Verification
@@ -26,6 +27,8 @@ interchange, not because of OS0-specific infrastructure.
 - `gff_two_point_equals_covarianceℂ_free`: S₂(f,g) = freeCovarianceℂ(f,g)
 - `isGaussianGJ_gaussianFreeField_free`: the free GFF is Gaussian
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex QFT OSforGFF
 

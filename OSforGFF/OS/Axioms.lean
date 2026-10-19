@@ -4,48 +4,49 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Tactic  -- gives `ext` and `simp` power
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Algebra.Group.Support
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Analytic.Basic
-import Mathlib.Analysis.Analytic.Constructions
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Analysis.Calculus.BumpFunction.Convolution
+public import Mathlib.Tactic  -- gives `ext` and `simp` power
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Algebra.Group.Support
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Analytic.Basic
+public import Mathlib.Analysis.Analytic.Constructions
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Analysis.Calculus.BumpFunction.Convolution
 
-import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
 
-import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
-import Mathlib.MeasureTheory.Measure.Haar.OfBasis
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.MeasureTheory.Function.LpSpace.Basic
-import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
+public import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.MeasureTheory.Function.LpSpace.Basic
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
 
-import Mathlib.Probability.Independence.Basic
-import Mathlib.Probability.Density
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.Probability.Density
 
-import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Analysis.Normed.Module.RCLike.Basic
-import Mathlib.Analysis.Normed.Module.RCLike.Real
+public import Mathlib.Analysis.RCLike.Basic
+public import Mathlib.Analysis.Normed.Module.RCLike.Basic
+public import Mathlib.Analysis.Normed.Module.RCLike.Real
 
-import Mathlib.Topology.Basic
-import Mathlib.Order.Filter.Basic
+public import Mathlib.Topology.Basic
+public import Mathlib.Order.Filter.Basic
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Schwinger.Defs
-import OSforGFF.General.FunctionalAnalysis
-import OSforGFF.Spacetime.Euclidean
-import OSforGFF.Spacetime.DiscreteSymmetry
-import OSforGFF.Spacetime.PositiveTimeTestFunction
-import OSforGFF.Spacetime.ComplexTestFunction
-import OSforGFF.Spacetime.TimeTranslation
-import OSforGFF.Schwinger.TwoPoint
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Schwinger.Defs
+public import OSforGFF.General.FunctionalAnalysis
+public import OSforGFF.Spacetime.Euclidean
+public import OSforGFF.Spacetime.DiscreteSymmetry
+public import OSforGFF.Spacetime.PositiveTimeTestFunction
+public import OSforGFF.Spacetime.ComplexTestFunction
+public import OSforGFF.Spacetime.TimeTranslation
+public import OSforGFF.Schwinger.TwoPoint
 
 /-!
 ## Osterwalder-Schrader Axioms
@@ -62,6 +63,8 @@ continuation to relativistic QFTs:
 Following Glimm-Jaffe formulation using probability measures on field configurations.
 Glimm and Jaffe, Quantum Physics, pp. 89-90
 -/
+
+@[expose] public section
 
 open MeasureTheory NNReal ENNReal
 open TopologicalSpace Measure QFT

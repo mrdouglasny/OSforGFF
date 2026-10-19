@@ -3,26 +3,27 @@ Copyright (c) 2025 Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim. All r
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import OSforGFF.General.PositiveDefinite
-import OSforGFF.General.GaussianRBF
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Analysis.LocallyConvex.Basic
-import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import OSforGFF.Measure.NuclearSpace
-import Mathlib.Data.Matrix.Basic
-import Mathlib.LinearAlgebra.Matrix.PosDef
-import Mathlib.Analysis.InnerProductSpace.EuclideanDist
-import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import OSforGFF.General.PositiveDefinite
+public import OSforGFF.General.GaussianRBF
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Analysis.LocallyConvex.Basic
+public import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import OSforGFF.Measure.NuclearSpace
+public import Mathlib.Data.Matrix.Basic
+public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
+public import Mathlib.Analysis.InnerProductSpace.PiL2
 -- Bochner library imports for proven Minlos theorem
-import Minlos.Main
-import Bochner.PositiveDefinite
+public import Minlos.Main
+public import Bochner.PositiveDefinite
 
 /-!
 # Minlos Theorem and Gaussian Measure Construction
@@ -41,6 +42,8 @@ the proven Minlos theorem.
 
 - `minlos_gaussian_construction`: Minlos + Gaussian CF → probability measure
 -/
+
+@[expose] public section
 
 open Complex MeasureTheory Matrix TopologicalSpace
 open BigOperators

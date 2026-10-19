@@ -4,14 +4,16 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import Mathlib.Analysis.Fourier.Inversion
-import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
-import OSforGFF.General.FunctionalAnalysis
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.ComplexTestFunction
-import OSforGFF.Spacetime.DiscreteSymmetry
-import OSforGFF.Spacetime.Euclidean
-import OSforGFF.Covariance.Propagator
+module
+
+public import Mathlib.Analysis.Fourier.Inversion
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+public import OSforGFF.General.FunctionalAnalysis
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.ComplexTestFunction
+public import OSforGFF.Spacetime.DiscreteSymmetry
+public import OSforGFF.Spacetime.Euclidean
+public import OSforGFF.Covariance.Propagator
 
 /-!
 # The dimension-generic Parseval bridge
@@ -52,6 +54,8 @@ be computed against `C_S` throughout:
 - the centered kernel `freeCovarianceKernel d m z = C(0,z)` with continuity off the origin,
   integrability, and exponential/polynomial decay beyond unit radius — the OS4 inputs.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex OSforGFF
 open scoped RealInnerProductSpace

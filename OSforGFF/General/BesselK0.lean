@@ -4,15 +4,17 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.MeasureTheory.Integral.IntegralEqImproper
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
-import Mathlib.MeasureTheory.Function.JacobianOneDim
-import Mathlib.Analysis.Calculus.Deriv.Inv
-import Mathlib.MeasureTheory.Integral.ExpDecay
-import Mathlib.Analysis.Asymptotics.Defs
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+public import Mathlib.MeasureTheory.Function.JacobianOneDim
+public import Mathlib.Analysis.Calculus.Deriv.Inv
+public import Mathlib.MeasureTheory.Integral.ExpDecay
+public import Mathlib.Analysis.Asymptotics.Defs
 
 /-!
 # Modified Bessel function `K₀`
@@ -24,6 +26,8 @@ cosh integral representation. The proper-time (Schwinger) evaluation
 `schwingerIntegral_eq_besselK` and is provided as `schwingerIntegral_eq_besselK0`
 (`OSforGFF.General.BesselK`).
 -/
+
+@[expose] public section
 
 open MeasureTheory Set Filter Real Topology Asymptotics intervalIntegral
 

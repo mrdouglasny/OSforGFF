@@ -4,10 +4,12 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import OSforGFF.Measure.Construct
-import OSforGFF.Covariance.RealForm
-import OSforGFF.Spacetime.ComplexTestFunction
-import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+module
+
+public import OSforGFF.Measure.Construct
+public import OSforGFF.Covariance.RealForm
+public import OSforGFF.Spacetime.ComplexTestFunction
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
 
 /-!
 # Nontriviality of the Gaussian Free Field
@@ -56,6 +58,8 @@ This file is deliberately **off the root import graph** — the headline theorem
 `OS.Master` do not depend on it, and `lake build` does not compile it. It is verified
 separately, via `lake env lean`, by `scripts/check-guardrails.sh`.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex QFT
 open scoped Real BigOperators SchwartzMap

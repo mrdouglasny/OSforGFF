@@ -4,16 +4,17 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.PositiveTimeTestFunction
-import OSforGFF.Spacetime.DiscreteSymmetry
-import OSforGFF.OS.Axioms
-import OSforGFF.Measure.Construct
-import OSforGFF.General.HadamardExp
-import OSforGFF.Covariance.RealForm
-import OSforGFF.OS.OS3_CovarianceRP
-import OSforGFF.Measure.IsGaussian
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.PositiveTimeTestFunction
+public import OSforGFF.Spacetime.DiscreteSymmetry
+public import OSforGFF.OS.Axioms
+public import OSforGFF.Measure.Construct
+public import OSforGFF.General.HadamardExp
+public import OSforGFF.Covariance.RealForm
+public import OSforGFF.OS.OS3_CovarianceRP
+public import OSforGFF.Measure.IsGaussian
 
 /-!
 # OS3 — Reflection Positivity for the GFF
@@ -46,6 +47,8 @@ while the Schur–Hadamard lifting in this file is dimension-free.
 - `gaussianFreeField_OS3_real`: real reflection positivity of the free GFF
 - `gaussianFreeField_OS3`: complex (star) reflection positivity of the free GFF
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex Matrix OSforGFF
 open scoped Real InnerProductSpace BigOperators

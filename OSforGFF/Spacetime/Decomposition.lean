@@ -4,9 +4,10 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.ProdIntegrable
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.ProdIntegrable
 
 /-!
 # Spacetime Decomposition
@@ -25,6 +26,8 @@ time and spatial components: `SpaceTime d ≃ᵐ ℝ × SpatialCoords d`.
 * `spacetimeDecomp_apply` - Explicit formula: spacetimeDecomp k = (k 0, spatialPart k)
 * `spacetime_norm_sq_decompose` - Norm decomposition: ‖k‖² = k₀² + ‖k_sp‖²
 -/
+
+@[expose] public section
 
 open MeasureTheory MeasureSpace FiniteDimensional Real
 

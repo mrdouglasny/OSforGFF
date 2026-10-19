@@ -4,8 +4,9 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.OS.OS3_MixedRepInfra
+public import OSforGFF.OS.OS3_MixedRepInfra
 
 /-!
 # OS3 — Mixed Representation via Schwinger Parametrization
@@ -43,6 +44,8 @@ The mixed representation exhibits:
 - Haag, "Local Quantum Physics" (1996), §V.3
 
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex Real Filter QFT LaplaceIntegral OSforGFF
 open TopologicalSpace

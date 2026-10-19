@@ -4,20 +4,21 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Tactic  -- gives `ext` and `simp` power
-import Mathlib.Basic.Complex.Basic
-import Mathlib.Basic.Real.Basic
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Algebra.Star.Basic
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Algebra.Order.Group.Unbundled.Abs
+public import Mathlib.Tactic  -- gives `ext` and `simp` power
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Algebra.Star.Basic
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Algebra.Order.Group.Unbundled.Abs
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.General.FunctionalAnalysis
-import OSforGFF.Spacetime.ComplexTestFunction
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.General.FunctionalAnalysis
+public import OSforGFF.Spacetime.ComplexTestFunction
 
 /-!
 # Generating Functional and Schwinger Functions
@@ -28,6 +29,8 @@ Schwinger n-point functions Sₙ(f₁,...,fₙ) = ∫ ⟨ω,f₁⟩...⟨ω,fₙ
 For centered Gaussian measures: Z[J] = exp(−½⟨J,CJ⟩) and all Sₙ are
 determined by Wick's theorem from the two-point function S₂ = C.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex
 open TopologicalSpace

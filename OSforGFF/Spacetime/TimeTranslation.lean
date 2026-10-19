@@ -4,14 +4,15 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.Analysis.Calculus.LineDeriv.Basic
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-import Mathlib.Tactic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.LineDeriv.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.Tactic
 
-import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.Basic
 
 /-!
 # Time Translation Operators
@@ -44,6 +45,8 @@ This is used to prove `continuous_timeTranslationSchwartz`, which establishes
 that time translation acts continuously on Schwartz space (a standard textbook fact
 from Reed-Simon V.3 and Hörmander Ch. 7).
 -/
+
+@[expose] public section
 
 open MeasureTheory Real
 open TopologicalSpace
