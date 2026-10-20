@@ -66,23 +66,13 @@ def negMap : FieldConfiguration d → FieldConfiguration d := fun ω => -ω
 
 /-- The negation map is measurable w.r.t. the cylinder σ-algebra. -/
 lemma negMap_measurable : Measurable (negMap (d := d)) := by
+  -- The cylinder σ-algebra is `comap (ω ↦ (f ↦ ω f)) MeasurableSpace.pi`, so it suffices that
+  -- each evaluation `ω ↦ (-ω) f = -(ω f)` is measurable.
   rw [measurable_iff_comap_le]
-  -- Unfold the cylinder σ-algebra instance and distribute comap over iSup
-  show (⨆ f, (borel ℝ).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) f)).comap negMap ≤
-    ⨆ f, (borel ℝ).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) f)
-  rw [MeasurableSpace.comap_iSup]
-  apply iSup_le; intro g
+  change (MeasurableSpace.comap (fun (ω : FieldConfiguration d) (f : SchwartzTestFunction d) =>
+    ω f) MeasurableSpace.pi).comap negMap ≤ _
   rw [MeasurableSpace.comap_comp]
-  conv_lhs => rw [show (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) g) ∘ negMap =
-      Neg.neg ∘ (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) g) from by
-    ext ω; show (-ω) g = -(ω g); rfl]
-  rw [← MeasurableSpace.comap_comp]
-  have h_neg_meas : (borel ℝ).comap (Neg.neg : ℝ → ℝ) ≤ borel ℝ :=
-    measurable_iff_comap_le.mp measurable_neg
-  calc ((borel ℝ).comap Neg.neg).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) g)
-      ≤ (borel ℝ).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) g) :=
-        MeasurableSpace.comap_mono h_neg_meas
-    _ ≤ _ := le_iSup (fun f => (borel ℝ).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) f)) g
+  exact (Measurable.of_eval fun f => (WeakDual.eval_measurable f).neg).comap_le
 
 /-- Symmetry under global sign flip induced by the real Gaussian CF.
     Uses Minlos uniqueness from the bochner library. -/

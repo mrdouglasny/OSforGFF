@@ -52,6 +52,7 @@ public import «OSforGFF».Covariance.RealForm
 
 -- Measure (Minlos + GFF construction)
 public import «OSforGFF».Measure.NuclearSpace
+public import «OSforGFF».Measure.WeakDualMeasurableSpace
 public import «OSforGFF».Measure.Minlos
 public import «OSforGFF».Measure.MinlosAnalytic
 public import «OSforGFF».Measure.Construct
