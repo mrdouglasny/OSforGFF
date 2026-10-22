@@ -4,8 +4,10 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import OSforGFF.General.BesselK
-import OSforGFF.Covariance.Propagator
+module
+
+public import OSforGFF.General.BesselK
+public import OSforGFF.Covariance.Propagator
 
 /-!
 # The four-dimensional instance of `GFFPropagator`
@@ -16,6 +18,8 @@ The radial profile of the free covariance in four dimensions is the Bessel close
 `schwingerIntegral_eq_besselK1` — the order `ν = -1` case of the master identity
 `schwingerIntegral_eq_besselK` (`General/BesselK`).
 -/
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,6 +56,6 @@ noncomputable instance instGFFPropagatorDim4 (m : ℝ) [Fact (0 < m)] :
     GFFPropagator 4 m where
   Cprofile r := if r = 0 then 0 else (m / (4 * Real.pi ^ 2 * r)) * besselK1 (m * r)
   schwinger_eq r hr := by
-    rw [if_neg (ne_of_gt hr), properTimeCovariance_dim4_eq m r Fact.out hr]
+    rw [ite_eq_right (ne_of_gt hr), properTimeCovariance_dim4_eq m r Fact.out hr]
 
 end

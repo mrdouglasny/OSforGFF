@@ -4,17 +4,19 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import OSforGFF.Measure.GaussianFreeField
-import OSforGFF.Instances.Dim2
-import OSforGFF.Instances.Dim3
-import OSforGFF.Instances.Dim4
-import OSforGFF.Instances.Dim5
-import OSforGFF.OS.OS3_ReflectionPositivity
-import OSforGFF.OS.OS0_Analyticity
-import OSforGFF.OS.OS1_Regularity
-import OSforGFF.OS.OS2_Invariance
-import OSforGFF.OS.OS4_Clustering
-import OSforGFF.OS.OS4_Ergodicity
+module
+
+public import OSforGFF.Measure.GaussianFreeField
+public import OSforGFF.Instances.Dim2
+public import OSforGFF.Instances.Dim3
+public import OSforGFF.Instances.Dim4
+public import OSforGFF.Instances.Dim5
+public import OSforGFF.OS.OS3_ReflectionPositivity
+public import OSforGFF.OS.OS0_Analyticity
+public import OSforGFF.OS.OS1_Regularity
+public import OSforGFF.OS.OS2_Invariance
+public import OSforGFF.OS.OS4_Clustering
+public import OSforGFF.OS.OS4_Ergodicity
 
 /-!
 # Master Theorem
@@ -40,6 +42,8 @@ The generic theorem holds for any spacetime dimension `d ≥ 2` equipped with a
 proper-time integral); the OS3 proper-time Fubini domination runs at boundary-vanishing
 order `d`, so no upper bound on the dimension is needed.
 -/
+
+@[expose] public section
 
 open scoped BigOperators
 

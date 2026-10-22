@@ -6,71 +6,74 @@ Authors: Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -- Root import file for the OSforGFF library.
 
 -- General mathematics (pure Mathlib extensions, no project imports)
-import «OSforGFF».General.FunctionalAnalysis
-import «OSforGFF».General.SchurProduct
-import «OSforGFF».General.HadamardExp
-import «OSforGFF».General.PositiveDefinite
-import «OSforGFF».General.GaussianRBF
-import «OSforGFF».General.FourierTransforms
-import «OSforGFF».General.LaplaceIntegral
-import «OSforGFF».General.BesselFunction
-import «OSforGFF».General.BesselK0
-import «OSforGFF».General.BesselK
-import «OSforGFF».General.QuantitativeDecay
-import «OSforGFF».General.SchwartzTranslationDecay
-import «OSforGFF».General.L2TimeIntegral
+module
+
+public import «OSforGFF».General.FunctionalAnalysis
+public import «OSforGFF».General.SchurProduct
+public import «OSforGFF».General.HadamardExp
+public import «OSforGFF».General.PositiveDefinite
+public import «OSforGFF».General.GaussianRBF
+public import «OSforGFF».General.FourierTransforms
+public import «OSforGFF».General.LaplaceIntegral
+public import «OSforGFF».General.BesselFunction
+public import «OSforGFF».General.BesselK0
+public import «OSforGFF».General.BesselK
+public import «OSforGFF».General.QuantitativeDecay
+public import «OSforGFF».General.SchwartzTranslationDecay
+public import «OSforGFF».General.L2TimeIntegral
 
 -- Spacetime (test functions & symmetries)
-import «OSforGFF».Spacetime.Basic
-import «OSforGFF».Spacetime.Euclidean
-import «OSforGFF».Spacetime.DiscreteSymmetry
-import «OSforGFF».Spacetime.Decomposition
-import «OSforGFF».Spacetime.ComplexTestFunction
-import «OSforGFF».Spacetime.PositiveTimeTestFunction
-import «OSforGFF».Spacetime.TimeTranslation
-import «OSforGFF».Spacetime.ProdIntegrable
-import «OSforGFF».Spacetime.Tonelli
+public import «OSforGFF».Spacetime.Basic
+public import «OSforGFF».Spacetime.Euclidean
+public import «OSforGFF».Spacetime.DiscreteSymmetry
+public import «OSforGFF».Spacetime.Decomposition
+public import «OSforGFF».Spacetime.ComplexTestFunction
+public import «OSforGFF».Spacetime.PositiveTimeTestFunction
+public import «OSforGFF».Spacetime.TimeTranslation
+public import «OSforGFF».Spacetime.ProdIntegrable
+public import «OSforGFF».Spacetime.Tonelli
 
 -- Schwinger (generating functionals)
-import «OSforGFF».Schwinger.Defs
-import «OSforGFF».Schwinger.TwoPoint
-import «OSforGFF».Schwinger.GaussianMoments
+public import «OSforGFF».Schwinger.Defs
+public import «OSforGFF».Schwinger.TwoPoint
+public import «OSforGFF».Schwinger.GaussianMoments
 
 -- Covariance (free propagator)
-import «OSforGFF».Covariance.Propagator
-import «OSforGFF».Covariance.ParsevalGeneric
+public import «OSforGFF».Covariance.Propagator
+public import «OSforGFF».Covariance.ParsevalGeneric
 
 -- Instances (per-dimension propagator closed forms)
-import «OSforGFF».Instances.Dim4
-import «OSforGFF».Instances.Dim3
-import «OSforGFF».Instances.Dim2
-import «OSforGFF».Instances.Dim5
+public import «OSforGFF».Instances.Dim4
+public import «OSforGFF».Instances.Dim3
+public import «OSforGFF».Instances.Dim2
+public import «OSforGFF».Instances.Dim5
 
-import «OSforGFF».Covariance.RealForm
+public import «OSforGFF».Covariance.RealForm
 
 -- Measure (Minlos + GFF construction)
-import «OSforGFF».Measure.NuclearSpace
-import «OSforGFF».Measure.Minlos
-import «OSforGFF».Measure.MinlosAnalytic
-import «OSforGFF».Measure.Construct
-import «OSforGFF».Measure.IsGaussian
-import «OSforGFF».Measure.GaussianFreeField
+public import «OSforGFF».Measure.NuclearSpace
+public import «OSforGFF».Measure.WeakDualMeasurableSpace
+public import «OSforGFF».Measure.Minlos
+public import «OSforGFF».Measure.MinlosAnalytic
+public import «OSforGFF».Measure.Construct
+public import «OSforGFF».Measure.IsGaussian
+public import «OSforGFF».Measure.GaussianFreeField
 
 -- OS axioms (definitions + proofs)
-import «OSforGFF».OS.Axioms
-import «OSforGFF».OS.OS0_Analyticity
-import «OSforGFF».OS.OS1_Regularity
-import «OSforGFF».OS.OS2_Invariance
-import «OSforGFF».OS.OS3_MixedRepInfra
-import «OSforGFF».OS.OS3_MixedRep
-import «OSforGFF».OS.OS3_CovarianceRP
-import «OSforGFF».OS.OS3_ReflectionPositivity
-import «OSforGFF».OS.OS4_MGF
-import «OSforGFF».OS.OS4_Clustering
-import «OSforGFF».OS.OS4_Ergodicity
+public import «OSforGFF».OS.Axioms
+public import «OSforGFF».OS.OS0_Analyticity
+public import «OSforGFF».OS.OS1_Regularity
+public import «OSforGFF».OS.OS2_Invariance
+public import «OSforGFF».OS.OS3_MixedRepInfra
+public import «OSforGFF».OS.OS3_MixedRep
+public import «OSforGFF».OS.OS3_CovarianceRP
+public import «OSforGFF».OS.OS3_ReflectionPositivity
+public import «OSforGFF».OS.OS4_MGF
+public import «OSforGFF».OS.OS4_Clustering
+public import «OSforGFF».OS.OS4_Ergodicity
 
 -- Master theorem
-import «OSforGFF».OS.Master
+public import «OSforGFF».OS.Master
 
 -- Build-enforced guardrails (axiom-footprint + statement-type). See OSforGFF/Guardrails.lean.
-import «OSforGFF».Guardrails
+public import «OSforGFF».Guardrails

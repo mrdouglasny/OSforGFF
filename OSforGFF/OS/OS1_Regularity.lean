@@ -4,29 +4,30 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Tactic
-import Mathlib.Data.Complex.Basic
-import Mathlib.Data.Real.Basic
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Analysis.SpecialFunctions.Exp
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Function.LpSpace.Basic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
-import Mathlib.Topology.Constructions
+public import Mathlib.Tactic
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Function.LpSpace.Basic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+public import Mathlib.Data.Nat.Factorial.DoubleFactorial
+public import Mathlib.Topology.Constructions
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.OS.Axioms
-import OSforGFF.Covariance.ParsevalGeneric
-import OSforGFF.General.FunctionalAnalysis
-import OSforGFF.Covariance.RealForm
-import OSforGFF.Measure.Construct
-import OSforGFF.Measure.IsGaussian
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.OS.Axioms
+public import OSforGFF.Covariance.ParsevalGeneric
+public import OSforGFF.General.FunctionalAnalysis
+public import OSforGFF.Covariance.RealForm
+public import OSforGFF.Measure.Construct
+public import OSforGFF.Measure.IsGaussian
 
 /-!
 # OS1 — Regularity (Exponential Bounds)
@@ -47,6 +48,8 @@ integrability of the radial covariance profile (`GFFPropagator.integrable`).
 
 - `gaussianFreeField_satisfies_OS1`
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex BigOperators SchwartzMap Real QFT OSforGFF
 open scoped MeasureTheory ENNReal
@@ -136,7 +139,7 @@ lemma schwingerTwoPoint_ae_eq_kernel (m : ℝ) [Fact (0 < m)] [GFFPropagator d m
   -- The complement of {0} has full measure, so {x ≠ 0} ∈ ae volume
   have h_mem : {x : SpaceTime d | x ≠ 0} ∈ ae volume := by
     rw [MeasureTheory.mem_ae_iff]
-    simp only [ne_eq, Set.compl_setOf, not_not]
+    simp only [ne_eq, Set.compl_ofPred, not_not]
     exact MeasureTheory.measure_singleton (0 : SpaceTime d)
   -- The functions agree on this set
   exact Filter.eventuallyEq_of_mem h_mem
@@ -278,7 +281,7 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] [GFFPropagator d m]
 
   -- Show integrability of ‖F‖² via MemLp → Integrable (square norm)
   have hF_memLp : MemLp F 2 volume := F.memLp 2 volume
-  have hF_meas : AEStronglyMeasurable F volume := hF_memLp.1
+  have hF_meas : AEStronglyMeasurable F volume := hF_memLp.aestronglyMeasurable
   have hF_sq_int : Integrable (fun k => ‖F k‖^2) volume :=
     (memLp_two_iff_integrable_sq_norm hF_meas).1 hF_memLp
 
@@ -342,12 +345,12 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] [GFFPropagator d m]
 
   -- Show integrability of both sides to apply integral monotonicity
   have hIm_memLp : MemLp (toComplex fIm) 2 volume := (toComplex fIm).memLp 2 volume
-  have hIm_meas : AEStronglyMeasurable (toComplex fIm) volume := hIm_memLp.1
+  have hIm_meas : AEStronglyMeasurable (toComplex fIm) volume := hIm_memLp.aestronglyMeasurable
   have hIm_sq_int : Integrable (fun x => ‖(toComplex fIm) x‖^2) volume :=
     (memLp_two_iff_integrable_sq_norm hIm_meas).1 hIm_memLp
 
   have hf_memLp : MemLp f 2 volume := f.memLp 2 volume
-  have hf_meas : AEStronglyMeasurable f volume := hf_memLp.1
+  have hf_meas : AEStronglyMeasurable f volume := hf_memLp.aestronglyMeasurable
   have hf_sq_int : Integrable (fun x => ‖f x‖^2) volume :=
     (memLp_two_iff_integrable_sq_norm hf_meas).1 hf_memLp
 
@@ -395,7 +398,7 @@ theorem TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable
   have heq : ∀ x : SpaceTime d, x ≠ 0 → SchwingerTwoPointFunction dμ_config x = K x := by
     intro x hx
     unfold SchwingerTwoPointFunction
-    simp only [hx, if_false]
+    simp only [hx, ite_false]
     refine Filter.Tendsto.limUnder_eq ?_
     refine (Filter.tendsto_add_atTop_iff_nat 1).mp ?_
     simpa [Nat.succ_ne_zero, TwoPointIntegrable.standardMollifier] using hconv x hx
@@ -403,7 +406,7 @@ theorem TwoPointIntegrable.schwingerTwoPointFunction_locallyIntegrable
   have : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
   have h_mem : {x : SpaceTime d | x ≠ 0} ∈ ae (volume : Measure (SpaceTime d)) := by
     rw [MeasureTheory.mem_ae_iff]
-    simp only [ne_eq, Set.compl_setOf, not_not]
+    simp only [ne_eq, Set.compl_ofPred, not_not]
     exact MeasureTheory.measure_singleton (0 : SpaceTime d)
   exact hK.congr (Filter.eventuallyEq_of_mem h_mem heq).symm
 

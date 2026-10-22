@@ -4,26 +4,27 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Tactic
-import Mathlib.Data.Complex.Basic
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Analytic.Basic
-import Mathlib.Analysis.Analytic.Constructions
-import Mathlib.Analysis.Analytic.Linear
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Function.LpSpace.Basic
-import Mathlib.Analysis.Complex.CauchyIntegral
-import Mathlib.Analysis.Calculus.ParametricIntegral
+public import Mathlib.Tactic
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Analytic.Basic
+public import Mathlib.Analysis.Analytic.Constructions
+public import Mathlib.Analysis.Analytic.Linear
+public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Function.LpSpace.Basic
+public import Mathlib.Analysis.Complex.CauchyIntegral
+public import Mathlib.Analysis.Calculus.ParametricIntegral
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Schwinger.Defs
-import OSforGFF.OS.Axioms
-import OSforGFF.Measure.Construct
-import OSforGFF.Spacetime.ComplexTestFunction
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Schwinger.Defs
+public import OSforGFF.OS.Axioms
+public import OSforGFF.Measure.Construct
+public import OSforGFF.Spacetime.ComplexTestFunction
 
 /-!
 # OS0 — Analyticity of the Generating Functional
@@ -57,6 +58,8 @@ L(t) = Z[f_re + t·f_im] and R(t) = exp(-½ Q(t)), show L = R on ℝ (from
 
 - `gaussianFreeField_satisfies_OS0`
 -/
+
+@[expose] public section
 
 noncomputable section
 
@@ -261,7 +264,7 @@ lemma gff_exp_abs_pairing_memLp (f : SchwartzTestFunction d) (p : ENNReal) (hp :
   -- Convert integrability of exp(p|x|) to eLpNorm bound
   -- Using: eLpNorm f p μ < ∞ ↔ ∫⁻ ‖f‖ₑ^p ∂μ < ∞
   have h_eLpNorm_lt : eLpNorm (fun ω => Real.exp |ω f|) p (gaussianFreeField_free (d := d) m).toMeasure < ⊤ := by
-    rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp_pos hp]
+    rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp_pos hp h_aesm]
     -- Need: ∫⁻ ‖exp(|ω f|)‖ₑ^p < ⊤
     -- Since ‖exp(|x|)‖ₑ = exp(|x|), we have ‖exp(|x|)‖ₑ^p = exp(p|x|)
     -- and exp(p|x|) is integrable by h_exp_p_integrable
@@ -284,7 +287,7 @@ lemma gff_exp_abs_pairing_memLp (f : SchwartzTestFunction d) (p : ENNReal) (hp :
     intro ω
     rw [Real.enorm_eq_ofReal (le_of_lt (Real.exp_pos _))]
 
-  exact ⟨h_aesm, h_eLpNorm_lt⟩
+  exact h_eLpNorm_lt
 
 /-- Integrability of exp(|ω f|) under the GFF measure.
     This is the L¹ special case of gff_exp_abs_pairing_memLp. -/

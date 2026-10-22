@@ -4,9 +4,11 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import OSforGFF.General.BesselK
-import OSforGFF.Covariance.Propagator
-import OSforGFF.Measure.Construct
+module
+
+public import OSforGFF.General.BesselK
+public import OSforGFF.Covariance.Propagator
+public import OSforGFF.Measure.Construct
 
 /-!
 # The three-dimensional (Yukawa) instance — proper-time evaluation
@@ -16,6 +18,8 @@ The radial profile of the free covariance in three dimensions is the Yukawa pote
 order `ν = -1/2` case of the master Bessel identity `schwingerIntegral_eq_besselK`, using the
 elementary half-integer value `besselK_half` (`K_{1/2}(z) = √(π/(2z)) e^{-z}`).
 -/
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,6 +83,6 @@ noncomputable instance instGFFPropagatorDim3 (m : ℝ) [Fact (0 < m)] :
     GFFPropagator 3 m where
   Cprofile r := if r = 0 then 0 else Real.exp (-(m * r)) / (4 * Real.pi * r)
   schwinger_eq r hr := by
-    rw [if_neg (ne_of_gt hr), properTimeCovariance_dim3_eq m r Fact.out hr]
+    rw [ite_eq_right (ne_of_gt hr), properTimeCovariance_dim3_eq m r Fact.out hr]
 
 end OSforGFF

@@ -4,10 +4,11 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.Decomposition
-import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.Decomposition
+public import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
 
 /-!
 # Schwartz Tonelli Factorization
@@ -25,6 +26,8 @@ depends only on the time coordinates.
 * Hörmander, "The Analysis of Linear Partial Differential Operators I"
 * Folland, "Real Analysis", Chapter 2 (Fubini-Tonelli theorem)
 -/
+
+@[expose] public section
 
 open MeasureTheory MeasureSpace FiniteDimensional Real
 

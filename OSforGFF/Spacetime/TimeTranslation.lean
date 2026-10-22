@@ -4,14 +4,15 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.Analysis.Calculus.LineDeriv.Basic
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-import Mathlib.Tactic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.LineDeriv.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.Tactic
 
-import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.Basic
 
 /-!
 # Time Translation Operators
@@ -44,6 +45,8 @@ This is used to prove `continuous_timeTranslationSchwartz`, which establishes
 that time translation acts continuously on Schwartz space (a standard textbook fact
 from Reed-Simon V.3 and Hörmander Ch. 7).
 -/
+
+@[expose] public section
 
 open MeasureTheory Real
 open TopologicalSpace
@@ -83,7 +86,7 @@ omit [Fact (2 ≤ d)] in
 lemma timeShift_spatial (s : ℝ) (u : (SpaceTime d)) (i : Fin d) (hi : i.val ≠ 0) :
     (timeShift s u) i = u i := by
   simp only [timeShift]
-  exact if_neg hi
+  exact ite_eq_right hi
 
 omit [Fact (2 ≤ d)] in
 /-- Time shift is a group action: T_{s+t} = T_s ∘ T_t -/
@@ -146,7 +149,7 @@ lemma timeShift_isometry (s : ℝ) : Isometry (timeShift (d := d) s) := by
 omit [Fact (2 ≤ d)] in
 /-- Time shift is antilipschitz (follows from being an isometry). -/
 lemma timeShift_antilipschitz (s : ℝ) : AntilipschitzWith 1 (timeShift (d := d) s) :=
-  (timeShift_isometry s).antilipschitz
+  (timeShift_isometry s).antilipschitzWith
 
 /-- The constant vector used to express timeShift as id + const. -/
 def timeShiftConst (s : ℝ) : (SpaceTime d) :=
@@ -171,7 +174,7 @@ lemma timeShift_hasTemperateGrowth (s : ℝ) : Function.HasTemperateGrowth (time
       ext x v
       have h : timeShift (d := d) s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
       rw [h]
-      simp only [fderiv_add_const, fderiv_id', ContinuousLinearMap.id_apply]
+      simp only [fderiv_add_const, fderiv_fun_id, ContinuousLinearMap.id_apply]
     rw [h_eq]
     exact Function.HasTemperateGrowth.const _
   -- timeShift is differentiable
@@ -417,7 +420,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
   let y : SpaceTime d := h • unitTimeDir
   have hy : ‖y‖ = |h| := by
     simp only [y, unitTimeDir, norm_smul, Real.norm_eq_abs]
-    rw [EuclideanSpace.norm_single, norm_one, mul_one]
+    rw [PiLp.norm_single, norm_one, mul_one]
   -- Use Mean Value estimate: ‖g(1) - g(0)‖ ≤ |h| · sup ‖D^{n+1} f(path)‖ · ‖unitTimeDir‖
   -- Since the path is from x to x + h•e₀, the bound involves |h|
   -- We bound this by the seminorm, absorbing weight shift via Peetre
@@ -535,7 +538,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
                 ContinuousLinearMap.fderiv _
         rw [h1, hg_eq]
         rw [fderiv_comp t h_iter_diff h_path_diff]
-        simp only [ContinuousLinearMap.coe_comp', Function.comp_apply, path, h_fderiv_path]
+        simp only [ContinuousLinearMap.coe_comp, Function.comp_apply, path, h_fderiv_path]
         simp only [ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.id_apply, one_smul]
         rfl  -- iter = iteratedFDeriv ℝ n f by definition
 
@@ -576,7 +579,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
               apply le_ciSup_of_le h_bdd ⟨0, by simp⟩
               exact norm_nonneg _
             have h_eq : (⨆ s ∈ Set.Icc (0 : ℝ) 1, D s) = ⨆ s : ↑(Set.Icc (0 : ℝ) 1), D s.1 :=
-              ciSup_subtype' (p := (· ∈ Set.Icc (0 : ℝ) 1)) (f := fun s _ => D s) h_bdd h_sSup_le
+              cbiSup_eq_ciSup_subtype (p := (· ∈ Set.Icc (0 : ℝ) 1)) (f := fun s _ => D s) h_bdd h_sSup_le
             rw [h_eq]
             exact le_ciSup h_bdd ⟨t, ht⟩
         _ = C := rfl
@@ -736,7 +739,7 @@ theorem schwartz_timeTranslation_lipschitz_seminorm
                 simp only [Real.sSup_empty]
                 apply le_ciSup_of_le h_bdd ⟨0, by simp⟩
                 exact norm_nonneg _
-              exact ciSup_subtype' (p := (· ∈ Set.Icc (0 : ℝ) 1))
+              exact cbiSup_eq_ciSup_subtype (p := (· ∈ Set.Icc (0 : ℝ) 1))
                   (f := fun t _ => ‖iteratedFDeriv ℝ (n + 1) f (x + t • y)‖) h_bdd h_sSup_le
             rw [h_biSup_eq, Real.mul_iSup_of_nonneg hxk_nonneg]
             apply ciSup_le

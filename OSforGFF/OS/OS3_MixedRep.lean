@@ -4,8 +4,9 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.OS.OS3_MixedRepInfra
+public import OSforGFF.OS.OS3_MixedRepInfra
 
 /-!
 # OS3 — Mixed Representation via Schwinger Parametrization
@@ -43,6 +44,8 @@ The mixed representation exhibits:
 - Haag, "Local Quantum Physics" (1996), §V.3
 
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex Real Filter QFT LaplaceIntegral OSforGFF
 open TopologicalSpace
@@ -1000,15 +1003,15 @@ theorem schwinger_bilinear_integrable (m : ℝ) [Fact (0 < m)] (f : (SchwartzTes
   -- First show that {p | p.1 ≤ 0} has μ-measure zero
   have h_null : μ {p : ℝ × (SpaceTime d) × (SpaceTime d) | p.1 ≤ 0} = 0 := by
     have h_preimage : {p : ℝ × (SpaceTime d) × (SpaceTime d) | p.1 ≤ 0} = Set.Iic 0 ×ˢ Set.univ := by
-      ext p; simp only [Set.mem_setOf_eq, Set.mem_prod, Set.mem_Iic, Set.mem_univ, and_true]
+      ext p; simp only [Set.mem_ofPred_eq, Set.mem_prod, Set.mem_Iic, Set.mem_univ, and_true]
     rw [h_preimage, Measure.prod_prod]
     rw [Measure.restrict_apply measurableSet_Iic]
     simp only [Set.Iic_inter_Ioi, Set.Ioc_self, measure_empty, zero_mul]
   -- The set where the bound fails is contained in {p | p.1 ≤ 0}
   apply measure_mono_null _ h_null
   intro p hp
-  simp only [Set.mem_setOf_eq, not_le] at hp
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq, not_le] at hp
+  simp only [Set.mem_ofPred_eq]
   by_contra h_pos
   push Not at h_pos
   have hpIoi : p.1 ∈ Set.Ioi 0 := h_pos
@@ -1319,7 +1322,7 @@ theorem bilinear_schwinger_eq_heatKernel (m : ℝ) [Fact (0 < m)] [GFFPropagator
       -- Need to show: volume {y | ¬(y ≠ Θx)} = 0
       -- i.e., volume {y | y = Θx} = 0
       have heq : {a | ¬a ≠ timeReflection x} = {timeReflection x} := by
-        ext y; simp only [Set.mem_setOf_eq, ne_eq, not_not, Set.mem_singleton_iff]
+        ext y; simp only [Set.mem_ofPred_eq, ne_eq, not_not, Set.mem_singleton_iff]
       rw [heq]
       exact h_singleton
     filter_upwards [h_compl] with y hy

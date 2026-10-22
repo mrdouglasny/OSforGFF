@@ -4,35 +4,36 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
-import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.Data.Complex.Basic
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
-import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
-import Mathlib.Analysis.Real.Pi.Bounds
-import Mathlib.Order.Filter.Basic
-import Mathlib.MeasureTheory.Function.JacobianOneDim
+public import Mathlib.Analysis.Fourier.FourierTransform
+public import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+public import Mathlib.Data.Nat.Factorial.DoubleFactorial
+public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
+public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.Order.Filter.Basic
+public import Mathlib.MeasureTheory.Function.JacobianOneDim
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.Euclidean
-import OSforGFF.Spacetime.DiscreteSymmetry
-import OSforGFF.Schwinger.Defs
-import OSforGFF.General.FunctionalAnalysis
-import OSforGFF.Covariance.ParsevalGeneric
-import OSforGFF.General.FourierTransforms
-import OSforGFF.OS.Axioms
-import OSforGFF.Spacetime.ProdIntegrable
-import OSforGFF.Spacetime.Decomposition
-import OSforGFF.Spacetime.Tonelli
-import OSforGFF.General.LaplaceIntegral
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.Euclidean
+public import OSforGFF.Spacetime.DiscreteSymmetry
+public import OSforGFF.Schwinger.Defs
+public import OSforGFF.General.FunctionalAnalysis
+public import OSforGFF.Covariance.ParsevalGeneric
+public import OSforGFF.General.FourierTransforms
+public import OSforGFF.OS.Axioms
+public import OSforGFF.Spacetime.ProdIntegrable
+public import OSforGFF.Spacetime.Decomposition
+public import OSforGFF.Spacetime.Tonelli
+public import OSforGFF.General.LaplaceIntegral
 
 /-!
 # OS3 Infrastructure — Schwinger Parametrization and Fubini Theorems
@@ -64,6 +65,8 @@ vanishing contributes one power of s. The spatial k-integral of the dominator is
 ∼ s^{(d+2)/2} e^{−sm²}, integrable near s = 0 for every d — so the OS3 chain carries no
 upper bound on the dimension.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex Real Filter QFT OSforGFF
 open TopologicalSpace
@@ -1049,7 +1052,7 @@ theorem integrable_dominate_G (C : ℝ) (m : ℝ) [Fact (0 < m)] :
                   (fun s : ℝ => s ^ (((d : ℝ) + 2) / 2) * Real.exp (-s * m^2)) (Set.Ioi 0) := by
                 have h0 := integrableOn_rpow_mul_exp_neg_mul_rpow
                   (s := ((d : ℝ) + 2) / 2) (p := 1) (b := m^2)
-                  (by linarith : (-1 : ℝ) < ((d : ℝ) + 2) / 2) (le_refl 1) (by positivity)
+                  (by linarith : (-1 : ℝ) < ((d : ℝ) + 2) / 2) one_pos (by positivity)
                 refine h0.congr_fun (fun s hs => ?_) measurableSet_Ioi
                 simp only [Real.rpow_one]
                 ring_nf
@@ -1083,9 +1086,7 @@ lemma spatialPart_measurable : Measurable (spatialPart : (SpaceTime d) → (Spat
   apply Measurable.comp
   · -- ContinuousLinearEquiv is continuous, hence measurable
     exact (EuclideanSpace.equiv (Fin (d - 1)) ℝ).symm.continuous.measurable
-  · apply measurable_pi_lambda
-    intro i
-    exact (measurable_pi_apply _).comp (WithLp.measurable_ofLp 2 _)
+  · exact Measurable.of_eval fun i ↦ (measurable_pi_apply _).comp (WithLp.measurable_ofLp 2 _)
 
 /-- The integrand for `fubini_s_ksp_swap` is strongly measurable.
 
@@ -1281,7 +1282,7 @@ lemma triangular_fubini_quadrant {f : ℝ → ℝ → ℝ}
       -- g ∘ φ = indicator of square
       have h_eq : g ∘ φ = (Set.Ioi 0 ×ˢ Set.Ioi 0).indicator (fun q => f q.1 (q.1 + q.2)) := by
         ext ⟨x, y⟩
-        simp only [g, T, φ, Set.indicator_apply, Set.mem_prod, Set.mem_Ioi, Set.mem_setOf_eq, Function.comp_apply]
+        simp only [g, T, φ, Set.indicator_apply, Set.mem_prod, Set.mem_Ioi, Set.mem_ofPred_eq, Function.comp_apply]
         split_ifs <;> simp_all
 
       -- Apply transfer
@@ -1317,11 +1318,11 @@ lemma triangular_fubini_quadrant {f : ℝ → ℝ → ℝ}
         -- T = {p | 0 < p.1 ∧ p.1 < p.2}, so (x, u) ∈ T iff 0 < x ∧ x < u
         -- Set.Ioo 0 u = {x | 0 < x ∧ x < u}
         -- These are the same condition!
-        simp only [g, T, Set.indicator_apply, Set.mem_Ioo, Set.mem_setOf_eq]
+        simp only [g, T, Set.indicator_apply, Set.mem_Ioo, Set.mem_ofPred_eq]
       · symm
         apply MeasureTheory.integral_eq_zero_of_ae
         filter_upwards with x
-        simp only [g, T, Set.indicator_apply, Set.mem_setOf_eq]
+        simp only [g, T, Set.indicator_apply, Set.mem_ofPred_eq]
         split_ifs with hcond
         · exfalso; exact hu (lt_trans hcond.1 hcond.2)
         · rfl
@@ -2808,7 +2809,7 @@ lemma s_xy_swap_bound_integrable (f : (SchwartzTestFunctionℂ d)) (m : ℝ) [Fa
     -- g_s(s) = √π * (s^{-1/2} * exp(-m² s))
     have h_inner : Integrable (fun s => s ^ (-(1:ℝ)/2) * Real.exp (-m^2 * s)) (volume.restrict (Set.Ioi 0)) := by
       have hr : (-1 : ℝ) < -(1:ℝ)/2 := by norm_num
-      have hp : (1 : ℝ) ≤ 1 := le_refl 1
+      have hp : (0 : ℝ) < 1 := one_pos
       have h := integrableOn_rpow_mul_exp_neg_mul_rpow hr hp hm2
       simp only [Real.rpow_one] at h
       exact h
@@ -2967,7 +2968,7 @@ theorem fubini_s_xy_swap (m : ℝ) [Fact (0 < m)] (f : (SchwartzTestFunctionℂ 
         -- Need: μ({p | 0 < p.1}ᶜ) = 0, i.e., μ({p | p.1 ≤ 0}) = 0
         have h_compl : ({p : ℝ × (SpaceTime d) × (SpaceTime d) | 0 < p.1})ᶜ =
             Prod.fst ⁻¹' Set.Iic 0 := by
-          ext p; simp only [Set.mem_compl_iff, Set.mem_setOf_eq, not_lt, Set.mem_preimage, Set.mem_Iic]
+          ext p; simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt, Set.mem_preimage, Set.mem_Iic]
         rw [h_compl]
         -- Prod.fst ⁻¹' Iic 0 = Iic 0 ×ˢ univ
         have h_prod : (Prod.fst ⁻¹' Set.Iic (0 : ℝ) : Set (ℝ × (SpaceTime d) × (SpaceTime d))) =

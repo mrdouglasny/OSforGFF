@@ -4,35 +4,36 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Analysis.Distribution.TemperateGrowth
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.MeasureTheory.Integral.MeanInequalities
-import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import Mathlib.Analysis.Calculus.ContDiff.Basic
-import Mathlib.Topology.Algebra.InfiniteSum.NatInt
-import Mathlib.Tactic
-import Mathlib.Tactic.Positivity
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Analysis.Distribution.TemperateGrowth
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.MeasureTheory.Integral.MeanInequalities
+public import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Topology.Algebra.InfiniteSum.NatInt
+public import Mathlib.Tactic
+public import Mathlib.Tactic.Positivity
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Schwinger.Defs
-import OSforGFF.Measure.Construct
-import OSforGFF.Measure.IsGaussian
-import OSforGFF.OS.OS0_Analyticity
-import OSforGFF.OS.OS2_Invariance
-import OSforGFF.Spacetime.ComplexTestFunction
-import OSforGFF.Spacetime.TimeTranslation
-import OSforGFF.OS.Axioms
-import OSforGFF.General.L2TimeIntegral
-import OSforGFF.General.SchwartzTranslationDecay
-import OSforGFF.OS.OS4_MGF
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Algebra.Order.Chebyshev
-import Mathlib.MeasureTheory.Group.Measure
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Schwinger.Defs
+public import OSforGFF.Measure.Construct
+public import OSforGFF.Measure.IsGaussian
+public import OSforGFF.OS.OS0_Analyticity
+public import OSforGFF.OS.OS2_Invariance
+public import OSforGFF.Spacetime.ComplexTestFunction
+public import OSforGFF.Spacetime.TimeTranslation
+public import OSforGFF.OS.Axioms
+public import OSforGFF.General.L2TimeIntegral
+public import OSforGFF.General.SchwartzTranslationDecay
+public import OSforGFF.OS.OS4_MGF
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Algebra.Order.Chebyshev
+public import Mathlib.MeasureTheory.Group.Measure
 
 /-!
 # OS4 — Ergodicity from Polynomial Clustering
@@ -53,6 +54,8 @@ polynomial rate, and `OS.Master` instantiates α = 6.
 
 - `OS4_PolynomialClustering_implies_OS4_Ergodicity`
 -/
+
+@[expose] public section
 
 open MeasureTheory Real OSforGFF QFT
 open TopologicalSpace
@@ -332,10 +335,9 @@ lemma gff_err_sq_integrable (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] (T : �
   have h_diff_L2 : MemLp (fun ω => (1/T : ℂ) * (∫ s in Set.Icc (0 : ℝ) T, A s ω) - EA) 2 μ := by
     have h := h_avg_L2.sub h_const_L2
     convert h using 2
-    rfl
   -- Step 4: L² function has integrable square
   have h_sq_int : Integrable (fun ω => ‖(1/T : ℂ) * (∫ s in Set.Icc (0 : ℝ) T, A s ω) - EA‖^2) μ := by
-    have h_meas := h_diff_L2.1
+    have h_meas := h_diff_L2.aestronglyMeasurable
     rw [memLp_two_iff_integrable_sq_norm h_meas] at h_diff_L2
     exact h_diff_L2
   -- Goal matches h_sq_int up to notation: smul ↔ mul, and ∫ ω' ... ↔ EA

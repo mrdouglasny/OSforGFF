@@ -14,7 +14,8 @@
 # and never compiled by `lake build`. It is reported separately, for information only.
 #
 # `OSforGFF/OS/NonTrivial.lean` is also deliberately off the import graph but, unlike Legacy,
-# is live mathematics: it is compiled here via `lake env lean` (needs a built library; skipped
+# is live mathematics: it is compiled here via `lake env lean`, followed by the downstream
+# module consumer in `tests/ModuleConsumer.lean` (needs a built library; both skipped
 # with a warning when `lake` is unavailable, or when GUARDRAIL_SKIP_OFFGRAPH=1).
 #
 #   exit 0  → clean
@@ -123,7 +124,7 @@ fi
 # `lake build` never compiles it. The source scan above already covers it (it is under
 # OSforGFF/, outside Legacy/); this step additionally checks that its proofs still compile.
 if [ -n "${GUARDRAIL_SKIP_OFFGRAPH:-}" ]; then
-  echo "ℹ note: off-graph compile of OS/NonTrivial.lean skipped (GUARDRAIL_SKIP_OFFGRAPH set)"
+  echo "ℹ note: off-graph compile checks skipped (GUARDRAIL_SKIP_OFFGRAPH set)"
 elif ! command -v lake >/dev/null 2>&1; then
   echo "⚠ warning: 'lake' not found — off-graph OS/NonTrivial.lean NOT compiled" >&2
 else
@@ -132,6 +133,11 @@ else
     exit 2
   fi
   echo "✓ off-graph OS/NonTrivial.lean compiles"
+  if ! lake env lean tests/ModuleConsumer.lean; then
+    echo "✗ BLOCK: the public API cannot be consumed from a module" >&2
+    exit 2
+  fi
+  echo "✓ module consumer compiles"
 fi
 
 echo "✓ guardrails: clean — ${#FILES[@]} modules, no axiom/sorry/escape-hatch in the build graph"

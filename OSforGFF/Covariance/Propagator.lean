@@ -4,7 +4,9 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
 
 /-!
 # The `GFFPropagator` typeclass and the generic proper-time covariance
@@ -28,6 +30,8 @@ symmetric and invariant under simultaneous isometries of both arguments by radia
 Instances (`Instances/`) provide the closed form and its Schwinger-integral evaluation;
 everything else in the library consumes only the class.
 -/
+
+@[expose] public section
 
 open MeasureTheory Real Complex
 open scoped RealInnerProductSpace
@@ -219,7 +223,7 @@ lemma decayDominator_integrableOn (d : ℕ) (m : ℝ) (hm : 0 < m) :
   have hb : (0 : ℝ) < m ^ 2 / 2 := by positivity
   have hgi : IntegrableOn (fun t => t ^ ((d : ℝ) / 2) * Real.exp (-(m ^ 2 / 2) * t)) (Set.Ioi 0) := by
     have := integrableOn_rpow_mul_exp_neg_mul_rpow (s := (d : ℝ) / 2) (p := 1) (b := m ^ 2 / 2)
-      (by have h2 : (0 : ℝ) ≤ (d : ℝ) / 2 := (by positivity); linarith) (le_refl 1) hb
+      (by have h2 : (0 : ℝ) ≤ (d : ℝ) / 2 := (by positivity); linarith) one_pos hb
     simpa [Real.rpow_one] using this
   refine (hgi.const_mul ((4 * Real.pi) ^ (-(d : ℝ) / 2) * ((d.factorial : ℝ) * 8 ^ d))).mono' ?_ ?_
   · exact (by fun_prop : Measurable _).aestronglyMeasurable

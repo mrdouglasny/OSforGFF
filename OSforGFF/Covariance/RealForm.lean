@@ -4,21 +4,22 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Analysis.Fourier.FourierTransform
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
-import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.Data.Complex.Basic
+public import Mathlib.Analysis.Fourier.FourierTransform
+public import Mathlib.Analysis.SpecialFunctions.Bernstein
+public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+public import Mathlib.Data.Nat.Factorial.DoubleFactorial
+public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.Basic.Complex.Basic
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.PositiveTimeTestFunction
-import OSforGFF.Spacetime.DiscreteSymmetry
-import OSforGFF.Spacetime.ComplexTestFunction
-import OSforGFF.Covariance.ParsevalGeneric
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.PositiveTimeTestFunction
+public import OSforGFF.Spacetime.DiscreteSymmetry
+public import OSforGFF.Spacetime.ComplexTestFunction
+public import OSforGFF.Covariance.ParsevalGeneric
 
 /-!
 # Real Covariance Form and Square Root Propagator Embedding
@@ -42,6 +43,8 @@ makes the field non-degenerate.
 - `freeCovarianceFormR_continuous`: continuity of `f ↦ C(f,f)` in the Schwartz topology
 - `freeCovarianceFormR_pos`: positivity of the quadratic form
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex Matrix OSforGFF
 open scoped Real InnerProductSpace BigOperators ComplexConjugate
@@ -144,7 +147,7 @@ lemma sqrtPropagatorMap_sq_integrable (m : ℝ) [Fact (0 < m)] (f : SchwartzTest
   set F := SchwartzMap.fourierTransformCLM ℂ (toComplex f)
   have hF_sq : Integrable (fun k => ‖F k‖ ^ 2) volume :=
     schwartz_normSq_integrable F
-  have hF_meas : AEStronglyMeasurable F volume := (F.memLp 2 volume).1
+  have hF_meas : AEStronglyMeasurable F volume := (F.memLp 2 volume).aestronglyMeasurable
   have h_weight_meas : AEStronglyMeasurable (freePropagatorMomSqrt d m) volume :=
     (freePropagatorMomSqrt_measurable (m := m)).aestronglyMeasurable
   have h_map_meas : AEStronglyMeasurable (sqrtPropagatorMap m f) volume := by
@@ -197,7 +200,7 @@ lemma sqrtPropagatorMap_memLp (m : ℝ) [Fact (0 < m)] (f : SchwartzTestFunction
     MemLp (sqrtPropagatorMap m f) 2 volume := by
   classical
   set F := SchwartzMap.fourierTransformCLM ℂ (toComplex f)
-  have hF_meas : AEStronglyMeasurable F volume := (F.memLp 2 volume).1
+  have hF_meas : AEStronglyMeasurable F volume := (F.memLp 2 volume).aestronglyMeasurable
   have h_weight_meas : AEStronglyMeasurable (freePropagatorMomSqrt d m) volume :=
     (freePropagatorMomSqrt_measurable (m := m)).aestronglyMeasurable
   have h_weight_C : AEStronglyMeasurable (fun k => (freePropagatorMomSqrt d m k : ℂ)) volume :=
@@ -350,27 +353,10 @@ noncomputable def embeddingMap (m : ℝ) [Fact (0 < m)] :
       rw [this]
       exact MeasureTheory.MemLp.toLp_const_smul c hf }
 
-/-- ℝ-linear view of the Lp multiplication CLM (avoiding `restrictScalars`). -/
-private noncomputable def freePropagatorMomSqrt_mul_CLM_real (m : ℝ) [Fact (0 < m)] :
-    Lp ℂ 2 (volume : Measure (SpaceTime d)) →L[ℝ]
-      Lp ℂ 2 (volume : Measure (SpaceTime d)) where
-  toLinearMap :=
-    { toFun := freePropagatorMomSqrt_mul_CLM d m
-      map_add' := fun x y => map_add _ x y
-      map_smul' := fun c x => by
-        show freePropagatorMomSqrt_mul_CLM d m (c • x)
-            = c • freePropagatorMomSqrt_mul_CLM d m x
-        have hcx : c • x = (c : ℂ) • x := lp_real_smul_eq_complex c x
-        have hmap : freePropagatorMomSqrt_mul_CLM d m ((c : ℂ) • x) =
-            (c : ℂ) • freePropagatorMomSqrt_mul_CLM d m x :=
-          ContinuousLinearMap.map_smul _ _ _
-        rw [hcx, hmap, ← lp_real_smul_eq_complex] }
-  cont := (freePropagatorMomSqrt_mul_CLM d m).continuous
-
 /-- Continuous linear map obtained by composing the proven building blocks. -/
 noncomputable def embeddingMapCLM (m : ℝ) [Fact (0 < m)] :
     SchwartzTestFunction d →L[ℝ] Lp ℂ 2 (volume : Measure (SpaceTime d)) :=
-  ((freePropagatorMomSqrt_mul_CLM_real m).comp (schwartzToL2CLM_real m)).comp
+  (((freePropagatorMomSqrt_mul_CLM d m).restrictScalars ℝ).comp (schwartzToL2CLM_real m)).comp
     ((fourierTransformCLM_real).comp toComplexCLM)
 
 omit [Fact (2 ≤ d)] in
@@ -434,6 +420,7 @@ theorem sqrtPropagatorEmbedding (m : ℝ) [Fact (0 < m)] [GFFPropagator d m] :
     _ = ENNReal.toReal (∫⁻ k, (‖sqrtPropagatorMap m f k‖₊ : ENNReal) ^ 2) := by
           congr 1
           have h_eq := MeasureTheory.eLpNorm_nnreal_pow_eq_lintegral (f := sqrtPropagatorMap m f) (p := 2) (μ := volume) h_two_ne
+            h_memLp.aestronglyMeasurable
           simp only [ENNReal.coe_ofNat, NNReal.coe_ofNat] at h_eq
           have h_pow_cast : (eLpNorm (sqrtPropagatorMap m f) 2 volume) ^ (2 : ℕ) = (eLpNorm (sqrtPropagatorMap m f) 2 volume) ^ (2 : ℝ) := by
             simp [pow_two]
@@ -477,6 +464,7 @@ lemma embeddingMap_norm_sq (m : ℝ) [Fact (0 < m)] (f : SchwartzTestFunction d)
             congr 1
             have h_eq := MeasureTheory.eLpNorm_nnreal_pow_eq_lintegral
               (f := sqrtPropagatorMap m f) (p := 2) (μ := volume) h_two_ne
+              h_memLp.aestronglyMeasurable
             simp only [ENNReal.coe_ofNat, NNReal.coe_ofNat] at h_eq
             have h_pow_cast : (eLpNorm (sqrtPropagatorMap m f) 2 volume) ^ (2 : ℕ)
                 = (eLpNorm (sqrtPropagatorMap m f) 2 volume) ^ (2 : ℝ) := by

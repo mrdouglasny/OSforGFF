@@ -28,19 +28,22 @@ The key tools are:
 - Billingsley "Probability and Measure", Ch. 7
 - Folland "Real Analysis", Thm. 2.37 (Fubini-Tonelli)
 -/
+module
 
-import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.MeasureTheory.Integral.MeanInequalities
-import Mathlib.MeasureTheory.Function.LocallyIntegrable
-import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
-import Mathlib.Analysis.Normed.Field.Basic
-import Mathlib.MeasureTheory.Group.Integral
-import Mathlib.MeasureTheory.Measure.Haar.Unique
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.MeasureTheory.Integral.IntegrableOn
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.Integral.MeanInequalities
+public import Mathlib.MeasureTheory.Function.LocallyIntegrable
+public import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
+public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.MeasureTheory.Group.Integral
+public import Mathlib.MeasureTheory.Measure.Haar.Unique
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+
+@[expose] public section
 
 
 open MeasureTheory Set Filter
@@ -594,7 +597,7 @@ private lemma memLp_two_lintegral_nnnorm_sq {α ε : Type*} [MeasurableSpace α]
     ∫⁻ x, ↑‖f x‖₊ ^ (2 : ℕ) ∂μ < ⊤ := by
   have h := hf.eLpNorm_lt_top
   rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
-    (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)] at h
+    (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) hf.aestronglyMeasurable] at h
   simp only [toReal_ofNat] at h
   rw [rpow_lt_top_iff_of_pos (by positivity : (0:ℝ) < 1/2)] at h
   refine lt_of_eq_of_lt ?_ h

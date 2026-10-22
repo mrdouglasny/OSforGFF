@@ -4,15 +4,16 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Tactic
-import Mathlib.Analysis.Calculus.BumpFunction.Convolution
-import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-import Mathlib.MeasureTheory.Function.LocallyIntegrable
-import Mathlib.Order.Filter.Basic
+public import Mathlib.Tactic
+public import Mathlib.Analysis.Calculus.BumpFunction.Convolution
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
+public import Mathlib.MeasureTheory.Function.LocallyIntegrable
+public import Mathlib.Order.Filter.Basic
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Schwinger.Defs
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Schwinger.Defs
 
 /-!
 ## Schwinger Two-Point Function
@@ -26,6 +27,8 @@ For mollifiers φ_ε (smooth, nonnegative, integral 1, support shrinking to 0):
 
 For the GFF with covariance kernel C, this equals C(x) by `double_mollifier_convergence`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped MeasureTheory

@@ -20,7 +20,11 @@ Frozen blocks — axiom footprint AND statement type — cover all six headline 
 dimension-generic master theorem, the all-dimensions corollary (`_of_dim`, every `d ≥ 2`), and
 the concrete instances `d = 4`, `d = 3`, `d = 2`, and `d = 5`.
 -/
-import «OSforGFF».OS.Master
+module
+
+public import «OSforGFF».OS.Master
+
+@[expose] public section
 
 -- ── Axiom-footprint guard for the four-dimensional instance ──────────────────
 /-- info: 'OSforGFF.gaussianFreeField_satisfies_all_OS_axioms_dim4' depends on axioms: [propext, Classical.choice, Quot.sound] -/

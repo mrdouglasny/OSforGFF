@@ -4,19 +4,20 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Schwinger.Defs
-import OSforGFF.Measure.Construct
-import OSforGFF.Measure.IsGaussian
-import OSforGFF.Measure.GaussianFreeField -- For gaussian_satisfies_OS2
-import OSforGFF.OS.OS2_Invariance -- For CovarianceEuclideanInvariantℂ_μ_GFF
-import OSforGFF.OS.Axioms
-import OSforGFF.General.FunctionalAnalysis
-import OSforGFF.Spacetime.ComplexTestFunction
-import OSforGFF.General.QuantitativeDecay  -- For schwartz_bilinear_translation_decay_polynomial
-import OSforGFF.Spacetime.TimeTranslation  -- For time translation on distributions
-import OSforGFF.OS.OS4_MGF  -- For shared OS4 infrastructure (no sorries)
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Schwinger.Defs
+public import OSforGFF.Measure.Construct
+public import OSforGFF.Measure.IsGaussian
+public import OSforGFF.Measure.GaussianFreeField -- For gaussian_satisfies_OS2
+public import OSforGFF.OS.OS2_Invariance -- For CovarianceEuclideanInvariantℂ_μ_GFF
+public import OSforGFF.OS.Axioms
+public import OSforGFF.General.FunctionalAnalysis
+public import OSforGFF.Spacetime.ComplexTestFunction
+public import OSforGFF.General.QuantitativeDecay  -- For schwartz_bilinear_translation_decay_polynomial
+public import OSforGFF.Spacetime.TimeTranslation  -- For time translation on distributions
+public import OSforGFF.OS.OS4_MGF  -- For shared OS4 infrastructure (no sorries)
 
 /-!
 # OS4 — Polynomial Clustering
@@ -40,6 +41,8 @@ The proof follows Steps 1–6 of §4.4.5:
 
 - `gaussianFreeField_satisfies_OS4`
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex OSforGFF
 open scoped Real BigOperators SchwartzMap
@@ -332,7 +335,7 @@ theorem schwartz_cross_covariance_decay_real (m : ℝ) [Fact (0 < m)] [GFFPropag
     apply (freeCovarianceKernel_continuousOn (d := d) (m := m)).mono
     intro z hz
     simp only [Set.mem_compl_iff, Metric.mem_closedBall, dist_zero_right, not_le] at hz
-    simp only [Set.mem_setOf_eq, ne_eq]
+    simp only [Set.mem_ofPred_eq, ne_eq]
     exact norm_ne_zero_iff.mp (by linarith)
 
   have h_decay_tendsto : Filter.Tendsto
@@ -370,7 +373,7 @@ theorem schwartz_cross_covariance_decay_real (m : ℝ) [Fact (0 < m)] [GFFPropag
 
   -- Apply the decay bound from cocompact membership
   have h_int_bound := hK_compl ha_not_in_K
-  simp only [Set.mem_setOf_eq, dist_zero_right] at h_int_bound
+  simp only [Set.mem_ofPred_eq, dist_zero_right] at h_int_bound
 
   -- Step 6: Connect SchwingerFunction₂ to the double integral
   -- SchwingerFunction₂ (GFF) f g = freeCovarianceFormR m f g = ∫∫ f(x) C(x-y) g(y) dx dy

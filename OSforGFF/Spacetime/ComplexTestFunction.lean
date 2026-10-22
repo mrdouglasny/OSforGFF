@@ -4,13 +4,14 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Data.Complex.Basic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Topology.Algebra.Module.Multilinear.Basic
-import Mathlib.Analysis.Complex.OperatorNorm
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Topology.Algebra.Module.Multilinear.Basic
+public import Mathlib.Analysis.Complex.OperatorNorm
 
-import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.Basic
 
 /-!
 ## Complex Test Function Linearity
@@ -35,6 +36,8 @@ and their pairings with field configurations.
 These results are essential for proving bilinearity of Schwinger functions
 and other quantum field theory constructions.
 -/
+
+@[expose] public section
 
 open Complex MeasureTheory
 
@@ -84,13 +87,8 @@ lemma ω_re_decompose_linear
     change Complex.reCLM ((t • f + s • g) x)
         = t.re * Complex.reCLM (f x) - t.im * Complex.imCLM (f x)
           + s.re * Complex.reCLM (g x) - s.im * Complex.imCLM (g x)
-    -- Evaluate pointwise scalar multiplication and addition
-    simp
-    -- Switch CLMs to the scalar functions and finish with the algebraic identity
-    change Complex.re (t * f x + s * g x)
-        = t.re * Complex.re (f x) - t.im * Complex.im (f x)
-          + s.re * Complex.re (g x) - s.im * Complex.im (g x)
-    simpa using re_of_complex_combination t s (f x) (g x)
+    simpa only [add_apply, smul_apply, smul_eq_mul, reCLM_apply, imCLM_apply] using
+      re_of_complex_combination t s (f x) (g x)
   -- Apply ω (a real-linear functional) to both sides
   have := congrArg (fun (φ : (SchwartzTestFunction d)) => ω φ) h_sum_re_eq
   -- Simplify using linearity of ω over ℝ
@@ -118,13 +116,8 @@ lemma ω_im_decompose_linear
     change Complex.imCLM ((t • f + s • g) x)
         = t.re * Complex.imCLM (f x) + t.im * Complex.reCLM (f x)
           + s.re * Complex.imCLM (g x) + s.im * Complex.reCLM (g x)
-    -- Evaluate pointwise scalar multiplication and addition
-    simp
-    -- Switch CLMs to scalar functions and finish with the algebraic identity
-    change Complex.im (t * f x + s * g x)
-        = t.re * Complex.im (f x) + t.im * Complex.re (f x)
-          + s.re * Complex.im (g x) + s.im * Complex.re (g x)
-    simpa using im_of_complex_combination t s (f x) (g x)
+    simpa only [add_apply, smul_apply, smul_eq_mul, reCLM_apply, imCLM_apply] using
+      im_of_complex_combination t s (f x) (g x)
   -- Apply ω (a real-linear functional) to both sides
   have := congrArg (fun (φ : (SchwartzTestFunction d)) => ω φ) h_sum_im_eq
   -- Simplify using linearity of ω over ℝ
@@ -375,7 +368,7 @@ lemma distributionPairingℂ_real_conj (ω : (FieldConfiguration d)) (f : (Schwa
   have h_conj_im : (complex_testfunction_decompose (conjSchwartz f)).2 =
       -(complex_testfunction_decompose f).2 := by
     ext x
-    simp only [complex_testfunction_decompose_snd_apply, SchwartzMap.neg_apply]
+    simp only [complex_testfunction_decompose_snd_apply, neg_apply]
     change (starRingEnd ℂ (f x)).im = -(f x).im
     exact Complex.conj_im (f x)
   rw [h_conj_re, h_conj_im]

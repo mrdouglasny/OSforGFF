@@ -4,22 +4,23 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import Mathlib.Data.Complex.Basic
-import Mathlib.Analysis.LocallyConvex.Basic
-import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.Analysis.Calculus.FDeriv.Basic
-import Mathlib.Topology.Algebra.Algebra
-import Mathlib.Topology.Basic
-import Mathlib.Order.Filter.Basic
-import Mathlib.Topology.Constructions
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Analysis.LocallyConvex.Basic
+public import Mathlib.Topology.Algebra.Module.Spaces.WeakDual
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.Analysis.Calculus.FDeriv.Basic
+public import Mathlib.Topology.Algebra.Algebra
+public import Mathlib.Topology.Basic
+public import Mathlib.Order.Filter.Basic
+public import Mathlib.Topology.Constructions
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Measure.Minlos
-import Mathlib.MeasureTheory.Measure.Map
-import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Measure.Minlos
+public import Mathlib.MeasureTheory.Measure.Map
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 
 /-!
 # Minlos Analyticity — Symmetry and Moments for Gaussian Measures
@@ -29,6 +30,8 @@ This file provides infrastructure for Gaussian measures constructed via Minlos' 
 - `negMap`, `integral_neg_invariance`: Symmetry under sign flip (uses Minlos uniqueness)
 - `moment_zero_from_realCF`: Zero mean from characteristic functional symmetry
 -/
+
+@[expose] public section
 
 open Classical
 open TopologicalSpace MeasureTheory Complex Filter
@@ -63,23 +66,13 @@ def negMap : FieldConfiguration d → FieldConfiguration d := fun ω => -ω
 
 /-- The negation map is measurable w.r.t. the cylinder σ-algebra. -/
 lemma negMap_measurable : Measurable (negMap (d := d)) := by
+  -- The cylinder σ-algebra is `comap (ω ↦ (f ↦ ω f)) MeasurableSpace.pi`, so it suffices that
+  -- each evaluation `ω ↦ (-ω) f = -(ω f)` is measurable.
   rw [measurable_iff_comap_le]
-  -- Unfold the cylinder σ-algebra instance and distribute comap over iSup
-  show (⨆ f, (borel ℝ).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) f)).comap negMap ≤
-    ⨆ f, (borel ℝ).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) f)
-  rw [MeasurableSpace.comap_iSup]
-  apply iSup_le; intro g
+  change (MeasurableSpace.comap (fun (ω : FieldConfiguration d) (f : SchwartzTestFunction d) =>
+    ω f) MeasurableSpace.pi).comap negMap ≤ _
   rw [MeasurableSpace.comap_comp]
-  conv_lhs => rw [show (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) g) ∘ negMap =
-      Neg.neg ∘ (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) g) from by
-    ext ω; show (-ω) g = -(ω g); rfl]
-  rw [← MeasurableSpace.comap_comp]
-  have h_neg_meas : (borel ℝ).comap (Neg.neg : ℝ → ℝ) ≤ borel ℝ :=
-    measurable_iff_comap_le.mp measurable_neg
-  calc ((borel ℝ).comap Neg.neg).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) g)
-      ≤ (borel ℝ).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) g) :=
-        MeasurableSpace.comap_mono h_neg_meas
-    _ ≤ _ := le_iSup (fun f => (borel ℝ).comap (fun l : FieldConfiguration d => (l : SchwartzTestFunction d →L[ℝ] ℝ) f)) g
+  exact (Measurable.of_eval fun f => (WeakDual.eval_measurable f).neg).comap_le
 
 /-- Symmetry under global sign flip induced by the real Gaussian CF.
     Uses Minlos uniqueness from the bochner library. -/
@@ -96,8 +89,7 @@ lemma integral_neg_invariance
   classical
   -- Step 1: Define the pushforward measure
   let μneg := μ.toMeasure.map negMap
-  have hμneg_prob : IsProbabilityMeasure μneg := by
-    exact Measure.isProbabilityMeasure_map (Measurable.aemeasurable negMap_measurable)
+  have hμneg_prob : IsProbabilityMeasure μneg := inferInstance
 
   -- Step 2: Show characteristic functionals are equal
   have hCF_equal : ∀ g : SchwartzTestFunction d,

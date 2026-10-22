@@ -4,9 +4,11 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import OSforGFF.General.BesselK
-import OSforGFF.Covariance.Propagator
-import OSforGFF.Measure.Construct
+module
+
+public import OSforGFF.General.BesselK
+public import OSforGFF.Covariance.Propagator
+public import OSforGFF.Measure.Construct
 
 /-!
 # The two-dimensional instance — proper-time evaluation
@@ -17,6 +19,8 @@ the heat-kernel prefactor is `(4πt)⁻¹`, so after pulling out the constant `(
 integral is exactly the Schwinger integral
 `∫₀^∞ (1/t) e^{-m²t - r²/(4t)} dt = 2 K₀(mr)` (`schwingerIntegral_eq_besselK0`).
 -/
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,6 +53,6 @@ noncomputable instance instGFFPropagatorDim2 (m : ℝ) [Fact (0 < m)] :
     GFFPropagator 2 m where
   Cprofile r := if r = 0 then 0 else 1 / (2 * Real.pi) * besselK0 (m * r)
   schwinger_eq r hr := by
-    rw [if_neg (ne_of_gt hr), properTimeCovariance_dim2_eq m r Fact.out hr]
+    rw [ite_eq_right (ne_of_gt hr), properTimeCovariance_dim2_eq m r Fact.out hr]
 
 end OSforGFF

@@ -4,13 +4,14 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
+module
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.PositiveTimeTestFunction
-import OSforGFF.General.FourierTransforms
-import OSforGFF.OS.OS3_MixedRep
-import OSforGFF.OS.OS3_MixedRepInfra
-import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.PositiveTimeTestFunction
+public import OSforGFF.General.FourierTransforms
+public import OSforGFF.OS.OS3_MixedRep
+public import OSforGFF.OS.OS3_MixedRepInfra
+public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-!
 # OS3 — Covariance Reflection Positivity
@@ -29,6 +30,8 @@ perfect square ∫ (1/ω)|F_ω(k̄)|² dk̄ with F_ω(k̄) = ∫ f̃(t,k̄) e^{�
 - `freeCovariance_reflection_positive_bilinear`: ⟨Θf, Cf⟩ ≥ 0 (complex)
 - `freeCovariance_reflection_positive_real`: real-valued version
 -/
+
+@[expose] public section
 
 namespace QFT
 

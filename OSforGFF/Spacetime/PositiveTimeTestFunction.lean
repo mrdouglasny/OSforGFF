@@ -4,16 +4,18 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import Mathlib.Tactic  -- gives `ext` and `simp` power
-import Mathlib.Data.Complex.Basic
-import Mathlib.Algebra.Star.Basic
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-import Mathlib.LinearAlgebra.TensorAlgebra.Basic
+module
 
-import OSforGFF.Spacetime.Basic
-import OSforGFF.Spacetime.DiscreteSymmetry
+public import Mathlib.Tactic  -- gives `ext` and `simp` power
+public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Algebra.Star.Basic
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
+public import Mathlib.LinearAlgebra.TensorAlgebra.Basic
+
+public import OSforGFF.Spacetime.Basic
+public import OSforGFF.Spacetime.DiscreteSymmetry
 
 /-!
 # Positive Time Test Functions and Star Operations
@@ -34,6 +36,8 @@ the star operation (complex conjugation composed with time reflection) for test 
 * `Star (SchwartzTestFunctionℂ d)`: Star instance for complex test functions
 -/
 
+@[expose] public section
+
 noncomputable section
 
 open TopologicalSpace Function SchwartzMap QFT
@@ -50,7 +54,7 @@ def positiveTimeSet : Set (SpaceTime d) := {x | HasPositiveTime x}
 def PositiveTimeTestFunctions.submodule : Submodule ℝ (SchwartzTestFunction d) where
   carrier := { f : (SchwartzTestFunction d) | tsupport f ⊆ positiveTimeSet }
   zero_mem' := by
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     suffices h : tsupport (0 : (SchwartzTestFunction d)) = ∅ by
       rw [h]
       apply Set.empty_subset
@@ -79,7 +83,7 @@ lemma PositiveTimeTestFunction.sum_smul_mem
 def PositiveTimeTestFunctionsℂ.submodule : Submodule ℂ (SchwartzTestFunctionℂ d) where
   carrier := { f : (SchwartzTestFunctionℂ d) | tsupport f ⊆ positiveTimeSet }
   zero_mem' := by
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     suffices h : tsupport (0 : (SchwartzTestFunctionℂ d)) = ∅ by
       rw [h]
       apply Set.empty_subset

@@ -4,11 +4,13 @@ Copyright (c) 2026 Sergey A. Cherkis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sergey A. Cherkis, Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 -/
-import OSforGFF.General.BesselK
-import OSforGFF.Instances.Dim2
-import OSforGFF.Covariance.Propagator
-import OSforGFF.Measure.Construct
-import Mathlib.MeasureTheory.Integral.Gamma
+module
+
+public import OSforGFF.General.BesselK
+public import OSforGFF.Instances.Dim2
+public import OSforGFF.Covariance.Propagator
+public import OSforGFF.Measure.Construct
+public import Mathlib.MeasureTheory.Integral.Gamma
 
 /-!
 # The five-dimensional instance — proper-time evaluation
@@ -21,6 +23,8 @@ the substitution `u = sinh(t/2)` and the Gaussian zeroth and second moments.
 
 The master theorem applies in every dimension `d ≥ 2`, in particular at `d = 5`.
 -/
+
+@[expose] public section
 
 noncomputable section
 
@@ -159,6 +163,6 @@ noncomputable instance instGFFPropagatorDim5 (m : ℝ) [Fact (0 < m)] :
     GFFPropagator 5 m where
   Cprofile r := if r = 0 then 0 else (1 + m * r) * Real.exp (-(m * r)) / (8 * Real.pi ^ 2 * r ^ 3)
   schwinger_eq r hr := by
-    rw [if_neg (ne_of_gt hr), properTimeCovariance_dim5_eq m r Fact.out hr]
+    rw [ite_eq_right (ne_of_gt hr), properTimeCovariance_dim5_eq m r Fact.out hr]
 
 end OSforGFF
